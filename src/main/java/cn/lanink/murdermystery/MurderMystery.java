@@ -13,6 +13,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 
@@ -80,10 +81,20 @@ public class MurderMystery extends PluginBase {
         getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
         getServer().getPluginManager().registerEvents(new MurderListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
-        new MetricsLite(this, 7290);
-        getLogger().info("§e开始加载扩展");
-        this.addons.enableAll();
-        getLogger().info("§e扩展加载完成！");
+        //延迟5秒启用扩展
+        getServer().getScheduler().scheduleDelayedTask(this, new Task() {
+            @Override
+            public void onRun(int i) {
+                getLogger().info("§e开始加载扩展...");
+                addons.enableAll();
+                getLogger().info("§e扩展加载完成！");
+            }
+        }, 100);
+        try {
+            new MetricsLite(this, 7290);
+        } catch (Throwable ignore) {
+
+        }
         getLogger().info("§e插件加载完成！欢迎使用！");
     }
 

@@ -8,13 +8,15 @@ import java.util.HashMap;
 
 public class Addons {
 
+    private final MurderMystery murderMystery;
     private final Config config;
     private final HashMap<String, BaseAddons> baseAddons = new HashMap<>();
 
     public Addons(MurderMystery murderMystery) {
-        murderMystery.saveResource("Addons/config.yml", false);
-        this.config = new Config(murderMystery.getDataFolder() + "/Addons/config.yml", 2);
-        if (this.config.getBoolean("UiShop", false)) {
+        this.murderMystery = murderMystery;
+        this.murderMystery.saveResource("Addons/config.yml", false);
+        this.config = new Config(this.murderMystery.getDataFolder() + "/Addons/config.yml", 2);
+        if (this.getConfig().getBoolean("UiShop", false)) {
             this.addAddons(new UiShop());
         }
     }
@@ -34,6 +36,7 @@ public class Addons {
     public void enable(BaseAddons baseAddons) {
         if (!this.baseAddons.containsValue(baseAddons)) {
             this.baseAddons.put(baseAddons.getAddonsName(), baseAddons);
+            this.baseAddons.get(baseAddons.getAddonsName()).onEnable();
         }
         this.baseAddons.get(baseAddons.getAddonsName()).onEnable();
     }

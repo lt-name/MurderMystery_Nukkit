@@ -15,7 +15,7 @@ public class StartRoom extends BaseSubCommand {
 
     @Override
     public boolean canUser(CommandSender sender) {
-        return false;
+        return sender.isPlayer() && sender.isOp();
     }
 
     @Override

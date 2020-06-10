@@ -19,7 +19,7 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetGameTime("setgametime"));
         this.addSubCommand(new StartRoom("startroom"));
         this.addSubCommand(new ReloadRoom("reloadroom"));
-        this.addSubCommand(new ReloadRoom("unloadroom"));
+        this.addSubCommand(new UnloadRoom("unloadroom"));
         this.loadCommandBase();
     }
 

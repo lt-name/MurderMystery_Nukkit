@@ -2,7 +2,10 @@ package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
-import cn.lanink.murdermystery.event.*;
+import cn.lanink.murdermystery.event.MurderPlayerCorpseSpawnEvent;
+import cn.lanink.murdermystery.event.MurderPlayerDeathEvent;
+import cn.lanink.murdermystery.event.MurderRoomChooseIdentityEvent;
+import cn.lanink.murdermystery.event.MurderRoomStartEvent;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.tasks.game.GoldTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
@@ -17,7 +20,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import me.onebone.economyapi.EconomyAPI;
 
 import java.util.LinkedHashMap;
 import java.util.Random;
@@ -45,15 +47,13 @@ public class MurderListener implements Listener {
         Room room = event.getRoom();
         room.setMode(2);
         Server.getInstance().getPluginManager().callEvent(new MurderRoomChooseIdentityEvent(room));
-        if (room.getRandomSpawn().size() > 0) {
-            int x=0;
-            for (Player player : room.getPlayers().keySet()) {
-                if (x >= room.getRandomSpawn().size()) {
-                    x = 0;
-                }
-                player.teleport(room.getRandomSpawn().get(x));
-                x++;
+        int x=0;
+        for (Player player : room.getPlayers().keySet()) {
+            if (x >= room.getRandomSpawn().size()) {
+                x = 0;
             }
+            player.teleport(room.getRandomSpawn().get(x));
+            x++;
         }
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 MurderMystery.getInstance(), new TimeTask(this.murderMystery, room), 20,true);
@@ -69,37 +69,36 @@ public class MurderListener implements Listener {
      */
     @EventHandler
     public void onChooseIdentity(MurderRoomChooseIdentityEvent event) {
-        if (!event.isCancelled()) {
-            Room room = event.getRoom();
-            LinkedHashMap<Player, Integer> players = room.getPlayers();
-            Random random = new Random();
-            int random1 = random.nextInt(players.size());
-            int random2;
-            do {
-                random2 = random.nextInt(players.size());
-            }while (random1 == random2);
-            int j = 0;
-            for (Player player : players.keySet()) {
-                player.getInventory().clearAll();
-                //侦探
-                if (j == random1) {
-                    room.addPlaying(player, 2);
-                    player.sendTitle(this.language.titleDetectiveTitle,
-                            this.language.titleDetectiveSubtitle, 10, 40, 10);
-                    continue;
-                }
-                //杀手
-                if (j == random2) {
-                    room.addPlaying(player, 3);
-                    player.sendTitle(this.language.titleKillerTitle,
-                            this.language.titleKillerSubtitle, 10, 40, 10);
-                    continue;
-                }
-                room.addPlaying(player, 1);
-                player.sendTitle(this.language.titleCommonPeopleTitle,
-                        this.language.titleCommonPeopleSubtitle, 10, 40, 10);
-                j++;
+        if (event.isCancelled()) return;
+        Room room = event.getRoom();
+        LinkedHashMap<Player, Integer> players = room.getPlayers();
+        Random random = new Random();
+        int random1 = random.nextInt(players.size()) + 1;
+        int random2;
+        do {
+            random2 = random.nextInt(players.size()) + 1;
+        }while (random1 == random2);
+        int j = 0;
+        for (Player player : players.keySet()) {
+            player.getInventory().clearAll();
+            j++;
+            //侦探
+            if (j == random1) {
+                room.addPlaying(player, 2);
+                player.sendTitle(this.language.titleDetectiveTitle,
+                        this.language.titleDetectiveSubtitle, 10, 40, 10);
+                continue;
             }
+            //杀手
+            if (j == random2) {
+                room.addPlaying(player, 3);
+                player.sendTitle(this.language.titleKillerTitle,
+                        this.language.titleKillerSubtitle, 10, 40, 10);
+                continue;
+            }
+            room.addPlaying(player, 1);
+            player.sendTitle(this.language.titleCommonPeopleTitle,
+                    this.language.titleCommonPeopleSubtitle, 10, 40, 10);
         }
     }
 
