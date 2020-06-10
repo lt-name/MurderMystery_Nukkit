@@ -4,6 +4,7 @@ import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.lanink.murdermystery.room.Room;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 
 public class JoinRoom extends BaseSubCommand {
@@ -65,7 +66,7 @@ public class JoinRoom extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[0];
+        return new CommandParameter[] { new CommandParameter("roomName", CommandParamType.TEXT, false) };
     }
 
 }

@@ -25,14 +25,16 @@ public class Language {
     public String listRoom = "§e房间列表： §a %list%";
     public String useCmdInCon = "请在游戏内输入！";
     public String adminHelp = "§eMurderMystery--命令帮助 \n " +
-                              "§a/%cmdName% §e打开ui \n " +
-                              "§a/%cmdName% 设置出生点 §e设置当前位置为游戏出生点 \n " +
-                               "§a/%cmdName% 添加金锭生成点 §e将当前位置设置为金锭生成点 \n " +
-                                "§a/%cmdName% 设置金锭产出间隔 数字 §e设置金锭生成间隔 \n " +
-                                "§a/%cmdName% 设置等待时间 数字 §e设置游戏人数足够后的等待时间 \n " +
-                                "§a/%cmdName% 设置游戏时间 数字 §e设置每轮游戏最长时间 \n " +
-                                "§a/%cmdName% reload §e重载所有房间 \n " +
-                               "§a/%cmdName% unload §e关闭所有房间,并卸载配置";
+            "§a/%cmdName% §e打开ui \n " +
+            "§a/%cmdName% setwaitspawn §e设置当前位置为游戏出生点 \n " +
+            "§a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点 \n " +
+            "§a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点 \n " +
+            "§a/%cmdName% setgoldspawntime 数字 §e设置金锭生成间隔 \n " +
+            "§a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n " +
+            "§a/%cmdName% setgametime 数字 §e设置每轮游戏最长时间 \n " +
+            "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
+            "§a/%cmdName% reloadroom §e重载所有房间 \n " +
+            "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
     public String adminSetSpawn = "§a默认出生点设置成功！";
     public String adminAddRandomSpawn = "§a随机出生点添加成功！";
     public String adminAddGoldSpawn = "§a金锭生成点添加成功！";

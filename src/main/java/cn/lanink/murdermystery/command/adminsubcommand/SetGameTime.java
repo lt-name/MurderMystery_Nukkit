@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.command.adminsubcommand;
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.Config;
 
@@ -47,7 +48,7 @@ public class SetGameTime extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[0];
+        return new CommandParameter[] { new CommandParameter("time", CommandParamType.INT, false) };
     }
 
 }
