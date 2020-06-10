@@ -47,11 +47,9 @@ abstract public class BaseCommand extends Command {
                         sender.sendMessage(this.language.noPermission);
                     }else {
                         sender.sendMessage(this.language.useCmdInCon);
-                        return true;
                     }
                 }else {
                     this.sendHelp(sender);
-                    return true;
                 }
             }else {
                 if (sender.isPlayer()) {
@@ -59,8 +57,8 @@ abstract public class BaseCommand extends Command {
                 }else {
                     this.sendHelp(sender);
                 }
-                return true;
             }
+            return true;
         }
         sender.sendMessage(this.language.noPermission);
         return true;

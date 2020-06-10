@@ -254,9 +254,7 @@ public class MurderMystery extends PluginBase {
             }
             this.rooms.clear();
         }
-        if (this.roomConfigs.values().size() > 0) {
-            this.roomConfigs.clear();
-        }
+        this.roomConfigs.clear();
         for (int id : this.taskList) {
             getServer().getScheduler().cancelTask(id);
         }
@@ -304,7 +302,7 @@ public class MurderMystery extends PluginBase {
                 }
             }
         }
-        if (this.skins.size() > 15) {
+        if (this.skins.size() >= 16) {
             getLogger().info("§e皮肤加载完成！当前已加载 " + this.skins.size() + " 个皮肤！");
         }else {
             getLogger().warning("§c当前皮肤数量小于16，部分玩家仍可使用自己的皮肤");
