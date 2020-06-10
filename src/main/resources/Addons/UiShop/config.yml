@@ -1,0 +1,6 @@
+#格式 道具内部ID:显示名称:购买价格(金锭)
+#道具内部id请参考 https://github.com/lt-name/MurderMystery_Nukkit/blob/master/README.md
+items:
+  - 21:神秘药水:1
+  - 22:护盾生成器:2
+  - 23:减速雪球:1

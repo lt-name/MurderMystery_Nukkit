@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cn.lanink</groupId>
+    <artifactId>MurderMystery</artifactId>
+    <version>1.0.2-SNAPSHOT</version>
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
+                    <compilerArguments>
+                        <bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar</bootclasspath>
+                    </compilerArguments>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>4.0.0</version>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                    <format>properties</format>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+                    <runOnlyOnce>false</runOnlyOnce>
+                    <verbose>true</verbose>
+                    <skipPoms>false</skipPoms>
+                    <excludeProperties>
+                        <excludeProperty>git.user.*</excludeProperty>
+                        <excludeProperty>git.build.user.email</excludeProperty>
+                        <excludeProperty>git.commit.user.email</excludeProperty>
+                    </excludeProperties>
+                    <commitIdGenerationMode>flat</commitIdGenerationMode>
+                    <gitDescribe>
+                        <always>true</always>
+                    </gitDescribe>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <id>add-version</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>${project.basedir}/src/main/java/cn/lanink/murdermystery/MurderMystery.java</include>
+                                <include>${project.basedir}/src/main/resources/plugin.yml</include>
+                            </includes>
+                            <replacements>
+                                <replacement>
+                                    <token>VERSION = ".*"</token>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <value>VERSION = "${project.version} git-${git.commit.id.abbrev}"</value>
+                                </replacement>
+                                <replacement>
+                                    <token>version: ".*"</token>
+                                    <value>version: "${project.version}"</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>nukkitx-releases</name>
+            <url>https://repo.nukkitx.com/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>nukkitx-snapshots</name>
+            <url>https://repo.nukkitx.com/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>nukkitx-repo</id>
+            <name>nukkitx-snapshot</name>
+            <url>https://repo.nukkitx.com/maven-snapshots</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.nukkit</groupId>
+            <artifactId>nukkit</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>me.onebone</groupId>
+            <artifactId>economyapi</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>tip.Main</groupId>
+            <artifactId>Tips</artifactId>
+            <version>1.6.8</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/Tips_v1.6.8.jar</systemPath>
+        </dependency>
+    </dependencies>
+
+</project>
