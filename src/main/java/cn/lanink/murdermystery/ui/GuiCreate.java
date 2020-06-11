@@ -16,17 +16,11 @@ import cn.nukkit.scheduler.Task;
 
 import java.util.Map;
 
-
 public class GuiCreate {
 
     private static final MurderMystery murderMystery = MurderMystery.getInstance();
     private static final Language language = murderMystery.getLanguage();
     public static final String PLUGIN_NAME = "§l§7[§1M§2u§3r§4d§5e§6r§aM§cy§bs§dt§9e§6r§2y§7]";
-    public static final int USER_MENU = 58894311;
-    public static final int ADMIN_MENU = 58894312;
-    public static final int ADMIN_TIME_MENU = 58894313;
-    public static final int ROOM_LIST_MENU = 58894314;
-    public static final int ROOM_JOIN_OK = 58894315;
 
     /**
      * 显示用户菜单
