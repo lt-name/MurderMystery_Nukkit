@@ -15,6 +15,7 @@ import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.level.Sound;
@@ -134,25 +135,32 @@ public class MurderListener implements Listener {
      */
     @EventHandler
     public void onCorpseSpawn(MurderPlayerCorpseSpawnEvent event) {
-        if (!event.isCancelled()) {
-            Player player = event.getPlayer();
-            Room room = event.getRoom();
-            if (player == null || room == null) {
-                return;
-            }
-            CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
-            nbt.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", room.getPlayerSkin(player).getSkinData().data)
-                    .putString("ModelId", room.getPlayerSkin(player).getSkinId()));
-            nbt.putFloat("Scale", -1.0F);
-            EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt);
-            ent.setSkin(room.getPlayerSkin(player));
-            ent.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
-            ent.setGliding(true);
-            ent.setRotation(player.getYaw(), 0);
-            ent.spawnToAll();
-            ent.updateMovement();
+        if (event.isCancelled()) return;
+        Player player = event.getPlayer();
+        Room room = event.getRoom();
+        if (player == null || room == null) return;
+        Skin skin = room.getPlayerSkin(player);
+        switch(skin.getSkinData().data.length) {
+            case 8192:
+            case 16384:
+            case 32768:
+            case 65536:
+                break;
+            default:
+                skin = this.murderMystery.getCorpseSkin();
         }
+        CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
+        nbt.putCompound("Skin", new CompoundTag()
+                .putByteArray("Data", skin.getSkinData().data)
+                .putString("ModelId", skin.getSkinId()));
+        nbt.putFloat("Scale", -1.0F);
+        EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt);
+        ent.setSkin(skin);
+        ent.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
+        ent.setGliding(true);
+        ent.setRotation(player.getYaw(), 0);
+        ent.spawnToAll();
+        ent.updateMovement();
     }
 
 }

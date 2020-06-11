@@ -38,9 +38,11 @@ public class MurderMystery extends PluginBase {
     private final LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
+    private final Skin corpseSkin = new Skin();
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private String cmdUser, cmdAdmin;
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
+    private MetricsLite metricsLite;
 
     public static MurderMystery getInstance() { return murderMystery; }
 
@@ -91,7 +93,7 @@ public class MurderMystery extends PluginBase {
             }
         }, 100);
         try {
-            new MetricsLite(this, 7290);
+            if (this.metricsLite == null) this.metricsLite = new MetricsLite(this, 7290);
         } catch (Throwable ignore) {
 
         }
@@ -149,6 +151,10 @@ public class MurderMystery extends PluginBase {
         return this.sword;
     }
 
+    public Skin getCorpseSkin() {
+        return this.corpseSkin;
+    }
+
     public LinkedHashMap<String, Room> getRooms() {
         return this.rooms;
     }
@@ -198,18 +204,33 @@ public class MurderMystery extends PluginBase {
                 Map<String, Object> skinJson = new Config(fileJson, 1).getAll();
                 String name = null;
                 for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
-                    if (name == null)
+                    if (name == null || name.trim().equals("")) {
                         name = entry1.getKey();
+                    }else {
+                        break;
+                    }
                 }
                 skin.setGeometryName(name);
                 skin.setGeometryData(Utils.readFile(fileJson));
                 this.sword = skin;
-                getLogger().info("§aSword文件加载完成");
+                getLogger().info("§a Sword加载完成");
             }else {
-                getLogger().warning("§cSword文件加载失败");
+                getLogger().warning("§cSword文件加载失败！请检查插件完整性！");
             }
         } catch (IOException ignored) {
             getLogger().warning("§cSword文件加载失败");
+        }
+        //默认尸体皮肤
+        skinData = null;
+        try {
+            skinData = ImageIO.read(this.getResource("skin.png"));
+        } catch (IOException ignored) { }
+        if (skinData != null) {
+            this.corpseSkin.setSkinData(skinData);
+            this.corpseSkin.setSkinId("defaultSkin");
+            getLogger().info("§a defaultSkin加载完成");
+        }else {
+            getLogger().error("§c默认尸体皮肤加载失败！请检查插件完整性！");
         }
         getLogger().info("§e资源文件加载完成");
     }
