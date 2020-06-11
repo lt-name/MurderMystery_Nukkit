@@ -7,7 +7,9 @@ import cn.lanink.murdermystery.entity.EntityText;
 import cn.lanink.murdermystery.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
@@ -31,10 +33,30 @@ import tip.messages.TipMessage;
 import tip.utils.Api;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 
 public class Tools {
+
+    /**
+     * 执行命令
+     * @param player 玩家
+     * @param cmds 命令
+     */
+    public static void cmd(Player player, List<String> cmds) {
+        if (player == null || cmds == null || cmds.size() == 0) {
+            return;
+        }
+        for (String s : cmds) {
+            String[] cmd = s.split("&");
+            if ((cmd.length > 1) && (cmd[1].equals("con"))) {
+                Server.getInstance().dispatchCommand(new ConsoleCommandSender(), cmd[0].replace("@p", player.getName()));
+            } else {
+                Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
+            }
+        }
+    }
 
     /**
      * 移除显示信息
@@ -251,7 +273,8 @@ public class Tools {
      * @return Y
      */
     public static double getFloorY(Player player) {
-        for (int y = 0; y < 10; y++) {
+        if (player.getFloorY() <= 0) return 1;
+        for (int y = 0; y < 15; y++) {
             Level level = player.getLevel();
             Block block = level.getBlock(player.getFloorX(), player.getFloorY() - y, player.getFloorZ());
             if (block.getId() != 0) {

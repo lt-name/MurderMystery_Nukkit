@@ -35,6 +35,7 @@ public class Room {
     private final Position waitSpawn;
     private final Level level;
     public ArrayList<ArrayList<Vector3>> placeBlocks = new ArrayList<>();
+    public Player killKillerPlayer = null; //击杀杀手的玩家
 
     /**
      * 初始化
@@ -132,6 +133,7 @@ public class Room {
         this.placeBlocks.clear();
         this.skinNumber.clear();
         this.skinCache.clear();
+        this.killKillerPlayer = null;
         Tools.cleanEntity(this.getLevel(), true);
         this.initTime();
     }

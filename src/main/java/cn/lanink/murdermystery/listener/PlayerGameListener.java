@@ -1,7 +1,6 @@
 package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.tasks.game.ScanTask;
 import cn.lanink.murdermystery.tasks.game.SwordMoveTask;
@@ -15,15 +14,10 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockPlaceEvent;
-import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
-import cn.nukkit.event.player.PlayerChatEvent;
-import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.player.PlayerItemConsumeEvent;
-import cn.nukkit.event.player.PlayerItemHeldEvent;
+import cn.nukkit.event.player.*;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -450,7 +444,6 @@ public class PlayerGameListener implements Listener {
                                 level.setBlock(it.next(), Block.get(0));
                                 it.remove();
                             }
-
                         }
                     }, 100);
                 }
@@ -458,6 +451,19 @@ public class PlayerGameListener implements Listener {
         }else {
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * 玩家游戏模式改变事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        Player player = event.getPlayer();
+        if (player == null) return;
+        Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room == null) return;
+        event.setCancelled(false);
     }
 
 }

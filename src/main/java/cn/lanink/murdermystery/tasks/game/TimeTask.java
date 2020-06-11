@@ -7,7 +7,6 @@ import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
-import me.onebone.economyapi.EconomyAPI;
 
 import java.util.Map;
 
@@ -17,7 +16,6 @@ import java.util.Map;
 public class TimeTask extends PluginTask<MurderMystery> {
 
     private final Room room;
-    private boolean use = false;
 
     public TimeTask(MurderMystery owner, Room room) {
         super(owner);
@@ -28,6 +26,7 @@ public class TimeTask extends PluginTask<MurderMystery> {
     public void onRun(int i) {
         if (this.room.getMode() != 2) {
             this.cancel();
+            return;
         }
         //计时与胜利判断
         if (room.gameTime > 0) {
@@ -88,39 +87,13 @@ public class TimeTask extends PluginTask<MurderMystery> {
     }
 
     private void victory(int victoryMode) {
-        if (use) return;
-        use = true;
+        this.cancel();
         if (room.getPlayers().values().size() > 0) {
             room.setMode(3);
-            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                if (victoryMode == 3) {
-                    entry.getKey().sendTitle(owner.getLanguage().titleVictoryKillerTitle,
-                            "", 10, 30, 10);
-                    if (entry.getValue() == 3) {
-                        int money = owner.getConfig().getInt("杀手胜利奖励", 0);
-                        if (money > 0) {
-                            EconomyAPI.getInstance().addMoney(entry.getKey(), money);
-                            entry.getKey().sendMessage(
-                                    owner.getLanguage().victoryMoney.replace("%money%", money + ""));
-                        }
-                    }
-                    continue;
-                }else if (entry.getValue() == 1 || entry.getValue() == 2) {
-                    int money = owner.getConfig().getInt("平民胜利奖励", 0);
-                    if (money > 0) {
-                        EconomyAPI.getInstance().addMoney(entry.getKey(), money);
-                        entry.getKey().sendMessage(
-                                owner.getLanguage().victoryMoney.replace("%money%", money + ""));
-                    }
-                }
-                entry.getKey().sendTitle(owner.getLanguage().titleVictoryCommonPeopleSubtitle,
-                        "", 10, 30, 10);
-            }
             owner.getServer().getScheduler().scheduleRepeatingTask(owner, new VictoryTask(owner, room, victoryMode), 20);
         }else {
            room.endGame();
         }
-        this.cancel();
     }
 
     @Override

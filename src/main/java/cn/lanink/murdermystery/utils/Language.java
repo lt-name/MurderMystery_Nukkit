@@ -100,8 +100,6 @@ public class Language {
     public String victoryKillerScoreBoard = "§e恭喜杀手获得胜利! ";
     public String victoryCommonPeopleBottom = "§e恭喜平民和侦探获得胜利！";
     public String victoryCommonPeopleScoreBoard = "§e恭喜平民和侦探获得胜利！";
-    public String victoryMoney = "§a你获得了胜利奖励: %money% 元";
-    public String victoryKillKillerMoney = "§a你获得了击杀杀手额外奖励: %money% 元！";
     public String scoreBoardTitle = "§e密室杀手";
     public String waitTimeScoreBoard = " 玩家: §a %playerNumber%/16 \n §a开始倒计时： §l§e %time%";
     public String waitScoreBoard = " 玩家: §a %playerNumber%/16 \n 最低游戏人数为 5 人 \n 等待玩家加入中";
@@ -210,8 +208,6 @@ public class Language {
         this.victoryKillerScoreBoard = config.getString("victoryKillerScoreBoard", this.victoryKillerScoreBoard);
         this.victoryCommonPeopleBottom = config.getString("victoryCommonPeopleBottom", this.victoryCommonPeopleBottom);
         this.victoryCommonPeopleScoreBoard = config.getString("victoryCommonPeopleScoreBoard", this.victoryCommonPeopleScoreBoard);
-        this.victoryMoney = config.getString("victoryMoney", this.victoryMoney);
-        this.victoryKillKillerMoney = config.getString("victoryKillKillerMoney", this.victoryKillKillerMoney);
         this.scoreBoardTitle = config.getString("scoreBoardTitle", this.scoreBoardTitle);
         this.waitTimeScoreBoard = config.getString("waitTimeScoreBoard", this.waitTimeScoreBoard);
         this.waitScoreBoard = config.getString("waitScoreBoard", this.waitScoreBoard);

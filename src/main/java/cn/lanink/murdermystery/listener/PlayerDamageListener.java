@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
 import cn.lanink.murdermystery.event.MurderPlayerDeathEvent;
 import cn.lanink.murdermystery.room.Room;
@@ -13,11 +14,11 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
-import me.onebone.economyapi.EconomyAPI;
 
 public class PlayerDamageListener implements Listener {
 
@@ -64,8 +65,8 @@ public class PlayerDamageListener implements Listener {
     @EventHandler
     public void onDamageByChild(EntityDamageByChildEntityEvent event) {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-            Player player1 = ((Player) event.getDamager()).getPlayer();
-            Player player2 = ((Player) event.getEntity()).getPlayer();
+            Player player1 = ((Player) event.getDamager());
+            Player player2 = ((Player) event.getEntity());
             if (player1 == player2 || event.getChild() == null || event.getChild().namedTag == null) {
                 return;
             }
@@ -92,6 +93,30 @@ public class PlayerDamageListener implements Listener {
     }
 
     /**
+     * 伤害事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+            if (room == null) return;
+            //虚空 游戏开始前拉回 游戏中判断玩家死亡
+            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                if (room.getMode() == 2) {
+                    Server.getInstance().getPluginManager().callEvent(new MurderPlayerDeathEvent(room, player));
+                }else {
+                    player.teleport(room.getWaitSpawn());
+                }
+            }
+            event.setCancelled(true);
+        }else if (event.getEntity() instanceof EntityPlayerCorpse) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
      * 玩家被攻击事件(符合游戏条件的攻击)
      * @param event 事件
      */
@@ -112,11 +137,7 @@ public class PlayerDamageListener implements Listener {
             }else { //攻击者是平民或侦探
                 if (room.getPlayerMode(player2) == 3) {
                     player1.sendMessage(this.language.killKiller);
-                    int money = this.murderMystery.getConfig().getInt("击杀杀手额外奖励", 0);
-                    if (money > 0) {
-                        EconomyAPI.getInstance().addMoney(player1, money);
-                        player1.sendMessage(this.language.victoryKillKillerMoney.replace("%money%", money + ""));
-                    }
+                    room.killKillerPlayer = player1;
                     player2.sendTitle(this.language.deathTitle,
                             this.language.killerDeathSubtitle, 10, 20, 20);
                 } else {

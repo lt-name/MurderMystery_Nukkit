@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.tasks;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.event.MurderRoomEndEvent;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
@@ -28,6 +29,15 @@ public class VictoryTask extends PluginTask<MurderMystery> {
         this.language = owner.getLanguage();
         this.victoryTime = 10;
         this.victory = victory;
+        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            if (victory == 3) {
+                entry.getKey().sendTitle(owner.getLanguage().titleVictoryKillerTitle,
+                        "", 10, 30, 10);
+            }else {
+                entry.getKey().sendTitle(owner.getLanguage().titleVictoryCommonPeopleSubtitle,
+                        "", 10, 30, 10);
+            }
+        }
     }
 
     @Override
@@ -38,6 +48,7 @@ public class VictoryTask extends PluginTask<MurderMystery> {
         }
         if (this.victoryTime < 1) {
             this.cancel();
+            owner.getServer().getPluginManager().callEvent(new MurderRoomEndEvent(this.room, this.victory));
             this.room.endGame();
         }else {
             this.victoryTime--;

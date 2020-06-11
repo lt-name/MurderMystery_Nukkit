@@ -2,10 +2,7 @@ package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
-import cn.lanink.murdermystery.event.MurderPlayerCorpseSpawnEvent;
-import cn.lanink.murdermystery.event.MurderPlayerDeathEvent;
-import cn.lanink.murdermystery.event.MurderRoomChooseIdentityEvent;
-import cn.lanink.murdermystery.event.MurderRoomStartEvent;
+import cn.lanink.murdermystery.event.*;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.tasks.game.GoldTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
@@ -21,8 +18,11 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.scheduler.Task;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -62,6 +62,58 @@ public class MurderListener implements Listener {
                 MurderMystery.getInstance(), new GoldTask(this.murderMystery, room), 20, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 MurderMystery.getInstance(), new TipsTask(this.murderMystery, room), 18, true);
+    }
+
+    /**
+     * 房间结束事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onRoomEnd(MurderRoomEndEvent event) {
+        Room room = event.getRoom();
+        final Player killKillerPlayer = room.killKillerPlayer;
+        int victoryMode = event.getVictoryMode();
+        Player killerVictory = null;
+        LinkedList<Player> commonPeopleVictory = new LinkedList<>();
+        LinkedList<Player> defeatPlayers = new LinkedList<>();
+        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            if (victoryMode == 3) {
+                if (entry.getValue() == 3) {
+                    killerVictory = entry.getKey();
+                }else {
+                    defeatPlayers.add(entry.getKey());
+                }
+            }else {
+                switch (entry.getValue()) {
+                    case 1:
+                    case 2:
+                        commonPeopleVictory.add(entry.getKey());
+                        break;
+                    default:
+                        defeatPlayers.add(entry.getKey());
+                        break;
+                }
+            }
+        }
+        //延迟执行，防止给物品被清
+        Player finalKillerVictory = killerVictory;
+        this.murderMystery.getServer().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
+            @Override
+            public void onRun(int i) {
+                if (killKillerPlayer != null) {
+                    Tools.cmd(killKillerPlayer, murderMystery.getConfig().getStringList("killKillerCmd"));
+                }
+                if (finalKillerVictory != null) {
+                    Tools.cmd(finalKillerVictory, murderMystery.getConfig().getStringList("killerVictoryCmd"));
+                }
+                for (Player player : commonPeopleVictory) {
+                    Tools.cmd(player, murderMystery.getConfig().getStringList("commonPeopleVictoryCmd"));
+                }
+                for (Player player : defeatPlayers) {
+                    Tools.cmd(player, murderMystery.getConfig().getStringList("defeatCmd"));
+                }
+            }
+        }, 40);
     }
 
     /**

@@ -1,8 +1,21 @@
 language: zh_CN
 插件命令: killer
 管理命令: kadmin
-#奖励金钱（EconomyAPI）
-杀手胜利奖励: 200
-#侦探属于平民阵营,仅存活的人可得
-平民胜利奖励: 100
-击杀杀手额外奖励: 100
+# 杀手胜利执行命令(仅杀手执行)
+killerVictoryCmd:
+  - me 我胜利了
+  - tell "@p" 恭喜获得胜利！&con
+# 平民与侦探胜利执行命令(仅存活的玩家执行)
+commonPeopleVictoryCmd:
+  - me 我胜利了
+  - tell "@p" 恭喜获得胜利！&con
+# 击杀杀手的玩家执行命令
+killKillerCmd:
+  - me 我击杀了杀手
+  - tell "@p" 恭喜成功击杀杀手！&con
+# 失败执行命令
+# 如果是平民与侦探胜利，就是杀手执行命令(已死亡的平民与侦探同意执行命令)
+# 如果是杀手胜利，就是侦探和平民执行命令
+defeatCmd:
+  - me 我失败了
+  - tell "@p" 再接再厉！&con
