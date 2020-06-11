@@ -35,7 +35,7 @@ public class StartRoom extends BaseSubCommand {
                 sender.sendMessage(this.language.adminStartNoPlayer);
             }
         }else {
-            sender.sendMessage(this.language.adminStartNoRoom);
+            sender.sendMessage(this.language.adminLevelNoRoom);
         }
         return true;
     }

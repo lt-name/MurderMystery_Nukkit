@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.room.GameMode;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -39,7 +40,7 @@ public class GoldTask extends PluginTask<MurderMystery> {
         }else {
             this.goldSpawnTime--;
         }
-        if (room.getPlayers().values().size() > 0) {
+        if (this.room.getGameMode() == GameMode.CLASSIC) {
             for (Player player : room.getPlayers().keySet()) {
                 int x = 0;
                 boolean bow = true;

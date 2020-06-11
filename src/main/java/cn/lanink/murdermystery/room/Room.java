@@ -36,6 +36,7 @@ public class Room {
     private final Level level;
     public ArrayList<ArrayList<Vector3>> placeBlocks = new ArrayList<>();
     public Player killKillerPlayer = null; //击杀杀手的玩家
+    private final GameMode gameMode;
 
     /**
      * 初始化
@@ -45,6 +46,11 @@ public class Room {
         this.level = Server.getInstance().getLevelByName(config.getString("world"));
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
+        if (config.getInt("gameMode") == 1) {
+            this.gameMode = GameMode.INFECTED;
+        }else {
+            this.gameMode = GameMode.CLASSIC;
+        }
         this.setGoldSpawnTime = config.getInt("goldSpawnTime");
         String[] s1 = config.getString("waitSpawn").split(":");
         this.waitSpawn = new Position(Integer.parseInt(s1[0]),
@@ -321,6 +327,10 @@ public class Room {
             return MurderMystery.getInstance().getSkins().get(this.skinNumber.get(player));
         }
         return player.getSkin();
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
     }
 
 }

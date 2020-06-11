@@ -1,8 +1,10 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.room.GameMode;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.utils.Language;
+import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
 import tip.messages.ScoreBoardMessage;
@@ -34,9 +36,17 @@ public class TipsTask extends PluginTask<MurderMystery> {
         }
         if (room.getPlayers().values().size() > 0) {
             int playerNumber = 0;
-            for (Integer integer : room.getPlayers().values()) {
-                if (integer != 0) {
-                    playerNumber++;
+            if (room.getGameMode() == GameMode.INFECTED) {
+                for (Integer integer : room.getPlayers().values()) {
+                    if (integer == 2) {
+                        playerNumber++;
+                    }
+                }
+            }else {
+                for (Integer integer : room.getPlayers().values()) {
+                    if (integer != 0) {
+                        playerNumber++;
+                    }
                 }
             }
             String mode;
@@ -55,12 +65,15 @@ public class TipsTask extends PluginTask<MurderMystery> {
                         mode = owner.getLanguage().death;
                         break;
                 }
-                entry.getKey().sendActionBar(language.gameTimeBottom.replace("%mode%", mode)
+                entry.getKey().sendActionBar(language.gameTimeBottom
+                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                        .replace("%mode%", mode)
                         .replace("%playerNumber%", playerNumber + "")
                         .replace("%time%", room.gameTime + ""));
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : language.gameTimeScoreBoard.split("\n")) {
-                    ms.add(string.replace("%mode%", mode)
+                    ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                            .replace("%mode%", mode)
                             .replace("%playerNumber%", playerNumber + "")
                             .replace("%time%", room.gameTime + ""));
                 }

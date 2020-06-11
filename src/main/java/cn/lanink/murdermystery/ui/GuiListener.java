@@ -74,9 +74,12 @@ public class GuiListener implements Listener {
                             GuiCreate.sendAdminTimeMenu(player);
                             break;
                         case 4:
-                            this.murderMystery.getServer().dispatchCommand(player, aName + " reloadroom");
+                            GuiCreate.sendAdminModeMenu(player);
                             break;
                         case 5:
+                            this.murderMystery.getServer().dispatchCommand(player, aName + " reloadroom");
+                            break;
+                        case 6:
                             this.murderMystery.getServer().dispatchCommand(player, aName + " unloadroom");
                             break;
                     }
@@ -84,10 +87,16 @@ public class GuiListener implements Listener {
             }
         }else if (event.getWindow() instanceof FormWindowCustom) {
             FormWindowCustom custom = (FormWindowCustom) event.getWindow();
-            if (cache == GuiType.ADMIN_TIME_MENU) {
-                MurderMystery.getInstance().getServer().dispatchCommand(player, aName + " setgoldspawntime " + custom.getResponse().getInputResponse(0));
-                MurderMystery.getInstance().getServer().dispatchCommand(player, aName + " setwaittime " + custom.getResponse().getInputResponse(1));
-                MurderMystery.getInstance().getServer().dispatchCommand(player, aName + " setgametime " + custom.getResponse().getInputResponse(2));
+            switch (cache) {
+                case ADMIN_TIME_MENU:
+                    MurderMystery.getInstance().getServer().dispatchCommand(player, aName + " setgoldspawntime " + custom.getResponse().getInputResponse(0));
+                    MurderMystery.getInstance().getServer().dispatchCommand(player, aName + " setwaittime " + custom.getResponse().getInputResponse(1));
+                    MurderMystery.getInstance().getServer().dispatchCommand(player, aName + " setgametime " + custom.getResponse().getInputResponse(2));
+                    break;
+                case ADMIN_MODE_MENU:
+                    this.murderMystery.getServer().dispatchCommand(player, this.murderMystery.getCmdAdmin() + " setgamemode " +
+                            custom.getResponse().getDropdownResponse(0).getElementID());
+                    break;
             }
         }else if (event.getWindow() instanceof FormWindowModal) {
             FormWindowModal modal = (FormWindowModal) event.getWindow();

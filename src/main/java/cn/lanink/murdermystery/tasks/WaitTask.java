@@ -39,11 +39,13 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 }
                 for (Player player : this.room.getPlayers().keySet()) {
                     player.sendActionBar(language.waitTimeBottom
+                            .replace("%roomMode%", Tools.getStringRoomMode(this.room))
                             .replace("%playerNumber%", room.getPlayers().size() + "")
                             .replace("%time%", room.waitTime + ""));
                     LinkedList<String> ms = new LinkedList<>();
                     for (String string : language.waitTimeScoreBoard.split("\n")) {
-                        ms.add(string.replace("%playerNumber%", room.getPlayers().size() + "")
+                        ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                                .replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
                     ScoreBoardMessage score = new ScoreBoardMessage(room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);
@@ -58,10 +60,12 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
             for (Player player : this.room.getPlayers().keySet()) {
-                player.sendActionBar(language.waitBottom.replace("%playerNumber%", room.getPlayers().size() + ""));
+                player.sendActionBar(language.waitBottom.replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                        .replace("%playerNumber%", room.getPlayers().size() + ""));
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : language.waitScoreBoard.split("\n")) {
-                    ms.add(string.replace("%playerNumber%", room.getPlayers().size() + ""));
+                    ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                            .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
                 ScoreBoardMessage score = new ScoreBoardMessage(room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);
                 Api.setPlayerShowMessage(player.getName(), score);

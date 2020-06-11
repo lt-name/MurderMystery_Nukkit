@@ -32,19 +32,21 @@ public class Language {
             "§a/%cmdName% setgoldspawntime 数字 §e设置金锭生成间隔 \n " +
             "§a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n " +
             "§a/%cmdName% setgametime 数字 §e设置每轮游戏最长时间 \n " +
+            "§a/%cmdName% setgamemode 模式 §e设置房间游戏模式 \n " +
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n " +
             "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
     public String adminSetSpawn = "§a默认出生点设置成功！";
     public String adminAddRandomSpawn = "§a随机出生点添加成功！";
     public String adminAddGoldSpawn = "§a金锭生成点添加成功！";
-    public String adminNotNumber = "§a时间只能设置为正整数！";
+    public String adminNotNumber = "§a输入的参数不是数字！";
     public String adminSetGoldSpawnTime = "§a金锭产出间隔已设置为： %time%";
     public String adminSetWaitTime = "§a等待时间已设置为：%time%";
     public String adminSetGameTime = "§a游戏时间已设置为：%time%";
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
+    public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
     public String adminStartNoPlayer = "§a房间人数不足三人,无法开始游戏！";
-    public String adminStartNoRoom = "§a当前地图不是游戏房间！";
+    public String adminLevelNoRoom = "§a当前地图不是游戏房间！";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
     public String roomSafeKick = "\n§c房间非正常关闭!\n为了您的背包安全，请稍后重进服务器！";
@@ -73,6 +75,9 @@ public class Language {
     public String exchangeItemsOnlyOne = "你只能携带一个 %name%";
     public String exchangeItem = "§a成功兑换到一个 %name%";
     public String exchangeUseGold = "§a需要使用金锭兑换 %name%";
+    //房间模式
+    public String Classic = "经典";
+    public String Infected = "感染";
     //身份
     public String commonPeople = "平民";
     public String killer = "杀手";
@@ -101,11 +106,11 @@ public class Language {
     public String victoryCommonPeopleBottom = "§e恭喜平民和侦探获得胜利！";
     public String victoryCommonPeopleScoreBoard = "§e恭喜平民和侦探获得胜利！";
     public String scoreBoardTitle = "§e密室杀手";
-    public String waitTimeScoreBoard = " 玩家: §a %playerNumber%/16 \n §a开始倒计时： §l§e %time%";
-    public String waitScoreBoard = " 玩家: §a %playerNumber%/16 \n 最低游戏人数为 5 人 \n 等待玩家加入中";
+    public String waitTimeScoreBoard = " 房间模式: §a %roomMode% \n 玩家: §a %playerNumber%/16 \n §a开始倒计时： §l§e %time%";
+    public String waitScoreBoard = " 房间模式: §a %roomMode% \n 玩家: §a %playerNumber%/16 \n 最低游戏人数为 5 人 \n 等待玩家加入中";
     public String waitTimeBottom = "§a当前已有: %playerNumber% 位玩家 \n §a游戏还有: %time% 秒开始！";
     public String waitBottom = "§c等待玩家加入中,当前已有: %playerNumber% 位玩家";
-    public String gameTimeScoreBoard = "§l§a当前身份:§e %mode% \n §l§a存活人数:§e %playerNumber% \n §l§a剩余时间:§e %time% §a秒 ";
+    public String gameTimeScoreBoard = " 房间模式: §a %roomMode% \n §l§a当前身份:§e %mode% \n §l§a存活人数:§e %playerNumber% \n §l§a剩余时间:§e %time% §a秒 ";
     public String gameTimeBottom = "§a身份:§e %mode% \n §a距游戏结束还有:§e %time% §a秒\n当前还有:§e %playerNumber% §a人存活";
     public String gameEffectCDScoreBoard = "§l§a加速冷却:§e %time% §a秒 ";
     public String gameSwordCDScoreBoard = "§l§a飞剑冷却:§e %time% §a秒 ";
@@ -119,8 +124,9 @@ public class Language {
     public String adminMenuButton2 = "§e添加随机出生点";
     public String adminMenuButton3 = "§e添加金锭生成点";
     public String adminMenuButton4 = "§e设置时间参数";
-    public String adminMenuButton5 = "§e重载所有房间";
-    public String adminMenuButton6 = "§c卸载所有房间";
+    public String adminMenuButton5 = "§e设置房间模式";
+    public String adminMenuButton6 = "§e重载所有房间";
+    public String adminMenuButton7 = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "金锭产出间隔（秒）";
     public String adminTimeMenuInputText2 = "等待时间（秒）";
     public String adminTimeMenuInputText3 = "游戏时间（秒）";
@@ -154,8 +160,9 @@ public class Language {
         this.adminSetWaitTime = config.getString("adminSetWaitTime", this.adminSetWaitTime);
         this.adminSetGameTime = config.getString("adminSetGameTime", this.adminSetGameTime);
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
+        this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
         this.adminStartNoPlayer = config.getString("adminStartNoPlayer", this.adminStartNoPlayer);
-        this.adminStartNoRoom = config.getString("adminStartNoRoom", this.adminStartNoRoom);
+        this.adminLevelNoRoom = config.getString("adminStartNoRoom", this.adminLevelNoRoom);
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
         this.roomSafeKick = config.getString("roomSafeKick", this.roomSafeKick);
@@ -183,6 +190,8 @@ public class Language {
         this.exchangeItemsOnlyOne = config.getString("exchangeItemsOnlyOne", this.exchangeItemsOnlyOne);
         this.exchangeItem = config.getString("exchangeItem", this.exchangeItem);
         this.exchangeUseGold = config.getString("exchangeUseGold", this.exchangeUseGold);
+        this.Classic = config.getString("Classic", this.Classic);
+        this.Infected = config.getString("Infected", this.Infected);
         this.commonPeople = config.getString("commonPeople", this.commonPeople);
         this.killer = config.getString("killer", this.killer);
         this.detective = config.getString("detective", this.detective);
@@ -228,6 +237,7 @@ public class Language {
         this.adminMenuButton4 = config.getString("adminMenuButton4", this.adminMenuButton4);
         this.adminMenuButton5 = config.getString("adminMenuButton5", this.adminMenuButton5);
         this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
+        this.adminMenuButton7 = config.getString("adminMenuButton7", this.adminMenuButton7);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);

@@ -7,6 +7,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.element.ElementButtonImageData;
+import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
@@ -14,6 +15,7 @@ import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.scheduler.Task;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 public class GuiCreate {
@@ -44,8 +46,9 @@ public class GuiCreate {
         simple.addButton(new ElementButton(language.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(language.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(language.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
-        simple.addButton(new ElementButton(language.adminMenuButton5,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(language.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/redX1")));
+        simple.addButton(new ElementButton(language.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
+        simple.addButton(new ElementButton(language.adminMenuButton6,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
+        simple.addButton(new ElementButton(language.adminMenuButton7, new ElementButtonImageData("path", "textures/ui/redX1")));
         showFormWindow(player, simple, GuiType.ADMIN_MENU);
     }
 
@@ -59,6 +62,22 @@ public class GuiCreate {
         custom.addElement(new ElementInput(language.adminTimeMenuInputText2, "", "60"));
         custom.addElement(new ElementInput(language.adminTimeMenuInputText3, "", "300"));
         showFormWindow(player, custom, GuiType.ADMIN_TIME_MENU);
+    }
+
+    /**
+     * 设置房间模式菜单
+     * @param player 玩家
+     */
+    public static void sendAdminModeMenu(Player player) {
+        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        custom.addElement(new ElementDropdown("\n\n\n" +
+                language.adminMenuSetLevel.replace("%name%", player.getLevel().getName()), new LinkedList<String>() {
+            {
+                add(language.Classic);
+                add(language.Infected);
+            }
+        }));
+        showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
     }
 
     /**

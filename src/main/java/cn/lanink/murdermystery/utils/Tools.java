@@ -40,6 +40,21 @@ import java.util.Random;
 public class Tools {
 
     /**
+     * 获取字符串房间模式
+     * @param room 房间
+     * @return 房间模式
+     */
+    public static String getStringRoomMode(Room room) {
+        switch (room.getGameMode()) {
+            case CLASSIC:
+                return "经典";
+            case INFECTED:
+                return "感染";
+        }
+        return "error";
+    }
+
+    /**
      * 执行命令
      * @param player 玩家
      * @param cmds 命令
