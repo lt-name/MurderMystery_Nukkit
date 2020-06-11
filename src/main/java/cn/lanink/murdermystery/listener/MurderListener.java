@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.listener;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.event.*;
+import cn.lanink.murdermystery.room.GameMode;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.tasks.game.GoldTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
@@ -47,7 +48,9 @@ public class MurderListener implements Listener {
     public void onRoomStart(MurderRoomStartEvent event) {
         Room room = event.getRoom();
         room.setMode(2);
-        Server.getInstance().getPluginManager().callEvent(new MurderRoomChooseIdentityEvent(room));
+        if (room.getGameMode() == GameMode.CLASSIC) {
+            Server.getInstance().getPluginManager().callEvent(new MurderRoomChooseIdentityEvent(room));
+        }
         int x=0;
         for (Player player : room.getPlayers().keySet()) {
             if (x >= room.getRandomSpawn().size()) {
@@ -55,6 +58,11 @@ public class MurderListener implements Listener {
             }
             player.teleport(room.getRandomSpawn().get(x));
             x++;
+            if (room.getGameMode() == GameMode.INFECTED) {
+                player.getInventory().clearAll();
+                room.addPlaying(player, 2);
+                Tools.giveItem(player, 1);
+            }
         }
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 MurderMystery.getInstance(), new TimeTask(this.murderMystery, room), 20,true);
@@ -71,6 +79,7 @@ public class MurderListener implements Listener {
     @EventHandler
     public void onRoomEnd(MurderRoomEndEvent event) {
         Room room = event.getRoom();
+        if (room.getGameMode() != GameMode.CLASSIC) return;
         final Player killKillerPlayer = room.killKillerPlayer;
         int victoryMode = event.getVictoryMode();
         Player killerVictory = null;

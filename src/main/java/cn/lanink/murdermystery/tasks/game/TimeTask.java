@@ -1,14 +1,17 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.room.GameMode;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.PluginTask;
 
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 游戏时间计算
@@ -33,16 +36,28 @@ public class TimeTask extends PluginTask<MurderMystery> {
             room.gameTime--;
             int playerNumber = 0;
             boolean killer = false;
-            for (Integer integer : room.getPlayers().values()) {
-                if (integer != 0) {
-                    playerNumber++;
-                }
-                if (integer == 3) {
-                    killer = true;
+            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                switch (entry.getValue()) {
+                    case 1:
+                    case 2:
+                        playerNumber++;
+                        break;
+                    case 3:
+                        killer = true;
+                        if (this.room.getGameMode() == GameMode.INFECTED && this.room.gameTime%10 == 0) {
+                            Effect effect = Effect.getEffect(1).setDuration(300)
+                                    .setAmplifier(1).setVisible(true);
+                            effect.setColor(0, 255, 0);
+                            entry.getKey().addEffect(effect);
+                        }
+                        break;
                 }
             }
+            if (this.room.getGameMode() == GameMode.INFECTED) {
+                killer = true;
+            }
             if (killer) {
-                if (playerNumber < 2) {
+                if (playerNumber == 0) {
                     victory(3);
                 }
             }else {
@@ -51,21 +66,47 @@ public class TimeTask extends PluginTask<MurderMystery> {
         }else {
             victory(1);
         }
-        //开局10秒后给物品
-        if (room.gameTime >= room.getSetGameTime()-10) {
-            int time = room.gameTime - (room.getSetGameTime() - 10);
+        //开局20秒后给物品
+        int time = room.gameTime - (room.getSetGameTime() - 20);
+        if (time >= 0) {
             if (time <= 5 && time >= 1) {
                 this.sendMessage(owner.getLanguage().killerGetSwordTime.replace("%time%", time + ""));
                 Tools.addSound(room, Sound.RANDOM_CLICK);
-            }else if (time < 1) {
-                this.sendMessage(owner.getLanguage().killerGetSword);
-                for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                    if (entry.getValue() == 2) {
-                        Tools.giveItem(entry.getKey(), 1);
-                    }else if (entry.getValue() == 3) {
-                        Tools.giveItem(entry.getKey(), 2);
+            }
+            switch (this.room.getGameMode()) {
+                case CLASSIC:
+                    if (time == 0) {
+                        this.sendMessage(owner.getLanguage().killerGetSword);
+                        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                            if (entry.getValue() == 2) {
+                                Tools.giveItem(entry.getKey(), 1);
+                            }else if (entry.getValue() == 3) {
+                                Tools.giveItem(entry.getKey(), 2);
+                            }
+                        }
                     }
-                }
+                    break;
+                case INFECTED:
+                    if (time == 0) {
+                        this.sendMessage(owner.getLanguage().killerGetSword);
+                        int y = new Random().nextInt(room.getPlayers().size());
+                        int x = 0;
+                        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                            if (x == y) {
+                                entry.setValue(3);
+                                entry.getKey().sendTitle(owner.getLanguage().titleKillerTitle,
+                                        owner.getLanguage().titleKillerSubtitle, 10, 40, 10);
+                                entry.getKey().getInventory().clearAll();
+                                Tools.giveItem(entry.getKey(), 2);
+                                Effect effect = Effect.getEffect(2).setAmplifier(1).setDuration(200);
+                                effect.setColor(0, 255, 0);
+                                entry.getKey().addEffect(effect);
+                                break;
+                            }
+                            x++;
+                        }
+                    }
+                    break;
             }
         }
         //杀手CD计算

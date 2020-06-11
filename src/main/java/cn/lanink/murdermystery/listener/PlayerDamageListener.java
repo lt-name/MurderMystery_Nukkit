@@ -4,6 +4,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
 import cn.lanink.murdermystery.event.MurderPlayerDeathEvent;
+import cn.lanink.murdermystery.room.GameMode;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
@@ -19,6 +20,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
+
+import java.util.Random;
 
 public class PlayerDamageListener implements Listener {
 
@@ -123,32 +126,50 @@ public class PlayerDamageListener implements Listener {
     @EventHandler
     public void onPlayerDamage(MurderPlayerDamageEvent event) {
         if (!event.isCancelled()) {
-            Player player1 = event.getDamage();
-            Player player2 = event.getPlayer();
+            Player damage = event.getDamage();
+            Player player = event.getPlayer();
             Room room = event.getRoom();
-            if (player1 == null || player2 == null || room == null) {
-                return;
-            }
-            //攻击者是杀手
-            if (room.getPlayerMode(player1) == 3) {
-                player1.sendMessage(this.language.killPlayer);
-                player2.sendTitle(this.language.deathTitle,
-                        this.language.deathByKillerSubtitle, 20, 60, 20);
-            }else { //攻击者是平民或侦探
-                if (room.getPlayerMode(player2) == 3) {
-                    player1.sendMessage(this.language.killKiller);
-                    room.killKillerPlayer = player1;
-                    player2.sendTitle(this.language.deathTitle,
-                            this.language.killerDeathSubtitle, 10, 20, 20);
-                } else {
-                    player1.sendTitle(this.language.deathTitle,
-                            this.language.deathByDamageTeammateSubtitle, 20, 60, 20);
-                    player2.sendTitle(this.language.deathTitle,
-                            this.language.deathByTeammateSubtitle, 20, 60, 20);
-                    Server.getInstance().getPluginManager().callEvent(new MurderPlayerDeathEvent(room, player1));
+            if (damage == null || player == null || room == null) return;
+            if (room.getGameMode() == GameMode.INFECTED) {
+                if (room.getPlayerMode(damage) == 3) {
+                    if (room.getPlayerMode(player) == 3) {
+                        return;
+                    }
+                    room.addPlaying(player, 3);
+                    player.sendTitle(this.language.titleKillerTitle,
+                            this.language.titleKillerSubtitle, 10, 40, 10);
+                }else {
+                    if (room.getPlayerMode(player) != 3) {
+                        return;
+                    }
                 }
+                player.getLevel().addSound(player, Sound.GAME_PLAYER_HURT);
+                player.teleport(room.getRandomSpawn().get(new Random().nextInt(room.getRandomSpawn().size())));
+                player.getInventory().clearAll();
+                Tools.giveItem(player, 2);
+                player.addEffect(Effect.getEffect(2).setAmplifier(2).setDuration(60));
+            }else {
+                //攻击者是杀手
+                if (room.getPlayerMode(damage) == 3) {
+                    damage.sendMessage(this.language.killPlayer);
+                    player.sendTitle(this.language.deathTitle,
+                            this.language.deathByKillerSubtitle, 20, 60, 20);
+                }else { //攻击者是平民或侦探
+                    if (room.getPlayerMode(player) == 3) {
+                        damage.sendMessage(this.language.killKiller);
+                        room.killKillerPlayer = damage;
+                        player.sendTitle(this.language.deathTitle,
+                                this.language.killerDeathSubtitle, 10, 20, 20);
+                    } else {
+                        damage.sendTitle(this.language.deathTitle,
+                                this.language.deathByDamageTeammateSubtitle, 20, 60, 20);
+                        player.sendTitle(this.language.deathTitle,
+                                this.language.deathByTeammateSubtitle, 20, 60, 20);
+                        Server.getInstance().getPluginManager().callEvent(new MurderPlayerDeathEvent(room, damage));
+                    }
+                }
+                Server.getInstance().getPluginManager().callEvent(new MurderPlayerDeathEvent(room, player));
             }
-            Server.getInstance().getPluginManager().callEvent(new MurderPlayerDeathEvent(room, player2));
         }
     }
 
