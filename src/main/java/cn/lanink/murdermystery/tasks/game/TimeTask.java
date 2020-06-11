@@ -62,7 +62,7 @@ public class TimeTask extends PluginTask<MurderMystery> {
                                 entry.getKey().sendTitle(owner.getLanguage().titleKillerTitle,
                                         owner.getLanguage().titleKillerSubtitle, 10, 40, 10);
                                 entry.getKey().getInventory().clearAll();
-                                Tools.giveItem(entry.getKey(), 2);
+                                entry.getKey().getInventory().setItem(1, Tools.getMurderItem(2));
                                 Effect effect = Effect.getEffect(2).setAmplifier(1).setDuration(200);
                                 effect.setColor(0, 255, 0);
                                 entry.getKey().addEffect(effect);

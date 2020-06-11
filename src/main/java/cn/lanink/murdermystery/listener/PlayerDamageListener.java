@@ -146,7 +146,7 @@ public class PlayerDamageListener implements Listener {
                 player.getLevel().addSound(player, Sound.GAME_PLAYER_HURT);
                 player.teleport(room.getRandomSpawn().get(new Random().nextInt(room.getRandomSpawn().size())));
                 player.getInventory().clearAll();
-                Tools.giveItem(player, 2);
+                player.getInventory().setItem(1, Tools.getMurderItem(2));
                 player.addEffect(Effect.getEffect(2).setAmplifier(2).setDuration(60));
             }else {
                 //攻击者是杀手

@@ -62,19 +62,20 @@ public class PlayerGameListener implements Listener {
                 return;
             }
             Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
-            if (room == null || room.getMode() != 2 ||
-                    room.getPlayerMode(player) == 0 || room.getPlayerMode(player) == 3) {
+            if (room == null || room.getMode() != 2) {
                 return;
             }
-            event.getProjectile().namedTag = new CompoundTag()
-                    .putBoolean("isMurderItem", true)
-                    .putInt("MurderType", 20);
-            if (room.getPlayerMode(player) == 2) {
-                player.getInventory().addItem(Item.get(262, 0, 1));
-                return;
+            if (room.getPlayerMode(player) != 0 && room.getPlayerMode(player) != 3) {
+                event.getProjectile().namedTag = new CompoundTag()
+                        .putBoolean("isMurderItem", true)
+                        .putInt("MurderType", 20);
+                if (room.getPlayerMode(player) == 2) {
+                    player.getInventory().addItem(Item.get(262, 0, 1));
+                    return;
+                }
             }
-            //回收平民的弓
-            Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+            //回收弓
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
                 @Override
                 public void onRun(int i) {
                     int j = 0; //箭的数量
@@ -89,7 +90,7 @@ public class PlayerGameListener implements Listener {
                         }
                     }
                     if (j < 1 && bow) {
-                        player.getInventory().removeItem(Item.get(261, 0, 1));
+                        player.getInventory().remove(Item.get(261));
                     }
                 }
             }, 20);
@@ -478,6 +479,20 @@ public class PlayerGameListener implements Listener {
                     entityItem.setNameTagAlwaysVisible(true);
                 }
             }, 100);
+        }
+    }
+
+    /**
+     * 玩家重生事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        for (Room room : this.murderMystery.getRooms().values()) {
+            if (room.isPlaying(player)) {
+                event.setRespawnPosition(room.getRandomSpawn().get(new Random().nextInt(room.getRandomSpawn().size())));
+            }
         }
     }
 
