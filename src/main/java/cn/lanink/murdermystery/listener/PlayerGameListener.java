@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.room.GameMode;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.tasks.game.ScanTask;
 import cn.lanink.murdermystery.tasks.game.SwordMoveTask;
@@ -181,8 +182,9 @@ public class PlayerGameListener implements Listener {
             return;
         }
         Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room == null || room.getGameMode() == GameMode.INFECTED) return;
         CompoundTag tag = item.getNamedTag();
-        if (room != null && room.getMode() == 2 && room.isPlaying(player) && room.getPlayerMode(player) == 3) {
+        if (room.getMode() == 2 && room.isPlaying(player) && room.getPlayerMode(player) == 3) {
             if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
                 if (room.effectCD < 1) {
                     Effect effect = Effect.getEffect(1);
@@ -221,7 +223,7 @@ public class PlayerGameListener implements Listener {
         }
         if (room.getMode() == 2) {
             if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
-                if (room.getPlayerMode(player) == 3) {
+                if (room.getPlayerMode(player) == 3 && room.getGameMode() != GameMode.INFECTED) {
                     CompoundTag tag = player.getInventory().getItemInHand() == null ? null : player.getInventory().getItemInHand().getNamedTag();
                     if (tag != null && tag.getBoolean("isMurderItem")) {
                         if (tag.getInt("MurderType") == 2) {

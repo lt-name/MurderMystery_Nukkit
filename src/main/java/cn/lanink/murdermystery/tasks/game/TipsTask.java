@@ -77,7 +77,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
                             .replace("%playerNumber%", playerNumber + "")
                             .replace("%time%", room.gameTime + ""));
                 }
-                if (entry.getValue() == 3) {
+                if (entry.getValue() == 3 && this.room.getGameMode() != GameMode.INFECTED) {
                     if (room.effectCD > 0) {
                         ms.add(language.gameEffectCDScoreBoard
                                 .replace("%time%", room.effectCD + ""));
