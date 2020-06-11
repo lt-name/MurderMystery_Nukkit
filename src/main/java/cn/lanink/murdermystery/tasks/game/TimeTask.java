@@ -31,41 +31,6 @@ public class TimeTask extends PluginTask<MurderMystery> {
             this.cancel();
             return;
         }
-        //计时与胜利判断
-        if (room.gameTime > 0) {
-            room.gameTime--;
-            int playerNumber = 0;
-            boolean killer = false;
-            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                switch (entry.getValue()) {
-                    case 1:
-                    case 2:
-                        playerNumber++;
-                        break;
-                    case 3:
-                        killer = true;
-                        if (this.room.getGameMode() == GameMode.INFECTED && this.room.gameTime%10 == 0) {
-                            Effect effect = Effect.getEffect(1).setDuration(300)
-                                    .setAmplifier(1).setVisible(true);
-                            effect.setColor(0, 255, 0);
-                            entry.getKey().addEffect(effect);
-                        }
-                        break;
-                }
-            }
-            if (this.room.getGameMode() == GameMode.INFECTED) {
-                killer = true;
-            }
-            if (killer) {
-                if (playerNumber == 0) {
-                    victory(3);
-                }
-            }else {
-                victory(1);
-            }
-        }else {
-            victory(1);
-        }
         //开局20秒后给物品
         int time = room.gameTime - (room.getSetGameTime() - 20);
         if (time >= 0) {
@@ -108,6 +73,41 @@ public class TimeTask extends PluginTask<MurderMystery> {
                     }
                     break;
             }
+        }
+        //计时与胜利判断
+        if (room.gameTime > 0) {
+            room.gameTime--;
+            int playerNumber = 0;
+            boolean killer = false;
+            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                switch (entry.getValue()) {
+                    case 1:
+                    case 2:
+                        playerNumber++;
+                        break;
+                    case 3:
+                        killer = true;
+                        if (this.room.getGameMode() == GameMode.INFECTED && this.room.gameTime%10 == 0) {
+                            Effect effect = Effect.getEffect(1).setDuration(300)
+                                    .setAmplifier(1).setVisible(true);
+                            effect.setColor(0, 255, 0);
+                            entry.getKey().addEffect(effect);
+                        }
+                        break;
+                }
+            }
+            if (this.room.getGameMode() == GameMode.INFECTED && time >= 0) {
+                killer = true;
+            }
+            if (killer) {
+                if (playerNumber == 0) {
+                    victory(3);
+                }
+            }else {
+                victory(1);
+            }
+        }else {
+            victory(1);
         }
         //杀手CD计算
         if (room.effectCD > 0) {
