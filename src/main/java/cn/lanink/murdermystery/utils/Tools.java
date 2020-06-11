@@ -13,6 +13,7 @@ import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
+import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Level;
@@ -274,7 +275,18 @@ public class Tools {
                     if (cleanAll) {
                         entity.close();
                     }
-                } else {
+                }else if (entity instanceof EntityItem) {
+                    Item item = ((EntityItem) entity).getItem();
+                    CompoundTag tag = item.getNamedTag();
+                    if (tag != null && tag.getBoolean("isMurderItem") &&
+                            tag.getInt("MurderType") == 1) {
+                        if (cleanAll) {
+                            entity.close();
+                        }
+                    }else {
+                        entity.close();
+                    }
+                }else {
                     entity.close();
                 }
             }

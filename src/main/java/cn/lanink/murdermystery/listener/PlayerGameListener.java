@@ -10,11 +10,13 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
+import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
@@ -450,6 +452,30 @@ public class PlayerGameListener implements Listener {
             });
         }else {
             event.setCancelled(true);
+        }
+    }
+
+    /**
+     * 掉落物生成事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onItemSpawn(ItemSpawnEvent event) {
+        final EntityItem entityItem = event.getEntity();
+        if (entityItem == null) return;
+        Item item = entityItem.getItem();
+        CompoundTag tag = item.getNamedTag();
+        if (tag != null && tag.getBoolean("isMurderItem") &&
+                tag.getInt("MurderType") == 1) {
+            this.murderMystery.getServer().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
+                @Override
+                public void onRun(int i) {
+                    if (entityItem.isClosed()) return;
+                    entityItem.setNameTag(language.itemDetectiveBow);
+                    entityItem.setNameTagVisible(true);
+                    entityItem.setNameTagAlwaysVisible(true);
+                }
+            }, 100);
         }
     }
 
