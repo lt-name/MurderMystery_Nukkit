@@ -1,3 +1,4 @@
+useCmdInRoom: "§e >> §c游戏中无法使用其他命令"
 cmdHelp: "§a查看帮助：/%cmdName% help"
 userHelp: |-
   §eMurderMystery--命令帮助

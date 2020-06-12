@@ -5,6 +5,7 @@ import cn.nukkit.utils.Config;
 public class Language {
 
     //命令
+    public String useCmdInRoom = "§e >> §c游戏中无法使用其他命令";
     public String cmdHelp = "§a查看帮助：/%cmdName% help";
     public String userHelp = "§eMurderMystery--命令帮助 \n " +
             "§a/%cmdName% §e打开ui \n " +
@@ -136,6 +137,7 @@ public class Language {
 
 
     public Language(Config config) {
+        this.useCmdInRoom = config.getString("useCmdInRoom", this.useCmdInRoom);
         this.cmdHelp = config.getString("cmdHelp", this.cmdHelp);
         this.userHelp = config.getString("userHelp", this.userHelp);
         this.noPermission = config.getString("noPermission", this.noPermission);

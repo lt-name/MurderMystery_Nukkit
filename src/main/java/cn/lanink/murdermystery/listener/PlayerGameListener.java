@@ -86,11 +86,12 @@ public class PlayerGameListener implements Listener {
                             continue;
                         }
                         if (item.getId() == 261) {
+                            item.setDamage(0);
                             bow = true;
                         }
                     }
                     if (j < 1 && bow) {
-                        player.getInventory().remove(Item.get(261));
+                        player.getInventory().removeItem(Item.get(261, 0, 1));
                     }
                 }
             }, 20);
@@ -507,6 +508,26 @@ public class PlayerGameListener implements Listener {
         Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null) return;
         event.setCancelled(false);
+    }
+
+    /**
+     * 玩家执行命令事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+        if (player == null || event.getMessage() == null) return;
+        Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        if (event.getMessage().startsWith(this.murderMystery.getCmdUser(), 1) ||
+                event.getMessage().startsWith(this.murderMystery.getCmdAdmin(), 1)) {
+            return;
+        }
+        event.setCancelled(true);
+        player.sendMessage(this.language.useCmdInRoom);
     }
 
 }
