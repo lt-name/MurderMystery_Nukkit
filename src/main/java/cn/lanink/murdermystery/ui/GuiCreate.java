@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.ui;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.utils.Language;
+import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButton;
@@ -87,7 +88,10 @@ public class GuiCreate {
     public static void sendRoomListMenu(Player player) {
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         for (Map.Entry<String, Room> entry : MurderMystery.getInstance().getRooms().entrySet()) {
-            simple.addButton(new ElementButton("§e" + entry.getKey(), new ElementButtonImageData("path", "textures/ui/switch_start_button")));
+            simple.addButton(new ElementButton("§e§l" + entry.getKey() +
+                    "\n§r§eMode: " + Tools.getStringRoomMode(entry.getValue()) +
+                    " Player: " + entry.getValue().getPlayers().size() + "/16",
+                    new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
         simple.addButton(new ElementButton(language.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));
         showFormWindow(player, simple, GuiType.ROOM_LIST_MENU);
@@ -99,8 +103,8 @@ public class GuiCreate {
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         FormWindowModal modal;
-        if (MurderMystery.getInstance().getRooms().containsKey(roomName.replace("§e", "").trim())) {
-            Room room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e", "").trim());
+        Room room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
+        if (room != null) {
             if (room.getMode() == 2 || room.getMode() == 3) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, language.joinRoomIsPlaying, language.buttonReturn, language.buttonReturn);

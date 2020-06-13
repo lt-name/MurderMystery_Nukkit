@@ -56,7 +56,8 @@ public class GuiListener implements Listener {
                     if (simple.getResponse().getClickedButton().getText().equals(this.language.buttonReturn)) {
                         GuiCreate.sendUserMenu(player);
                     }else {
-                        GuiCreate.sendRoomJoinOkMenu(player, simple.getResponse().getClickedButton().getText());
+                        GuiCreate.sendRoomJoinOkMenu(player,
+                                simple.getResponse().getClickedButton().getText().split("\n")[0]);
                     }
                     break;
                 case ADMIN_MENU:
@@ -104,7 +105,7 @@ public class GuiListener implements Listener {
                 if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(this.language.buttonReturn)) {
                     String[] s = modal.getContent().split("\"");
                     MurderMystery.getInstance().getServer().dispatchCommand(
-                            player, uName + " join " + s[1].replace("§e", "").trim());
+                            player, uName + " join " + s[1].replace("§e§l", "").trim());
                 }else {
                     GuiCreate.sendRoomListMenu(player);
                 }
