@@ -53,7 +53,7 @@ public class Language {
     public String roomSafeKick = "\n§c房间非正常关闭!\n为了您的背包安全，请稍后重进服务器！";
     public String playerDeathChat = "§c[死亡] %player% + §b >>> %message%";
     public String tpJoinRoomLevel = "§e >> §c要进入游戏地图，请先加入游戏！";
-    public String tpQuitRoomLevel = "§e >> §c退出房间请使用：/killer quit";
+    public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
     //道具
     public String itemDetectiveBow = "§e侦探之弓";
     public String itemDetectiveBowLore = "会自动补充消耗的箭\n提示:\n攻击队友,您也会死";

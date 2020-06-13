@@ -48,9 +48,9 @@ public class Tools {
     public static String getStringRoomMode(Room room) {
         switch (room.getGameMode()) {
             case CLASSIC:
-                return "经典";
+                return MurderMystery.getInstance().getLanguage().Classic;
             case INFECTED:
-                return "感染";
+                return MurderMystery.getInstance().getLanguage().Infected;
         }
         return "error";
     }

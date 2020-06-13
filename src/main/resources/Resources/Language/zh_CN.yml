@@ -50,7 +50,7 @@ roomSafeKick: |-
   为了您的背包安全，请稍后重进服务器！
 playerDeathChat: "§c[死亡] %player% + §b >>> %message%"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
-tpQuitRoomLevel: "§e >> §c退出房间请使用：/killer quit"
+tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 itemDetectiveBow: "§e侦探之弓"
 itemDetectiveBowLore: |-
   会自动补充消耗的箭
