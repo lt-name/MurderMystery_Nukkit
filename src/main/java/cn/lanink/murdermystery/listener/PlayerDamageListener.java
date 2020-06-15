@@ -16,7 +16,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
@@ -40,58 +39,43 @@ public class PlayerDamageListener implements Listener {
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
-            Player player1 = (Player) event.getDamager();
-            Player player2 = (Player) event.getEntity();
-            if (player1 == null || player2 == null) {
+            Player damager = (Player) event.getDamager();
+            Player player = (Player) event.getEntity();
+            if (damager == null || player == null) {
                 return;
             }
-            Room room = this.murderMystery.getRooms().getOrDefault(player1.getLevel().getName(), null);
-            if (room != null) {
-                if (room.isPlaying(player1) && room.getPlayerMode(player1) == 3 &&
-                        room.isPlaying(player2) && room.getPlayerMode(player2) != 0) {
-                    if (player1.getInventory().getItemInHand() != null) {
-                        CompoundTag tag = player1.getInventory().getItemInHand().getNamedTag();
+            Room room = this.murderMystery.getRooms().getOrDefault(damager.getLevel().getName(), null);
+            if (room == null) return;
+            event.setCancelled(true);
+            if (event instanceof  EntityDamageByChildEntityEvent) {
+                EntityDamageByChildEntityEvent event1 = (EntityDamageByChildEntityEvent) event;
+                damager = (Player) event1.getDamager();
+                player = (Player) event1.getEntity();
+                Entity child = event1.getChild();
+                if (child == null || child.namedTag == null) return;
+                if (child.namedTag.getBoolean("isMurderItem")) {
+                    if (child.namedTag.getInt("MurderType") == 20) {
+                        Server.getInstance().getPluginManager().callEvent(new MurderPlayerDamageEvent(room, damager, player));
+                    }else if (child.namedTag.getInt("MurderType") == 23) {
+                        Tools.addSound(player, Sound.RANDOM_ANVIL_LAND);
+                        player.sendMessage(this.language.damageSnowball);
+                        Effect effect = Effect.getEffect(2);
+                        effect.setAmplifier(2);
+                        effect.setDuration(40);
+                        player.addEffect(effect);
+                    }
+                }
+            }else {
+                if (room.isPlaying(damager) && room.getPlayerMode(damager) == 3 &&
+                        room.isPlaying(player) && room.getPlayerMode(player) != 0) {
+                    if (damager.getInventory().getItemInHand() != null) {
+                        CompoundTag tag = damager.getInventory().getItemInHand().getNamedTag();
                         if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
-                            Server.getInstance().getPluginManager().callEvent(new MurderPlayerDamageEvent(room, player1, player2));
+                            Server.getInstance().getPluginManager().callEvent(new MurderPlayerDamageEvent(room, damager, player));
                         }
                     }
                 }
-                event.setCancelled(true);
             }
-        }
-    }
-
-    /**
-     * 实体受到另一个子实体伤害事件
-     * @param event 事件
-     */
-    @EventHandler
-    public void onDamageByChild(EntityDamageByChildEntityEvent event) {
-        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-            Player player1 = ((Player) event.getDamager());
-            Player player2 = ((Player) event.getEntity());
-            if (player1 == player2 || event.getChild() == null || event.getChild().namedTag == null) {
-                return;
-            }
-            Level level = player1.getLevel();
-            Room room = this.murderMystery.getRooms().getOrDefault(level.getName(), null);
-            if (room == null || room.getMode() != 2) {
-                return;
-            }
-            Entity child = event.getChild();
-            if (child.namedTag.getBoolean("isMurderItem")) {
-                if (child.namedTag.getInt("MurderType") == 20) {
-                    Server.getInstance().getPluginManager().callEvent(new MurderPlayerDamageEvent(room, player1, player2));
-                }else if (child.namedTag.getInt("MurderType") == 23) {
-                    Tools.addSound(player2, Sound.RANDOM_ANVIL_LAND);
-                    player2.sendMessage(this.language.damageSnowball);
-                    Effect effect = Effect.getEffect(2);
-                    effect.setAmplifier(2);
-                    effect.setDuration(40);
-                    player2.addEffect(effect);
-                }
-            }
-            event.setCancelled();
         }
     }
 
