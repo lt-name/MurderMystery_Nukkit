@@ -4,6 +4,28 @@ import cn.nukkit.utils.Config;
 
 public class Language {
 
+    //控制台
+    public String startLoadingAddons = "§e开始加载扩展...";
+    public String addonsLoaded = "§e扩展加载完成！";
+    public String swordSuccess = "§a Sword加载完成";
+    public String swordFailure = "§cSword文件加载失败！请检查插件完整性！";
+    public String defaultSkinSuccess = "§a 默认尸体皮肤加载完成";
+    public String defaultSkinFailure = "§c 默认尸体皮肤加载失败！请检查插件完整性！";
+    public String startLoadingRoom = "§e开始加载房间...";
+    public String roomLoadedSuccess = "§a房间：%name% 已加载！";
+    public String roomLoadedFailureByConfig = "§c房间：%name% 配置不完整，加载失败！";
+    public String roomLoadedFailureByLevel = "§c房间：%name% 地图读取失败！";
+    public String roomLoadedAllSuccess = "§e房间加载完成！当前已加载 %number% 个房间！";
+    public String roomUnloadSuccess = "§c房间：%name% 已卸载！";
+    public String roomUnloadFailure = "§c房间：%name% 非正常结束！";
+    public String startLoadingSkin = "§e开始加载皮肤...";
+    public String skinFailureByFormat = "§c %name% 加载失败，这可能不是一个正确的图片";
+    public String skinFailureByName = "§c %name% 加载失败，请将皮肤文件命名为 skin.png";
+    public String skinLoadedSuccess = "§a编号: %number% 皮肤: %name% 已加载";
+    public String skinLoadedAllSuccess = "§e皮肤加载完成！当前已加载 %number% 个皮肤！";
+    public String skinLoadedAllFailureByNumber = "§c当前皮肤数量小于16，部分玩家仍可使用自己的皮肤!";
+    public String pluginEnable = "§e插件加载完成！欢迎使用！";
+    public String pluginDisable = "§c插件卸载完成！";
     //命令
     public String useCmdInRoom = "§e >> §c游戏中无法使用其他命令";
     public String cmdHelp = "§a查看帮助：/%cmdName% help";
@@ -137,6 +159,27 @@ public class Language {
 
 
     public Language(Config config) {
+        this.startLoadingAddons = config.getString("startLoadingAddons", this.startLoadingAddons);
+        this.addonsLoaded = config.getString("addonsLoaded", this.addonsLoaded);
+        this.swordSuccess = config.getString("swordSuccess", this.swordSuccess);
+        this.swordFailure = config.getString("swordFailure", this.swordFailure);
+        this.defaultSkinSuccess = config.getString("defaultSkinSuccess", this.defaultSkinSuccess);
+        this.defaultSkinFailure = config.getString("defaultSkinFailure", this.defaultSkinFailure);
+        this.startLoadingRoom = config.getString("startLoadingRoom", this.startLoadingRoom);
+        this.roomLoadedSuccess = config.getString("roomLoadedSuccess", this.roomLoadedSuccess);
+        this.roomLoadedFailureByConfig = config.getString("roomLoadedFailureByConfig", this.roomLoadedFailureByConfig);
+        this.roomLoadedFailureByLevel = config.getString("roomLoadedFailureByLevel", this.roomLoadedFailureByLevel);
+        this.roomLoadedAllSuccess = config.getString("roomLoadedAllSuccess", this.roomLoadedAllSuccess);
+        this.roomUnloadSuccess = config.getString("roomUnloadSuccess", this.roomUnloadSuccess);
+        this.roomUnloadFailure = config.getString("roomUnloadFailure", this.roomUnloadFailure);
+        this.startLoadingSkin = config.getString("startLoadingSkin", this.startLoadingSkin);
+        this.skinFailureByFormat = config.getString("skinFailureByFormat", this.skinFailureByFormat);
+        this.skinFailureByName = config.getString("skinFailureByName", this.skinFailureByName);
+        this.skinLoadedSuccess = config.getString("skinLoadedSuccess", this.skinLoadedSuccess);
+        this.skinLoadedAllSuccess = config.getString("skinLoadedAllSuccess", this.skinLoadedAllSuccess);
+        this.skinLoadedAllFailureByNumber = config.getString("skinLoadedAllFailureByNumber", this.skinLoadedAllFailureByNumber);
+        this.pluginEnable = config.getString("pluginEnable", this.pluginEnable);
+        this.pluginDisable = config.getString("pluginDisable", this.pluginDisable);
         this.useCmdInRoom = config.getString("useCmdInRoom", this.useCmdInRoom);
         this.cmdHelp = config.getString("cmdHelp", this.cmdHelp);
         this.userHelp = config.getString("userHelp", this.userHelp);

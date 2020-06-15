@@ -68,13 +68,13 @@ public class MurderMystery extends PluginBase {
     @Override
     public void onEnable() {
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        getLogger().info("§l§e版本: " + VERSION);
+        getLogger().info("§l§eVersion: " + VERSION);
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         this.loadResources();
         this.loadRooms();
         this.loadSkins();
-        this.cmdUser = this.config.getString("插件命令", "killer");
-        this.cmdAdmin = this.config.getString("管理命令", "kadmin");
+        this.cmdUser = this.config.getString("cmdUser", "murdermystery");
+        this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
         getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
@@ -87,9 +87,9 @@ public class MurderMystery extends PluginBase {
         getServer().getScheduler().scheduleDelayedTask(this, new Task() {
             @Override
             public void onRun(int i) {
-                getLogger().info("§e开始加载扩展...");
+                getLogger().info(language.startLoadingAddons);
                 addons.enableAll();
-                getLogger().info("§e扩展加载完成！");
+                getLogger().info(language.addonsLoaded);
             }
         }, 100);
         try {
@@ -97,7 +97,7 @@ public class MurderMystery extends PluginBase {
         } catch (Throwable ignore) {
 
         }
-        getLogger().info("§e插件加载完成！欢迎使用！");
+        getLogger().info(this.language.pluginEnable);
     }
 
     @Override
@@ -109,9 +109,9 @@ public class MurderMystery extends PluginBase {
                 Map.Entry<String, Room> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
                     entry.getValue().endGame(false);
-                    getLogger().info("§c房间：" + entry.getKey() + " 非正常结束！");
+                    getLogger().info(this.language.roomUnloadFailure.replace("%name%", entry.getKey()));
                 }else {
-                    getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
+                    getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
                 }
                 it.remove();
             }
@@ -123,7 +123,7 @@ public class MurderMystery extends PluginBase {
             getServer().getScheduler().cancelTask(id);
         }
         this.taskList.clear();
-        getLogger().info("§c插件卸载完成！");
+        getLogger().info(this.language.pluginDisable);
     }
 
     public Language getLanguage() {
@@ -177,7 +177,6 @@ public class MurderMystery extends PluginBase {
     }
 
     private void loadResources() {
-        getLogger().info("§e开始加载资源文件...");
         //语言文件
         saveResource("Resources/Language/zh_CN.yml", false);
         saveResource("Resources/Language/en_US.yml", false);
@@ -214,12 +213,12 @@ public class MurderMystery extends PluginBase {
                 skin.setGeometryName(name);
                 skin.setGeometryData(Utils.readFile(fileJson));
                 this.sword = skin;
-                getLogger().info("§a Sword加载完成");
+                getLogger().info(this.language.swordSuccess);
             }else {
-                getLogger().warning("§cSword文件加载失败！请检查插件完整性！");
+                getLogger().warning(this.language.swordFailure);
             }
         } catch (IOException ignored) {
-            getLogger().warning("§cSword文件加载失败");
+            getLogger().warning(this.language.swordFailure);
         }
         //默认尸体皮肤
         skinData = null;
@@ -229,18 +228,17 @@ public class MurderMystery extends PluginBase {
         if (skinData != null) {
             this.corpseSkin.setSkinData(skinData);
             this.corpseSkin.setSkinId("defaultSkin");
-            getLogger().info("§a defaultSkin加载完成");
+            getLogger().info(this.language.defaultSkinSuccess);
         }else {
-            getLogger().error("§c默认尸体皮肤加载失败！请检查插件完整性！");
+            getLogger().error(this.language.defaultSkinFailure);
         }
-        getLogger().info("§e资源文件加载完成");
     }
 
     /**
      * 加载所有房间
      */
     private void loadRooms() {
-        getLogger().info("§e开始加载房间...");
+        getLogger().info(this.language.startLoadingRoom);
         File[] s = new File(getDataFolder() + "/Rooms").listFiles();
         if (s != null && s.length > 0) {
             for (File file1 : s) {
@@ -253,7 +251,7 @@ public class MurderMystery extends PluginBase {
                             config.getStringList("goldSpawn").size() == 0 ||
                             config.getInt("goldSpawnTime", 0) == 0 ||
                             config.getString("world", "").trim().equals("")) {
-                        getLogger().warning("§c房间：" + fileName[0] + " 配置不完整，加载失败！");
+                        getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", fileName[0]));
                         continue;
                     }
                     String levelName = config.getString("world");
@@ -261,16 +259,16 @@ public class MurderMystery extends PluginBase {
                         Server.getInstance().loadLevel(levelName);
                     }
                     if (Server.getInstance().getLevelByName(levelName) == null) {
-                        getLogger().warning("§c房间：" + fileName[0] + " 地图读取失败！");
+                        getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", fileName[0]));
                         continue;
                     }
                     Room room = new Room(config);
                     this.rooms.put(fileName[0], room);
-                    getLogger().info("§a房间：" + fileName[0] + " 已加载！");
+                    getLogger().info(this.language.roomLoadedSuccess.replace("%name%", fileName[0]));
                 }
             }
         }
-        getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
+        getLogger().info(this.language.roomLoadedAllSuccess.replace(" %number%", this.rooms.size() + ""));
     }
 
     /**
@@ -282,7 +280,7 @@ public class MurderMystery extends PluginBase {
             while(it.hasNext()){
                 Map.Entry<String, Room> entry = it.next();
                 entry.getValue().endGame();
-                getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
+                getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();
             }
             this.rooms.clear();
@@ -306,7 +304,7 @@ public class MurderMystery extends PluginBase {
      * 加载所有皮肤
      */
     private void loadSkins() {
-        getLogger().info("§e开始加载皮肤...");
+        getLogger().info(this.language.startLoadingSkin);
         File[] files = (new File(getDataFolder() + "/Skins")).listFiles();
         if (files != null && files.length > 0) {
             int x = 0;
@@ -319,26 +317,27 @@ public class MurderMystery extends PluginBase {
                     try {
                         skinData = ImageIO.read(skinFile);
                     } catch (IOException ignored) {
-                        getLogger().warning(skinName + "加载失败，这可能不是一个正确的图片");
+                        getLogger().warning(this.language.skinFailureByFormat.replace("%name%", skinName));
                     }
                     if (skinData != null) {
                         skin.setSkinData(skinData);
                         skin.setSkinId(skinName);
-                        getLogger().info("§a编号: " + x + " 皮肤: " + skinName + " 已加载");
+                        getLogger().info(this.language.skinLoadedSuccess.replace("%number%", x + "")
+                                .replace("%name%", skinName));
                         this.skins.put(x, skin);
                         x++;
                     }else {
-                        getLogger().warning(skinName + "加载失败，这可能不是一个正确的图片");
+                        getLogger().warning(this.language.skinFailureByFormat.replace("%name%", skinName));
                     }
                 } else {
-                    getLogger().warning(skinName + "加载失败，请将皮肤文件命名为 skin.png");
+                    getLogger().warning(this.language.skinFailureByName.replace("%name%", skinName));
                 }
             }
         }
         if (this.skins.size() >= 16) {
-            getLogger().info("§e皮肤加载完成！当前已加载 " + this.skins.size() + " 个皮肤！");
+            getLogger().info(this.language.skinLoadedAllSuccess.replace("%number%", this.skins.size() + ""));
         }else {
-            getLogger().warning("§c当前皮肤数量小于16，部分玩家仍可使用自己的皮肤");
+            getLogger().warning(this.language.skinLoadedAllFailureByNumber);
         }
     }
 

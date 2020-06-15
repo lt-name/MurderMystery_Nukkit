@@ -1,6 +1,6 @@
 language: zh_CN
-插件命令: killer
-管理命令: kadmin
+cmdUser: killer
+cmdAdmin: kadmin
 # 杀手胜利执行命令(仅杀手执行)
 killerVictoryCmd:
   - me 我胜利了
