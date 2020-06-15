@@ -316,11 +316,10 @@ public class Tools {
 
     /**
      * 放烟花
-     * GitHub：https://github.com/SmallasWater/LuckDraw/blob/master/src/main/java/smallaswater/luckdraw/utils/Tools.java
-     * @param player 玩家
+     * GitHub：https://github.com/PetteriM1/FireworkShow
+     * @param position 位置
      */
-    public static void spawnFirework(Position player) {
-        Level level = player.getLevel();
+    public static void spawnFirework(Position position) {
         ItemFirework item = new ItemFirework();
         CompoundTag tag = new CompoundTag();
         Random random = new Random();
@@ -333,13 +332,14 @@ public class Tools {
         ex.putBoolean("FireworkTrail",random.nextBoolean());
         ex.putByte("FireworkType",ItemFirework.FireworkExplosion.ExplosionType.values()
                 [random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
-        tag.putCompound("Fireworks",(new CompoundTag("Fireworks")).putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
+        tag.putCompound("Fireworks",(new CompoundTag("Fireworks"))
+                .putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
         item.setNamedTag(tag);
         CompoundTag nbt = new CompoundTag();
         nbt.putList(new ListTag<DoubleTag>("Pos")
-                .add(new DoubleTag("",player.x+0.5D))
-                .add(new DoubleTag("",player.y+0.5D))
-                .add(new DoubleTag("",player.z+0.5D))
+                .add(new DoubleTag("",position.x+0.5D))
+                .add(new DoubleTag("",position.y+0.5D))
+                .add(new DoubleTag("",position.z+0.5D))
         );
         nbt.putList(new ListTag<DoubleTag>("Motion")
                 .add(new DoubleTag("",0.0D))
@@ -352,7 +352,7 @@ public class Tools {
 
         );
         nbt.putCompound("FireworkItem", NBTIO.putItemHelper(item));
-        EntityFirework entity = new EntityFirework(level.getChunk((int)player.x >> 4, (int)player.z >> 4), nbt);
+        EntityFirework entity = new EntityFirework(position.getLevel().getChunk((int)position.x >> 4, (int)position.z >> 4), nbt);
         entity.spawnToAll();
     }
 
