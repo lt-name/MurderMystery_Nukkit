@@ -248,6 +248,7 @@ public class MurderMystery extends PluginBase {
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
                             config.getString("waitSpawn", "").trim().equals("") ||
+                            config.getStringList("randomSpawn").size() == 0 ||
                             config.getStringList("goldSpawn").size() == 0 ||
                             config.getInt("goldSpawnTime", 0) == 0 ||
                             config.getString("world", "").trim().equals("")) {
