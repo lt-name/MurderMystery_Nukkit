@@ -5,6 +5,7 @@ import cn.nukkit.utils.Config;
 public class Language {
 
     //控制台
+    public String scoreboardAPINotFound = "§c请安装计分板前置！";
     public String startLoadingAddons = "§e开始加载扩展...";
     public String addonsLoaded = "§e扩展加载完成！";
     public String swordSuccess = "§a Sword加载完成";
@@ -159,6 +160,7 @@ public class Language {
 
 
     public Language(Config config) {
+        this.scoreboardAPINotFound = config.getString("scoreboardAPINotFound", this.scoreboardAPINotFound);
         this.startLoadingAddons = config.getString("startLoadingAddons", this.startLoadingAddons);
         this.addonsLoaded = config.getString("addonsLoaded", this.addonsLoaded);
         this.swordSuccess = config.getString("swordSuccess", this.swordSuccess);

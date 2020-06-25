@@ -1,3 +1,4 @@
+scoreboardAPINotFound: "§c请安装计分板前置！"
 startLoadingAddons: "§e开始加载扩展..."
 addonsLoaded: "§e扩展加载完成！"
 swordSuccess: "§aSword加载完成"
