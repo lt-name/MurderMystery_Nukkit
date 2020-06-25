@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author SmallasWater
  */
-abstract public class BaseCommand extends Command {
+public abstract class BaseCommand extends Command {
 
     private final ArrayList<BaseSubCommand> subCommand = new ArrayList<>();
     private final ConcurrentHashMap<String, Integer> subCommands = new ConcurrentHashMap<>();

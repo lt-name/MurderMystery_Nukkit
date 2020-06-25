@@ -8,8 +8,6 @@ import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
-import tip.messages.ScoreBoardMessage;
-import tip.utils.Api;
 
 import java.util.LinkedList;
 
@@ -48,8 +46,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
-                    ScoreBoardMessage score = new ScoreBoardMessage(room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);
-                    Api.setPlayerShowMessage(player.getName(), score);
+                    owner.getScoreboard().showScoreboard(player, ms);
                 }
             }else {
                 owner.getServer().getPluginManager().callEvent(new MurderRoomStartEvent(this.room));
@@ -67,8 +64,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
                             .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
-                ScoreBoardMessage score = new ScoreBoardMessage(room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);
-                Api.setPlayerShowMessage(player.getName(), score);
+                owner.getScoreboard().showScoreboard(player, ms);
             }
         }else {
             this.room.endGame();

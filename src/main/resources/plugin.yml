@@ -1,13 +1,13 @@
 name: MurderMystery
 main: cn.lanink.murdermystery.MurderMystery
-version: "1.0.3-SNAPSHOT"
+version: "1.0.4-SNAPSHOT"
 api:
   - 1.0.0
 load: POSTWORLD
 author: "LT_Name"
-depend:
-  - "Tips"
-  - "EconomyAPI"
+loadbefore:
+  - "ScoreboardPlugin"
+  - "ScoreboardAPI"
 
 permissions:
   MurderMystery.command.user:

@@ -9,6 +9,9 @@ import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.ui.GuiType;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
+import cn.lanink.murdermystery.utils.scoreboard.BaseScoreboard;
+import cn.lanink.murdermystery.utils.scoreboard.ScoreboardDe;
+import cn.lanink.murdermystery.utils.scoreboard.ScoreboardGt;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -42,6 +45,7 @@ public class MurderMystery extends PluginBase {
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private String cmdUser, cmdAdmin;
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
+    private BaseScoreboard scoreboard;
     private MetricsLite metricsLite;
 
     public static MurderMystery getInstance() { return murderMystery; }
@@ -70,6 +74,32 @@ public class MurderMystery extends PluginBase {
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        //语言文件
+        saveResource("Resources/Language/zh_CN.yml", false);
+        saveResource("Resources/Language/en_US.yml", false);
+        String s = this.config.getString("language", "zh_CN");
+        File languageFile = new File(getDataFolder() + "/Resources/Language/" + s + ".yml");
+        if (languageFile.exists()) {
+            this.language = new Language(new Config(languageFile, 2));
+            getLogger().info("§aLanguage: " + s + " loaded !");
+        }else {
+            this.language = new Language(new Config());
+            getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
+        }
+        //加载计分板
+        try {
+            Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
+            this.scoreboard = new ScoreboardDe();
+        } catch (ClassNotFoundException e) {
+            try {
+                Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
+                this.scoreboard = new ScoreboardGt();
+            } catch (ClassNotFoundException ignored) {
+                getLogger().error(this.language.scoreboardAPINotFound);
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
         this.loadResources();
         this.loadRooms();
         this.loadSkins();
@@ -130,6 +160,10 @@ public class MurderMystery extends PluginBase {
         return this.language;
     }
 
+    public BaseScoreboard getScoreboard() {
+        return this.scoreboard;
+    }
+
     @Override
     public Config getConfig() {
         return this.config;
@@ -177,18 +211,6 @@ public class MurderMystery extends PluginBase {
     }
 
     private void loadResources() {
-        //语言文件
-        saveResource("Resources/Language/zh_CN.yml", false);
-        saveResource("Resources/Language/en_US.yml", false);
-        String s = this.config.getString("language", "zh_CN");
-        File languageFile = new File(getDataFolder() + "/Resources/Language/" + s + ".yml");
-        if (languageFile.exists()) {
-            this.language = new Language(new Config(languageFile, 2));
-            getLogger().info("§aLanguage: " + s + " loaded !");
-        }else {
-            this.language = new Language(new Config());
-            getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
-        }
         //剑
         saveResource("Resources/Sword/skin.png", false);
         saveResource("Resources/Sword/skin.json", false);

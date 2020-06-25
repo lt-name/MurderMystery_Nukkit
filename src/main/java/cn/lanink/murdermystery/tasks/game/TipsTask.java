@@ -7,8 +7,6 @@ import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
-import tip.messages.ScoreBoardMessage;
-import tip.utils.Api;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -51,6 +49,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
             }
             String mode;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                entry.getKey().setNameTag("");
                 switch (entry.getValue()) {
                     case 1:
                         mode = owner.getLanguage().commonPeople;
@@ -91,9 +90,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
                                 .replace("%time%", room.scanCD + ""));
                     }
                 }
-                ScoreBoardMessage score = new ScoreBoardMessage(
-                        room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);
-                Api.setPlayerShowMessage(entry.getKey().getName(), score);
+                owner.getScoreboard().showScoreboard(entry.getKey(), ms);
             }
         }
     }
