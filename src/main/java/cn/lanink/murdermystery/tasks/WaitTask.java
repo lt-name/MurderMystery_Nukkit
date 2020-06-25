@@ -46,7 +46,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
-                    Tools.showScoreboard(player, ms);
+                    owner.getScoreboard().showScoreboard(player, ms);
                 }
             }else {
                 owner.getServer().getPluginManager().callEvent(new MurderRoomStartEvent(this.room));
@@ -64,7 +64,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
                             .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
-                Tools.showScoreboard(player, ms);
+                owner.getScoreboard().showScoreboard(player, ms);
             }
         }else {
             this.room.endGame();

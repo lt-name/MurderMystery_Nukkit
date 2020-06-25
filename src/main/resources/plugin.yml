@@ -5,8 +5,9 @@ api:
   - 1.0.0
 load: POSTWORLD
 author: "LT_Name"
-depend:
+loadbefore:
   - "ScoreboardPlugin"
+  - "ScoreboardAPI"
 
 permissions:
   MurderMystery.command.user:

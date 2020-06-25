@@ -9,6 +9,9 @@ import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.ui.GuiType;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
+import cn.lanink.murdermystery.utils.scoreboard.BaseScoreboard;
+import cn.lanink.murdermystery.utils.scoreboard.ScoreboardDe;
+import cn.lanink.murdermystery.utils.scoreboard.ScoreboardGt;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -44,6 +47,7 @@ public class MurderMystery extends PluginBase {
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private String cmdUser, cmdAdmin;
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
+    private BaseScoreboard scoreboard;
     public Map<Player, Scoreboard> scoreboards = new HashMap<>();
     private MetricsLite metricsLite;
 
@@ -72,6 +76,18 @@ public class MurderMystery extends PluginBase {
     public void onEnable() {
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
+        try {
+            Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
+            this.scoreboard = new ScoreboardDe();
+        } catch (ClassNotFoundException e) {
+            try {
+                Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
+                this.scoreboard = new ScoreboardGt();
+            } catch (ClassNotFoundException ignored) {
+                getLogger().error("§cPlease install ScoreboardAPI plugin!");
+                getServer().getPluginManager().disablePlugin(this);
+            }
+        }
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         this.loadResources();
         this.loadRooms();
@@ -131,6 +147,10 @@ public class MurderMystery extends PluginBase {
 
     public Language getLanguage() {
         return this.language;
+    }
+
+    public BaseScoreboard getScoreboard() {
+        return this.scoreboard;
     }
 
     @Override

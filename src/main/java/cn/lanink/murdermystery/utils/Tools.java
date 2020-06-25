@@ -27,36 +27,12 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
-import de.theamychan.scoreboard.api.ScoreboardAPI;
-import de.theamychan.scoreboard.network.DisplaySlot;
-import de.theamychan.scoreboard.network.Scoreboard;
-import de.theamychan.scoreboard.network.ScoreboardDisplay;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 
 public class Tools {
-
-    /**
-     * 计分板显示信息
-     * @param player 玩家
-     * @param message 信息
-     */
-    public static void showScoreboard(Player player, LinkedList<String> message) {
-        Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
-        ScoreboardDisplay scoreboardDisplay = scoreboard.addDisplay(DisplaySlot.SIDEBAR,
-                "MurderMystery", MurderMystery.getInstance().getLanguage().scoreBoardTitle);
-        if (MurderMystery.getInstance().scoreboards.containsKey(player)) {
-            MurderMystery.getInstance().scoreboards.get(player).hideFor(player);
-        }
-        for (int line = 0; line < message.size(); line++) {
-            scoreboardDisplay.addLine(message.get(line), line);
-        }
-        scoreboard.showFor(player);
-        MurderMystery.getInstance().scoreboards.put(player, scoreboard);
-    }
 
     /**
      * 获取字符串房间模式

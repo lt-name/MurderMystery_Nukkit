@@ -54,11 +54,11 @@ public class VictoryTask extends PluginTask<MurderMystery> {
                 if (this.victory == 3) {
                     entry.getKey().sendActionBar(language.victoryKillerBottom);
                     LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryKillerScoreBoard.split("\n")));
-                    Tools.showScoreboard(entry.getKey(), ms);
+                    owner.getScoreboard().showScoreboard(entry.getKey(), ms);
                 } else {
                     entry.getKey().sendActionBar(language.victoryCommonPeopleBottom);
                     LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryCommonPeopleScoreBoard.split("\n")));
-                    Tools.showScoreboard(entry.getKey(), ms);
+                    owner.getScoreboard().showScoreboard(entry.getKey(), ms);
                 }
                 if (entry.getValue() != 0) {
                     if (this.victory == 1 && entry.getValue() == 3) {

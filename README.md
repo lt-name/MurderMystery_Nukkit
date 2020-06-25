@@ -6,8 +6,12 @@
 [![Discord](https://img.shields.io/badge/Link-Discord-blue.svg)](https://discord.gg/pJjQDQC)    
 MurderMystery game for Nukkit    
 ### depend:
-* ScoreboardAPI:  
+Please install a scoreboard plugin (choose one)  
+* ScoreboardPlugin:
 https://github.com/lt-name/MurderMystery_Nukkit/blob/master/lib/ScoreboardAPI-1.3.jar
+* ScoreboardAPI:  
+https://nukkitx.com/resources/scoreboardapl.170/
+
 
 ### Command：
 ##### user:

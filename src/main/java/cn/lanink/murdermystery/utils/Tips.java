@@ -10,6 +10,7 @@ import tip.utils.Api;
 import java.util.LinkedList;
 
 public class Tips {
+
     /**
      * 关闭Tips显示
      * @param level 世界
