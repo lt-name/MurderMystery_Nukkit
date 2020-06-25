@@ -30,4 +30,19 @@ public class ScoreboardGt extends BaseScoreboard {
         this.scoreboards.put(player, simpleScoreboard);
     }
 
+    @Override
+    public void closeScoreboard(Player player) {
+        if (this.scoreboards.containsKey(player)) {
+            SimpleScoreboard simpleScoreboard = this.scoreboards.get(player);
+            simpleScoreboard.removePlayer(player);
+            simpleScoreboard.update();
+        }
+    }
+
+    @Override
+    public void delCache(Player player) {
+        this.closeScoreboard(player);
+        this.scoreboards.remove(player);
+    }
+
 }

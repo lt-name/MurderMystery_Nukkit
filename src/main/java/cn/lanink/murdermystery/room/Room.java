@@ -185,6 +185,7 @@ public class Room {
             Tips.removeTipsConfig(this.level.getName(), player);
         }
         if (online) {
+            MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
             player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
             Tools.rePlayerState(player, false);
             SavePlayerInventory.restore(player);

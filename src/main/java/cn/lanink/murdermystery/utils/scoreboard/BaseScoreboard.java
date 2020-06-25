@@ -8,4 +8,8 @@ public abstract class BaseScoreboard {
 
     public abstract void showScoreboard(Player player, LinkedList<String> message);
 
+    public abstract void closeScoreboard(Player player);
+
+    public abstract void delCache(Player player);
+
 }
