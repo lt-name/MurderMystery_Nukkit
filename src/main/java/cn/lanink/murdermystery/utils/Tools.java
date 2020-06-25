@@ -27,11 +27,10 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
-import tip.messages.BossBarMessage;
-import tip.messages.NameTagMessage;
-import tip.messages.ScoreBoardMessage;
-import tip.messages.TipMessage;
-import tip.utils.Api;
+import de.theamychan.scoreboard.api.ScoreboardAPI;
+import de.theamychan.scoreboard.network.DisplaySlot;
+import de.theamychan.scoreboard.network.Scoreboard;
+import de.theamychan.scoreboard.network.ScoreboardDisplay;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +38,25 @@ import java.util.Random;
 
 
 public class Tools {
+
+    /**
+     * 计分板显示信息
+     * @param player 玩家
+     * @param message 信息
+     */
+    public static void showScoreboard(Player player, LinkedList<String> message) {
+        Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
+        ScoreboardDisplay scoreboardDisplay = scoreboard.addDisplay(DisplaySlot.SIDEBAR,
+                "MurderMystery", MurderMystery.getInstance().getLanguage().scoreBoardTitle);
+        if (MurderMystery.getInstance().scoreboards.containsKey(player)) {
+            MurderMystery.getInstance().scoreboards.get(player).hideFor(player);
+        }
+        for (int line = 0; line < message.size(); line++) {
+            scoreboardDisplay.addLine(message.get(line), line);
+        }
+        scoreboard.showFor(player);
+        MurderMystery.getInstance().scoreboards.put(player, scoreboard);
+    }
 
     /**
      * 获取字符串房间模式
@@ -72,21 +90,6 @@ public class Tools {
                 Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
             }
         }
-    }
-
-    /**
-     * 移除显示信息
-     * @param level 地图
-     */
-    public static void removePlayerShowMessage(String level, Player player) {
-        Api.removePlayerShowMessage(player.getName(),
-                new NameTagMessage(level, true, ""));
-        Api.removePlayerShowMessage(player.getName(),
-                new TipMessage(level, true, 0, ""));
-        Api.removePlayerShowMessage(player.getName(),
-                new ScoreBoardMessage(level, true, "", new LinkedList<>()));
-        Api.removePlayerShowMessage(player.getName(),
-                new BossBarMessage(level, false, 5, false, new LinkedList<>()));
     }
 
     /**
@@ -225,10 +228,12 @@ public class Tools {
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         if (joinRoom) {
+            player.setNameTag("");
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
             player.setAllowModifyWorld(false);
         }else {
+            player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
             setPlayerInvisible(player, false);

@@ -9,6 +9,7 @@ import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.ui.GuiType;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -16,6 +17,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
+import de.theamychan.scoreboard.network.Scoreboard;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -42,6 +44,7 @@ public class MurderMystery extends PluginBase {
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private String cmdUser, cmdAdmin;
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
+    public Map<Player, Scoreboard> scoreboards = new HashMap<>();
     private MetricsLite metricsLite;
 
     public static MurderMystery getInstance() { return murderMystery; }

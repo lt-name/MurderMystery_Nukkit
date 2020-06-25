@@ -6,8 +6,7 @@ api:
 load: POSTWORLD
 author: "LT_Name"
 depend:
-  - "Tips"
-  - "EconomyAPI"
+  - "ScoreboardPlugin"
 
 permissions:
   MurderMystery.command.user:

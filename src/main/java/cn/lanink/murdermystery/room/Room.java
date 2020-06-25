@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.room;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
+import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -12,9 +13,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
-import tip.messages.NameTagMessage;
-import tip.messages.TipMessage;
-import tip.utils.Api;
 
 import java.util.*;
 
@@ -159,10 +157,9 @@ public class Room {
             player.teleport(this.getWaitSpawn());
             this.setRandomSkin(player);
             Tools.giveItem(player, 10);
-            NameTagMessage nameTagMessage = new NameTagMessage(this.level.getName(), true, "");
-            Api.setPlayerShowMessage(player.getName(), nameTagMessage);
-            TipMessage tipMessage = new TipMessage(this.level.getName(), false, 0, "");
-            Api.setPlayerShowMessage(player.getName(), tipMessage);
+            if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+                Tips.closeTipsShow(this.level.getName(), player);
+            }
             player.sendMessage(MurderMystery.getInstance().getLanguage().joinRoom.replace("%name%", this.level.getName()));
         }
     }
@@ -184,8 +181,10 @@ public class Room {
         if (this.isPlaying(player)) {
             this.players.remove(player);
         }
+        if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+            Tips.removeTipsConfig(this.level.getName(), player);
+        }
         if (online) {
-            Tools.removePlayerShowMessage(this.level.getName(), player);
             player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
             Tools.rePlayerState(player, false);
             SavePlayerInventory.restore(player);
