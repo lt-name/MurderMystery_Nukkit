@@ -18,7 +18,7 @@ public class Tips {
      */
     public static void closeTipsShow(String level, Player player) {
         Api.setPlayerShowMessage(player.getName(),
-                new NameTagMessage(level, false, ""));
+                new NameTagMessage(level, true, ""));
         Api.setPlayerShowMessage(player.getName(),
                 new TipMessage(level, false, 0, ""));
         Api.setPlayerShowMessage(player.getName(),
