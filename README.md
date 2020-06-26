@@ -8,7 +8,7 @@ MurderMystery game for Nukkit
 ### depend:
 Please install a scoreboard plugin (choose one)  
 * ScoreboardPlugin:  
-https://github.com/lt-name/MurderMystery_Nukkit/blob/master/lib/ScoreboardAPI-1.3.jar
+https://github.com/LucGamesYT/ScoreboardAPI/releases/tag/1.0.0
 * ScoreboardAPI:  
 https://nukkitx.com/resources/scoreboardapl.170/
 
@@ -36,6 +36,3 @@ https://nukkitx.com/resources/scoreboardapl.170/
 [![MCBBS](https://img.shields.io/badge/Link-MCBBS-brightgreen)](https://www.mcbbs.net/thread-1014768-1-1.html)  
 #### 演示视频/Demo video:
 [![bilibili](https://img.shields.io/badge/Link-bilibili-ff69b4)](https://www.bilibili.com/video/BV1ga4y147Lf/)
-
-#### bStats:
-![bStats](https://bstats.org/signatures/bukkit/MurderMystery_Nukkit.svg)
