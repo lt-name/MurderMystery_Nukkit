@@ -31,9 +31,15 @@ public class VictoryTask extends PluginTask<MurderMystery> {
             if (victory == 3) {
                 entry.getKey().sendTitle(owner.getLanguage().titleVictoryKillerTitle,
                         "", 10, 30, 10);
+                entry.getKey().sendActionBar(language.victoryKillerBottom);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryKillerScoreBoard.split("\n")));
+                owner.getScoreboard().showScoreboard(entry.getKey(), ms);
             }else {
                 entry.getKey().sendTitle(owner.getLanguage().titleVictoryCommonPeopleSubtitle,
                         "", 10, 30, 10);
+                entry.getKey().sendActionBar(language.victoryCommonPeopleBottom);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryCommonPeopleScoreBoard.split("\n")));
+                owner.getScoreboard().showScoreboard(entry.getKey(), ms);
             }
         }
     }
@@ -51,15 +57,6 @@ public class VictoryTask extends PluginTask<MurderMystery> {
         }else {
             this.victoryTime--;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                if (this.victory == 3) {
-                    entry.getKey().sendActionBar(language.victoryKillerBottom);
-                    LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryKillerScoreBoard.split("\n")));
-                    owner.getScoreboard().showScoreboard(entry.getKey(), ms);
-                } else {
-                    entry.getKey().sendActionBar(language.victoryCommonPeopleBottom);
-                    LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryCommonPeopleScoreBoard.split("\n")));
-                    owner.getScoreboard().showScoreboard(entry.getKey(), ms);
-                }
                 if (entry.getValue() != 0) {
                     if (this.victory == 1 && entry.getValue() == 3) {
                         continue;
