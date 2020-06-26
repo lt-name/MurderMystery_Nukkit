@@ -16,8 +16,8 @@ import java.util.LinkedList;
 
 public class SwordMoveTask extends AsyncTask {
 
-    private Room room;
-    private Player player;
+    private final Room room;
+    private final Player player;
     private LinkedList<double[]> math;
     private EntitySword sword;
 
@@ -30,13 +30,14 @@ public class SwordMoveTask extends AsyncTask {
         this.math = this.mathLine(pos1, pos2);
         if (this.math == null || this.math.size() == 0) return;
         Skin skin = MurderMystery.getInstance().getSword();
-        CompoundTag tag = EntitySword.getDefaultNBT(player);
+        CompoundTag tag = EntitySword.getDefaultNBT(pos1);
         tag.putCompound("Skin",new CompoundTag()
                 .putByteArray("Data", skin.getSkinData().data)
                 .putString("ModelId", skin.getSkinId()));
         tag.putFloat("Scale", 0.5F);
         this.sword = new EntitySword(player.getChunk(), tag);
         this.sword.setSkin(skin);
+        this.sword.setRotation(player.getYaw(), player.getPitch());
         this.sword.spawnToAll();
     }
 
@@ -49,10 +50,10 @@ public class SwordMoveTask extends AsyncTask {
                 this.sword.setPosition(p);
                 this.sword.updateMovement();
                 for (Entity entity : p.level.getEntities()) {
-                    if (entity.x >= p.x - entity.getWidth() && entity.x <= p.x + entity.getWidth() &&
-                            entity.y >= p.y - entity.getHeight() && p.y <= entity.y + entity.getHeight() &&
-                            entity.z > p.z - entity.getWidth() && entity.z < p.z + entity.getWidth()) {
-                        if (entity instanceof Player) {
+                    if (entity instanceof Player) {
+                        if (entity.x >= p.x - entity.getWidth() && entity.x <= p.x + entity.getWidth() &&
+                                entity.y >= p.y - entity.getHeight() && p.y <= entity.y + entity.getHeight() &&
+                                entity.z >= p.z - entity.getWidth() && entity.z <= p.z + entity.getWidth()) {
                             Player player2 = (Player) entity;
                             if (player2 != this.player) {
                                 Server.getInstance().getPluginManager().callEvent(

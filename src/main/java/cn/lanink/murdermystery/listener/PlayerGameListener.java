@@ -126,16 +126,13 @@ public class PlayerGameListener implements Listener {
     public void onPickupItem(InventoryPickupItemEvent event) {
         if (event.isCancelled()) return;
         Level level = event.getItem() == null ? null : event.getItem().getLevel();
-        if (level == null || !this.murderMystery.getRooms().containsKey(level.getName()) ||
-                this.murderMystery.getRooms().get(level.getName()).getMode() != 2) {
-            return;
-        }
+        if (level == null) return;
+        Room room = this.murderMystery.getRooms().getOrDefault(level.getName(), null);
+        if (room == null) return;
         if (event.getInventory() != null && event.getInventory() instanceof PlayerInventory) {
             Player player = (Player) event.getInventory().getHolder();
-            Room room = this.murderMystery.getRooms().getOrDefault(level.getName(), null);
             CompoundTag tag = event.getItem().getItem() == null ? null : event.getItem().getItem().getNamedTag();
-            if (room != null && tag != null &&
-                    tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 1) {
+            if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 1) {
                 if (room.getPlayerMode(player) != 1) {
                     event.setCancelled(true);
                     return;

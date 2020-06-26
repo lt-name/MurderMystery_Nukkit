@@ -47,6 +47,7 @@ public class MurderListener implements Listener {
     @EventHandler
     public void onRoomStart(MurderRoomStartEvent event) {
         Room room = event.getRoom();
+        Tools.cleanEntity(room.getLevel(), true);
         room.setMode(2);
         if (room.getGameMode() == GameMode.CLASSIC) {
             Server.getInstance().getPluginManager().callEvent(new MurderRoomChooseIdentityEvent(room));
