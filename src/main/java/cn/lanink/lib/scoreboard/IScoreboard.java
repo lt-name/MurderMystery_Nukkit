@@ -4,11 +4,15 @@ import cn.nukkit.Player;
 
 import java.util.LinkedList;
 
+/**
+ * @author lt_name
+ */
 public interface IScoreboard {
 
     /**
      * 计分板显示信息
      * @param player 玩家
+     * @param title 标题
      * @param message 信息
      */
     void showScoreboard(Player player, String title, LinkedList<String> message);

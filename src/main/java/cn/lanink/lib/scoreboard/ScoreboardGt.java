@@ -7,6 +7,9 @@ import gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+/**
+ * @author lt_name
+ */
 public class ScoreboardGt implements IScoreboard {
 
     private final HashMap<Player, SimpleScoreboard> scoreboards = new HashMap<>();

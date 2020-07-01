@@ -9,6 +9,9 @@ import de.theamychan.scoreboard.network.ScoreboardDisplay;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+/**
+ * @author lt_name
+ */
 public class ScoreboardDe implements IScoreboard {
 
     private final HashMap<Player, Scoreboard> scoreboards = new HashMap<>();
