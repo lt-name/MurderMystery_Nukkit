@@ -91,7 +91,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
                                 .replace("%time%", room.scanCD + ""));
                     }
                 }
-                owner.getScoreboard().showScoreboard(entry.getKey(), ms);
+                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
             }
         }
     }

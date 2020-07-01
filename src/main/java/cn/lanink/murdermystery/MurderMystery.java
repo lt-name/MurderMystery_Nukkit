@@ -1,5 +1,8 @@
 package cn.lanink.murdermystery;
 
+import cn.lanink.lib.scoreboard.IScoreboard;
+import cn.lanink.lib.scoreboard.ScoreboardDe;
+import cn.lanink.lib.scoreboard.ScoreboardGt;
 import cn.lanink.murdermystery.addons.Addons;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
@@ -9,9 +12,6 @@ import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.ui.GuiType;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
-import cn.lanink.murdermystery.utils.scoreboard.BaseScoreboard;
-import cn.lanink.murdermystery.utils.scoreboard.ScoreboardDe;
-import cn.lanink.murdermystery.utils.scoreboard.ScoreboardGt;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -45,7 +45,7 @@ public class MurderMystery extends PluginBase {
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private String cmdUser, cmdAdmin;
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
-    private BaseScoreboard scoreboard;
+    private IScoreboard scoreboard;
     private MetricsLite metricsLite;
 
     public static MurderMystery getInstance() { return murderMystery; }
@@ -160,7 +160,7 @@ public class MurderMystery extends PluginBase {
         return this.language;
     }
 
-    public BaseScoreboard getScoreboard() {
+    public IScoreboard getScoreboard() {
         return this.scoreboard;
     }
 

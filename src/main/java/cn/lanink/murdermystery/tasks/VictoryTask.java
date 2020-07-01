@@ -31,15 +31,17 @@ public class VictoryTask extends PluginTask<MurderMystery> {
             if (victory == 3) {
                 entry.getKey().sendTitle(owner.getLanguage().titleVictoryKillerTitle,
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(language.victoryKillerBottom);
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryKillerScoreBoard.split("\n")));
-                owner.getScoreboard().showScoreboard(entry.getKey(), ms);
+                entry.getKey().sendActionBar(this.language.victoryKillerBottom);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryKillerScoreBoard.split("\n")));
+                owner.getScoreboard().showScoreboard(entry.getKey(),
+                        this.language.scoreBoardTitle, ms);
             }else {
-                entry.getKey().sendTitle(owner.getLanguage().titleVictoryCommonPeopleSubtitle,
+                entry.getKey().sendTitle(this.language.titleVictoryCommonPeopleSubtitle,
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(language.victoryCommonPeopleBottom);
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryCommonPeopleScoreBoard.split("\n")));
-                owner.getScoreboard().showScoreboard(entry.getKey(), ms);
+                entry.getKey().sendActionBar(this.language.victoryCommonPeopleBottom);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryCommonPeopleScoreBoard.split("\n")));
+                owner.getScoreboard().showScoreboard(entry.getKey(),
+                        this.language.scoreBoardTitle, ms);
             }
         }
     }

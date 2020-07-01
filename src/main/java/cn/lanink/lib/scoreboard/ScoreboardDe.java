@@ -1,6 +1,5 @@
-package cn.lanink.murdermystery.utils.scoreboard;
+package cn.lanink.lib.scoreboard;
 
-import cn.lanink.murdermystery.MurderMystery;
 import cn.nukkit.Player;
 import de.theamychan.scoreboard.api.ScoreboardAPI;
 import de.theamychan.scoreboard.network.DisplaySlot;
@@ -9,22 +8,15 @@ import de.theamychan.scoreboard.network.ScoreboardDisplay;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
-public class ScoreboardDe extends BaseScoreboard {
+public class ScoreboardDe implements IScoreboard {
 
-    private final Map<Player, Scoreboard> scoreboards = new HashMap<>();
+    private final HashMap<Player, Scoreboard> scoreboards = new HashMap<>();
 
-    /**
-     * 计分板显示信息
-     * @param player 玩家
-     * @param message 信息
-     */
     @Override
-    public void showScoreboard(Player player, LinkedList<String> message) {
+    public void showScoreboard(Player player, String title, LinkedList<String> message) {
         Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
-        ScoreboardDisplay scoreboardDisplay = scoreboard.addDisplay(DisplaySlot.SIDEBAR,
-                "MurderMystery", MurderMystery.getInstance().getLanguage().scoreBoardTitle);
+        ScoreboardDisplay scoreboardDisplay = scoreboard.addDisplay(DisplaySlot.SIDEBAR, title, title);
         if (this.scoreboards.containsKey(player)) {
             this.scoreboards.get(player).hideFor(player);
         }

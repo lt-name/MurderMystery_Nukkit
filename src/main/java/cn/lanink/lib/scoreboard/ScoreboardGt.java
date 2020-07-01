@@ -1,6 +1,5 @@
-package cn.lanink.murdermystery.utils.scoreboard;
+package cn.lanink.lib.scoreboard;
 
-import cn.lanink.murdermystery.MurderMystery;
 import cn.nukkit.Player;
 import gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI;
 import gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard;
@@ -8,20 +7,25 @@ import gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class ScoreboardGt extends BaseScoreboard {
+public class ScoreboardGt implements IScoreboard {
 
     private final HashMap<Player, SimpleScoreboard> scoreboards = new HashMap<>();
 
     @Override
-    public void showScoreboard(Player player, LinkedList<String> message) {
+    public void showScoreboard(Player player, String title, LinkedList<String> message) {
         SimpleScoreboard simpleScoreboard;
         if (!this.scoreboards.containsKey(player)) {
             simpleScoreboard = ScoreboardAPI.builder().build();
         }else {
             simpleScoreboard = this.scoreboards.get(player);
             simpleScoreboard.clearCache();
+            if (simpleScoreboard.getAllScores().size() > message.size()) {
+                for (int line = message.size(); line < simpleScoreboard.getAllScores().size(); line++) {
+                    simpleScoreboard.resetScore(line);
+                }
+            }
         }
-        simpleScoreboard.setDisplayName(MurderMystery.getInstance().getLanguage().scoreBoardTitle);
+        simpleScoreboard.setDisplayName(title);
         for (int line = 0; line < message.size(); line++) {
             simpleScoreboard.setScore(line, message.get(line), line);
         }

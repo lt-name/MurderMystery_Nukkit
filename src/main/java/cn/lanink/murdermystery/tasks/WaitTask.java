@@ -46,7 +46,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
-                    owner.getScoreboard().showScoreboard(player, ms);
+                    owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle, ms);
                 }
             }else {
                 owner.getServer().getPluginManager().callEvent(new MurderRoomStartEvent(this.room));
@@ -57,14 +57,15 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
             for (Player player : this.room.getPlayers().keySet()) {
-                player.sendActionBar(language.waitBottom.replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                player.sendActionBar(this.language.waitBottom
+                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
                         .replace("%playerNumber%", room.getPlayers().size() + ""));
                 LinkedList<String> ms = new LinkedList<>();
-                for (String string : language.waitScoreBoard.split("\n")) {
+                for (String string : this.language.waitScoreBoard.split("\n")) {
                     ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
                             .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
-                owner.getScoreboard().showScoreboard(player, ms);
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle,  ms);
             }
         }else {
             this.room.endGame();
