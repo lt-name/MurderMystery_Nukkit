@@ -1,10 +1,10 @@
-# 한글화 BY mcsim415 (현 LS서버 어드민)
+# 한글화 BY mcsim415
 scoreboardAPINotFound: "§c스코어 보드 API 플러그인을 설치해주세요!"
 startLoadingAddons: "§e애드온 로딩중..."
 addonsLoaded: "§e애드온 로딩 성공!"
 swordSuccess: "§a검 로딩 성공!"
 swordFailure: "§c검 파일 로딩이 실패하였습니다! 플러그인이 손상 되었는지 확인하세요!"
-defaultSkinSuccess: "§a기본 몸 스킨 로딩이 완료"
+defaultSkinSuccess: "§a기본 몸 스킨 로딩 성공!"
 defaultSkinFailure: "§c기본 몸 스킨 로딩이 실패하였습니다! 플러그인이 손상 되었는지 확인하세요!"
 startLoadingRoom: "§e방 로딩중..."
 roomLoadedSuccess: "§a방: %name% 이(가) 로딩 되었습니다!"
@@ -14,8 +14,8 @@ roomLoadedAllSuccess: "§e방: %number% 로딩 완료! 방이 현재 적용 완�
 roomUnloadSuccess: "§c방: %name% 이(가) 언로드 되었습니다!"
 roomUnloadFailure: "§c방: %name% 이(가) 비정상적으로 끝났습니다!"
 startLoadingSkin: "§e스킨 로딩중..."
-skinFailureByFormat: "§c%name% 이(가) 로딩에 실패하였습니다, 이것이 정상적인 사진이 아닐 수 있습니다."
-skinFailureByName: "§c%name% 이(가) 로딩에 실패하였습니다, 스킨 파일 이름을 skin.png로 지정하세요!"
+skinFailureByFormat: "§c%name% 를 로딩하는데 실패하였습니다, 이것이 정상적인 사진이 아닐 수 있습니다."
+skinFailureByName: "§c%name% 를 로딩하는데 실패하였습니다, 스킨 파일 이름을 skin.png로 지정하세요!"
 skinLoadedSuccess: "§a번호: %number% 스킨: %name% 이(가) 로딩되었습니다!"
 skinLoadedAllSuccess: "§e스킨 로딩 완료! %number% 스킨들이 현재 로딩되어 있습니다!"
 skinLoadedAllFailureByNumber: "§c현재 스킨 개수는 16개 미만이므로, 일부 플레이어들은 여전히 자신의 스킨을 사용할 수 있습니다!"
