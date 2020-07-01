@@ -1,0 +1,185 @@
+# 한글화 BY mcsim415
+scoreboardAPINotFound: "§cScoreBoardAPI 플러그인을 설치해주세요!"
+startLoadingAddons: "§e애드온 로딩중..."
+addonsLoaded: "§e애드온 로딩 성공!"
+swordSuccess: "§a검 로딩 성공!"
+swordFailure: "§c검 파일 로딩이 실패하였습니다! 플러그인이 손상 되었는지 확인하세요!"
+defaultSkinSuccess: "§a기본 몸 스킨 로딩 성공!"
+defaultSkinFailure: "§c기본 몸 스킨 로딩이 실패하였습니다! 플러그인이 손상 되었는지 확인하세요!"
+startLoadingRoom: "§e방 로딩중..."
+roomLoadedSuccess: "§a방: %name% 이(가) 로딩 되었습니다!"
+roomLoadedFailureByConfig: "§c방: %name% 설정이 불완전하여 로딩에 실패하였습니다!"
+roomLoadedFailureByLevel: "§c방: %name% 의 지도를 읽지 못하였습니다!"
+roomLoadedAllSuccess: "§e방: %number% 로딩 완료! 방이 현재 적용 완료되었습니다!"
+roomUnloadSuccess: "§c방: %name% 이(가) 언로드 되었습니다!"
+roomUnloadFailure: "§c방: %name% 이(가) 비정상적으로 끝났습니다!"
+startLoadingSkin: "§e스킨 로딩중..."
+skinFailureByFormat: "§c%name% 를 로딩하는데 실패하였습니다, 이것이 정상적인 사진이 아닐 수 있습니다."
+skinFailureByName: "§c%name% 를 로딩하는데 실패하였습니다, 스킨 파일 이름을 skin.png로 지정하세요!"
+skinLoadedSuccess: "§a번호: %number% 스킨: %name% 이(가) 로딩되었습니다!"
+skinLoadedAllSuccess: "§e스킨 로딩 완료! %number% 스킨들이 현재 로딩되어 있습니다!"
+skinLoadedAllFailureByNumber: "§c현재 스킨 개수는 16개 미만이므로, 일부 플레이어들은 여전히 자신의 스킨을 사용할 수 있습니다!"
+pluginEnable: "§e플러그인이 로딩되었습니다! 사용하게 된 것을 환영합니다!"
+pluginDisable: "§c플러그인 제거 완료!"
+useCmdInRoom: "§e >> §c플레이하는 동안에는 다른 명령어 사용이 허용되지 않습니다."
+cmdHelp: "§a도움말 검색 방법:/%cmdName% help"
+userHelp: |-
+  §e머더 미스터리--도움말
+  §a/%cmdName% §eUI 열기
+  §a/%cmdName% join NameOfRoom §e게임 참가하기
+  §a/%cmdName% quit §e게임 나가기
+  §a/%cmdName% list §e방들 목록 보기
+noPermission: "§c이 명령어를 실행하기 위한 권한이 부족합니다!"
+joinRoom: "§a%name% 방에 입장하였습니다!"
+joinRoomOnRoom: "§c이미 방에 입장하였습니다!"
+joinRoomOnRiding: "§a타있는 동안에는 입장할 수 없습니다!"
+joinRandomRoom: "§a 임의로 배정된 방입니다!"
+joinRoomIsPlaying: "§a이 방은 이미 게임중입니다, 잠시 후 다시 시도해주세요!"
+joinRoomIsFull: "§a이 방은 꽉 찼습니다, 잠시 후 다시 시도해주세요!"
+joinRoomIsNotFound: "§a방을 찾을 수 없습니다!"
+joinRoomNotAvailable: "§a참가할 수 있는 빈 방이 없습니다!"
+quitRoom: "§a방을 나왔습니다!"
+quitRoomNotInRoom: "§a방에 들어가 있지 않습니다!"
+listRoom: "§e방 목록: §a %list%"
+useCmdInCon: "게임 안에서 명령어를 사용해주세요!!"
+adminHelp: |-
+  §e머더 미스터리--도움말
+  §a/%cmdName% §eUI 열기
+  §a/%cmdName% setwaitspawn §e현재 위치를 게임의 스폰 지점으로 설정하기
+  §a/%cmdName% addrandomspawn  §e현재 위치를 게임의 대기 위치로 추가하기
+  §a/%cmdName% addgoldspawn §e  현재 위치를 금괴 생성 지점으로 추가하기
+  §a/%cmdName% setgoldspawntime number §e금괴 생성 간격 설정하기
+  §a/%cmdName% setwaittime number §e플레이어 수가 채워진 후 대기 시간 설정하기
+  §a/%cmdName% setgametime number §e각 게임 라운드의 최대 시간 설정하기
+  §a/%cmdName% setgamemode mode §e방 게임 모드 설정하기
+  §a/%cmdName% startroom §e게임 시작하기
+  §a/%cmdName% reloadroom §e모든 방을 다시 로드하기
+  §a/%cmdName% unloadroom §e모든 방을 닫고 설정 제거하기
+adminSetSpawn: "§a기본 스폰포인트 지점이 성공적으로 설정되었습니다!"
+adminAddRandomSpawn: "§a랜덤 스폰포인트 지점이 성공적으로 설정되었습니다!"
+adminAddGoldSpawn: "§a기본 금괴 생성 지점이 성공적으로 설정되었습니다!"
+adminNotNumber: "§a숫자를 입력해주세요"
+adminSetGoldSpawnTime: "§a각 금괴의 생성 간격은 다음과 같이 설정되었습니다: %time%"
+adminSetWaitTime: "§a대기 시간은 다음과 같이 설정되었습니다: %time%"
+adminSetGameTime: "§a각 게임의 시간은 다음과 같이 설정되었습니다: %time%"
+adminSetGameTimeShort: "§a최소 게임 시간은 1분 이상 이여야 합니다!"
+adminSetGameMode: "§a이 방의 게임모드는 다음과 같이 설정되었습니다: %roomMode%"
+adminStartNoPlayer: "§a준비된 플레이어가 3명 미만일때는 시작이 불가능합니다!"
+adminLevelNoRoom: "§a게임 방에 들어가 있지 않습니다!"
+adminReload: "§a설정 재로드 성공! 백그라운드에서 정보를 확인하세요!"
+adminUnload: "§a모든 방 언로드 성공! 백그라운드에서 정보를 확인하세요!"
+roomSafeKick: |-
+  §c방이 비정상적으로 닫혔습니다!
+  안전을 위해 나중에 서버를 다시 접속 하세요!
+playerDeathChat: "§c[사망] %player% + §b >>> %message%"
+tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 맵에 참가하세요."
+tpQuitRoomLevel: "§e >> §c명령어를 사용하여 방을 종료하세요."
+itemDetectiveBow: "§e형사들의 활"
+itemDetectiveBowLore: |-
+  소비한 화살을 자동으로 보충합니다.
+  "팁:"
+  당신은 시민이나 형사를 공격하면 죽을 것입니다.
+itemKillerSword: "§c머더의 칼"
+itemKillerSwordLore: |-
+  머더의 칼
+  "팁:"
+  살인자의 검을 들면 약간의 가속력을 얻을 수 있을 것입니다.
+  화면을 클릭할 때 플라이검을 사용할 수 있습니다.
+itemScan: "§c스캐너"
+itemScanLore: |-
+  살아있는 사람들의 위치를 모두 스캔합니다.
+  "팁:"
+  모든 시민/형사들의 위치는 사용 후 표시됩니다.
+  이건 5초 동안 지속될 것입니다.
+  (당신만 볼 수 있습니다)
+itemQuitRoom: "§c게임 나가기"
+itemQuitRoomLore: "이걸 클릭하면 게임을 나갈 수 있습니다."
+itemPotion: "§e신비한 물약"
+itemPotionLore: |-
+  알 수 없는 약
+  이건 행운을 가져다 줄까, 아니면 불운을 가져다 줄까?
+  Usage: 마시기
+itemShieldWall: "§a보호막 생성기"
+itemShieldWallLore: |-
+  잠깐의 보호막을 생성할 수 있습니다.
+  잘 작동 되지는 않지만 중요할 때 생명을 구할 수 있습니다.
+  Usage: 땅에 놓기
+itemSnowball: "§a구속기"
+itemSnowballLore: "명중하면 목표물을 2초 구속시킵니다."
+useItemScan: "§a모든 플레이어의 위치가 섹션에 표시됩니다!"
+damageSnowball: "§a구속기에 맞았습니다! "
+useItemSwordCD: "§a플라잉검 쿨다운중"
+useItemScanCD: "§a스캐너 쿨다운중"
+exchangeItemsOnlyOne: "오직 한개의 %name%만 가질 수 있습니다."
+exchangeItem: "§a성공적으로 %name%(을)를 얻었습니다."
+exchangeUseGold: "§a%name%와 교환하려면 금괴를 사용해야 합니다. "
+Classic: "클래식"
+Infected: "감염"
+commonPeople: "시민"
+killer: "머더"
+detective: "형사"
+death: "사망"
+killPlayer: "§a한명을 죽였습니다!"
+killKiller: "§a머더를 죽였습니다!"
+deathTitle: "§c사망"
+deathByKillerSubtitle: "§c머더에게 살해당했습니다."
+deathByDamageTeammateSubtitle: "§c같은 팀을 죽였습니다."
+deathByTeammateSubtitle: "§c같은 팀에게 죽었습니다."
+killerDeathSubtitle: "§c죽었습니다."
+titleCommonPeopleTitle: "§a시민"
+titleCommonPeopleSubtitle: "살아남아 승리하세요!"
+titleDetectiveTitle: "§e형사"
+titleDetectiveSubtitle: "머더를 찾아서 당신의 칼로 죽이세요!"
+titleKillerTitle: "§c머더"
+titleKillerSubtitle: "모든 플레이어를 죽이세요!"
+killerGetSwordTime: "§e머더는 %time%후에 칼을 얻을 것 입니다!"
+killerGetSword: "§e머더가 칼을 얻었습니다!"
+titleVictoryKillerTitle: "§a머더 승리!"
+titleVictoryCommonPeopleSubtitle: "§a시민과 형사 승리!"
+victoryKillerBottom: "§e머더가 모두를 죽여 승리한 것을 축하합니다!"
+victoryKillerScoreBoard: "§e머더를 축하해주세요!"
+victoryCommonPeopleBottom: "§e시민과 형사가 승리한 것을 축하합니다! "
+victoryCommonPeopleScoreBoard: "§e시민과 형사를 축하해주세요!"
+scoreBoardTitle: "§e머더 미스터리"
+waitTimeScoreBoard: |-
+  Room Mode: §a %roomMode%
+  Player: §a %playerNumber%/16
+  §aStart countdown: §l§e %time%
+waitScoreBoard: |-
+  Room Mode: §a %roomMode%
+  Player: §a %playerNumber%/16
+  5명 이상이 필요합니다.
+  플레이어가 들어올 때 까지 기다려주세요.
+waitTimeBottom: |-
+  §aNumber of players: %playerNumber% 
+  §aThere is: %time%초 후 시작 됩니다!
+waitBottom: "§c플레이어가 들어올 때 까지 기다려주세요, 이 방에는 %playerNumber%명의 플레이어가 있습니다."
+gameTimeScoreBoard: |-
+  RoomMode: §a %roomMode%
+  §l§a현재 신분:§e %mode%
+  §l§a살아남아 있는 사람 수:§e %playerNumber%
+  §l§a남은 시간:§e %time% §a초
+gameTimeBottom: |-
+  §a신분:§e %mode%
+  §a게임이 종료되기 §e %time% §a초가 남았습니다.
+  현재:§e %playerNumber% §a명의 플레이어가 살아있습니다.
+gameEffectCDScoreBoard: "§l§a가속 쿨다운:§e %time% §a초 "
+gameSwordCDScoreBoard: "§l§a플라이검 쿨다운:§e %time% §a초 "
+gameScanCDScoreBoard: "§l§a스캐너 쿨다운:§e %time% §a초 "
+userMenuButton1: "§e랜덤으로 방 들어가기"
+userMenuButton2: "§e이 방 나가기"
+userMenuButton3: "§e모든 룸 리스트 보기"
+adminMenuSetLevel: "맵: %name%"
+adminMenuButton1: "§e기본 스폰포인트 지정하기"
+adminMenuButton2: "§e랜덤 스폰포인트 추가하기"
+adminMenuButton3: "§e금괴 생성포인트 추가하기"
+adminMenuButton4: "§e시간 매개변수 설정하기"
+adminMenuButton5: "§e방 모드 설정하기"
+adminMenuButton6: "§e모든 방들 재로딩하기"
+adminMenuButton7: "§c모든 방들 지우기"
+adminTimeMenuInputText1: "각 금괴 생성 간격"
+adminTimeMenuInputText2: "기다리는 시간"
+adminTimeMenuInputText3: "게임 시간"
+joinRoomOK: "§l§a방 참가하기: %name% §l§a"
+buttonOK: "§a수락"
+buttonReturn: "§c뒤로 돌아가기"
