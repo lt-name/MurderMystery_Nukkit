@@ -1,5 +1,5 @@
 # 한글화 BY mcsim415
-scoreboardAPINotFound: "§c스코어 보드 API 플러그인을 설치해주세요!"
+scoreboardAPINotFound: "§cScoreBoardAPI 플러그인을 설치해주세요!"
 startLoadingAddons: "§e애드온 로딩중..."
 addonsLoaded: "§e애드온 로딩 성공!"
 swordSuccess: "§a검 로딩 성공!"
