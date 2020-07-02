@@ -209,7 +209,7 @@ public class Language {
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
         this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
         this.adminStartNoPlayer = config.getString("adminStartNoPlayer", this.adminStartNoPlayer);
-        this.adminLevelNoRoom = config.getString("adminStartNoRoom", this.adminLevelNoRoom);
+        this.adminLevelNoRoom = config.getString("adminLevelNoRoom", this.adminLevelNoRoom);
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
         this.roomSafeKick = config.getString("roomSafeKick", this.roomSafeKick);
