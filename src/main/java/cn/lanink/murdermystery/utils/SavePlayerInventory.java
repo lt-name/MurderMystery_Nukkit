@@ -12,6 +12,7 @@ import java.util.*;
 
 /**
  * @author 若水
+ * @author lt_name
  */
 public class SavePlayerInventory {
 
@@ -22,7 +23,7 @@ public class SavePlayerInventory {
     public static void save(Player player) {
         File file = new File(MurderMystery.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
         Config config = new Config(file, 1);
-        config.set("Inventory", InventoryToJson(player));
+        config.set("Inventory", InventoryToLinkedHashMap(player));
         config.save();
         player.getInventory().clearAll();
     }
@@ -37,16 +38,27 @@ public class SavePlayerInventory {
             Config config = new Config(file, 1);
             if (file.delete()) {
                 player.getInventory().clearAll();
+                player.getUIInventory().clearAll();
                 PutInventory(player, config.get("Inventory", null));
             }
         }
     }
 
-    public static LinkedHashMap<String, Object> InventoryToJson(@NotNull Player player) {
+    /**
+     * 玩家背包内容转换为 LinkedHashMap
+     * @param player 玩家
+     * @return LinkedHashMap
+     */
+    public static LinkedHashMap<String, Object> InventoryToLinkedHashMap(@NotNull Player player) {
         LinkedHashMap<String, Object> Inventory = new LinkedHashMap<>();
-        for (int i = 0; i < player.getInventory().getSize() + 4; i++) {
+        for (int i = -1; i < player.getInventory().getSize() + 4; i++) {
             LinkedList<String> list = new LinkedList<>();
-            Item item = player.getInventory().getItem(i);
+            Item item;
+            if (i == -1) {
+                item = player.getOffhandInventory().getItem(0);
+            }else {
+                item = player.getInventory().getItem(i);
+            }
             list.add(item.getId() + ":" + item.getDamage());
             list.add(item.getCount() + "");
             String tag = item.hasCompoundTag() ? bytesToBase64(item.getCompoundTag()) : "not";
@@ -56,6 +68,11 @@ public class SavePlayerInventory {
         return Inventory;
     }
 
+    /**
+     * 字节数组转base64
+     * @param src 字节数组
+     * @return base64字符串
+     */
     public static String bytesToBase64(byte[] src) {
         if (src == null || src.length <= 0) {
             return "not";
@@ -63,26 +80,45 @@ public class SavePlayerInventory {
         return Base64.getEncoder().encodeToString(src);
     }
 
-    public static void PutInventory(Player player, Map inventory) {
+    /**
+     * 物品还原到玩家背包
+     * @param player 玩家
+     * @param inventory 物品Map
+     */
+    public static void PutInventory(Player player, Map<String, Object> inventory) {
         if (inventory == null || inventory.isEmpty()) {
             return;
         }
-        for (int i = 0; i < player.getInventory().getSize() + 4; i++) {
-            List list = (List)inventory.get(i + "");
-            Item item = Item.fromString((String) list.get(0));
-            item.setCount(Integer.parseInt((String) list.get(1)));
+        for (Map.Entry<String, Object> entry : inventory.entrySet()) {
+            List<String> list = null;
+            try {
+                list = (List<String>) entry.getValue();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (list == null || list.isEmpty()) break;
+            Item item = Item.fromString(list.get(0));
+            item.setCount(Integer.parseInt(list.get(1)));
             if (!String.valueOf(list.get(2)).equals("not")) {
-                CompoundTag tag = Item.parseCompoundTag(base64ToBytes((String) list.get(2)));
+                CompoundTag tag = Item.parseCompoundTag(base64ToBytes(list.get(2)));
                 item.setNamedTag(tag);
             }
-            if (player.getInventory().getSize() + 4 < i) {
+            int index = Integer.parseInt(entry.getKey());
+            if (index == -1) {
+                player.getOffhandInventory().setItem(0, item);
+            }else if (index > player.getInventory().getSize() + 4) {
                 player.getInventory().addItem(item.clone());
-            } else {
-                player.getInventory().setItem(i, item.clone());
+            }else {
+                player.getInventory().setItem(index, item.clone());
             }
         }
     }
 
+    /**
+     * base64转字节数组
+     * @param hexString base64
+     * @return 字节数组
+     */
     public static byte[] base64ToBytes(String hexString) {
         if (hexString == null || hexString.equals("")) {
             return null;

@@ -144,6 +144,7 @@ public class MurderListener implements Listener {
         int j = 0;
         for (Player player : players.keySet()) {
             player.getInventory().clearAll();
+            player.getUIInventory().clearAll();
             j++;
             //侦探
             if (j == random1) {
@@ -178,6 +179,7 @@ public class MurderListener implements Listener {
                 return;
             }
             player.getInventory().clearAll();
+            player.getUIInventory().clearAll();
             player.setAllowModifyWorld(true);
             player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
             player.setGamemode(3);
