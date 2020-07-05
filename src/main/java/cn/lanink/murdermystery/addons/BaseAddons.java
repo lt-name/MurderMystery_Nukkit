@@ -13,24 +13,50 @@ import java.io.File;
  */
 public abstract class BaseAddons {
 
-    protected final Server server;
-    protected final MurderMystery murderMystery;
-    protected String addonsName;
-    private final File configFile;
+    private final Server server = Server.getInstance();
+    private final MurderMystery murderMystery = MurderMystery.getInstance();
+    private String addonsName;
+    private boolean isEnabled = false;
+    private File configFile;
     private Config config;
 
-    public BaseAddons(MurderMystery murderMystery, String addonsName) {
-        this.murderMystery = murderMystery;
-        this.server = murderMystery.getServer();
+    public BaseAddons() {
+
+    }
+
+    public final void init(String addonsName) throws Exception {
+        if (this.isEnabled) {
+            throw new Exception("[Error] 请勿在加载后操作init方法！");
+        }
         this.addonsName = addonsName;
         this.configFile = new File(this.getDataFolder() + "/" + this.addonsName, "config.yml");
+    }
+
+    public final boolean isEnabled() {
+        return this.isEnabled;
+    }
+
+    public final void setEnabled() {
+        this.setEnabled(true);
+    }
+
+    public final void setEnabled(boolean value) {
+        if (this.isEnabled != value) {
+            this.isEnabled = value;
+            if (this.isEnabled) {
+                this.onEnable();
+            } else {
+                this.onDisable();
+            }
+        }
+
     }
 
     private void setAddonsName(String name) {
         this.addonsName = name;
     }
 
-    public String getAddonsName() {
+    public final String getAddonsName() {
         return this.addonsName;
     }
 
@@ -38,8 +64,12 @@ public abstract class BaseAddons {
 
     public abstract void onDisable();
 
-    public Server getServer() {
+    public final Server getServer() {
         return this.server;
+    }
+
+    public final MurderMystery getMurderMystery() {
+        return this.murderMystery;
     }
 
     public Config getConfig() {
@@ -53,7 +83,7 @@ public abstract class BaseAddons {
         return new File(this.murderMystery.getDataFolder() + "/Addons");
     }
 
-    public PluginLogger getLogger() {
+    public final PluginLogger getLogger() {
         return this.murderMystery.getLogger();
     }
 
