@@ -60,11 +60,11 @@ adminSetSpawn: "§a기본 플레이어 생성 지점이 성공적으로 설정�
 adminAddRandomSpawn: "§a무작위 플레이어 생성 지점이 성공적으로 설정되었습니다!"
 adminAddGoldSpawn: "§a기본 금괴 생성 지점이 성공적으로 설정되었습니다!"
 adminNotNumber: "§a숫자를 입력해주세요"
-adminSetGoldSpawnTime: "§a각 금괴의 생성 간격은 다음과 같이 설정되었습니다: %time%"
-adminSetWaitTime: "§a대기 시간은 다음과 같이 설정되었습니다: %time%"
-adminSetGameTime: "§a각 게임의 시간은 다음과 같이 설정되었습니다: %time%"
+adminSetGoldSpawnTime: "§a각 금괴의 생성 간격은 %time%초로 설정되었습니다!"
+adminSetWaitTime: "§a대기 시간은 %time%초로 설정되었습니다!"
+adminSetGameTime: "§a각 게임의 시간은 %time%초로 설정되었습니다!"
 adminSetGameTimeShort: "§a최소 게임 시간은 1분 이상 이여야 합니다!"
-adminSetGameMode: "§a이 방의 게임모드는 다음과 같이 설정되었습니다: %roomMode%"
+adminSetGameMode: "§a이 방의 게임모드는 %roomMode%로 설정되었습니다!"
 adminStartNoPlayer: "§a준비된 플레이어가 3명 미만일 때는 시작이 불가능합니다!"
 adminLevelNoRoom: "§a게임 방에 들어가 있지 않습니다!"
 adminReload: "§a설정 다시 불러오기 성공! 백그라운드에서 정보를 확인하세요!"
@@ -77,22 +77,22 @@ tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 월드에 참가하세
 tpQuitRoomLevel: "§e >> §c명령어를 사용하여 방을 종료하세요."
 itemDetectiveBow: "§e형사들의 활"
 itemDetectiveBowLore: |-
-  소비한 화살을 자동으로 보충합니다.
+  소비된 화살이 자동적으로 보충됩니다.
   "팁:"
-  당신은 시민이나 형사를 공격하면 죽을 것입니다.
+  이 아이템으로 시민이나 형사를 공격하면 자신이 죽습니다.
 itemKillerSword: "§c머더의 칼"
 itemKillerSwordLore: |-
   머더의 칼
   "팁:"
-  살인자의 검을 들면 약간의 가속력을 얻을 수 있을 것입니다.
+  살인자의 검을 들면 약간의 가속력을 얻을 수 있습니다.
   화면을 클릭할 때 플라이 검을 사용할 수 있습니다.
 itemScan: "§c스캐너"
 itemScanLore: |-
   살아있는 사람들의 위치를 모두 스캔합니다.
   "팁:"
   모든 시민/형사들의 위치는 사용 후 표시됩니다.
-  이건 5초 동안 지속할 것입니다.
-  (당신만 볼 수 있습니다)
+  이건 5초 동안 지속됩니다!
+  (사용자만 볼 수 있습니다!)
 itemQuitRoom: "§c게임 나가기"
 itemQuitRoomLore: "이걸 클릭하면 게임을 나갈 수 있습니다."
 itemPotion: "§e신비한 물약"
@@ -106,7 +106,7 @@ itemShieldWallLore: |-
   잘 작동하지는 않지만 중요할 때 생명을 구할 수 있습니다.
   : 땅에 놓기
 itemSnowball: "§a구속기"
-itemSnowballLore: "명중하면 목표물을 2초 구속합니다."
+itemSnowballLore: "명중하면 목표물이 2초 구속됩니다."
 useItemScan: "§a모든 플레이어의 위치가 섹션에 표시됩니다!"
 damageSnowball: "§a구속기에 맞았습니다! "
 useItemSwordCD: "§a플라잉 검 쿨다운 중"
@@ -174,7 +174,7 @@ adminMenuSetLevel: "맵: %name%"
 adminMenuButton1: "§e기본 생성 지점 지정하기"
 adminMenuButton2: "§e무작위 생성 지점 추가하기"
 adminMenuButton3: "§e금괴 생성 지점 추가하기"
-adminMenuButton4: "§e시간 매개변수 설정하기"
+adminMenuButton4: "§e시간 관련 설정하기"
 adminMenuButton5: "§e방 모드 설정하기"
 adminMenuButton6: "§e모든 방들 다시 불러오기"
 adminMenuButton7: "§c모든 방들 지우기"
