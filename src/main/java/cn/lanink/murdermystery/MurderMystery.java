@@ -3,7 +3,7 @@ package cn.lanink.murdermystery;
 import cn.lanink.lib.scoreboard.IScoreboard;
 import cn.lanink.lib.scoreboard.ScoreboardDe;
 import cn.lanink.lib.scoreboard.ScoreboardGt;
-import cn.lanink.murdermystery.addons.Addons;
+import cn.lanink.murdermystery.addons.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
 import cn.lanink.murdermystery.listener.*;
@@ -34,7 +34,7 @@ public class MurderMystery extends PluginBase {
 
     public static String VERSION = "?";
     private static MurderMystery murderMystery;
-    private Addons addons;
+    private static AddonsManager addonsManager;
     private Language language;
     private Config config;
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
@@ -66,7 +66,7 @@ public class MurderMystery extends PluginBase {
             getLogger().warning("Skins 文件夹初始化失败");
         }
         saveDefaultConfig();
-        if (addons == null) this.addons = new Addons(this);
+        if (addonsManager == null) addonsManager = new AddonsManager(this);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class MurderMystery extends PluginBase {
             @Override
             public void onRun(int i) {
                 getLogger().info(language.startLoadingAddons);
-                addons.enableAll();
+                addonsManager.enableAll();
                 getLogger().info(language.addonsLoaded);
             }
         }, 100);
@@ -133,7 +133,7 @@ public class MurderMystery extends PluginBase {
 
     @Override
     public void onDisable() {
-        this.addons.disableAll();
+        addonsManager.disableAll();
         if (this.rooms.values().size() > 0) {
             Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
@@ -159,6 +159,10 @@ public class MurderMystery extends PluginBase {
 
     public Language getLanguage() {
         return this.language;
+    }
+
+    public AddonsManager getAddonsManager() {
+        return addonsManager;
     }
 
     public IScoreboard getScoreboard() {

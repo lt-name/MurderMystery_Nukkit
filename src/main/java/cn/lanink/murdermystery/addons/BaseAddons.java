@@ -2,8 +2,8 @@ package cn.lanink.murdermystery.addons;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.nukkit.Server;
-import cn.nukkit.plugin.PluginLogger;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.Logger;
 
 import java.io.File;
 
@@ -16,6 +16,7 @@ public abstract class BaseAddons {
     private final Server server = Server.getInstance();
     private final MurderMystery murderMystery = MurderMystery.getInstance();
     private String addonsName;
+    private Logger logger;
     private boolean isEnabled = false;
     private File configFile;
     private Config config;
@@ -26,9 +27,10 @@ public abstract class BaseAddons {
 
     public final void init(String addonsName) throws Exception {
         if (this.isEnabled) {
-            throw new Exception("[Error] 请勿在加载后操作init方法！");
+            throw new Exception("[Error] 请勿在加载后执行此方法！");
         }
         this.addonsName = addonsName;
+        this.logger = new AddonsLogger(this);
         this.configFile = new File(this.getDataFolder() + "/" + this.addonsName, "config.yml");
     }
 
@@ -83,8 +85,8 @@ public abstract class BaseAddons {
         return new File(this.murderMystery.getDataFolder() + "/Addons");
     }
 
-    public final PluginLogger getLogger() {
-        return this.murderMystery.getLogger();
+    public final Logger getLogger() {
+        return this.logger;
     }
 
     @Override
