@@ -1,13 +1,14 @@
 package cn.lanink.murdermystery.addons.uishop;
 
+import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.addons.BaseAddons;
 
 import java.util.ArrayList;
 
 public class UiShop extends BaseAddons {
 
-    public UiShop() {
-        super("UiShop");
+    public UiShop(MurderMystery murderMystery, String name) {
+        super(murderMystery, "UiShop");
     }
 
     @Override

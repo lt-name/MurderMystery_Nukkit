@@ -13,15 +13,21 @@ import java.io.File;
  */
 public abstract class BaseAddons {
 
-    private final Server server = Server.getInstance();
-    protected MurderMystery murderMystery = MurderMystery.getInstance();
+    protected final Server server;
+    protected final MurderMystery murderMystery;
     protected String addonsName;
     private final File configFile;
     private Config config;
 
-    public BaseAddons(String addonsName) {
+    public BaseAddons(MurderMystery murderMystery, String addonsName) {
+        this.murderMystery = murderMystery;
+        this.server = murderMystery.getServer();
         this.addonsName = addonsName;
         this.configFile = new File(this.getDataFolder() + "/" + this.addonsName, "config.yml");
+    }
+
+    private void setAddonsName(String name) {
+        this.addonsName = name;
     }
 
     public String getAddonsName() {
