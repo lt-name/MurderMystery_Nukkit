@@ -32,7 +32,7 @@ import java.util.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static String VERSION = "1.0.5-SNAPSHOT git-ac6eb39";
+    public static String VERSION = "?";
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;
