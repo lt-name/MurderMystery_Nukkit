@@ -1,6 +1,6 @@
 package cn.lanink.murdermystery.addons.uishop;
 
-import cn.lanink.murdermystery.addons.BaseAddons;
+import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderRoomStartEvent;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.ui.GuiCreate;
@@ -23,7 +23,7 @@ import cn.nukkit.scheduler.Task;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class UiShop extends BaseAddons implements Listener {
+public class UiShop extends AddonsBase implements Listener {
 
     private static final int DLC_UI_SHOP = 1111856485;
     private static final int DLC_UI_SHOP_OK = 1111856486;
@@ -34,7 +34,7 @@ public class UiShop extends BaseAddons implements Listener {
     public void onEnable() {
         getMurderMystery().saveResource("Addons/UiShop/config.yml", false);
         this.items = (ArrayList<String>) this.getConfig().getStringList("items");
-        getServer().getPluginManager().registerEvents(this, getMurderMystery());
+        getAddonsManager().registerEvents(this, this);
         getLogger().info("§a加载完成！");
     }
 

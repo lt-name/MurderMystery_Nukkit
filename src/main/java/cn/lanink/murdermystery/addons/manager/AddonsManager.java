@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.addons.manager;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.addons.BaseAddons;
+import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.addons.manager.autoregister.RegisterCommand;
 import cn.lanink.murdermystery.addons.manager.autoregister.RegisterCommands;
 import cn.lanink.murdermystery.addons.manager.autoregister.RegisterListener;
@@ -9,11 +9,13 @@ import cn.lanink.murdermystery.addons.manager.command.AddonsCommand;
 import cn.lanink.murdermystery.addons.manager.logger.AddonsLogger;
 import cn.lanink.murdermystery.addons.uishop.UiShop;
 import cn.nukkit.Server;
+import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Logger;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -26,8 +28,9 @@ public final class AddonsManager {
     private final Server server;
     private final Logger logger;
     private final Config config;
-    private final HashMap<String, BaseAddons> baseAddons = new HashMap<>();
-    private final HashMap<String, Class<? extends BaseAddons>> addonsClassMap = new HashMap<>();
+    private final HashMap<String, AddonsBase> addonsBaseMap = new HashMap<>();
+    private final HashMap<String, Class<? extends AddonsBase>> addonsClassMap = new HashMap<>();
+    private final HashMap<String, HashSet<Listener>> addonsListeners = new HashMap<>();
 
     public AddonsManager(MurderMystery murderMystery) {
         this.murderMystery = murderMystery;
@@ -44,8 +47,30 @@ public final class AddonsManager {
         return this.config;
     }
 
-    public void registerAddons(String name, Class<? extends BaseAddons> addon) {
-        this.addonsClassMap.put(name, addon);
+    /**
+     * 注册扩展
+     * @param name 名称
+     * @param addonsBase 扩展
+     */
+    public void registerAddons(String name, Class<? extends AddonsBase> addonsBase) {
+        this.addonsClassMap.put(name, addonsBase);
+    }
+
+    /**
+     * 注册监听器
+     * @param listener 监听器
+     * @param addonsBase 所属扩展
+     */
+    public void registerEvents(Listener listener, AddonsBase addonsBase) {
+        if (!this.addonsListeners.containsKey(addonsBase.getAddonsName())) {
+            this.addonsListeners.put(addonsBase.getAddonsName(), new HashSet<>());
+        }
+        this.addonsListeners.get(addonsBase.getAddonsName()).add(listener);
+        getServer().getPluginManager().registerEvents(listener, this.murderMystery);
+    }
+
+    public static AddonsManager getInstance() {
+        return MurderMystery.getAddonsManager();
     }
 
     public Server getServer() {
@@ -56,27 +81,34 @@ public final class AddonsManager {
         return this.logger;
     }
 
+    /**
+     * @return 已加载的Addons HashMap
+     */
+    public HashMap<String, AddonsBase> getAddonsBaseMap() {
+        return this.addonsBaseMap;
+    }
+
     public boolean enable(String addonName) {
-        if (!this.baseAddons.containsKey(addonName) && this.addonsClassMap.containsKey(addonName)) {
+        if (!this.addonsBaseMap.containsKey(addonName) && this.addonsClassMap.containsKey(addonName)) {
             this.getLogger().info("Loading " + addonName + " ...");
             try {
-                Class<? extends BaseAddons> addonsClass = this.addonsClassMap.get(addonName);
-                BaseAddons baseAddons = addonsClass.newInstance();
-                addonsClass.getMethod("init", String.class).invoke(baseAddons, addonName);
-                if (addonsClass.isAnnotationPresent(RegisterListener.class) && baseAddons instanceof Listener) {
-                    getServer().getPluginManager().registerEvents((Listener) baseAddons, this.murderMystery);
+                Class<? extends AddonsBase> addonsClass = this.addonsClassMap.get(addonName);
+                AddonsBase addonsBase = addonsClass.newInstance();
+                addonsClass.getMethod("init", String.class).invoke(addonsBase, addonName);
+                if (addonsClass.isAnnotationPresent(RegisterListener.class) && addonsBase instanceof Listener) {
+                    this.registerEvents((Listener) addonsBase, addonsBase);
                 }
                 if (addonsClass.isAnnotationPresent(RegisterCommands.class)) {
                     RegisterCommands commands = addonsClass.getAnnotation(RegisterCommands.class);
                     for (RegisterCommand command : commands.value()) {
-                        getServer().getCommandMap().register(command.fallbackPrefix(), new AddonsCommand(baseAddons, command));
+                        getServer().getCommandMap().register(command.fallbackPrefix(), new AddonsCommand(addonsBase, command));
                     }
                 }else if (addonsClass.isAnnotationPresent(RegisterCommand.class)) {
                     RegisterCommand command = addonsClass.getAnnotation(RegisterCommand.class);
-                    getServer().getCommandMap().register(command.fallbackPrefix(), new AddonsCommand(baseAddons,command));
+                    getServer().getCommandMap().register(command.fallbackPrefix(), new AddonsCommand(addonsBase,command));
                 }
-                baseAddons.setEnabled(true);
-                this.baseAddons.put(addonName, baseAddons);
+                addonsBase.setEnabled(true);
+                this.addonsBaseMap.put(addonName, addonsBase);
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -92,21 +124,31 @@ public final class AddonsManager {
     }
 
     public boolean disable(String addonsName) {
-        if (this.baseAddons.containsKey(addonsName)) {
+        return this.disable(addonsName, true);
+    }
+
+    private boolean disable(String addonsName, Boolean delete) {
+        if (this.addonsBaseMap.containsKey(addonsName)) {
             this.getLogger().info("Disabling " + addonsName + " ...");
-            this.baseAddons.get(addonsName).setEnabled(false);
-            this.baseAddons.remove(addonsName);
+            this.addonsBaseMap.get(addonsName).setEnabled(false);
+            if (this.addonsListeners.containsKey(addonsName)) {
+                for (Listener listener : this.addonsListeners.get(addonsName)) {
+                    HandlerList.unregisterAll(listener);
+                }
+            }
+            if (delete) {
+                this.addonsBaseMap.remove(addonsName);
+            }
             return true;
         }
         return false;
     }
 
     public void disableAll() {
-        Iterator<Map.Entry<String, BaseAddons>> iterator = this.baseAddons.entrySet().iterator();
+        Iterator<Map.Entry<String, AddonsBase>> iterator = this.addonsBaseMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, BaseAddons> entry = iterator.next();
-            this.getLogger().info("Disabling " + entry.getKey() + " ...");
-            entry.getValue().setEnabled(false);
+            Map.Entry<String, AddonsBase> entry = iterator.next();
+            this.disable(entry.getKey(), false);
             iterator.remove();
         }
     }

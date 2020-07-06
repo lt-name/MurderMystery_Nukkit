@@ -1,6 +1,6 @@
 package cn.lanink.murdermystery.addons.manager.command;
 
-import cn.lanink.murdermystery.addons.BaseAddons;
+import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.addons.manager.autoregister.RegisterCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -10,12 +10,12 @@ import cn.nukkit.command.CommandSender;
  */
 public class AddonsCommand extends Command {
 
-    private final BaseAddons baseAddons;
+    private final AddonsBase addonsBase;
     private final Permissions permissions;
 
-    public AddonsCommand(BaseAddons baseAddons, RegisterCommand registerCommand) {
+    public AddonsCommand(AddonsBase addonsBase, RegisterCommand registerCommand) {
         super(registerCommand.command(), registerCommand.description(), registerCommand.usageMessage(), registerCommand.aliases());
-        this.baseAddons = baseAddons;
+        this.addonsBase = addonsBase;
         this.permissions = registerCommand.permissions();
         this.setPermission(this.permissions.getPermission());
         this.setPermissionMessage(registerCommand.permissionMessage());
@@ -23,13 +23,16 @@ public class AddonsCommand extends Command {
 
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] strings) {
+        if (!this.addonsBase.isEnabled()) {
+            return true;
+        }
         if (this.permissions == Permissions.default_op) {
             if (!commandSender.isOp()) {
                 commandSender.sendMessage(this.getPermissionMessage());
                 return true;
             }
         }
-        return this.baseAddons.onCommand(commandSender, this, s, strings);
+        return this.addonsBase.onCommand(commandSender, this, s, strings);
     }
 
 }

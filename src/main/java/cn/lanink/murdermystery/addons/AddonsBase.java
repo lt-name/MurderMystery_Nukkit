@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.addons;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.addons.manager.exception.AddonsException;
 import cn.lanink.murdermystery.addons.manager.logger.AddonsLogger;
 import cn.nukkit.Server;
@@ -11,12 +12,13 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Logger;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * 扩展基础
  * @author lt_name
  */
-public abstract class BaseAddons implements CommandExecutor {
+public abstract class AddonsBase implements CommandExecutor {
 
     private final Server server = Server.getInstance();
     private final MurderMystery murderMystery = MurderMystery.getInstance();
@@ -26,7 +28,7 @@ public abstract class BaseAddons implements CommandExecutor {
     private File configFile;
     private Config config;
 
-    public BaseAddons() {
+    public AddonsBase() {
 
     }
 
@@ -86,6 +88,10 @@ public abstract class BaseAddons implements CommandExecutor {
         return this.murderMystery;
     }
 
+    public final AddonsManager getAddonsManager() {
+        return MurderMystery.getAddonsManager();
+    }
+
     public Config getConfig() {
         if (this.config == null) {
             this.config = new Config(configFile, 2);
@@ -103,10 +109,15 @@ public abstract class BaseAddons implements CommandExecutor {
 
     @Override
     public final boolean equals(Object obj) {
-        if(obj instanceof BaseAddons){
-            return ((BaseAddons) obj).getAddonsName().equals(this.getAddonsName());
+        if(obj instanceof AddonsBase){
+            return ((AddonsBase) obj).getAddonsName().equals(this.getAddonsName());
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.addonsName);
     }
 
 }
