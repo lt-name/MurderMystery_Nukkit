@@ -35,7 +35,7 @@ public class UiShop extends BaseAddons implements Listener {
         getMurderMystery().saveResource("Addons/UiShop/config.yml", false);
         this.items = (ArrayList<String>) this.getConfig().getStringList("items");
         getServer().getPluginManager().registerEvents(this, getMurderMystery());
-        getLogger().info("§aUiShop 扩展已加载！");
+        getLogger().info("§a加载完成！");
     }
 
     @Override

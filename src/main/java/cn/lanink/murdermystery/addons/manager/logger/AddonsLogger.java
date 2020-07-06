@@ -1,6 +1,8 @@
-package cn.lanink.murdermystery.addons;
+package cn.lanink.murdermystery.addons.manager.logger;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.addons.BaseAddons;
+import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.nukkit.Server;
 import cn.nukkit.utils.LogLevel;
 import cn.nukkit.utils.Logger;
@@ -11,6 +13,12 @@ import cn.nukkit.utils.Logger;
 public class AddonsLogger implements Logger {
 
     private final String addonsName;
+
+    public AddonsLogger(AddonsManager addonsManager) {
+        String prefix = MurderMystery.getInstance().getDescription().getPrefix();
+        String murderMystery = prefix != null ? "[" + prefix + "] " : "[" + MurderMystery.getInstance().getDescription().getName() + "] ";
+        this.addonsName = murderMystery + "[AddonsManager] ";
+    }
 
     public AddonsLogger(BaseAddons baseAddons) {
         String prefix = MurderMystery.getInstance().getDescription().getPrefix();

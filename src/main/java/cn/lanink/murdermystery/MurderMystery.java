@@ -3,7 +3,7 @@ package cn.lanink.murdermystery;
 import cn.lanink.lib.scoreboard.IScoreboard;
 import cn.lanink.lib.scoreboard.ScoreboardDe;
 import cn.lanink.lib.scoreboard.ScoreboardGt;
-import cn.lanink.murdermystery.addons.AddonsManager;
+import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
 import cn.lanink.murdermystery.listener.*;
@@ -32,7 +32,7 @@ import java.util.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static String VERSION = "?";
+    public static String VERSION = "1.0.5-SNAPSHOT git-aeadb4c";
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;

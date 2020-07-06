@@ -1,7 +1,12 @@
 package cn.lanink.murdermystery.addons;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.addons.manager.exception.AddonsException;
+import cn.lanink.murdermystery.addons.manager.logger.AddonsLogger;
 import cn.nukkit.Server;
+import cn.nukkit.command.Command;
+import cn.nukkit.command.CommandExecutor;
+import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Logger;
 
@@ -11,7 +16,7 @@ import java.io.File;
  * 扩展基础
  * @author lt_name
  */
-public abstract class BaseAddons {
+public abstract class BaseAddons implements CommandExecutor {
 
     private final Server server = Server.getInstance();
     private final MurderMystery murderMystery = MurderMystery.getInstance();
@@ -25,9 +30,9 @@ public abstract class BaseAddons {
 
     }
 
-    public final void init(String addonsName) throws Exception {
+    public final void init(String addonsName) throws AddonsException {
         if (this.isEnabled) {
-            throw new Exception("[Error] 请勿在加载后执行此方法！");
+            throw new AddonsException("[Error] 请勿在加载后执行此方法！");
         }
         this.addonsName = addonsName;
         this.logger = new AddonsLogger(this);
@@ -54,7 +59,10 @@ public abstract class BaseAddons {
 
     }
 
-    private void setAddonsName(String name) {
+    public final void setAddonsName(String name) throws AddonsException {
+        if (this.isEnabled) {
+            throw new AddonsException("[Error] 请勿在加载后执行此方法！");
+        }
         this.addonsName = name;
     }
 
@@ -65,6 +73,10 @@ public abstract class BaseAddons {
     public abstract void onEnable();
 
     public abstract void onDisable();
+
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        return false;
+    }
 
     public final Server getServer() {
         return this.server;
