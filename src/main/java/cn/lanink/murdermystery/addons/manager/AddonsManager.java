@@ -29,10 +29,10 @@ public final class AddonsManager {
     private final Server server;
     private final Logger logger;
     private final Config config;
-    private static final HashMap<String, AddonsBase> addonsBaseMap = new HashMap<>();
-    private static final HashMap<String, Class<? extends AddonsBase>> addonsClassMap = new HashMap<>();
-    private static final HashMap<String, HashSet<Listener>> addonsListeners = new HashMap<>();
-    private static final HashMap<String, HashSet<Command>> addonsCommands = new HashMap<>();
+    private static final HashMap<String, AddonsBase> ADDONS_BASE_MAP = new HashMap<>();
+    private static final HashMap<String, Class<? extends AddonsBase>> ADDONS_CLASS_MAP = new HashMap<>();
+    private static final HashMap<String, HashSet<Listener>> ADDONS_LISTENERS = new HashMap<>();
+    private static final HashMap<String, HashSet<Command>> ADDONS_COMMANDS = new HashMap<>();
 
     public AddonsManager(MurderMystery murderMystery) {
         this.murderMystery = murderMystery;
@@ -55,7 +55,7 @@ public final class AddonsManager {
      * @param addonsBase 扩展
      */
     public static void registerAddons(String name, Class<? extends AddonsBase> addonsBase) {
-        addonsClassMap.put(name, addonsBase);
+        ADDONS_CLASS_MAP.put(name, addonsBase);
     }
 
     /**
@@ -64,20 +64,20 @@ public final class AddonsManager {
      * @param addonsBase 所属扩展
      */
     public void registerEvents(Listener listener, AddonsBase addonsBase) {
-        if (!addonsListeners.containsKey(addonsBase.getAddonsName())) {
-            addonsListeners.put(addonsBase.getAddonsName(), new HashSet<>());
+        if (!ADDONS_LISTENERS.containsKey(addonsBase.getAddonsName())) {
+            ADDONS_LISTENERS.put(addonsBase.getAddonsName(), new HashSet<>());
         }
-        addonsListeners.get(addonsBase.getAddonsName()).add(listener);
+        ADDONS_LISTENERS.get(addonsBase.getAddonsName()).add(listener);
         getServer().getPluginManager().registerEvents(listener, this.murderMystery);
     }
 
     public boolean registerCommand(String fallbackPrefix, Command command, AddonsBase addonsBase) {
-        if (!addonsCommands.containsKey(addonsBase.getAddonsName())) {
-            addonsCommands.put(addonsBase.getAddonsName(), new HashSet<>());
+        if (!ADDONS_COMMANDS.containsKey(addonsBase.getAddonsName())) {
+            ADDONS_COMMANDS.put(addonsBase.getAddonsName(), new HashSet<>());
         }
         boolean b = getServer().getCommandMap().register(fallbackPrefix, command);
         if (b) {
-            addonsCommands.get(addonsBase.getAddonsName()).add(command);
+            ADDONS_COMMANDS.get(addonsBase.getAddonsName()).add(command);
         }
         return b;
     }
@@ -98,14 +98,14 @@ public final class AddonsManager {
      * @return 已加载的Addons HashMap
      */
     public HashMap<String, AddonsBase> getAddonsBaseMap() {
-        return addonsBaseMap;
+        return ADDONS_BASE_MAP;
     }
 
     public boolean enable(String addonName) {
-        if (!addonsBaseMap.containsKey(addonName) && addonsClassMap.containsKey(addonName)) {
+        if (!ADDONS_BASE_MAP.containsKey(addonName) && ADDONS_CLASS_MAP.containsKey(addonName)) {
             this.getLogger().info("Loading " + addonName + " ...");
             try {
-                Class<? extends AddonsBase> addonsClass = addonsClassMap.get(addonName);
+                Class<? extends AddonsBase> addonsClass = ADDONS_CLASS_MAP.get(addonName);
                 AddonsBase addonsBase = addonsClass.newInstance();
                 addonsClass.getMethod("init", String.class).invoke(addonsBase, addonName);
                 if (addonsClass.isAnnotationPresent(RegisterListener.class) && addonsBase instanceof Listener) {
@@ -121,7 +121,7 @@ public final class AddonsManager {
                     this.registerCommand(command.fallbackPrefix(), new AddonsCommand(addonsBase, command), addonsBase);
                 }
                 addonsBase.setEnabled(true);
-                addonsBaseMap.put(addonName, addonsBase);
+                ADDONS_BASE_MAP.put(addonName, addonsBase);
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -131,7 +131,7 @@ public final class AddonsManager {
     }
 
     public void enableAll() {
-        for (String addonsName : addonsClassMap.keySet()) {
+        for (String addonsName : ADDONS_CLASS_MAP.keySet()) {
             this.enable(addonsName);
         }
     }
@@ -141,29 +141,29 @@ public final class AddonsManager {
     }
 
     private boolean disable(String addonsName, Boolean delete) {
-        if (addonsBaseMap.containsKey(addonsName)) {
+        if (ADDONS_BASE_MAP.containsKey(addonsName)) {
             this.getLogger().info("Disabling " + addonsName + " ...");
-            addonsBaseMap.get(addonsName).setEnabled(false);
-            if (addonsCommands.containsKey(addonsName)) {
-                Iterator<Command> commandIt = addonsCommands.get(addonsName).iterator();
+            ADDONS_BASE_MAP.get(addonsName).setEnabled(false);
+            if (ADDONS_COMMANDS.containsKey(addonsName)) {
+                Iterator<Command> commandIt = ADDONS_COMMANDS.get(addonsName).iterator();
                 while (commandIt.hasNext()) {
                     Command command = commandIt.next();
                     command.unregister(getServer().getCommandMap());
                     commandIt.remove();
                 }
-                addonsCommands.remove(addonsName);
+                ADDONS_COMMANDS.remove(addonsName);
             }
-            if (addonsListeners.containsKey(addonsName)) {
-                Iterator<Listener> listenerIt = addonsListeners.get(addonsName).iterator();
+            if (ADDONS_LISTENERS.containsKey(addonsName)) {
+                Iterator<Listener> listenerIt = ADDONS_LISTENERS.get(addonsName).iterator();
                 while (listenerIt.hasNext()) {
                     Listener listener = listenerIt.next();
                     HandlerList.unregisterAll(listener);
                     listenerIt.remove();
                 }
-                addonsListeners.remove(addonsName);
+                ADDONS_LISTENERS.remove(addonsName);
             }
             if (delete) {
-                addonsBaseMap.remove(addonsName);
+                ADDONS_BASE_MAP.remove(addonsName);
             }
             return true;
         }
@@ -171,7 +171,7 @@ public final class AddonsManager {
     }
 
     public void disableAll() {
-        Iterator<Map.Entry<String, AddonsBase>> iterator = addonsBaseMap.entrySet().iterator();
+        Iterator<Map.Entry<String, AddonsBase>> iterator = ADDONS_BASE_MAP.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, AddonsBase> entry = iterator.next();
             this.disable(entry.getKey(), false);
