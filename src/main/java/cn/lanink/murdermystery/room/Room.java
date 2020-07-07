@@ -12,6 +12,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
 import java.util.*;
@@ -121,25 +122,30 @@ public class Room {
      * @param normal 正常关闭
      */
     public void endGame(boolean normal) {
-        this.mode = 0;
-        if (normal) {
-            Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
-            while(it.hasNext()) {
-                Map.Entry<Player, Integer> entry = it.next();
-                it.remove();
-                this.quitRoom(entry.getKey());
+        Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
+            @Override
+            public void onRun(int i) {
+                mode = 0;
+                if (normal) {
+                    Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
+                    while(it.hasNext()) {
+                        Map.Entry<Player, Integer> entry = it.next();
+                        it.remove();
+                        quitRoom(entry.getKey());
+                    }
+                }else {
+                    getLevel().getPlayers().values().forEach(
+                            player -> player.kick(MurderMystery.getInstance().getLanguage().roomSafeKick));
+                }
+                placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
+                placeBlocks.clear();
+                skinNumber.clear();
+                skinCache.clear();
+                killKillerPlayer = null;
+                Tools.cleanEntity(getLevel(), true);
+                initTime();
             }
-        }else {
-            this.getLevel().getPlayers().values().forEach(
-                    player -> player.kick(MurderMystery.getInstance().getLanguage().roomSafeKick));
-        }
-        this.placeBlocks.forEach(list -> list.forEach(vector3 -> this.getLevel().setBlock(vector3, Block.get(0))));
-        this.placeBlocks.clear();
-        this.skinNumber.clear();
-        this.skinCache.clear();
-        this.killKillerPlayer = null;
-        Tools.cleanEntity(this.getLevel(), true);
-        this.initTime();
+        }, 1);
     }
 
     /**
