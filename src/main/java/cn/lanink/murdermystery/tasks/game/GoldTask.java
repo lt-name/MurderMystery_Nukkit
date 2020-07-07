@@ -8,6 +8,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.scheduler.PluginTask;
+import cn.nukkit.scheduler.Task;
 
 /**
  * 金锭生成 金锭自动兑换
@@ -33,10 +34,16 @@ public class GoldTask extends PluginTask<MurderMystery> {
         }
         if (this.goldSpawnTime < 1) {
             this.goldSpawnTime = this.room.getSetGoldSpawnTime();
-            Tools.cleanEntity(room.getLevel());
-            for (Position spawn : room.getGoldSpawn()) {
-                room.getLevel().dropItem(spawn, Item.get(266, 0));
-            }
+            //主线程操作掉落物
+            owner.getServer().getScheduler().scheduleDelayedTask(owner, new Task() {
+                @Override
+                public void onRun(int i) {
+                    Tools.cleanEntity(room.getLevel());
+                    for (Position spawn : room.getGoldSpawn()) {
+                        room.getLevel().dropItem(spawn, Item.get(266, 0));
+                    }
+                }
+            }, 1);
         }else {
             this.goldSpawnTime--;
         }
