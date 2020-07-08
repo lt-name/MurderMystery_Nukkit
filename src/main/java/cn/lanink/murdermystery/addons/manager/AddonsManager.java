@@ -67,19 +67,19 @@ public final class AddonsManager {
         if (!ADDONS_LISTENERS.containsKey(addonsBase.getAddonsName())) {
             ADDONS_LISTENERS.put(addonsBase.getAddonsName(), new HashSet<>());
         }
-        ADDONS_LISTENERS.get(addonsBase.getAddonsName()).add(listener);
-        getServer().getPluginManager().registerEvents(listener, this.murderMystery);
+        if (ADDONS_LISTENERS.get(addonsBase.getAddonsName()).add(listener)) {
+            getServer().getPluginManager().registerEvents(listener, this.murderMystery);
+        }
     }
 
     public boolean registerCommand(String fallbackPrefix, Command command, AddonsBase addonsBase) {
         if (!ADDONS_COMMANDS.containsKey(addonsBase.getAddonsName())) {
             ADDONS_COMMANDS.put(addonsBase.getAddonsName(), new HashSet<>());
         }
-        boolean b = getServer().getCommandMap().register(fallbackPrefix, command);
-        if (b) {
-            ADDONS_COMMANDS.get(addonsBase.getAddonsName()).add(command);
+        if (ADDONS_COMMANDS.get(addonsBase.getAddonsName()).add(command)) {
+            return getServer().getCommandMap().register(fallbackPrefix, command);
         }
-        return b;
+        return false;
     }
 
     public static AddonsManager getInstance() {
