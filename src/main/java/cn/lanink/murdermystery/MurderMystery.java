@@ -253,6 +253,7 @@ public class MurderMystery extends PluginBase {
             skinData = ImageIO.read(this.getResource("skin.png"));
         } catch (IOException ignored) { }
         if (skinData != null) {
+            this.corpseSkin.setTrusted(true);
             this.corpseSkin.setSkinData(skinData);
             this.corpseSkin.setSkinId("defaultSkin");
             getLogger().info(this.language.defaultSkinSuccess);
@@ -341,6 +342,7 @@ public class MurderMystery extends PluginBase {
                 File skinFile = new File(getDataFolder() + "/Skins/" + skinName + "/skin.png");
                 if (skinFile.exists()) {
                     Skin skin = new Skin();
+                    skin.setTrusted(true);
                     BufferedImage skinData = null;
                     try {
                         skinData = ImageIO.read(skinFile);

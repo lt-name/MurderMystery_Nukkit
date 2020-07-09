@@ -181,7 +181,7 @@ public class Tools {
         packet.oldSkinName = player.getSkin().getSkinId();
         packet.uuid = player.getUniqueId();
         player.setSkin(skin);
-        player.dataPacket(packet);
+        player.getLevel().getPlayers().values().forEach(p -> p.dataPacket(packet));
     }
 
     /**
