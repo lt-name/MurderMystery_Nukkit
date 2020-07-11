@@ -22,11 +22,7 @@ public class ScoreboardGt implements IScoreboard {
         }else {
             simpleScoreboard = this.scoreboards.get(player);
             simpleScoreboard.clearCache();
-            if (simpleScoreboard.getAllScores().size() > message.size()) {
-                for (int line = message.size(); line < simpleScoreboard.getAllScores().size(); line++) {
-                    simpleScoreboard.resetScore(line);
-                }
-            }
+            simpleScoreboard.resetAllScores();
         }
         simpleScoreboard.setDisplayName(title);
         for (int line = 0; line < message.size(); line++) {
