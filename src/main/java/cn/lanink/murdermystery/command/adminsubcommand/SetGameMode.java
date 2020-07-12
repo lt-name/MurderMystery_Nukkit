@@ -1,7 +1,6 @@
 package cn.lanink.murdermystery.command.adminsubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.room.Room;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -29,21 +28,16 @@ public class SetGameMode extends BaseSubCommand {
         if (args.length == 2) {
             if (args[1].matches("[0-9]*")) {
                 Player player = (Player) sender;
-                Room room = this.murderMystery.getRooms().get(player.getLevel().getName());
-                if (room != null) {
-                    int mode = Integer.parseInt(args[1]);
-                    Config config = this.murderMystery.getRoomConfig(player.getLevel());
-                    config.set("gameMode", mode);
-                    config.save();
-                    if (mode == 1) {
-                        sender.sendMessage(this.language.adminSetGameMode
-                                .replace("%roomMode%", this.language.Infected));
-                    }else {
-                        sender.sendMessage(this.language.adminSetGameMode
-                                .replace("%roomMode%", this.language.Classic));
-                    }
+                int mode = Integer.parseInt(args[1]);
+                Config config = this.murderMystery.getRoomConfig(player.getLevel());
+                config.set("gameMode", mode);
+                config.save();
+                if (mode == 1) {
+                    sender.sendMessage(this.language.adminSetGameMode
+                            .replace("%roomMode%", this.language.Infected));
                 }else {
-                    sender.sendMessage(this.language.adminLevelNoRoom);
+                    sender.sendMessage(this.language.adminSetGameMode
+                            .replace("%roomMode%", this.language.Classic));
                 }
             }else {
                 sender.sendMessage(this.language.adminNotNumber);
