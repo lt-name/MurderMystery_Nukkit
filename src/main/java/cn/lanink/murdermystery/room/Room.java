@@ -215,7 +215,7 @@ public class Room {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
                 this.skinNumber.put(player, entry.getKey());
-                Tools.setPlayerSkin(player, entry.getValue());
+                Tools.setHumanSkin(player, entry.getValue());
                 return;
             }
         }
@@ -227,7 +227,7 @@ public class Room {
      */
     public void restorePlayerSkin(Player player) {
         if (this.skinCache.containsKey(player)) {
-            Tools.setPlayerSkin(player, this.skinCache.get(player));
+            Tools.setHumanSkin(player, this.skinCache.get(player));
             this.skinCache.remove(player);
         }
         this.skinNumber.remove(player);

@@ -4,6 +4,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
 import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
@@ -36,7 +37,7 @@ public class SwordMoveTask extends AsyncTask {
                 .putString("ModelId", skin.getSkinId()));
         tag.putFloat("Scale", 0.5F);
         this.sword = new EntitySword(player.getChunk(), tag);
-        this.sword.setSkin(skin);
+        Tools.setHumanSkin(this.sword, skin);
         this.sword.setRotation(player.getYaw(), player.getPitch());
         this.sword.spawnToAll();
     }

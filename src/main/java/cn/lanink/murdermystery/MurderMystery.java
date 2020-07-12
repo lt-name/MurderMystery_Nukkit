@@ -222,6 +222,7 @@ public class MurderMystery extends PluginBase {
         File fileImg = new File(getDataFolder() + "/Resources/Sword/skin.png");
         File fileJson = new File(getDataFolder() + "/Resources/Sword/skin.json");
         Skin skin = new Skin();
+        skin.setTrusted(true);
         BufferedImage skinData;
         try {
             skinData = ImageIO.read(fileImg);

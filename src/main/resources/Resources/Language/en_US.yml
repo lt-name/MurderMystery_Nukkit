@@ -20,7 +20,7 @@ skinLoadedAllSuccess: "§eAll skin files have been checked with %number% skin fi
 skinLoadedAllFailureByNumber: "§c§lWARNING:§r§cYou are not put enough 16 skin files in the plugin,some players may use their own skins,this will lead to some problems when in the game!"
 pluginEnable: "§ePlugin §cMystery§4Murder§e enabled!§lWelcome to use!!!"
 pluginDisable: "§ePlugin §cMystery§4Murder§e disabled!§lThanks for your use!!!"
-useCmdInRoom: "§e >> §cYou can't use any commands here!"
+useCmdInRoom: "§e >> §cYou can't use this commands here!"
 cmdHelp: "§eFor more help,please type: §b/%cmdName% help"
 userHelp: |-
   §eMurderMystery-HELP
@@ -70,7 +70,7 @@ adminUnload: "§aAll rooms unloaded! Please check the information in the backgro
 roomSafeKick: |-
   §cRoom is closed abnormally!
   For the safety of your backpack, please re-enter the server later!
-playerDeathChat: "§c[Death] %player% + §b >>> %message%"
+playerDeathChat: "§c[Death] %player% §b >>> %message%"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"
 tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room"
 itemDetectiveBow: "§eBow of detectives"
@@ -148,11 +148,11 @@ waitScoreBoard: |-
   Room Mode: §a %roomMode%
   Player: §a %playerNumber%/16
   Need more than 5 players.
-  Waiting for players
+  Status: Waiting
 waitTimeBottom: |-
   §aNumber of players: %playerNumber% 
   §aThere is: %time% seconds to start!
-waitBottom: "§cWaiting for players,there are %playerNumber% players in the room"
+waitBottom: "§cWaiting for more players..."
 gameTimeScoreBoard: |-
   RoomMode: §a %roomMode%
   §l§aCurrent identity:§e %mode%
@@ -179,6 +179,6 @@ adminMenuButton7: "§cUninstall all the rooms"
 adminTimeMenuInputText1: "The interval of each gold ingot(s)"
 adminTimeMenuInputText2: "Waiting Time(s)"
 adminTimeMenuInputText3: "Playing Time(s)"
-joinRoomOK: "§l§aCofirm to join the room: %name% §l§a"
+joinRoomOK: "§l§aCofirm to join the room: %name% §l§a?"
 buttonOK: "§aConfirm"
 buttonReturn: "§cBack"
