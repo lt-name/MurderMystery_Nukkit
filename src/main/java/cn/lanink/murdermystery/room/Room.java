@@ -160,13 +160,17 @@ public class Room {
             this.addPlaying(player);
             Tools.rePlayerState(player, true);
             SavePlayerInventory.save(player);
-            player.teleport(this.getWaitSpawn());
-            this.setRandomSkin(player);
-            Tools.giveItem(player, 10);
-            if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
-                Tips.closeTipsShow(this.level.getName(), player);
+            if (player.teleport(this.getWaitSpawn())) {
+                this.setRandomSkin(player);
+                Tools.giveItem(player, 10);
+                if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+                    Tips.closeTipsShow(this.level.getName(), player);
+                }
+                player.sendMessage(MurderMystery.getInstance().getLanguage().joinRoom
+                        .replace("%name%", this.level.getName()));
+            }else {
+                this.quitRoom(player, true);
             }
-            player.sendMessage(MurderMystery.getInstance().getLanguage().joinRoom.replace("%name%", this.level.getName()));
         }
     }
 
