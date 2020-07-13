@@ -11,6 +11,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.entity.item.EntityItem;
@@ -170,18 +171,18 @@ public class Tools {
     }
 
     /**
-     * 设置玩家皮肤
-     * @param player 玩家
+     * 设置Human实体皮肤
+     * @param human 实体
      * @param skin 皮肤
      */
-    public static void setPlayerSkin(Player player, Skin skin) {
+    public static void setHumanSkin(EntityHuman human, Skin skin) {
         PlayerSkinPacket packet = new PlayerSkinPacket();
         packet.skin = skin;
         packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = player.getSkin().getSkinId();
-        packet.uuid = player.getUniqueId();
-        player.setSkin(skin);
-        player.getLevel().getPlayers().values().forEach(p -> p.dataPacket(packet));
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        human.setSkin(skin);
+        human.getLevel().getPlayers().values().forEach(p -> p.dataPacket(packet));
     }
 
     /**

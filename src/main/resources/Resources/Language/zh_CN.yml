@@ -25,7 +25,7 @@ cmdHelp: "§a查看帮助：/%cmdName% help"
 userHelp: |-
   §eMurderMystery--命令帮助
   §a/%cmdName% §e打开ui
-  §a/%cmdName% join 房间名称 §e加入游戏
+  §a/%cmdName% join <房间名称> §e加入游戏
   §a/%cmdName% quit §e退出游戏
   §a/%cmdName% list §e查看房间列表
 noPermission: "§c你没有权限！"
@@ -48,9 +48,9 @@ adminHelp: |-
   §a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点
   §a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点
   §a/%cmdName% setgoldspawntime 数字 §e设置金锭生成间隔
-  §a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间
-  §a/%cmdName% setgametime 数字 §e设置每轮游戏最长时间
-  §a/%cmdName% setgamemode 模式 §e设置房间游戏模式
+  §a/%cmdName% setwaittime <时间> §e设置游戏人数足够后的等待时间
+  §a/%cmdName% setgametime <时间> §e设置每轮游戏最长时间
+  §a/%cmdName% setgamemode <模式> §e设置房间游戏模式
   §a/%cmdName% startroom §e开始所在地图的房间游戏
   §a/%cmdName% reloadroom §e重载所有房间
   §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置
@@ -70,7 +70,7 @@ adminUnload: "§a已卸载所有房间！请在后台查看信息！"
 roomSafeKick: |-
   §c房间非正常关闭!
   为了您的背包安全，请稍后重进服务器！
-playerDeathChat: "§c[死亡] %player% + §b >>> %message%"
+playerDeathChat: "§c[死亡] %player% §b >>> %message%"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
 tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 itemDetectiveBow: "§e侦探之弓"
