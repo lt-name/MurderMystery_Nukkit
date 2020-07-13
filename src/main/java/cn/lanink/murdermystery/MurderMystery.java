@@ -8,6 +8,8 @@ import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
 import cn.lanink.murdermystery.listener.*;
 import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.RoomInfected;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.ui.GuiType;
 import cn.lanink.murdermystery.utils.Language;
@@ -24,6 +26,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
@@ -38,7 +41,8 @@ public class MurderMystery extends PluginBase {
     private Language language;
     private Config config;
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
-    private final LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOMCLASS = new LinkedHashMap<>();
+    private final LinkedHashMap<String, RoomBase> rooms = new LinkedHashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
@@ -66,13 +70,6 @@ public class MurderMystery extends PluginBase {
             getLogger().warning("Skins 文件夹初始化失败");
         }
         saveDefaultConfig();
-        if (addonsManager == null) addonsManager = new AddonsManager(this);
-    }
-
-    @Override
-    public void onEnable() {
-        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        getLogger().info("§l§eVersion: " + VERSION);
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         //语言文件
         saveResource("Resources/Language/zh_CN.yml", false);
@@ -87,6 +84,24 @@ public class MurderMystery extends PluginBase {
             this.language = new Language(new Config());
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
         }
+        //扩展
+        if (addonsManager == null) addonsManager = new AddonsManager(this);
+        //加载房间类
+        registerRoom("classic", Room.class);
+        registerRoom("infected", RoomInfected.class);
+
+        //稍微暂停下，方便服主查看提示信息
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ignored) {
+
+        }
+    }
+
+    @Override
+    public void onEnable() {
+        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
+        getLogger().info("§l§eVersion: " + VERSION);
         //加载计分板
         try {
             Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
@@ -135,9 +150,9 @@ public class MurderMystery extends PluginBase {
     public void onDisable() {
         addonsManager.disableAll();
         if (this.rooms.values().size() > 0) {
-            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
+            Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, Room> entry = it.next();
+                Map.Entry<String, RoomBase> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
                     entry.getValue().endGame(false);
                     getLogger().info(this.language.roomUnloadFailure.replace("%name%", entry.getKey()));
@@ -155,6 +170,14 @@ public class MurderMystery extends PluginBase {
         }
         this.taskList.clear();
         getLogger().info(this.language.pluginDisable);
+    }
+
+    public static void registerRoom(String name, Class<? extends RoomBase> roomClass) {
+        ROOMCLASS.put(name, roomClass);
+    }
+
+    public static LinkedHashMap<String, Class<? extends RoomBase>> getRoomClass() {
+        return ROOMCLASS;
     }
 
     public Language getLanguage() {
@@ -194,7 +217,7 @@ public class MurderMystery extends PluginBase {
         return this.corpseSkin;
     }
 
-    public LinkedHashMap<String, Room> getRooms() {
+    public LinkedHashMap<String, RoomBase> getRooms() {
         return this.rooms;
     }
 
@@ -292,9 +315,17 @@ public class MurderMystery extends PluginBase {
                         getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", fileName[0]));
                         continue;
                     }
-                    Room room = new Room(config);
-                    this.rooms.put(fileName[0], room);
-                    getLogger().info(this.language.roomLoadedSuccess.replace("%name%", fileName[0]));
+
+                    try {
+                        Constructor<? extends RoomBase> constructor =  ROOMCLASS.get(
+                                config.getString("gameMode", "classic")).getConstructor(Config.class);
+                        RoomBase roomBase = constructor.newInstance(config);
+                        roomBase.setGameName(config.getString("gameMode", "classic"));
+                        this.rooms.put(fileName[0], roomBase);
+                        getLogger().info(this.language.roomLoadedSuccess.replace("%name%", fileName[0]));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -306,9 +337,9 @@ public class MurderMystery extends PluginBase {
      */
     public void unloadRooms() {
         if (this.rooms.values().size() > 0) {
-            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
+            Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, Room> entry = it.next();
+                Map.Entry<String, RoomBase> entry = it.next();
                 entry.getValue().endGame();
                 getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();

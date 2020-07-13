@@ -1,8 +1,7 @@
 package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.GameMode;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.tasks.game.ScanTask;
 import cn.lanink.murdermystery.tasks.game.SwordMoveTask;
 import cn.lanink.murdermystery.utils.Language;
@@ -61,15 +60,15 @@ public class PlayerGameListener implements Listener {
             if (player == null || event.getProjectile() == null) {
                 return;
             }
-            Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+            RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
             if (room == null || room.getMode() != 2) {
                 return;
             }
-            if (room.getPlayerMode(player) != 0 && room.getPlayerMode(player) != 3) {
+            if (room.getPlayers(player) != 0 && room.getPlayers(player) != 3) {
                 event.getProjectile().namedTag = new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 20);
-                if (room.getPlayerMode(player) == 2) {
+                if (room.getPlayers(player) == 2) {
                     player.getInventory().addItem(Item.get(262, 0, 1));
                     return;
                 }
@@ -127,13 +126,13 @@ public class PlayerGameListener implements Listener {
         if (event.isCancelled()) return;
         Level level = event.getItem() == null ? null : event.getItem().getLevel();
         if (level == null) return;
-        Room room = this.murderMystery.getRooms().getOrDefault(level.getName(), null);
+        RoomBase room = this.murderMystery.getRooms().getOrDefault(level.getName(), null);
         if (room == null) return;
         if (event.getInventory() != null && event.getInventory() instanceof PlayerInventory) {
             Player player = (Player) event.getInventory().getHolder();
             CompoundTag tag = event.getItem().getItem() == null ? null : event.getItem().getItem().getNamedTag();
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 1) {
-                if (room.getPlayerMode(player) != 1) {
+                if (room.getPlayers(player) != 1) {
                     event.setCancelled(true);
                     return;
                 }
@@ -154,10 +153,10 @@ public class PlayerGameListener implements Listener {
         if (player == null || string == null) {
             return;
         }
-        Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room != null && room.getMode() == 2 && room.getPlayerMode(player) == 0) {
+        RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room != null && room.getMode() == 2 && room.getPlayers(player) == 0) {
             for (Player p : room.getPlayers().keySet()) {
-                if (room.getPlayerMode(p) == 0) {
+                if (room.getPlayers(p) == 0) {
                     p.sendMessage(
                             this.language.playerDeathChat.replace("%player%", player.getName())
                                     .replace("%message%", string));
@@ -180,10 +179,10 @@ public class PlayerGameListener implements Listener {
         if (player == null || item == null) {
             return;
         }
-        Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room == null || room.getGameMode() == GameMode.INFECTED) return;
+        RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room == null || room.getGameMode().equals("infected")) return;
         CompoundTag tag = item.hasCompoundTag() ? item.getNamedTag() : null;
-        if (room.getMode() == 2 && room.isPlaying(player) && room.getPlayerMode(player) == 3) {
+        if (room.getMode() == 2 && room.isPlaying(player) && room.getPlayers(player) == 3) {
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
                 if (room.effectCD < 1) {
                     Effect effect = Effect.getEffect(1);
@@ -211,7 +210,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || block == null) {
             return;
         }
-        Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -222,7 +221,7 @@ public class PlayerGameListener implements Listener {
         }
         if (room.getMode() == 2) {
             if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
-                if (room.getPlayerMode(player) == 3 && room.getGameMode() != GameMode.INFECTED) {
+                if (room.getPlayers(player) == 3 && !room.getGameMode().equals("infected")) {
                     CompoundTag tag = player.getInventory().getItemInHand() == null ? null : player.getInventory().getItemInHand().getNamedTag();
                     if (tag != null && tag.getBoolean("isMurderItem")) {
                         if (tag.getInt("MurderType") == 2) {
@@ -339,7 +338,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || item == null || item.getNamedTag() == null) {
             return;
         }
-        Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null || room.getMode() != 2) {
             return;
         }
@@ -347,7 +346,7 @@ public class PlayerGameListener implements Listener {
         if (room.isPlaying(player) &&
                 tag.getBoolean("isMurderItem") &&
                 tag.getInt("MurderType") == 21) {
-            if (room.getPlayerMode(player) == 3) {
+            if (room.getPlayers(player) == 3) {
                 Effect effect = Effect.getEffect(2);
                 effect.setDuration(100);
                 player.addEffect(effect);
@@ -391,7 +390,7 @@ public class PlayerGameListener implements Listener {
         if (level == null || !this.murderMystery.getRooms().containsKey(level.getName())) {
             return;
         }
-        Room room = this.murderMystery.getRooms().get(level.getName());
+        RoomBase room = this.murderMystery.getRooms().get(level.getName());
         CompoundTag tag = item.getNamedTag();
         if (room.getMode() == 2 && tag != null &&
                 tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 22) {
@@ -487,7 +486,7 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        for (Room room : this.murderMystery.getRooms().values()) {
+        for (RoomBase room : this.murderMystery.getRooms().values()) {
             if (room.isPlaying(player)) {
                 event.setRespawnPosition(room.getRandomSpawn().get(new Random().nextInt(room.getRandomSpawn().size())));
             }
@@ -501,10 +500,9 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
-        if (player == null) return;
-        Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room == null) return;
-        event.setCancelled(false);
+        if (player != null && this.murderMystery.getRooms().containsKey(player.getLevel().getName())) {
+            event.setCancelled(false);
+        }
     }
 
     /**
@@ -515,7 +513,7 @@ public class PlayerGameListener implements Listener {
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         if (player == null || event.getMessage() == null) return;
-        Room room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null || !room.isPlaying(player)) {
             return;
         }

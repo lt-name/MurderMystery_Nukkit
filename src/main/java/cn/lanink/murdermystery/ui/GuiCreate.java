@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.ui;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -87,7 +87,7 @@ public class GuiCreate {
      */
     public static void sendRoomListMenu(Player player) {
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        for (Map.Entry<String, Room> entry : MurderMystery.getInstance().getRooms().entrySet()) {
+        for (Map.Entry<String, RoomBase> entry : MurderMystery.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e§l" + entry.getKey() +
                     "\n§r§eMode: " + Tools.getStringRoomMode(entry.getValue()) +
                     " Player: " + entry.getValue().getPlayers().size() + "/16",
@@ -103,7 +103,7 @@ public class GuiCreate {
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         FormWindowModal modal;
-        Room room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
+        RoomBase room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
         if (room != null) {
             if (room.getMode() == 2 || room.getMode() == 3) {
                 modal = new FormWindowModal(

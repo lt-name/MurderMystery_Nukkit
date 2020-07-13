@@ -4,7 +4,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -40,14 +40,14 @@ public class Tools {
      * @param room 房间
      * @return 房间模式
      */
-    public static String getStringRoomMode(Room room) {
+    public static String getStringRoomMode(RoomBase room) {
         switch (room.getGameMode()) {
-            case CLASSIC:
-                return MurderMystery.getInstance().getLanguage().Classic;
-            case INFECTED:
+            case "infected":
                 return MurderMystery.getInstance().getLanguage().Infected;
+            case "classic":
+            default:
+                return MurderMystery.getInstance().getLanguage().Classic;
         }
-        return "error";
     }
 
     /**
@@ -219,12 +219,18 @@ public class Tools {
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
     }
 
+    public static void sendMessage(RoomBase roomBase, String string) {
+        for (Player player : roomBase.getPlayers().keySet()) {
+            player.sendMessage(string);
+        }
+    }
+
     /**
      * 添加声音
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(Room room, Sound sound) {
+    public static void addSound(RoomBase room, Sound sound) {
         for (Player player : room.getPlayers().keySet()) {
             addSound(player, sound);
         }

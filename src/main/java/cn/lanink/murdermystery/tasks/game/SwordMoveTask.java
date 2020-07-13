@@ -3,7 +3,7 @@ package cn.lanink.murdermystery.tasks.game;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -17,12 +17,12 @@ import java.util.LinkedList;
 
 public class SwordMoveTask extends AsyncTask {
 
-    private final Room room;
+    private final RoomBase room;
     private final Player player;
     private LinkedList<double[]> math;
     private EntitySword sword;
 
-    public SwordMoveTask(Room room, Player player) {
+    public SwordMoveTask(RoomBase room, Player player) {
         this.room = room;
         this.player = player;
         Position pos1 = new Position(player.x + 0.5D, player.y + player.getEyeHeight(), player.z + 0.5D, player.getLevel());

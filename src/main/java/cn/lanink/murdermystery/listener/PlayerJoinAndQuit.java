@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -42,7 +42,7 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null) {
             return;
         }
-        for (Room room : MurderMystery.getInstance().getRooms().values()) {
+        for (RoomBase room : MurderMystery.getInstance().getRooms().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player, false);
             }
@@ -57,7 +57,7 @@ public class PlayerJoinAndQuit implements Listener {
         String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getName();
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
-            LinkedHashMap<String, Room> room =  MurderMystery.getInstance().getRooms();
+            LinkedHashMap<String, RoomBase> room = MurderMystery.getInstance().getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
                 player.sendMessage(MurderMystery.getInstance().getLanguage().tpQuitRoomLevel);

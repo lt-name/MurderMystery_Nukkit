@@ -1,6 +1,6 @@
 package cn.lanink.murdermystery.event;
 
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
@@ -14,7 +14,7 @@ public class MurderPlayerDamageEvent extends RoomPlayerEvent implements Cancella
         return handlers;
     }
 
-    public MurderPlayerDamageEvent(Room room, Player damage, Player player) {
+    public MurderPlayerDamageEvent(RoomBase room, Player damage, Player player) {
         this.room = room;
         this.damage = damage;
         this.player = player;

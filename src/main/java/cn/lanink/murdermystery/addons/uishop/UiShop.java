@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.addons.uishop;
 
 import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderRoomStartEvent;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -60,7 +60,7 @@ public class UiShop extends AddonsBase implements Listener {
         Player player = event.getPlayer();
         Item item = event.getItem();
         if (player == null || item == null || item.getNamedTag() == null) return;
-        Room room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
+        RoomBase room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room != null && room.getMode() == 2 &&
                 item.getNamedTag().getBoolean("isMurderUiShop") && !this.cache.contains(player)) {
             this.cache.add(player);

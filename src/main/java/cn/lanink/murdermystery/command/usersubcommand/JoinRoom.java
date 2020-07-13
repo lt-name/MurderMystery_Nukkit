@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.command.usersubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -27,7 +27,7 @@ public class JoinRoom extends BaseSubCommand {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (this.murderMystery.getRooms().size() > 0) {
             Player player = (Player) sender;
-            for (Room room : this.murderMystery.getRooms().values()) {
+            for (RoomBase room : this.murderMystery.getRooms().values()) {
                 if (room.isPlaying(player)) {
                     sender.sendMessage(this.language.joinRoomOnRoom);
                     return true;
@@ -38,7 +38,7 @@ public class JoinRoom extends BaseSubCommand {
                 return true;
             }
             if (args.length < 2) {
-                for (Room room : this.murderMystery.getRooms().values()) {
+                for (RoomBase room : this.murderMystery.getRooms().values()) {
                     if (room.getMode() == 0 || room.getMode() == 1) {
                         room.joinRoom(player);
                         sender.sendMessage(this.language.joinRandomRoom);
@@ -46,7 +46,7 @@ public class JoinRoom extends BaseSubCommand {
                     }
                 }
             }else if (this.murderMystery.getRooms().containsKey(args[1])) {
-                Room room = this.murderMystery.getRooms().get(args[1]);
+                RoomBase room = this.murderMystery.getRooms().get(args[1]);
                 if (room.getMode() == 2 || room.getMode() == 3) {
                     sender.sendMessage(this.language.joinRoomIsPlaying);
                 }else if (room.getPlayers().values().size() > 15) {

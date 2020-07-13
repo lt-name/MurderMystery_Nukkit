@@ -1,8 +1,7 @@
 package cn.lanink.murdermystery.tasks;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.event.MurderRoomStartEvent;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -13,10 +12,10 @@ import java.util.LinkedList;
 
 public class WaitTask extends PluginTask<MurderMystery> {
 
-    private final Room room;
+    private final RoomBase room;
     private final Language language;
 
-    public WaitTask(MurderMystery owner, Room room) {
+    public WaitTask(MurderMystery owner, RoomBase room) {
         super(owner);
         owner.taskList.add(this.getTaskId());
         this.room = room;
@@ -49,7 +48,8 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle, ms);
                 }
             }else {
-                owner.getServer().getPluginManager().callEvent(new MurderRoomStartEvent(this.room));
+                this.room.gameStart();
+                //owner.getServer().getPluginManager().callEvent(new MurderRoomStartEvent(this.room));
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0) {

@@ -1,10 +1,13 @@
 package cn.lanink.murdermystery.event;
 
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
-public class MurderRoomChooseIdentityEvent extends RoomEvent implements Cancellable {
+/**
+ * @author lt_name
+ */
+public class MurderRoomAsyncTimeTaskEvent extends RoomEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -12,7 +15,7 @@ public class MurderRoomChooseIdentityEvent extends RoomEvent implements Cancella
         return handlers;
     }
 
-    public MurderRoomChooseIdentityEvent(Room room) {
+    public MurderRoomAsyncTimeTaskEvent(RoomBase room) {
         this.room = room;
     }
 

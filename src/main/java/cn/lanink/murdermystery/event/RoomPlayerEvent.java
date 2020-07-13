@@ -1,14 +1,14 @@
 package cn.lanink.murdermystery.event;
 
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.nukkit.event.player.PlayerEvent;
 
 
 public abstract class RoomPlayerEvent extends PlayerEvent {
 
-    protected Room room;
+    protected RoomBase room;
 
-    public Room getRoom() {
+    public RoomBase getRoom() {
         return this.room;
     }
 

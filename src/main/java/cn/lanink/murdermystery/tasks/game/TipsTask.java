@@ -1,7 +1,6 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.GameMode;
 import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
@@ -34,20 +33,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
             return;
         }
         if (room.getPlayers().values().size() > 0) {
-            int playerNumber = 0;
-            if (room.getGameMode() == GameMode.INFECTED) {
-                for (Integer integer : room.getPlayers().values()) {
-                    if (integer == 2) {
-                        playerNumber++;
-                    }
-                }
-            }else {
-                for (Integer integer : room.getPlayers().values()) {
-                    if (integer != 0) {
-                        playerNumber++;
-                    }
-                }
-            }
+            int playerNumber = this.room.getSurvivorPlayerNumber();
             String mode;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                 entry.getKey().setNameTag("");
@@ -77,7 +63,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
                             .replace("%playerNumber%", playerNumber + "")
                             .replace("%time%", room.gameTime + ""));
                 }
-                if (entry.getValue() == 3 && this.room.getGameMode() != GameMode.INFECTED) {
+                if (entry.getValue() == 3) {
                     if (room.effectCD > 0) {
                         ms.add(language.gameEffectCDScoreBoard
                                 .replace("%time%", room.effectCD + ""));

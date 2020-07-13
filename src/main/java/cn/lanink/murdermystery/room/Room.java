@@ -1,79 +1,53 @@
 package cn.lanink.murdermystery.room;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
+import cn.lanink.murdermystery.event.MurderPlayerCorpseSpawnEvent;
+import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
+import cn.lanink.murdermystery.event.MurderPlayerDeathEvent;
+import cn.lanink.murdermystery.event.MurderRoomAssignIdentityEvent;
 import cn.lanink.murdermystery.tasks.WaitTask;
+import cn.lanink.murdermystery.tasks.game.GoldTask;
+import cn.lanink.murdermystery.tasks.game.TimeTask;
+import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.level.Level;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
- * 房间类
+ * 经典模式房间
+ *
+ * @author lt_name
  */
-public class Room {
+public class Room extends RoomBase {
 
-    private int mode; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
-    public int waitTime, gameTime; //秒
-    public int effectCD, swordCD, scanCD; //杀手技能CD
-    private final int setWaitTime, setGameTime, setGoldSpawnTime;
-    private final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1平民 2侦探 3杀手
-    private final LinkedHashMap<Player, Integer> skinNumber = new LinkedHashMap<>(); //玩家使用皮肤编号，用于防止重复使用
-    private final LinkedHashMap<Player, Skin> skinCache = new LinkedHashMap<>(); //缓存玩家皮肤，用于退出房间时还原
-    private final ArrayList<Position> randomSpawn = new ArrayList<>();
-    private final ArrayList<Position> goldSpawn = new ArrayList<>();
-    private final Position waitSpawn;
-    private final Level level;
-    public ArrayList<ArrayList<Vector3>> placeBlocks = new ArrayList<>();
+
     public Player killKillerPlayer = null; //击杀杀手的玩家
-    private final GameMode gameMode;
 
     /**
      * 初始化
+     *
      * @param config 配置文件
      */
     public Room(Config config) {
-        this.level = Server.getInstance().getLevelByName(config.getString("world"));
-        this.setWaitTime = config.getInt("waitTime");
-        this.setGameTime = config.getInt("gameTime");
-        if (config.getInt("gameMode") == 1) {
-            this.gameMode = GameMode.INFECTED;
-        }else {
-            this.gameMode = GameMode.CLASSIC;
-        }
-        this.setGoldSpawnTime = config.getInt("goldSpawnTime");
-        String[] s1 = config.getString("waitSpawn").split(":");
-        this.waitSpawn = new Position(Integer.parseInt(s1[0]),
-                Integer.parseInt(s1[1]),
-                Integer.parseInt(s1[2]),
-                this.getLevel());
-        for (String string : config.getStringList("randomSpawn")) {
-            String[] s = string.split(":");
-            this.randomSpawn.add(new Position(
-                    Integer.parseInt(s[0]),
-                    Integer.parseInt(s[1]),
-                    Integer.parseInt(s[2]),
-                    this.level));
-        }
-        for (String string : config.getStringList("goldSpawn")) {
-            String[] s = string.split(":");
-            this.goldSpawn.add(new Position(
-                    Integer.parseInt(s[0]),
-                    Integer.parseInt(s[1]),
-                    Integer.parseInt(s[2]),
-                    this.level));
-        }
-        this.mode = 0;
-        this.initTime();
+        super(config);
     }
 
     /**
@@ -86,35 +60,87 @@ public class Room {
     }
 
     /**
-     * 初始化时间参数
+     * 加入房间
+     *
+     * @param player 玩家
      */
-    public void initTime() {
-        this.waitTime = this.setWaitTime;
-        this.gameTime = this.setGameTime;
-        this.effectCD = 0;
-        this.swordCD = 0;
-        this.scanCD = 0;
+    public void joinRoom(Player player) {
+        if (this.players.values().size() < 16) {
+            if (this.mode == 0) {
+                this.initTask();
+            }
+            this.addPlaying(player);
+            Tools.rePlayerState(player, true);
+            SavePlayerInventory.save(player);
+            if (player.teleport(this.getWaitSpawn())) {
+                this.setRandomSkin(player);
+                Tools.giveItem(player, 10);
+                if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+                    Tips.closeTipsShow(this.level.getName(), player);
+                }
+                player.sendMessage(MurderMystery.getInstance().getLanguage().joinRoom
+                        .replace("%name%", this.level.getName()));
+            }else {
+                this.quitRoom(player, true);
+            }
+        }
     }
 
     /**
-     * @param mode 房间状态
+     * 退出房间
+     *
+     * @param player 玩家
      */
-    public void setMode(int mode) {
-        this.mode = mode;
+    public void quitRoom(Player player) {
+        this.quitRoom(player, true);
     }
 
     /**
-     * @return 房间状态
+     * 退出房间
+     *
+     * @param player 玩家
+     * @param online 是否在线
      */
-    public int getMode() {
-        return this.mode;
+    public void quitRoom(Player player, boolean online) {
+        if (this.isPlaying(player)) {
+            this.players.remove(player);
+        }
+        if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+            Tips.removeTipsConfig(this.level.getName(), player);
+        }
+        if (online) {
+            MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
+            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+            Tools.rePlayerState(player, false);
+            SavePlayerInventory.restore(player);
+            this.restorePlayerSkin(player);
+        }else {
+            this.skinNumber.remove(player);
+            this.skinCache.remove(player);
+        }
     }
 
     /**
-     * 结束本局游戏
+     * 房间开始游戏
      */
-    public void endGame() {
-        this.endGame(true);
+    public void gameStart() {
+        Tools.cleanEntity(this.getLevel(), true);
+        this.setMode(2);
+        this.assignIdentity();
+        int x=0;
+        for (Player player : this.getPlayers().keySet()) {
+            if (x >= this.getRandomSpawn().size()) {
+                x = 0;
+            }
+            player.teleport(this.getRandomSpawn().get(x));
+            x++;
+        }
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                MurderMystery.getInstance(), new TimeTask(this.murderMystery, this), 20,true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                MurderMystery.getInstance(), new GoldTask(this.murderMystery, this), 20, true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                MurderMystery.getInstance(), new TipsTask(this.murderMystery, this), 18, true);
     }
 
     /**
@@ -149,198 +175,244 @@ public class Room {
     }
 
     /**
-     * 加入房间
-     * @param player 玩家
+     * 计时Task
      */
-    public void joinRoom(Player player) {
-        if (this.players.values().size() < 16) {
-            if (this.mode == 0) {
-                this.initTask();
+    @Override
+    public void asyncTimeTask() {
+        //开局20秒后给物品
+        int time = this.gameTime - (this.getSetGameTime() - 20);
+        if (time >= 0) {
+            if (time <= 5 && time >= 1) {
+                Tools.sendMessage(this, this.language.killerGetSwordTime
+                        .replace("%time%", time + ""));
+                Tools.addSound(this, Sound.RANDOM_CLICK);
             }
-            this.addPlaying(player);
-            Tools.rePlayerState(player, true);
-            SavePlayerInventory.save(player);
-            if (player.teleport(this.getWaitSpawn())) {
-                this.setRandomSkin(player);
-                Tools.giveItem(player, 10);
-                if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
-                    Tips.closeTipsShow(this.level.getName(), player);
+            if (time == 0) {
+                Tools.sendMessage(this, this.language.killerGetSword);
+                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                    if (entry.getValue() == 2) {
+                        Tools.giveItem(entry.getKey(), 1);
+                    }else if (entry.getValue() == 3) {
+                        Tools.giveItem(entry.getKey(), 2);
+                    }
                 }
-                player.sendMessage(MurderMystery.getInstance().getLanguage().joinRoom
-                        .replace("%name%", this.level.getName()));
+            }
+        }
+        //计时与胜利判断
+        if (this.gameTime > 0) {
+            this.gameTime--;
+            int playerNumber = 0;
+            boolean killer = false;
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                switch (entry.getValue()) {
+                    case 1:
+                    case 2:
+                        playerNumber++;
+                        break;
+                    case 3:
+                        killer = true;
+                        break;
+                }
+            }
+            if (killer) {
+                if (playerNumber == 0) {
+                    this.victory(3);
+                }
             }else {
-                this.quitRoom(player, true);
+                this.victory(1);
+            }
+        }else {
+            this.victory(1);
+        }
+        //杀手CD计算
+        if (this.effectCD > 0) {
+            this.effectCD--;
+        }
+        if (this.swordCD > 0) {
+            this.swordCD--;
+        }
+        if (this.scanCD > 0) {
+            this.scanCD--;
+        }
+    }
+
+    /**
+     * 金锭生成
+     */
+    @Override
+    public void goldSpawn() {
+        Tools.cleanEntity(this.getLevel());
+        for (Position spawn : this.getGoldSpawn()) {
+            this.getLevel().dropItem(spawn, Item.get(266, 0));
+        }
+    }
+
+    /**
+     * 异步金锭Task 金锭自动兑换弓箭检测
+     */
+    public void asyncGoldTask() {
+        for (Player player : this.getPlayers().keySet()) {
+            int x = 0;
+            boolean bow = true;
+            for (Item item : player.getInventory().getContents().values()) {
+                if (item.getId() == 266) {
+                    x += item.getCount();
+                    continue;
+                }
+                if (item.getId() == 261) {
+                    bow = false;
+                }
+            }
+            if (x > 9) {
+                player.getInventory().removeItem(Item.get(266, 0, 10));
+                player.getInventory().addItem(Item.get(262, 0, 1));
+                if (bow) {
+                    player.getInventory().addItem(Item.get(261, 0, 1));
+                }
             }
         }
     }
 
     /**
-     * 退出房间
-     * @param player 玩家
+     * 分配玩家身份
      */
-    public void quitRoom(Player player) {
-        this.quitRoom(player, true);
+    public void assignIdentity() {
+        MurderRoomAssignIdentityEvent ev = new MurderRoomAssignIdentityEvent(this);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) return;
+        LinkedHashMap<Player, Integer> players = this.getPlayers();
+        Random random = new Random();
+        int random1 = random.nextInt(players.size()) + 1;
+        int random2;
+        do {
+            random2 = random.nextInt(players.size()) + 1;
+        }while (random1 == random2);
+        int j = 0;
+        for (Player player : players.keySet()) {
+            player.getInventory().clearAll();
+            player.getUIInventory().clearAll();
+            j++;
+            //侦探
+            if (j == random1) {
+                this.addPlaying(player, 2);
+                player.sendTitle(this.language.titleDetectiveTitle,
+                        this.language.titleDetectiveSubtitle, 10, 40, 10);
+                continue;
+            }
+            //杀手
+            if (j == random2) {
+                this.addPlaying(player, 3);
+                player.sendTitle(this.language.titleKillerTitle,
+                        this.language.titleKillerSubtitle, 10, 40, 10);
+                continue;
+            }
+            this.addPlaying(player, 1);
+            player.sendTitle(this.language.titleCommonPeopleTitle,
+                    this.language.titleCommonPeopleSubtitle, 10, 40, 10);
+        }
     }
 
-    /**
-     * 退出房间
-     * @param player 玩家
-     * @param online 是否在线
-     */
-    public void quitRoom(Player player, boolean online) {
-        if (this.isPlaying(player)) {
-            this.players.remove(player);
-        }
-        if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
-            Tips.removeTipsConfig(this.level.getName(), player);
-        }
-        if (online) {
-            MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
-            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-            Tools.rePlayerState(player, false);
-            SavePlayerInventory.restore(player);
-            this.restorePlayerSkin(player);
-        }else {
-            this.skinNumber.remove(player);
-            this.skinCache.remove(player);
-        }
-    }
-
-    /**
-     * 设置玩家随机皮肤
-     * @param player 玩家
-     */
-    public void setRandomSkin(Player player) {
-        for (Map.Entry<Integer, Skin> entry : MurderMystery.getInstance().getSkins().entrySet()) {
-            if (!this.skinNumber.containsValue(entry.getKey())) {
-                this.skinCache.put(player, player.getSkin());
-                this.skinNumber.put(player, entry.getKey());
-                Tools.setHumanSkin(player, entry.getValue());
-                return;
+    @Override
+    public int getSurvivorPlayerNumber() {
+        int x = 0;
+        for (Integer integer : this.getPlayers().values()) {
+            if (integer != 0) {
+                x++;
             }
         }
+        return x;
     }
 
     /**
-     * 还原玩家皮肤
-     * @param player 玩家
+     * 符合游戏条件的攻击
+     *
+     * @param damage 攻击者
+     * @param player 被攻击者
      */
-    public void restorePlayerSkin(Player player) {
-        if (this.skinCache.containsKey(player)) {
-            Tools.setHumanSkin(player, this.skinCache.get(player));
-            this.skinCache.remove(player);
+    public void playerDamage(Player damage, Player player) {
+        if (this.getPlayers(player) == 0) return;
+        MurderPlayerDamageEvent ev = new MurderPlayerDamageEvent(this, damage, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) return;
+        //攻击者是杀手
+        if (this.getPlayers(damage) == 3) {
+            damage.sendMessage(this.language.killPlayer);
+            player.sendTitle(this.language.deathTitle,
+                    this.language.deathByKillerSubtitle, 20, 60, 20);
+        }else { //攻击者是平民或侦探
+            if (this.getPlayers(player) == 3) {
+                damage.sendMessage(this.language.killKiller);
+                this.killKillerPlayer = damage;
+                player.sendTitle(this.language.deathTitle,
+                        this.language.killerDeathSubtitle, 10, 20, 20);
+            } else {
+                damage.sendTitle(this.language.deathTitle,
+                        this.language.deathByDamageTeammateSubtitle, 20, 60, 20);
+                player.sendTitle(this.language.deathTitle,
+                        this.language.deathByTeammateSubtitle, 20, 60, 20);
+                this.playerDeath(damage);
+            }
         }
-        this.skinNumber.remove(player);
+        this.playerDeath(player);
     }
 
     /**
-     * 记录在游戏内的玩家
+     * 玩家死亡
+     *
      * @param player 玩家
      */
-    public void addPlaying(Player player) {
-        if (!this.players.containsKey(player)) {
-            this.addPlaying(player, 0);
+    public void playerDeath(Player player) {
+        MurderPlayerDeathEvent ev = new MurderPlayerDeathEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) return;
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
+        //player.setAllowModifyWorld(true);
+        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
+        player.setGamemode(3);
+        if (this.getPlayers(player) == 2) {
+            this.getLevel().dropItem(player, Tools.getMurderItem(1));
         }
+        this.addPlaying(player, 0);
+        Tools.setPlayerInvisible(player, true);
+        Tools.addSound(this, Sound.GAME_PLAYER_HURT);
+        this.playerCorpseSpawn(player);
     }
 
     /**
-     * 记录在游戏内的玩家
-     * @param player 玩家
-     * @param mode 身份
-     */
-    public void addPlaying(Player player, Integer mode) {
-        this.players.put(player, mode);
-    }
-
-    /**
-     * @return boolean 玩家是否在游戏里
+     * 尸体生成
+     *
      * @param player 玩家
      */
-    public boolean isPlaying(Player player) {
-        return this.players.containsKey(player);
-    }
-
-    /**
-     * @return 玩家列表
-     */
-    public LinkedHashMap<Player, Integer> getPlayers() {
-        return this.players;
-    }
-
-    /**
-     * @return 玩家身份
-     */
-    public Integer getPlayerMode(Player player) {
-        if (isPlaying(player)) {
-            return this.players.get(player);
-        }else {
-            return null;
+    public void playerCorpseSpawn(Player player) {
+        MurderPlayerCorpseSpawnEvent ev = new MurderPlayerCorpseSpawnEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) return;
+        Skin skin = this.getPlayerSkin(player);
+        switch(skin.getSkinData().data.length) {
+            case 8192:
+            case 16384:
+            case 32768:
+            case 65536:
+                break;
+            default:
+                skin = this.murderMystery.getCorpseSkin();
         }
+        CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
+        nbt.putCompound("Skin", new CompoundTag()
+                .putByteArray("Data", skin.getSkinData().data)
+                .putString("ModelId", skin.getSkinId()));
+        nbt.putFloat("Scale", -1.0F);
+        EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt);
+        ent.setSkin(skin);
+        ent.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
+        ent.setGliding(true);
+        ent.setRotation(player.getYaw(), 0);
+        ent.spawnToAll();
+        ent.updateMovement();
     }
 
-    /**
-     * @return 出生点
-     */
-    public Position getWaitSpawn() {
-        return this.waitSpawn;
-    }
 
-    /**
-     * @return 随机出生点列表
-     */
-    public List<Position> getRandomSpawn() {
-        return this.randomSpawn;
-    }
 
-    /**
-     * @return 金锭刷新时间
-     */
-    public int getSetGoldSpawnTime() {
-        return this.setGoldSpawnTime;
-    }
-
-    /**
-     * @return 等待时间
-     */
-    public int getSetWaitTime() {
-        return this.setWaitTime;
-    }
-
-    /**
-     * @return 游戏时间
-     */
-    public int getSetGameTime() {
-        return this.setGameTime;
-    }
-
-    /**
-     * @return 金锭产出地点
-     */
-    public ArrayList<Position> getGoldSpawn() {
-        return this.goldSpawn;
-    }
-
-    /**
-     * @return 游戏世界
-     */
-    public Level getLevel() {
-        return this.level;
-    }
-
-    /**
-     * 获取玩家在游戏中使用的皮肤
-     * @param player 玩家
-     * @return 皮肤
-     */
-    public Skin getPlayerSkin(Player player) {
-        if (this.skinNumber.containsKey(player)) {
-            return MurderMystery.getInstance().getSkins().get(this.skinNumber.get(player));
-        }
-        return player.getSkin();
-    }
-
-    public GameMode getGameMode() {
-        return gameMode;
-    }
 
 }

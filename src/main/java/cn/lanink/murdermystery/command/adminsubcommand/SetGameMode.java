@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.command.adminsubcommand;
 
+import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
@@ -26,21 +27,19 @@ public class SetGameMode extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (args.length == 2) {
-            if (args[1].matches("[0-9]*")) {
-                Player player = (Player) sender;
-                int mode = Integer.parseInt(args[1]);
-                Config config = this.murderMystery.getRoomConfig(player.getLevel());
-                config.set("gameMode", mode);
-                config.save();
-                if (mode == 1) {
-                    sender.sendMessage(this.language.adminSetGameMode
-                            .replace("%roomMode%", this.language.Infected));
-                }else {
-                    sender.sendMessage(this.language.adminSetGameMode
-                            .replace("%roomMode%", this.language.Classic));
-                }
+            Player player = (Player) sender;
+            Config config = this.murderMystery.getRoomConfig(player.getLevel());
+            config.set("gameMode", args[1]);
+            config.save();
+            if (MurderMystery.getRoomClass().containsKey(args[1])) {
+                sender.sendMessage(this.language.adminSetGameMode
+                        .replace("%roomMode%", args[1]));
+            }else if (args[1].equals("infected")) {
+                sender.sendMessage(this.language.adminSetGameMode
+                        .replace("%roomMode%", this.language.Infected));
             }else {
-                sender.sendMessage(this.language.adminNotNumber);
+                sender.sendMessage(this.language.adminSetGameMode
+                        .replace("%roomMode%", this.language.Classic));
             }
         }else {
             sender.sendMessage(this.language.cmdHelp.replace("%cmdName%", this.getName()));
