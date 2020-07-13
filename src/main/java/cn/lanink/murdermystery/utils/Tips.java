@@ -30,6 +30,7 @@ public class Tips {
     /**
      * 移除Tips设置
      * @param level 世界
+     * @param player 玩家
      */
     public static void removeTipsConfig(String level, Player player) {
         Api.removePlayerShowMessage(player.getName(),

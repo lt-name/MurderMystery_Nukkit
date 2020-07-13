@@ -31,6 +31,7 @@ import java.util.*;
 
 /**
  * MurderMystery
+ *
  * @author lt_name
  */
 public class MurderMystery extends PluginBase {
@@ -172,6 +173,12 @@ public class MurderMystery extends PluginBase {
         getLogger().info(this.language.pluginDisable);
     }
 
+    /**
+     * 注册房间类
+     *
+     * @param name 名称
+     * @param roomClass 房间类
+     */
     public static void registerRoom(String name, Class<? extends RoomBase> roomClass) {
         ROOMCLASS.put(name, roomClass);
     }

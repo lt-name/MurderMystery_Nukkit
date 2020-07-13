@@ -6,7 +6,6 @@ import cn.lanink.murdermystery.event.MurderPlayerCorpseSpawnEvent;
 import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
 import cn.lanink.murdermystery.event.MurderPlayerDeathEvent;
 import cn.lanink.murdermystery.event.MurderRoomAssignIdentityEvent;
-import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.tasks.game.GoldTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
 import cn.lanink.murdermystery.tasks.game.TipsTask;
@@ -48,15 +47,6 @@ public class RoomClassicMode extends RoomBase {
      */
     public RoomClassicMode(Config config) {
         super(config);
-    }
-
-    /**
-     * 初始化Task
-     */
-    private void initTask() {
-        this.setMode(1);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                MurderMystery.getInstance(), new WaitTask(MurderMystery.getInstance(), this), 20);
     }
 
     /**

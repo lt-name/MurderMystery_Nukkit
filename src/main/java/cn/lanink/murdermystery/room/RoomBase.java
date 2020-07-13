@@ -103,7 +103,7 @@ public abstract class RoomBase {
     /**
      * 初始化Task
      */
-    private void initTask() {
+    protected void initTask() {
         if (this.mode != 1) {
             this.setMode(1);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -232,12 +232,14 @@ public abstract class RoomBase {
 
     /**
      * @deprecated
+     * @param player 玩家
+     * @return 玩家身份
      */
-    public Integer getPlayerMode(Player player) {
+    public int getPlayerMode(Player player) {
         if (isPlaying(player)) {
             return this.players.get(player);
         }else {
-            return null;
+            return 0;
         }
     }
 

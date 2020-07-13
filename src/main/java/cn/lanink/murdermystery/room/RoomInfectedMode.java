@@ -20,6 +20,7 @@ import java.util.Random;
  * @author lt_name
  */
 public class RoomInfectedMode extends RoomClassicMode {
+
     /**
      * 初始化
      *
