@@ -19,13 +19,13 @@ import java.util.Random;
  *
  * @author lt_name
  */
-public class RoomInfected extends Room {
+public class RoomInfectedMode extends RoomClassicMode {
     /**
      * 初始化
      *
      * @param config 配置文件
      */
-    public RoomInfected(Config config) {
+    public RoomInfectedMode(Config config) {
         super(config);
     }
 

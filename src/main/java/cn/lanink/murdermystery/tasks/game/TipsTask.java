@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomClassicMode;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -16,10 +16,10 @@ import java.util.Map;
  */
 public class TipsTask extends PluginTask<MurderMystery> {
 
-    private final Room room;
+    private final RoomClassicMode room;
     private final Language language;
 
-    public TipsTask(MurderMystery owner, Room room) {
+    public TipsTask(MurderMystery owner, RoomClassicMode room) {
         super(owner);
         owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();

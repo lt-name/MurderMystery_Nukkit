@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.event.MurderRoomEndEvent;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomClassicMode;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -33,8 +33,8 @@ public class MurderListener implements Listener {
      */
     @EventHandler
     public void onRoomEnd(MurderRoomEndEvent event) {
-        if (event.getRoom() instanceof Room) {
-            Room room = (Room) event.getRoom();
+        if (event.getRoom() instanceof RoomClassicMode) {
+            RoomClassicMode room = (RoomClassicMode) event.getRoom();
             final Player killKillerPlayer = room.killKillerPlayer;
             int victoryMode = event.getVictoryMode();
             Player killerVictory = null;

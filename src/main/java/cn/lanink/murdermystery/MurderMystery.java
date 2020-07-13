@@ -7,9 +7,9 @@ import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
 import cn.lanink.murdermystery.listener.*;
-import cn.lanink.murdermystery.room.Room;
 import cn.lanink.murdermystery.room.RoomBase;
-import cn.lanink.murdermystery.room.RoomInfected;
+import cn.lanink.murdermystery.room.RoomClassicMode;
+import cn.lanink.murdermystery.room.RoomInfectedMode;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.ui.GuiType;
 import cn.lanink.murdermystery.utils.Language;
@@ -87,8 +87,8 @@ public class MurderMystery extends PluginBase {
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
         //加载房间类
-        registerRoom("classic", Room.class);
-        registerRoom("infected", RoomInfected.class);
+        registerRoom("classic", RoomClassicMode.class);
+        registerRoom("infected", RoomInfectedMode.class);
 
         //稍微暂停下，方便服主查看提示信息
         try {

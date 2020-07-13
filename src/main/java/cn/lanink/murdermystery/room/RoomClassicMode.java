@@ -36,7 +36,7 @@ import java.util.Random;
  *
  * @author lt_name
  */
-public class Room extends RoomBase {
+public class RoomClassicMode extends RoomBase {
 
 
     public Player killKillerPlayer = null; //击杀杀手的玩家
@@ -46,7 +46,7 @@ public class Room extends RoomBase {
      *
      * @param config 配置文件
      */
-    public Room(Config config) {
+    public RoomClassicMode(Config config) {
         super(config);
     }
 
