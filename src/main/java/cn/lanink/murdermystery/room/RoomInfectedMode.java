@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * 感染模式
+ * 感染模式房间类
  *
  * @author lt_name
  */

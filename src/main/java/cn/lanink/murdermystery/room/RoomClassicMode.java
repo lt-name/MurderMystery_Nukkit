@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * 经典模式房间
+ * 经典模式房间类
  *
  * @author lt_name
  */
