@@ -52,6 +52,7 @@ adminHelp: |-
   §a/%cmdName% setgametime number §eSet the maximum time of each game round
   §a/%cmdName% setgamemode mode §eSet room game mode
   §a/%cmdName% startroom §eStart Game
+  §a/%cmdName% stoproom §eEnd Game
   §a/%cmdName% reloadroom §Reload all the rooms
   §a/%cmdName% unloadroom §eClose all rooms and uninstall config
 adminSetSpawn: "§aThe default spawnpoint is set successfully!"

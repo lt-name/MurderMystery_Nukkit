@@ -58,6 +58,7 @@ public class Language {
             "§a/%cmdName% setgametime 数字 §e设置每轮游戏最长时间 \n" +
             "§a/%cmdName% setgamemode 模式 §e设置房间游戏模式 \n" +
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
+            "§a/%cmdName% stoproom §e强制关闭所在地图的房间 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n" +
             "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
     public String adminSetSpawn = "§a默认出生点设置成功！";

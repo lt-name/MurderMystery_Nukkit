@@ -52,6 +52,7 @@ adminHelp: |-
   §a/%cmdName% setgametime <时间> §e设置每轮游戏最长时间
   §a/%cmdName% setgamemode <模式> §e设置房间游戏模式
   §a/%cmdName% startroom §e开始所在地图的房间游戏
+  §a/%cmdName% stoproom §e强制关闭所在地图的房间
   §a/%cmdName% reloadroom §e重载所有房间
   §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置
 adminSetSpawn: "§a默认出生点设置成功！"
