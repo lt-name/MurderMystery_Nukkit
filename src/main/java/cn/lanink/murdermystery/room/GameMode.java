@@ -1,6 +1,16 @@
 package cn.lanink.murdermystery.room;
 
 public enum GameMode {
-    CLASSIC, //经典
-    INFECTED //感染
+    CLASSIC("classic"), //经典
+    INFECTED("infected"); //感染
+
+    private final String name;
+
+    GameMode(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }

@@ -35,7 +35,7 @@ joinRoomOnRiding: "§a请勿在骑乘状态下进入房间！"
 joinRandomRoom: "§a已为你随机分配房间！"
 joinRoomIsPlaying: "§a该房间正在游戏中，请稍后"
 joinRoomIsFull: "§a该房间已满人，请稍后"
-joinRoomIsNotFound: "§a该房间不存在！"
+joinRoomIsNotFound: "§a暂无符合条件的房间！"
 joinRoomNotAvailable: "§a暂无房间可用！"
 quitRoom: "§a你已退出房间"
 quitRoomNotInRoom: "§a你本来就不在游戏房间！"
@@ -48,7 +48,7 @@ adminHelp: |-
   §a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点
   §a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点
   §a/%cmdName% setgoldspawntime 数字 §e设置金锭生成间隔
-  §a/%cmdName% setwaittime <时间> §e设置游戏人数足够后的等待时间
+  §a/%cmdName% setwaittime <时间> §e设置游戏人数达到最少人数后的等待时间
   §a/%cmdName% setgametime <时间> §e设置每轮游戏最长时间
   §a/%cmdName% setgamemode <模式> §e设置房间游戏模式
   §a/%cmdName% startroom §e开始所在地图的房间游戏
@@ -65,6 +65,7 @@ adminSetGameTimeShort: "§a游戏时间最小不能低于1分钟！"
 adminSetGameMode: "§a房间模式已设置为: %roomMode%"
 adminStartNoPlayer: "§a房间人数不足三人,无法开始游戏！"
 adminLevelNoRoom: "§a当前地图不是游戏房间！"
+adminStopRoom: "§a已强制结束房间！"
 adminReload: "§a配置重载完成！请在后台查看信息！"
 adminUnload: "§a已卸载所有房间！请在后台查看信息！"
 roomSafeKick: |-

@@ -19,6 +19,7 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetGameTime("setgametime"));
         this.addSubCommand(new SetGameMode("setgamemode"));
         this.addSubCommand(new StartRoom("startroom"));
+        this.addSubCommand(new StopRoom("stoproom"));
         this.addSubCommand(new ReloadRoom("reloadroom"));
         this.addSubCommand(new UnloadRoom("unloadroom"));
         this.loadCommandBase();

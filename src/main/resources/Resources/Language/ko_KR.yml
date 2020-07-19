@@ -67,6 +67,7 @@ adminSetGameTimeShort: "§a최소 게임 시간은 1분 이상 이여야 합니�
 adminSetGameMode: "§a이 방의 게임모드는 %roomMode%로 설정되었습니다!"
 adminStartNoPlayer: "§a준비된 플레이어가 3명 미만일 때는 시작이 불가능합니다!"
 adminLevelNoRoom: "§a게임 방에 들어가 있지 않습니다!"
+adminStopRoom: "§a no translation"
 adminReload: "§a설정 다시 불러오기 성공! 백그라운드에서 정보를 확인하세요!"
 adminUnload: "§a모든 방 언로드 성공! 백그라운드에서 정보를 확인하세요!"
 roomSafeKick: |-

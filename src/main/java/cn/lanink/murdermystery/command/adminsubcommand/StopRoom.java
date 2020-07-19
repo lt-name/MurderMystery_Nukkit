@@ -1,16 +1,17 @@
 package cn.lanink.murdermystery.command.adminsubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.event.MurderRoomStartEvent;
 import cn.lanink.murdermystery.room.Room;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 
-public class StartRoom extends BaseSubCommand {
+/**
+ * @author lt_name
+ */
+public class StopRoom extends BaseSubCommand {
 
-    public StartRoom(String name) {
+    public StopRoom(String name) {
         super(name);
     }
 
@@ -29,12 +30,8 @@ public class StartRoom extends BaseSubCommand {
         Player player = (Player) sender;
         Room room = this.murderMystery.getRooms().get(player.getLevel().getName());
         if (room != null) {
-            //少于三人将进入死循环！
-            if (room.getPlayers().size() >= 3) {
-                Server.getInstance().getPluginManager().callEvent(new MurderRoomStartEvent(room));
-            }else {
-                sender.sendMessage(this.language.adminStartNoPlayer);
-            }
+            room.endGame(true);
+            sender.sendMessage(this.language.adminStopRoom);
         }else {
             sender.sendMessage(this.language.adminLevelNoRoom);
         }
@@ -45,5 +42,4 @@ public class StartRoom extends BaseSubCommand {
     public CommandParameter[] getParameters() {
         return new CommandParameter[0];
     }
-
 }
