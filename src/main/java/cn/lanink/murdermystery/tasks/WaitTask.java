@@ -30,6 +30,9 @@ public class WaitTask extends PluginTask<MurderMystery> {
             return;
         }
         if (this.room.getPlayers().size() >= 5) {
+            if (this.room.getPlayers().size() == 16 && this.room.waitTime > 10) {
+                this.room.waitTime = 10;
+            }
             if (this.room.waitTime > 0) {
                 this.room.waitTime--;
                 if (this.room.waitTime <= 5) {

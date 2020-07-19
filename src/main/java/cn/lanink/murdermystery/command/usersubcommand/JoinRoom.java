@@ -39,7 +39,7 @@ public class JoinRoom extends BaseSubCommand {
             }
             if (args.length < 2) {
                 for (Room room : this.murderMystery.getRooms().values()) {
-                    if (room.getMode() == 0 || room.getMode() == 1) {
+                    if ((room.getMode() == 0 || room.getMode() == 1) && room.getPlayers().size() < 16) {
                         room.joinRoom(player);
                         sender.sendMessage(this.language.joinRandomRoom);
                         return true;
@@ -47,10 +47,11 @@ public class JoinRoom extends BaseSubCommand {
                 }
             }else {
                 String[] s = args[1].split(":");
-                if (s.length == 2 && s[0].equals("mode")) {
+                if (s.length == 2 && s[0].toLowerCase().trim().equals("mode")) {
+                    String modeName = s[1].toLowerCase().trim();
                     for (Room room : this.murderMystery.getRooms().values()) {
-                        if (room.getMode() == 0 || room.getMode() == 1) {
-                            if (room.getGameMode().getName().equals(s[1])) {
+                        if ((room.getMode() == 0 || room.getMode() == 1) && room.getPlayers().size() < 16) {
+                            if (room.getGameMode().getName().equals(modeName)) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.language.joinRandomRoom);
                                 return true;
@@ -63,7 +64,7 @@ public class JoinRoom extends BaseSubCommand {
                     Room room = this.murderMystery.getRooms().get(args[1]);
                     if (room.getMode() == 2 || room.getMode() == 3) {
                         sender.sendMessage(this.language.joinRoomIsPlaying);
-                    }else if (room.getPlayers().values().size() > 15) {
+                    }else if (room.getPlayers().values().size() >= 16) {
                         sender.sendMessage(this.language.joinRoomIsFull);
                     } else {
                         room.joinRoom(player);
