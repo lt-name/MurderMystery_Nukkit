@@ -31,9 +31,13 @@ public class StartRoom extends BaseSubCommand {
         if (room != null) {
             //少于三人将进入死循环！
             if (room.getPlayers().size() >= 3) {
-                Server.getInstance().getPluginManager().callEvent(new MurderRoomStartEvent(room));
+                if (room.getMode() == 1) {
+                    Server.getInstance().getPluginManager().callEvent(new MurderRoomStartEvent(room));
+                }else {
+                    sender.sendMessage(this.language.adminStartRoomIsPlaying);
+                }
             }else {
-                sender.sendMessage(this.language.adminStartNoPlayer);
+                sender.sendMessage(this.language.adminStartRoomNoPlayer);
             }
         }else {
             sender.sendMessage(this.language.adminLevelNoRoom);
