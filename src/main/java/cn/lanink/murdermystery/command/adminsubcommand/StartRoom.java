@@ -33,6 +33,7 @@ public class StartRoom extends BaseSubCommand {
             if (room.getPlayers().size() >= 3) {
                 if (room.getMode() == 1) {
                     Server.getInstance().getPluginManager().callEvent(new MurderRoomStartEvent(room));
+                    sender.sendMessage(this.language.adminStartRoom);
                 }else {
                     sender.sendMessage(this.language.adminStartRoomIsPlaying);
                 }
