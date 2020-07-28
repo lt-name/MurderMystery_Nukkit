@@ -29,7 +29,7 @@ public class StartRoom extends BaseSubCommand {
         if (room != null) {
             //少于三人将进入死循环！
             if (room.getPlayers().size() >= 3) {
-                if (room.getMode() == 1) {
+                if (room.getStatus() == 1) {
                     room.gameStart();
                     sender.sendMessage(this.language.adminStartRoom);
                 }else {

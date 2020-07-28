@@ -61,7 +61,7 @@ public class UiShop extends AddonsBase implements Listener {
         Item item = event.getItem();
         if (player == null || item == null || item.getNamedTag() == null) return;
         RoomBase room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room != null && room.getMode() == 2 &&
+        if (room != null && room.getStatus() == 2 &&
                 item.getNamedTag().getBoolean("isMurderUiShop") && !this.cache.contains(player)) {
             this.cache.add(player);
             this.showUiShop(player);

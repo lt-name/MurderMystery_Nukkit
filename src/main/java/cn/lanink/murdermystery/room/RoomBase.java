@@ -31,7 +31,7 @@ public abstract class RoomBase {
     protected MurderMystery murderMystery = MurderMystery.getInstance();
     protected Language language = MurderMystery.getInstance().getLanguage();
 
-    protected int mode; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
+    protected int status; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
     protected final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime; //秒
     public int effectCD, swordCD, scanCD; //杀手技能CD
@@ -75,7 +75,7 @@ public abstract class RoomBase {
                     Integer.parseInt(s[2]),
                     this.level));
         }
-        this.mode = 0;
+        this.status = 0;
         this.initTime();
     }
 
@@ -104,25 +104,25 @@ public abstract class RoomBase {
      * 初始化Task
      */
     protected void initTask() {
-        if (this.mode != 1) {
-            this.setMode(1);
+        if (this.status != 1) {
+            this.setStatus(1);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     MurderMystery.getInstance(), new WaitTask(MurderMystery.getInstance(), this), 20);
         }
     }
 
     /**
-     * @param mode 房间状态
+     * @param status 房间状态
      */
-    public void setMode(int mode) {
-        this.mode = mode;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     /**
      * @return 房间状态
      */
-    public int getMode() {
-        return this.mode;
+    public int getStatus() {
+        return this.status;
     }
 
     /**
@@ -377,7 +377,7 @@ public abstract class RoomBase {
      */
     protected void victory(int victoryMode) {
         if (this.getPlayers().values().size() > 0) {
-            this.setMode(3);
+            this.setStatus(3);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
                     new VictoryTask(this.murderMystery, this, victoryMode), 20);
         }else {

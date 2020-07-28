@@ -56,7 +56,7 @@ public class RoomClassicMode extends RoomBase {
      */
     public void joinRoom(Player player) {
         if (this.players.values().size() < 16) {
-            if (this.mode == 0) {
+            if (this.status == 0) {
                 this.initTask();
             }
             this.addPlaying(player);
@@ -74,15 +74,6 @@ public class RoomClassicMode extends RoomBase {
                 this.quitRoom(player, true);
             }
         }
-    }
-
-    /**
-     * 退出房间
-     *
-     * @param player 玩家
-     */
-    public void quitRoom(Player player) {
-        this.quitRoom(player, true);
     }
 
     /**
@@ -115,7 +106,7 @@ public class RoomClassicMode extends RoomBase {
      */
     public void gameStart() {
         Tools.cleanEntity(this.getLevel(), true);
-        this.setMode(2);
+        this.setStatus(2);
         this.assignIdentity();
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
@@ -138,7 +129,7 @@ public class RoomClassicMode extends RoomBase {
      * @param normal 正常关闭
      */
     public void endGame(boolean normal) {
-        this.mode = 0;
+        this.status = 0;
         Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
             @Override
             public void onRun(int i) {

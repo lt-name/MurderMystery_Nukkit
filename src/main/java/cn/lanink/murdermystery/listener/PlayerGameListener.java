@@ -61,7 +61,7 @@ public class PlayerGameListener implements Listener {
                 return;
             }
             RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
-            if (room == null || room.getMode() != 2) {
+            if (room == null || room.getStatus() != 2) {
                 return;
             }
             if (room.getPlayers(player) != 0 && room.getPlayers(player) != 3) {
@@ -106,7 +106,7 @@ public class PlayerGameListener implements Listener {
         if (event.isCancelled()) return;
         Entity entity = event.getEntity();
         if (entity == null || !this.murderMystery.getRooms().containsKey(entity.getLevel().getName()) ||
-                this.murderMystery.getRooms().get(entity.getLevel().getName()).getMode() != 2) {
+                this.murderMystery.getRooms().get(entity.getLevel().getName()).getStatus() != 2) {
             return;
         }
         if (entity.getNetworkId() == 81) {
@@ -154,7 +154,7 @@ public class PlayerGameListener implements Listener {
             return;
         }
         RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room != null && room.getMode() == 2 && room.getPlayers(player) == 0) {
+        if (room != null && room.getStatus() == 2 && room.getPlayers(player) == 0) {
             for (Player p : room.getPlayers().keySet()) {
                 if (room.getPlayers(p) == 0) {
                     p.sendMessage(
@@ -182,7 +182,7 @@ public class PlayerGameListener implements Listener {
         RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null || room.getGameMode().equals("infected")) return;
         CompoundTag tag = item.hasCompoundTag() ? item.getNamedTag() : null;
-        if (room.getMode() == 2 && room.isPlaying(player) && room.getPlayers(player) == 3) {
+        if (room.getStatus() == 2 && room.isPlaying(player) && room.getPlayers(player) == 3) {
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
                 if (room.effectCD < 1) {
                     Effect effect = Effect.getEffect(1);
@@ -219,7 +219,7 @@ public class PlayerGameListener implements Listener {
             event.setCancelled(true);
             player.setAllowModifyWorld(false);
         }
-        if (room.getMode() == 2) {
+        if (room.getStatus() == 2) {
             if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
                 if (room.getPlayers(player) == 3 && !room.getGameMode().equals("infected")) {
                     CompoundTag tag = player.getInventory().getItemInHand() == null ? null : player.getInventory().getItemInHand().getNamedTag();
@@ -339,7 +339,7 @@ public class PlayerGameListener implements Listener {
             return;
         }
         RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room == null || room.getMode() != 2) {
+        if (room == null || room.getStatus() != 2) {
             return;
         }
         CompoundTag tag = item.getNamedTag();
@@ -392,7 +392,7 @@ public class PlayerGameListener implements Listener {
         }
         RoomBase room = this.murderMystery.getRooms().get(level.getName());
         CompoundTag tag = item.getNamedTag();
-        if (room.getMode() == 2 && tag != null &&
+        if (room.getStatus() == 2 && tag != null &&
                 tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 22) {
             level.addSound(block, Sound.RANDOM_ANVIL_USE);
             //>315 <45  X

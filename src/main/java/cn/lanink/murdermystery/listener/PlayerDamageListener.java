@@ -86,7 +86,7 @@ public class PlayerDamageListener implements Listener {
             if (room == null) return;
             //虚空 游戏开始前拉回 游戏中判断玩家死亡
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (room.getMode() == 2) {
+                if (room.getStatus() == 2) {
                     room.playerDeath(player);
                 }else {
                     player.teleport(room.getWaitSpawn());

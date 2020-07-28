@@ -28,7 +28,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 2) {
+        if (this.room.getStatus() != 2) {
             this.cancel();
             return;
         }

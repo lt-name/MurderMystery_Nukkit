@@ -106,7 +106,7 @@ public class GuiCreate {
         FormWindowModal modal;
         RoomBase room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
         if (room != null) {
-            if (room.getMode() == 2 || room.getMode() == 3) {
+            if (room.getStatus() == 2 || room.getStatus() == 3) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
             }else if (room.getPlayers().size() > 15){

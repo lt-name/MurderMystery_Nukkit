@@ -33,7 +33,7 @@ public class RoomInfectedMode extends RoomClassicMode {
     @Override
     public void gameStart() {
         Tools.cleanEntity(this.getLevel(), true);
-        this.setMode(2);
+        this.setStatus(2);
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
             if (x >= this.getRandomSpawn().size()) {

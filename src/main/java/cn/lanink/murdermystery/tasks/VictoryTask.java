@@ -46,7 +46,7 @@ public class VictoryTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 3) {
+        if (this.room.getStatus() != 3) {
             this.cancel();
             return;
         }
