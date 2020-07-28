@@ -31,14 +31,12 @@ public class VictoryTask extends PluginTask<MurderMystery> {
             if (victory == 3) {
                 entry.getKey().sendTitle(owner.getLanguage().titleVictoryKillerTitle,
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(this.language.victoryKillerBottom);
                 LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryKillerScoreBoard.split("\n")));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
                         this.language.scoreBoardTitle, ms);
             }else {
                 entry.getKey().sendTitle(this.language.titleVictoryCommonPeopleSubtitle,
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(this.language.victoryCommonPeopleBottom);
                 LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryCommonPeopleScoreBoard.split("\n")));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
                         this.language.scoreBoardTitle, ms);
@@ -59,6 +57,15 @@ public class VictoryTask extends PluginTask<MurderMystery> {
         }else {
             this.victoryTime--;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                String bottom;
+                if (victory == 3) {
+                    bottom = this.language.victoryKillerBottom;
+                }else {
+                    bottom = this.language.victoryCommonPeopleBottom;
+                }
+                if (!bottom.trim().equals("")) {
+                    entry.getKey().sendTip(bottom);
+                }
                 if (entry.getValue() != 0) {
                     if (this.victory == 1 && entry.getValue() == 3) {
                         continue;

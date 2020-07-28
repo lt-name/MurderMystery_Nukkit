@@ -39,10 +39,13 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     Tools.addSound(this.room, Sound.RANDOM_CLICK);
                 }
                 for (Player player : this.room.getPlayers().keySet()) {
-                    player.sendActionBar(language.waitTimeBottom
+                    String waitTimeBottom = this.language.waitTimeBottom
                             .replace("%roomMode%", Tools.getStringRoomMode(this.room))
                             .replace("%playerNumber%", room.getPlayers().size() + "")
-                            .replace("%time%", room.waitTime + ""));
+                            .replace("%time%", room.waitTime + "");
+                    if (!waitTimeBottom.trim().equals("")) {
+                        player.sendTip(waitTimeBottom);
+                    }
                     LinkedList<String> ms = new LinkedList<>();
                     for (String string : language.waitTimeScoreBoard.split("\n")) {
                         ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
@@ -60,9 +63,12 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
             for (Player player : this.room.getPlayers().keySet()) {
-                player.sendActionBar(this.language.waitBottom
+                String waitBottom = this.language.waitBottom
                         .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                        .replace("%playerNumber%", room.getPlayers().size() + ""));
+                        .replace("%playerNumber%", room.getPlayers().size() + "");
+                if (!waitBottom.trim().equals("")) {
+                    player.sendActionBar(waitBottom);
+                }
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : this.language.waitScoreBoard.split("\n")) {
                     ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
