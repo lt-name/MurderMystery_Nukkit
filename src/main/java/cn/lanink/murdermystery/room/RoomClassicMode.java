@@ -138,10 +138,10 @@ public class RoomClassicMode extends RoomBase {
      * @param normal 正常关闭
      */
     public void endGame(boolean normal) {
+        this.mode = 0;
         Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
             @Override
             public void onRun(int i) {
-                mode = 0;
                 if (normal) {
                     Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
                     while(it.hasNext()) {

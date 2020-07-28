@@ -51,11 +51,14 @@ public class TipsTask extends PluginTask<MurderMystery> {
                         mode = owner.getLanguage().death;
                         break;
                 }
-                entry.getKey().sendActionBar(language.gameTimeBottom
+                String gameTimeBottom = this.language.gameTimeBottom
                         .replace("%roomMode%", Tools.getStringRoomMode(this.room))
                         .replace("%mode%", mode)
                         .replace("%playerNumber%", playerNumber + "")
-                        .replace("%time%", room.gameTime + ""));
+                        .replace("%time%", room.gameTime + "");
+                if (!gameTimeBottom.trim().equals("")) {
+                    entry.getKey().sendTip(gameTimeBottom);
+                }
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : language.gameTimeScoreBoard.split("\n")) {
                     ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))

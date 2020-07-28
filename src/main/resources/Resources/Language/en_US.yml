@@ -52,6 +52,7 @@ adminHelp: |-
   §a/%cmdName% setgametime number §eSet the maximum time of each game round
   §a/%cmdName% setgamemode mode §eSet room game mode
   §a/%cmdName% startroom §eStart Game
+  §a/%cmdName% stoproom §eEnd Game
   §a/%cmdName% reloadroom §Reload all the rooms
   §a/%cmdName% unloadroom §eClose all rooms and uninstall config
 adminSetSpawn: "§aThe default spawnpoint is set successfully!"
@@ -63,8 +64,11 @@ adminSetWaitTime: "§aWaiting time is set to:%time%"
 adminSetGameTime: "§aTime of each game is set to:%time%"
 adminSetGameTimeShort: "§aThe minimum time of each game should be more than 1 minute!"
 adminSetGameMode: "§aThe mode of this room is set to :%roomMode%"
-adminStartNoPlayer: "§aThe number of the players is less than 3,you can't start game."
+adminStartRoom: "§aThe game has been forcibly started!"
+adminStartRoomNoPlayer: "§aThe number of the players is less than 3,you can't start game."
+adminStartRoomIsPlaying: "§cThe room is playing!"
 adminLevelNoRoom: "§aYou are not in the game room"
+adminStopRoom: "§aThe room has been forcibly ended!"
 adminReload: "§aConfig reload complete! Please check the information in the background!"
 adminUnload: "§aAll rooms unloaded! Please check the information in the background!"
 roomSafeKick: |-

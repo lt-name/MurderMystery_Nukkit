@@ -111,8 +111,6 @@ public abstract class RoomBase {
         }
     }
 
-
-
     /**
      * @param mode 房间状态
      */
