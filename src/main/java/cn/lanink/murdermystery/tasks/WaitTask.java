@@ -55,7 +55,6 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 }
             }else {
                 this.room.gameStart();
-                //owner.getServer().getPluginManager().callEvent(new MurderRoomStartEvent(this.room));
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0) {

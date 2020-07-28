@@ -314,20 +314,16 @@ public class MurderMystery extends PluginBase {
                         getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", fileName[0]));
                         continue;
                     }
-                    String levelName = config.getString("world");
-                    if (Server.getInstance().getLevelByName(levelName) == null) {
-                        Server.getInstance().loadLevel(levelName);
-                    }
-                    if (Server.getInstance().getLevelByName(levelName) == null) {
+                    if (Server.getInstance().getLevelByName(fileName[0]) == null && !Server.getInstance().loadLevel(fileName[0])) {
                         getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", fileName[0]));
                         continue;
                     }
-
                     try {
                         Constructor<? extends RoomBase> constructor =  ROOMCLASS.get(
                                 config.getString("gameMode", "classic")).getConstructor(Config.class);
                         RoomBase roomBase = constructor.newInstance(config);
-                        roomBase.setGameName(config.getString("gameMode", "classic"));
+                        roomBase.setGameMode(config.getString("gameMode", "classic"));
+                        roomBase.setLevel(Server.getInstance().getLevelByName(fileName[0]));
                         this.rooms.put(fileName[0], roomBase);
                         getLogger().info(this.language.roomLoadedSuccess.replace("%name%", fileName[0]));
                     } catch (Exception e) {

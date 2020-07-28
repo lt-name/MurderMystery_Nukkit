@@ -13,10 +13,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 房间抽象类
@@ -27,19 +24,19 @@ import java.util.Map;
 
 public abstract class RoomBase {
 
-    protected String gameMode = null;
+    private String gameMode = null;
     protected MurderMystery murderMystery = MurderMystery.getInstance();
     protected Language language = MurderMystery.getInstance().getLanguage();
 
     protected int status; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
-    protected final int setWaitTime, setGameTime, setGoldSpawnTime;
+    public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime; //秒
     public int effectCD, swordCD, scanCD; //杀手技能CD
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
     protected final ArrayList<Position> goldSpawn = new ArrayList<>();
     protected final Position waitSpawn;
-    protected final Level level;
-    public ArrayList<ArrayList<Vector3>> placeBlocks = new ArrayList<>();
+    protected Level level;
+    public LinkedList<LinkedList<Vector3>> placeBlocks = new LinkedList<>();
     protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1平民 2侦探 3杀手
     protected final LinkedHashMap<Player, Integer> skinNumber = new LinkedHashMap<>(); //玩家使用皮肤编号，用于防止重复使用
     protected final LinkedHashMap<Player, Skin> skinCache = new LinkedHashMap<>(); //缓存玩家皮肤，用于退出房间时还原
@@ -50,7 +47,6 @@ public abstract class RoomBase {
      * @param config 配置文件
      */
     public RoomBase(Config config) {
-        this.level = Server.getInstance().getLevelByName(config.getString("world"));
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.setGoldSpawnTime = config.getInt("goldSpawnTime");
@@ -79,7 +75,7 @@ public abstract class RoomBase {
         this.initTime();
     }
 
-    public final void setGameName(String gameMode) {
+    public final void setGameMode(String gameMode) {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
         }
@@ -87,6 +83,10 @@ public abstract class RoomBase {
 
     public final String getGameMode() {
         return this.gameMode;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class RoomBase {
      * @param player 玩家
      */
     public void setRandomSkin(Player player) {
-        for (Map.Entry<Integer, Skin> entry : MurderMystery.getInstance().getSkins().entrySet()) {
+        for (Map.Entry<Integer, Skin> entry : this.murderMystery.getSkins().entrySet()) {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
                 this.skinNumber.put(player, entry.getKey());
@@ -195,6 +195,7 @@ public abstract class RoomBase {
      * @param player 玩家
      * @param mode 身份
      */
+    @Deprecated
     public void addPlaying(Player player, Integer mode) {
         this.players.put(player, mode);
     }
@@ -221,19 +222,6 @@ public abstract class RoomBase {
      * @return 身份
      */
     public int getPlayers(Player player) {
-        if (isPlaying(player)) {
-            return this.players.get(player);
-        }else {
-            return 0;
-        }
-    }
-
-    /**
-     * @deprecated
-     * @param player 玩家
-     * @return 玩家身份
-     */
-    public int getPlayerMode(Player player) {
         if (isPlaying(player)) {
             return this.players.get(player);
         }else {
