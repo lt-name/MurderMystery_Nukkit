@@ -30,8 +30,8 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Random;
 
 /**
@@ -136,7 +136,7 @@ public class PlayerGameListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                room.addPlaying(player, 2);
+                room.getPlayers().put(player, 2);
                 player.getInventory().addItem(Item.get(262, 0, 1));
             }
         }
@@ -401,7 +401,7 @@ public class PlayerGameListener implements Listener {
             Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery, new AsyncTask() {
                 @Override
                 public void onRun() {
-                    ArrayList<Vector3> blockList = new ArrayList<>();
+                    LinkedList<Vector3> blockList = new LinkedList<>();
                     blockList.add(block);
                     for (int y = block.getFloorY() ; y < (block.getFloorY() + 6); y++) {
                         if ((yaw > 315 || yaw < 45) || (yaw > 135 && yaw < 225)) {

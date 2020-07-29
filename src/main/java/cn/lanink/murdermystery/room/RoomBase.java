@@ -36,7 +36,7 @@ public abstract class RoomBase {
     protected final ArrayList<Position> goldSpawn = new ArrayList<>();
     protected final Position waitSpawn;
     protected Level level;
-    public LinkedList<LinkedList<Vector3>> placeBlocks = new LinkedList<>();
+    public List<List<Vector3>> placeBlocks = new LinkedList<>();
     protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1平民 2侦探 3杀手
     protected final LinkedHashMap<Player, Integer> skinNumber = new LinkedHashMap<>(); //玩家使用皮肤编号，用于防止重复使用
     protected final LinkedHashMap<Player, Skin> skinCache = new LinkedHashMap<>(); //缓存玩家皮肤，用于退出房间时还原
@@ -177,28 +177,6 @@ public abstract class RoomBase {
      * @param online 是否在线
      */
     public abstract void quitRoom(Player player, boolean online);
-
-    /**
-     * 记录在游戏内的玩家
-     *
-     * @param player 玩家
-     */
-    public void addPlaying(Player player) {
-        if (!this.players.containsKey(player)) {
-            this.addPlaying(player, 0);
-        }
-    }
-
-    /**
-     * 记录在游戏内的玩家
-     *
-     * @param player 玩家
-     * @param mode 身份
-     */
-    @Deprecated
-    public void addPlaying(Player player, Integer mode) {
-        this.players.put(player, mode);
-    }
 
     /**
      * @return boolean 玩家是否在游戏里

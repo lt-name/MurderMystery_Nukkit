@@ -59,7 +59,7 @@ public class RoomClassicMode extends RoomBase {
             if (this.status == 0) {
                 this.initTask();
             }
-            this.addPlaying(player);
+            this.players.put(player, 0);
             Tools.rePlayerState(player, true);
             SavePlayerInventory.save(player);
             if (player.teleport(this.getWaitSpawn())) {
@@ -275,19 +275,19 @@ public class RoomClassicMode extends RoomBase {
             j++;
             //侦探
             if (j == random1) {
-                this.addPlaying(player, 2);
+                this.players.put(player, 2);
                 player.sendTitle(this.language.titleDetectiveTitle,
                         this.language.titleDetectiveSubtitle, 10, 40, 10);
                 continue;
             }
             //杀手
             if (j == random2) {
-                this.addPlaying(player, 3);
+                this.players.put(player, 3);
                 player.sendTitle(this.language.titleKillerTitle,
                         this.language.titleKillerSubtitle, 10, 40, 10);
                 continue;
             }
-            this.addPlaying(player, 1);
+            this.players.put(player, 1);
             player.sendTitle(this.language.titleCommonPeopleTitle,
                     this.language.titleCommonPeopleSubtitle, 10, 40, 10);
         }
@@ -348,13 +348,12 @@ public class RoomClassicMode extends RoomBase {
         if (ev.isCancelled()) return;
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
-        //player.setAllowModifyWorld(true);
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(3);
         if (this.getPlayers(player) == 2) {
             this.getLevel().dropItem(player, Tools.getMurderItem(1));
         }
-        this.addPlaying(player, 0);
+        this.players.put(player, 0);
         Tools.setPlayerInvisible(player, true);
         Tools.addSound(this, Sound.GAME_PLAYER_HURT);
         this.playerCorpseSpawn(player);

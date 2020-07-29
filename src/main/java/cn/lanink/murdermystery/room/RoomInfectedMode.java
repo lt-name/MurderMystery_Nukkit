@@ -42,7 +42,7 @@ public class RoomInfectedMode extends RoomClassicMode {
             player.teleport(this.getRandomSpawn().get(x));
             x++;
             player.getInventory().clearAll();
-            this.addPlaying(player, 2);
+            this.players.put(player, 2);
             Tools.giveItem(player, 1);
         }
         Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -151,7 +151,7 @@ public class RoomInfectedMode extends RoomClassicMode {
             if (this.getPlayers(player) == 3) {
                 return;
             }
-            this.addPlaying(player, 3);
+            this.players.put(player, 3);
             player.sendTitle(this.language.titleKillerTitle,
                     this.language.titleKillerSubtitle, 10, 40, 10);
         }else {
