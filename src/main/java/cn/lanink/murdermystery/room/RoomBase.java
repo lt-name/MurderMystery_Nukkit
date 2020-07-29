@@ -44,9 +44,11 @@ public abstract class RoomBase {
     /**
      * 初始化
      *
+     * @param level 世界
      * @param config 配置文件
      */
     public RoomBase(Level level, Config config) {
+        this.level = level;
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.setGoldSpawnTime = config.getInt("goldSpawnTime");
