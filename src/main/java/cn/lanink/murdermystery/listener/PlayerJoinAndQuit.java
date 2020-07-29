@@ -44,7 +44,7 @@ public class PlayerJoinAndQuit implements Listener {
         }
         for (RoomBase room : MurderMystery.getInstance().getRooms().values()) {
             if (room.isPlaying(player)) {
-                room.quitRoom(player, false);
+                room.quitRoom(player);
             }
         }
         MurderMystery.getInstance().getScoreboard().delCache(player);

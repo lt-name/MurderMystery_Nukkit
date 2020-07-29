@@ -18,6 +18,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
@@ -45,8 +46,8 @@ public class RoomClassicMode extends RoomBase {
      *
      * @param config 配置文件
      */
-    public RoomClassicMode(Config config) {
-        super(config);
+    public RoomClassicMode(Level level, Config config) {
+        super(level, config);
     }
 
     /**
@@ -68,10 +69,9 @@ public class RoomClassicMode extends RoomBase {
                 if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
                     Tips.closeTipsShow(this.level.getName(), player);
                 }
-                player.sendMessage(MurderMystery.getInstance().getLanguage().joinRoom
-                        .replace("%name%", this.level.getName()));
+                player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
             }else {
-                this.quitRoom(player, true);
+                this.quitRoom(player);
             }
         }
     }
@@ -80,25 +80,21 @@ public class RoomClassicMode extends RoomBase {
      * 退出房间
      *
      * @param player 玩家
-     * @param online 是否在线
      */
-    public void quitRoom(Player player, boolean online) {
+    public void quitRoom(Player player) {
         if (this.isPlaying(player)) {
             this.players.remove(player);
         }
         if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
             Tips.removeTipsConfig(this.level.getName(), player);
         }
-        if (online) {
-            MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
-            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-            Tools.rePlayerState(player, false);
-            SavePlayerInventory.restore(player);
-            this.restorePlayerSkin(player);
-        }else {
-            this.skinNumber.remove(player);
-            this.skinCache.remove(player);
-        }
+        MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
+        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        Tools.rePlayerState(player, false);
+        SavePlayerInventory.restore(player);
+        this.restorePlayerSkin(player);
+        this.skinNumber.remove(player);
+        this.skinCache.remove(player);
     }
 
     /**
@@ -130,7 +126,7 @@ public class RoomClassicMode extends RoomBase {
      */
     public void endGame(boolean normal) {
         this.status = 0;
-        Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
+        Server.getInstance().getScheduler().scheduleTask(this.murderMystery, new Task() {
             @Override
             public void onRun(int i) {
                 if (normal) {
@@ -142,7 +138,7 @@ public class RoomClassicMode extends RoomBase {
                     }
                 }else {
                     getLevel().getPlayers().values().forEach(
-                            player -> player.kick(MurderMystery.getInstance().getLanguage().roomSafeKick));
+                            player -> player.kick(language.roomSafeKick));
                 }
                 placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
                 placeBlocks.clear();
@@ -152,7 +148,7 @@ public class RoomClassicMode extends RoomBase {
                 Tools.cleanEntity(getLevel(), true);
                 initTime();
             }
-        }, 1);
+        });
     }
 
     /**
@@ -161,7 +157,7 @@ public class RoomClassicMode extends RoomBase {
     @Override
     public void asyncTimeTask() {
         //开局20秒后给物品
-        int time = this.gameTime - (this.getSetGameTime() - 20);
+        int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
             if (time <= 5 && time >= 1) {
                 Tools.sendMessage(this, this.language.killerGetSwordTime

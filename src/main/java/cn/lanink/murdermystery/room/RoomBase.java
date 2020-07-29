@@ -32,8 +32,8 @@ public abstract class RoomBase {
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime; //秒
     public int effectCD, swordCD, scanCD; //杀手技能CD
-    protected final ArrayList<Position> randomSpawn = new ArrayList<>();
-    protected final ArrayList<Position> goldSpawn = new ArrayList<>();
+    protected final List<Position> randomSpawn = new ArrayList<>();
+    protected final List<Position> goldSpawn = new ArrayList<>();
     protected final Position waitSpawn;
     protected Level level;
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
@@ -46,7 +46,7 @@ public abstract class RoomBase {
      *
      * @param config 配置文件
      */
-    public RoomBase(Config config) {
+    public RoomBase(Level level, Config config) {
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.setGoldSpawnTime = config.getInt("goldSpawnTime");
@@ -83,10 +83,6 @@ public abstract class RoomBase {
 
     public final String getGameMode() {
         return this.gameMode;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
     }
 
     /**
@@ -166,17 +162,7 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public void quitRoom(Player player) {
-        this.quitRoom(player, true);
-    }
-
-    /**
-     * 退出房间
-     *
-     * @param player 玩家
-     * @param online 是否在线
-     */
-    public abstract void quitRoom(Player player, boolean online);
+    public abstract void quitRoom(Player player);
 
     /**
      * @return boolean 玩家是否在游戏里
@@ -222,30 +208,9 @@ public abstract class RoomBase {
     }
 
     /**
-     * @return 金锭刷新时间
-     */
-    public int getSetGoldSpawnTime() {
-        return this.setGoldSpawnTime;
-    }
-
-    /**
-     * @return 等待时间
-     */
-    public int getSetWaitTime() {
-        return this.setWaitTime;
-    }
-
-    /**
-     * @return 游戏时间
-     */
-    public int getSetGameTime() {
-        return this.setGameTime;
-    }
-
-    /**
      * @return 金锭产出地点
      */
-    public ArrayList<Position> getGoldSpawn() {
+    public List<Position> getGoldSpawn() {
         return this.goldSpawn;
     }
 

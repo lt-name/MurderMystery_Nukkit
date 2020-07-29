@@ -29,14 +29,14 @@ public class GoldTask extends PluginTask<MurderMystery> {
             return;
         }
         if (this.goldSpawnTime < 1) {
-            this.goldSpawnTime = this.room.getSetGoldSpawnTime();
+            this.goldSpawnTime = this.room.setGoldSpawnTime;
             //主线程操作掉落物
-            owner.getServer().getScheduler().scheduleDelayedTask(owner, new Task() {
+            owner.getServer().getScheduler().scheduleTask(owner, new Task() {
                 @Override
                 public void onRun(int i) {
                     room.goldSpawn();
                 }
-            }, 1);
+            });
         }else {
             this.goldSpawnTime--;
         }

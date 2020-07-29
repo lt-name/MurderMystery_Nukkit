@@ -338,7 +338,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || item == null || item.getNamedTag() == null) {
             return;
         }
-        RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        RoomBase room = this.murderMystery.getRooms().get(player.getLevel().getName());
         if (room == null || room.getStatus() != 2) {
             return;
         }

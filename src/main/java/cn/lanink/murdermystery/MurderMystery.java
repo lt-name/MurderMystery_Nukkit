@@ -303,7 +303,8 @@ public class MurderMystery extends PluginBase {
             for (File file1 : s) {
                 String[] fileName = file1.getName().split("\\.");
                 if (fileName.length > 0) {
-                    Config config = getRoomConfig(fileName[0]);
+                    String worldName = fileName[0];
+                    Config config = getRoomConfig(worldName);
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
                             config.getString("waitSpawn", "").trim().equals("") ||
@@ -311,21 +312,26 @@ public class MurderMystery extends PluginBase {
                             config.getStringList("goldSpawn").size() == 0 ||
                             config.getInt("goldSpawnTime", 0) == 0 ||
                             config.getString("world", "").trim().equals("")) {
-                        getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", fileName[0]));
+                        getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", worldName));
                         continue;
                     }
-                    if (Server.getInstance().getLevelByName(fileName[0]) == null && !Server.getInstance().loadLevel(fileName[0])) {
-                        getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", fileName[0]));
+                    if (Server.getInstance().getLevelByName(worldName) == null && !Server.getInstance().loadLevel(worldName)) {
+                        getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", worldName));
+                        continue;
+                    }
+                    String gameMode = config.getString("gameMode", "classic");
+                    if (!ROOMCLASS.containsKey(gameMode)) {
+                        //TODO 加载失败提示
+
                         continue;
                     }
                     try {
-                        Constructor<? extends RoomBase> constructor =  ROOMCLASS.get(
-                                config.getString("gameMode", "classic")).getConstructor(Config.class);
-                        RoomBase roomBase = constructor.newInstance(config);
-                        roomBase.setGameMode(config.getString("gameMode", "classic"));
-                        roomBase.setLevel(Server.getInstance().getLevelByName(fileName[0]));
-                        this.rooms.put(fileName[0], roomBase);
-                        getLogger().info(this.language.roomLoadedSuccess.replace("%name%", fileName[0]));
+                        Constructor<? extends RoomBase> constructor =  ROOMCLASS.get(gameMode)
+                                .getConstructor(Level.class, Config.class);
+                        RoomBase roomBase = constructor.newInstance(Server.getInstance().getLevelByName(worldName), config);
+                        roomBase.setGameMode(gameMode);
+                        this.rooms.put(worldName, roomBase);
+                        getLogger().info(this.language.roomLoadedSuccess.replace("%name%", worldName));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

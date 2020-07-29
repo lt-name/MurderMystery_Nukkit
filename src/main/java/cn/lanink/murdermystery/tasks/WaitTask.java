@@ -58,8 +58,8 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0) {
-            if (this.room.waitTime != this.room.getSetWaitTime()) {
-                this.room.waitTime = this.room.getSetWaitTime();
+            if (this.room.waitTime != this.room.setWaitTime) {
+                this.room.waitTime = this.room.setWaitTime;
             }
             for (Player player : this.room.getPlayers().keySet()) {
                 String waitBottom = this.language.waitBottom

@@ -7,6 +7,7 @@ import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
@@ -26,8 +27,8 @@ public class RoomInfectedMode extends RoomClassicMode {
      *
      * @param config 配置文件
      */
-    public RoomInfectedMode(Config config) {
-        super(config);
+    public RoomInfectedMode(Level level, Config config) {
+        super(level, config);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class RoomInfectedMode extends RoomClassicMode {
     @Override
     public void asyncTimeTask() {
         //开局20秒后给物品
-        int time = this.gameTime - (this.getSetGameTime() - 20);
+        int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
             if (time <= 5 && time >= 1) {
                 Tools.sendMessage(this, this.language.killerGetSwordTime.replace("%time%", time + ""));
