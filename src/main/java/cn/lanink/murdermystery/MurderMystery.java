@@ -47,7 +47,7 @@ public class MurderMystery extends PluginBase {
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
-    public final LinkedList<Integer> taskList = new LinkedList<>();
+    public final List<Integer> taskList = new LinkedList<>();
     private String cmdUser, cmdAdmin;
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
@@ -130,15 +130,15 @@ public class MurderMystery extends PluginBase {
         getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
         getServer().getPluginManager().registerEvents(new MurderListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
-        //延迟5秒启用扩展
-        getServer().getScheduler().scheduleDelayedTask(this, new Task() {
+        //启用扩展-使用task保证在所有插件都加载完后加载扩展
+        getServer().getScheduler().scheduleTask(this, new Task() {
             @Override
             public void onRun(int i) {
                 getLogger().info(language.startLoadingAddons);
                 addonsManager.enableAll();
                 getLogger().info(language.addonsLoaded);
             }
-        }, 100);
+        });
         try {
             if (this.metricsLite == null) this.metricsLite = new MetricsLite(this, 7290);
         } catch (Throwable ignore) {

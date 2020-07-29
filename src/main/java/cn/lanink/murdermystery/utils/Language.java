@@ -69,7 +69,8 @@ public class Language {
     public String adminSetWaitTime = "§a等待时间已设置为：%time%";
     public String adminSetGameTime = "§a游戏时间已设置为：%time%";
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
-    public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
+    public String adminSetGameMode = "§a房间游戏模式已设置为: %roomMode%";
+    public String adminSetGameModeNotFound = "§c房间游戏模式: %mode% 不存在！";
     public String adminStartRoom = "§a已强制开启游戏！";
     public String adminStartRoomNoPlayer = "§a房间人数不足三人,无法开始游戏！";
     public String adminStartRoomIsPlaying = "§c房间已经开始了！";
@@ -217,6 +218,7 @@ public class Language {
         this.adminSetGameTime = config.getString("adminSetGameTime", this.adminSetGameTime);
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
         this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
+        this.adminSetGameModeNotFound = config.getString("adminSetGameModeNotFound", this.adminSetGameModeNotFound);
         this.adminStartRoom = config.getString("adminStartRoom", this.adminStartRoom);
         this.adminStartRoomNoPlayer = config.getString("adminStartRoomNoPlayer", this.adminStartRoomNoPlayer);
         this.adminStartRoomIsPlaying = config.getString("adminStartRoomIsPlaying", this.adminStartRoomIsPlaying);
