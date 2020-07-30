@@ -143,31 +143,6 @@ public class PlayerGameListener implements Listener {
     }
 
     /**
-     * 发送消息事件
-     * @param event 事件
-     */
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerChat(PlayerChatEvent event) {
-        Player player = event.getPlayer();
-        String string = event.getMessage();
-        if (player == null || string == null) {
-            return;
-        }
-        RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room != null && room.getStatus() == 2 && room.getPlayers(player) == 0) {
-            for (Player p : room.getPlayers().keySet()) {
-                if (room.getPlayers(p) == 0) {
-                    p.sendMessage(
-                            this.language.playerDeathChat.replace("%player%", player.getName())
-                                    .replace("%message%", string));
-                }
-            }
-            event.setCancelled(true);
-            event.setMessage("");
-        }
-    }
-
-    /**
      * 玩家手持物品事件
      * @param event 事件
      */
@@ -353,16 +328,16 @@ public class PlayerGameListener implements Listener {
             }else {
                 int random = new Random().nextInt(100);
                 Effect effect = null;
-                if (random < 100 && random >= 70) {
+                if (random >= 70) {
                     effect = Effect.getEffect(1); //速度
-                }else if (random < 70 && random >= 60) {
+                }else if (random >= 60) {
                     effect = Effect.getEffect(16); //夜视
-                }else if (random < 60 && random >= 50) {
+                }else if (random >= 50) {
                     effect = Effect.getEffect(14); //隐身
-                }else if (random < 50 && random >= 30) {
+                }else if (random >= 30) {
                     effect = Effect.getEffect(8); //跳跃提升2
                     effect.setAmplifier(2);
-                }else if (random < 30 && random >= 10) {
+                }else if (random >= 10) {
                     effect = Effect.getEffect(2); //缓慢
                 }
                 if (effect != null) {
@@ -494,18 +469,6 @@ public class PlayerGameListener implements Listener {
     }
 
     /**
-     * 玩家游戏模式改变事件
-     * @param event 事件
-     */
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onGameModeChange(PlayerGameModeChangeEvent event) {
-        Player player = event.getPlayer();
-        if (player != null && this.murderMystery.getRooms().containsKey(player.getLevel().getName())) {
-            event.setCancelled(false);
-        }
-    }
-
-    /**
      * 玩家执行命令事件
      * @param event 事件
      */
@@ -523,6 +486,38 @@ public class PlayerGameListener implements Listener {
         }
         event.setCancelled(true);
         player.sendMessage(this.language.useCmdInRoom);
+    }
+
+    /**
+     * 发送消息事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerChat(PlayerChatEvent event) {
+        Player player = event.getPlayer();
+        String string = event.getMessage();
+        if (player == null || string == null) {
+            return;
+        }
+        RoomBase room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        if (room == null || !room.isPlaying(player) || room.getStatus() != 2) return;
+        if (room.getPlayers(player) == 0) {
+            for (Player p : room.getPlayers().keySet()) {
+                if (room.getPlayers(p) == 0) {
+                    p.sendMessage(this.language.playerDeathChat
+                            .replace("%player%", player.getName())
+                            .replace("%message%", string));
+                }
+            }
+        }else {
+            for (Player p : room.getPlayers().keySet()) {
+                p.sendMessage(this.language.playerChat
+                        .replace("%player%", player.getName())
+                        .replace("%message%", string));
+            }
+        }
+        event.setMessage("");
+        event.setCancelled(true);
     }
 
 }

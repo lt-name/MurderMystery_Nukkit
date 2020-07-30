@@ -76,7 +76,8 @@ adminUnload: "§aAll rooms unloaded! Please check the information in the backgro
 roomSafeKick: |-
   §cRoom is closed abnormally!
   For the safety of your backpack, please re-enter the server later!
-playerDeathChat: "§c[Death] %player% §b >>> %message%"
+playerChat: "§a[Room]§f %player% + §b >>>§f %message%"
+playerDeathChat: "§c[Death]§f %player% §b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"
 tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room"
 itemDetectiveBow: "§eBow of detectives"

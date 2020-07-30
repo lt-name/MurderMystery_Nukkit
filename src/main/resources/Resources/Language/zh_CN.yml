@@ -76,7 +76,8 @@ adminUnload: "§a已卸载所有房间！请在后台查看信息！"
 roomSafeKick: |-
   §c房间非正常关闭!
   为了您的背包安全，请稍后重进服务器！
-playerDeathChat: "§c[死亡] %player% §b >>> %message%"
+playerChat: "§a[房间]§f %player% + §b >>>§f %message%"
+playerDeathChat: "§c[死亡]§f %player% §b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
 tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 itemDetectiveBow: "§e侦探之弓"
