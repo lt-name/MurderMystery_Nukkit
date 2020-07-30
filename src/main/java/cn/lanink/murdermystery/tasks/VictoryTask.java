@@ -51,7 +51,7 @@ public class VictoryTask extends PluginTask<MurderMystery> {
         }
         if (this.victoryTime < 1) {
             this.cancel();
-            this.room.endGameEvent(true, this.victory);
+            this.room.endGameEvent(this.victory);
         }else {
             this.victoryTime--;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {

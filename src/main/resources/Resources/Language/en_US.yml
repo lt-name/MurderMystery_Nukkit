@@ -73,9 +73,6 @@ adminLevelNoRoom: "§aYou are not in the game room"
 adminStopRoom: "§aThe room has been forcibly ended!"
 adminReload: "§aConfig reload complete! Please check the information in the background!"
 adminUnload: "§aAll rooms unloaded! Please check the information in the background!"
-roomSafeKick: |-
-  §cRoom is closed abnormally!
-  For the safety of your backpack, please re-enter the server later!
 playerChat: "§a[Room]§f %player% + §b >>>§f %message%"
 playerDeathChat: "§c[Death]§f %player% §b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"

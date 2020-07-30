@@ -75,9 +75,6 @@ adminLevelNoRoom: "§a게임 방에 들어가 있지 않습니다!"
 adminStopRoom: "§a no translation"
 adminReload: "§a설정 다시 불러오기 성공! 백그라운드에서 정보를 확인하세요!"
 adminUnload: "§a모든 방 언로드 성공! 백그라운드에서 정보를 확인하세요!"
-roomSafeKick: |-
-  §c방이 비정상적으로 닫혔습니다!
-  인벤토리 안전을 위해 나중에 서버를 다시 접속해주세요!
 playerChat: "§a[房间]§f %player% + §b >>>§f %message%"
 playerDeathChat: "§c[사망] %player% + §b >>> %message%"
 tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 월드에 참가하세요."

@@ -152,12 +152,12 @@ public class MurderMystery extends PluginBase {
     @Override
     public void onDisable() {
         addonsManager.disableAll();
-        if (this.rooms.values().size() > 0) {
+        if (this.rooms.size() > 0) {
             Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, RoomBase> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
-                    entry.getValue().endGameEvent(false, 0);
+                    entry.getValue().endGameEvent(0);
                     getLogger().info(this.language.roomUnloadFailure.replace("%name%", entry.getKey()));
                 }else {
                     getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));

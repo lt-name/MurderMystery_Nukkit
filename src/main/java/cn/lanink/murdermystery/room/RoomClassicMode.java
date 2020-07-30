@@ -38,6 +38,7 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 初始化
      *
+     * @param level 世界
      * @param config 配置文件
      */
     public RoomClassicMode(Level level, Config config) {
@@ -116,34 +117,24 @@ public class RoomClassicMode extends RoomBase {
 
     /**
      * 结束本局游戏
-     * @param normal 正常关闭
+     * @param victory 胜利队伍
      */
-    public void endGame(boolean normal, int victory) {
+    public synchronized void endGame(int victory) {
         this.status = 0;
         this.victoryReward(victory);
-        Server.getInstance().getScheduler().scheduleTask(this.murderMystery, new Task() {
-            @Override
-            public void onRun(int i) {
-                if (normal) {
-                    Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
-                    while(it.hasNext()) {
-                        Map.Entry<Player, Integer> entry = it.next();
-                        it.remove();
-                        quitRoom(entry.getKey());
-                    }
-                }else {
-                    getLevel().getPlayers().values().forEach(
-                            player -> player.kick(language.roomSafeKick));
-                }
-                placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
-                placeBlocks.clear();
-                skinNumber.clear();
-                skinCache.clear();
-                killKillerPlayer = null;
-                Tools.cleanEntity(getLevel(), true);
-                initTime();
-            }
-        });
+        Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
+        while(it.hasNext()) {
+            Map.Entry<Player, Integer> entry = it.next();
+            it.remove();
+            quitRoom(entry.getKey());
+        }
+        placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
+        placeBlocks.clear();
+        skinNumber.clear();
+        skinCache.clear();
+        killKillerPlayer = null;
+        Tools.cleanEntity(getLevel(), true);
+        initTime();
     }
 
     protected void victoryReward(int victory) {

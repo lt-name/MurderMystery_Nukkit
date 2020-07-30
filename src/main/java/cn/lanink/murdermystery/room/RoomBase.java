@@ -249,21 +249,21 @@ public abstract class RoomBase {
     /**
      * 结束本局游戏
      */
-    public final void endGameEvent() {
-        this.endGameEvent(true, 0);
+    public final synchronized void endGameEvent() {
+        this.endGameEvent(0);
     }
 
-    public final void endGameEvent(boolean normal, int victory) {
+    public final synchronized void endGameEvent(int victory) {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomEndEvent(this, victory));
-        this.endGame(normal, victory);
+        this.endGame(victory);
     }
 
     /**
      * 结束本局游戏
      *
-     * @param normal 正常关闭
+     * @param victory 胜利队伍
      */
-    protected abstract void endGame(boolean normal, int victory);
+    protected abstract void endGame(int victory);
 
     /**
      * 计时Task
@@ -344,7 +344,7 @@ public abstract class RoomBase {
      * @param victoryMode 胜利队伍
      */
     protected void victory(int victoryMode) {
-        if (this.getPlayers().size() > 0) {
+        if (this.status != 3 && this.getPlayers().size() > 0) {
             this.setStatus(3);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
                     new VictoryTask(this.murderMystery, this, victoryMode), 20);

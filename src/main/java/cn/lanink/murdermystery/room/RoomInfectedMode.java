@@ -25,6 +25,7 @@ public class RoomInfectedMode extends RoomClassicMode {
     /**
      * 初始化
      *
+     * @param level 世界
      * @param config 配置文件
      */
     public RoomInfectedMode(Level level, Config config) {
