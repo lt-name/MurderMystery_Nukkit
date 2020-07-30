@@ -6,7 +6,10 @@ import cn.lanink.lib.scoreboard.ScoreboardGt;
 import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
-import cn.lanink.murdermystery.listener.*;
+import cn.lanink.murdermystery.listener.PlayerDamageListener;
+import cn.lanink.murdermystery.listener.PlayerGameListener;
+import cn.lanink.murdermystery.listener.PlayerJoinAndQuit;
+import cn.lanink.murdermystery.listener.RoomLevelProtection;
 import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.room.RoomClassicMode;
 import cn.lanink.murdermystery.room.RoomInfectedMode;
@@ -128,7 +131,6 @@ public class MurderMystery extends PluginBase {
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(this), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
-        getServer().getPluginManager().registerEvents(new MurderListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         //启用扩展-使用task保证在所有插件都加载完后加载扩展
         getServer().getScheduler().scheduleTask(this, new Task() {

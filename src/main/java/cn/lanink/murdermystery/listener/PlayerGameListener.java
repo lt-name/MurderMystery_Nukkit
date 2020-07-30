@@ -35,7 +35,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * 游戏监听器（nk事件）
+ * 游戏监听器
  * @author lt_name
  */
 public class PlayerGameListener implements Listener {

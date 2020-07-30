@@ -23,10 +23,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * 经典模式房间类
@@ -123,6 +120,7 @@ public class RoomClassicMode extends RoomBase {
      */
     public void endGame(boolean normal, int victory) {
         this.status = 0;
+        this.victoryReward(victory);
         Server.getInstance().getScheduler().scheduleTask(this.murderMystery, new Task() {
             @Override
             public void onRun(int i) {
@@ -146,6 +144,52 @@ public class RoomClassicMode extends RoomBase {
                 initTime();
             }
         });
+    }
+
+    protected void victoryReward(int victory) {
+        if (victory == 0) return;
+        Player killerVictory = null;
+        Set<Player> commonPeopleVictory = new HashSet<>();
+        Set<Player> defeatPlayers = new HashSet<>();
+        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            if (victory == 3) {
+                if (entry.getValue() == 3) {
+                    killerVictory = entry.getKey();
+                }else {
+                    defeatPlayers.add(entry.getKey());
+                }
+            }else {
+                switch (entry.getValue()) {
+                    case 1:
+                    case 2:
+                        commonPeopleVictory.add(entry.getKey());
+                        break;
+                    default:
+                        defeatPlayers.add(entry.getKey());
+                        break;
+                }
+            }
+        }
+        //延迟执行，防止给物品被清
+        final Player finalKillKillerPlayer = this.killKillerPlayer;
+        final Player finalKillerVictory = killerVictory;
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
+            @Override
+            public void onRun(int i) {
+                if (finalKillKillerPlayer != null) {
+                    Tools.cmd(finalKillKillerPlayer, murderMystery.getConfig().getStringList("killKillerCmd"));
+                }
+                if (finalKillerVictory != null) {
+                    Tools.cmd(finalKillerVictory, murderMystery.getConfig().getStringList("killerVictoryCmd"));
+                }
+                for (Player player : commonPeopleVictory) {
+                    Tools.cmd(player, murderMystery.getConfig().getStringList("commonPeopleVictoryCmd"));
+                }
+                for (Player player : defeatPlayers) {
+                    Tools.cmd(player, murderMystery.getConfig().getStringList("defeatCmd"));
+                }
+            }
+        }, 20);
     }
 
     /**
@@ -261,20 +305,20 @@ public class RoomClassicMode extends RoomBase {
         do {
             random2 = random.nextInt(players.size()) + 1;
         }while (random1 == random2);
-        int j = 0;
+        int i = 0;
         for (Player player : players.keySet()) {
             player.getInventory().clearAll();
             player.getUIInventory().clearAll();
-            j++;
+            i++;
             //侦探
-            if (j == random1) {
+            if (i == random1) {
                 this.players.put(player, 2);
                 player.sendTitle(this.language.titleDetectiveTitle,
                         this.language.titleDetectiveSubtitle, 10, 40, 10);
                 continue;
             }
             //杀手
-            if (j == random2) {
+            if (i == random2) {
                 this.players.put(player, 3);
                 player.sendTitle(this.language.titleKillerTitle,
                         this.language.titleKillerSubtitle, 10, 40, 10);

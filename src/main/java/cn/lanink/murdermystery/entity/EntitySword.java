@@ -25,7 +25,7 @@ public class EntitySword extends EntityHuman {
 
     @Override
     public float getHeight() {
-        return 1;
+        return 1.5F;
     }
 
 }

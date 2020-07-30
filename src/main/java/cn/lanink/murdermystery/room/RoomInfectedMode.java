@@ -55,6 +55,11 @@ public class RoomInfectedMode extends RoomClassicMode {
     }
 
     @Override
+    protected void victoryReward(int victory) {
+
+    }
+
+    @Override
     public void asyncTimeTask() {
         //开局20秒后给物品
         int time = this.gameTime - (this.setGameTime - 20);
