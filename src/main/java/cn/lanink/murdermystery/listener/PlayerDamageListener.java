@@ -49,8 +49,8 @@ public class PlayerDamageListener implements Listener {
                 if (child == null || child.namedTag == null) return;
                 if (child.namedTag.getBoolean("isMurderItem")) {
                     if (child.namedTag.getInt("MurderType") == 20) {
-                        room.playerDamage(damager, player);
-                        //Server.getInstance().getPluginManager().callEvent(new MurderPlayerDamageEvent(room, damager, player));
+                        room.playerDamageEvent(damager, player);
+                        //Server.getInstance().getPluginManager().callEvent(new MurderMysteryPlayerDamageEvent(room, damager, player));
                     }else if (child.namedTag.getInt("MurderType") == 23) {
                         Tools.addSound(player, Sound.RANDOM_ANVIL_LAND);
                         player.sendMessage(this.language.damageSnowball);
@@ -66,7 +66,7 @@ public class PlayerDamageListener implements Listener {
                     if (damager.getInventory().getItemInHand() != null) {
                         CompoundTag tag = damager.getInventory().getItemInHand().getNamedTag();
                         if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
-                            room.playerDamage(damager, player);
+                            room.playerDamageEvent(damager, player);
                         }
                     }
                 }
@@ -87,7 +87,7 @@ public class PlayerDamageListener implements Listener {
             //虚空 游戏开始前拉回 游戏中判断玩家死亡
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if (room.getStatus() == 2) {
-                    room.playerDeath(player);
+                    room.playerDeathEvent(player);
                 }else {
                     player.teleport(room.getWaitSpawn());
                 }

@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.RoomClassicMode;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.scheduler.Task;
@@ -11,10 +11,10 @@ import cn.nukkit.scheduler.Task;
  */
 public class GoldTask extends PluginTask<MurderMystery> {
 
-    private final RoomClassicMode room;
+    private final RoomBase room;
     private int goldSpawnTime;
 
-    public GoldTask(MurderMystery owner, RoomClassicMode room) {
+    public GoldTask(MurderMystery owner, RoomBase room) {
         super(owner);
         owner.taskList.add(this.getTaskId());
         this.room = room;

@@ -1,7 +1,6 @@
 package cn.lanink.murdermystery.tasks;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.event.MurderRoomEndEvent;
 import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
@@ -52,8 +51,7 @@ public class VictoryTask extends PluginTask<MurderMystery> {
         }
         if (this.victoryTime < 1) {
             this.cancel();
-            owner.getServer().getPluginManager().callEvent(new MurderRoomEndEvent(this.room, this.victory));
-            this.room.endGame();
+            this.room.endGameEvent();
         }else {
             this.victoryTime--;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {

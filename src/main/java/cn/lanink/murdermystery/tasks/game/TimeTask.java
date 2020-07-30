@@ -1,9 +1,7 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.event.MurderRoomAsyncTimeTaskEvent;
 import cn.lanink.murdermystery.room.RoomBase;
-import cn.nukkit.Server;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
@@ -24,11 +22,7 @@ public class TimeTask extends PluginTask<MurderMystery> {
             this.cancel();
             return;
         }
-        MurderRoomAsyncTimeTaskEvent ev = new MurderRoomAsyncTimeTaskEvent(this.room);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled()) {
-            this.room.asyncTimeTask();
-        }
+        this.room.asyncTimeTask();
     }
 
     @Override

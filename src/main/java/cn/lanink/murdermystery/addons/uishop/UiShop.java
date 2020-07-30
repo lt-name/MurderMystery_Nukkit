@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.addons.uishop;
 
 import cn.lanink.murdermystery.addons.AddonsBase;
-import cn.lanink.murdermystery.event.MurderRoomStartEvent;
+import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
 import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.lanink.murdermystery.utils.Tools;
@@ -44,7 +44,7 @@ public class UiShop extends AddonsBase implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onRoomStart(MurderRoomStartEvent event) {
+    public void onRoomStart(MurderMysteryRoomStartEvent event) {
         String[] s = getConfig().get("UiShopItem", "347:0").split(":");
         Item item = Item.get(Integer.parseInt(s[0]), Integer.parseInt(s[1]), 1);
         item.setNamedTag(new CompoundTag().putBoolean("isMurderUiShop", true));

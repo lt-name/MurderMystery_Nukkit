@@ -2,10 +2,7 @@ package cn.lanink.murdermystery.room;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
-import cn.lanink.murdermystery.event.MurderPlayerCorpseSpawnEvent;
-import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
-import cn.lanink.murdermystery.event.MurderPlayerDeathEvent;
-import cn.lanink.murdermystery.event.MurderRoomAssignIdentityEvent;
+import cn.lanink.murdermystery.event.MurderMysteryRoomAssignIdentityEvent;
 import cn.lanink.murdermystery.tasks.game.GoldTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
 import cn.lanink.murdermystery.tasks.game.TipsTask;
@@ -100,7 +97,7 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 房间开始游戏
      */
-    public void gameStart() {
+    protected void gameStart() {
         Tools.cleanEntity(this.getLevel(), true);
         this.setStatus(2);
         this.assignIdentity();
@@ -124,7 +121,7 @@ public class RoomClassicMode extends RoomBase {
      * 结束本局游戏
      * @param normal 正常关闭
      */
-    public void endGame(boolean normal) {
+    public void endGame(boolean normal, int victory) {
         this.status = 0;
         Server.getInstance().getScheduler().scheduleTask(this.murderMystery, new Task() {
             @Override
@@ -254,7 +251,7 @@ public class RoomClassicMode extends RoomBase {
      * 分配玩家身份
      */
     public void assignIdentity() {
-        MurderRoomAssignIdentityEvent ev = new MurderRoomAssignIdentityEvent(this);
+        MurderMysteryRoomAssignIdentityEvent ev = new MurderMysteryRoomAssignIdentityEvent(this);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) return;
         LinkedHashMap<Player, Integer> players = this.getPlayers();
@@ -306,11 +303,8 @@ public class RoomClassicMode extends RoomBase {
      * @param damage 攻击者
      * @param player 被攻击者
      */
-    public void playerDamage(Player damage, Player player) {
+    protected void playerDamage(Player damage, Player player) {
         if (this.getPlayers(player) == 0) return;
-        MurderPlayerDamageEvent ev = new MurderPlayerDamageEvent(this, damage, player);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) return;
         //攻击者是杀手
         if (this.getPlayers(damage) == 3) {
             damage.sendMessage(this.language.killPlayer);
@@ -327,10 +321,10 @@ public class RoomClassicMode extends RoomBase {
                         this.language.deathByDamageTeammateSubtitle, 20, 60, 20);
                 player.sendTitle(this.language.deathTitle,
                         this.language.deathByTeammateSubtitle, 20, 60, 20);
-                this.playerDeath(damage);
+                this.playerDeathEvent(damage);
             }
         }
-        this.playerDeath(player);
+        this.playerDeathEvent(player);
     }
 
     /**
@@ -338,10 +332,7 @@ public class RoomClassicMode extends RoomBase {
      *
      * @param player 玩家
      */
-    public void playerDeath(Player player) {
-        MurderPlayerDeathEvent ev = new MurderPlayerDeathEvent(this, player);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) return;
+    protected void playerDeath(Player player) {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
@@ -352,7 +343,7 @@ public class RoomClassicMode extends RoomBase {
         this.players.put(player, 0);
         Tools.setPlayerInvisible(player, true);
         Tools.addSound(this, Sound.GAME_PLAYER_HURT);
-        this.playerCorpseSpawn(player);
+        this.playerCorpseSpawnEvent(player);
     }
 
     /**
@@ -360,10 +351,7 @@ public class RoomClassicMode extends RoomBase {
      *
      * @param player 玩家
      */
-    public void playerCorpseSpawn(Player player) {
-        MurderPlayerCorpseSpawnEvent ev = new MurderPlayerCorpseSpawnEvent(this, player);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) return;
+    protected void playerCorpseSpawn(Player player) {
         Skin skin = this.getPlayerSkin(player);
         switch(skin.getSkinData().data.length) {
             case 8192:

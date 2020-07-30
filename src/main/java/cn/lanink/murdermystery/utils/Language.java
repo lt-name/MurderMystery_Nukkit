@@ -16,6 +16,7 @@ public class Language {
     public String roomLoadedSuccess = "§a房间：%name% 已加载！";
     public String roomLoadedFailureByConfig = "§c房间：%name% 配置不完整，加载失败！";
     public String roomLoadedFailureByLevel = "§c房间：%name% 地图读取失败！";
+    public String roomLoadedFailureByGameMode = "§c房间：%name% 游戏模式设置错误！没有找到游戏模式: %gameMode%";
     public String roomLoadedAllSuccess = "§e房间加载完成！当前已加载 %number% 个房间！";
     public String roomUnloadSuccess = "§c房间：%name% 已卸载！";
     public String roomUnloadFailure = "§c房间：%name% 非正常结束！";
@@ -181,6 +182,7 @@ public class Language {
         this.roomLoadedSuccess = config.getString("roomLoadedSuccess", this.roomLoadedSuccess);
         this.roomLoadedFailureByConfig = config.getString("roomLoadedFailureByConfig", this.roomLoadedFailureByConfig);
         this.roomLoadedFailureByLevel = config.getString("roomLoadedFailureByLevel", this.roomLoadedFailureByLevel);
+        this.roomLoadedFailureByGameMode = config.getString("roomLoadedFailureByGameMode", this.roomLoadedFailureByGameMode);
         this.roomLoadedAllSuccess = config.getString("roomLoadedAllSuccess", this.roomLoadedAllSuccess);
         this.roomUnloadSuccess = config.getString("roomUnloadSuccess", this.roomUnloadSuccess);
         this.roomUnloadFailure = config.getString("roomUnloadFailure", this.roomUnloadFailure);

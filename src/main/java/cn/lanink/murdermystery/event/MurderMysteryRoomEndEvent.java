@@ -2,13 +2,12 @@ package cn.lanink.murdermystery.event;
 
 import cn.lanink.murdermystery.room.RoomBase;
 import cn.nukkit.Player;
-import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 import java.util.LinkedList;
 import java.util.Map;
 
-public class MurderRoomEndEvent extends RoomEvent implements Cancellable {
+public class MurderMysteryRoomEndEvent extends MurderMysteryRoomEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private int victoryMode;
@@ -18,7 +17,7 @@ public class MurderRoomEndEvent extends RoomEvent implements Cancellable {
         return handlers;
     }
 
-    public MurderRoomEndEvent(RoomBase room, int victoryMode) {
+    public MurderMysteryRoomEndEvent(RoomBase room, int victoryMode) {
         this.room = room;
         this.victoryMode = victoryMode;
         for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
@@ -38,7 +37,7 @@ public class MurderRoomEndEvent extends RoomEvent implements Cancellable {
         }
     }
 
-    public MurderRoomEndEvent(RoomBase room, int victoryMode, LinkedList<Player> victoryPlayers, LinkedList<Player> defeatPlayers) {
+    public MurderMysteryRoomEndEvent(RoomBase room, int victoryMode, LinkedList<Player> victoryPlayers, LinkedList<Player> defeatPlayers) {
         this.room = room;
         this.victoryMode = victoryMode;
         this.victoryPlayers = victoryPlayers;

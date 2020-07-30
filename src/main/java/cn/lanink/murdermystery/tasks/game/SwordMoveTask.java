@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntitySword;
-import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
+import cn.lanink.murdermystery.event.MurderMysteryPlayerDamageEvent;
 import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -58,7 +58,7 @@ public class SwordMoveTask extends AsyncTask {
                             Player player2 = (Player) entity;
                             if (player2 != this.player) {
                                 Server.getInstance().getPluginManager().callEvent(
-                                        new MurderPlayerDamageEvent(this.room, this.player, player2));
+                                        new MurderMysteryPlayerDamageEvent(this.room, this.player, player2));
                                 this.sword.close();
                                 return;
                             }

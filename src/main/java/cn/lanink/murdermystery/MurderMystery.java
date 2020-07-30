@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.0.6-SNAPSHOT git-86a1635";
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;
@@ -47,7 +47,7 @@ public class MurderMystery extends PluginBase {
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
-    public final List<Integer> taskList = new LinkedList<>();
+    public final Set<Integer> taskList = new HashSet<>();
     private String cmdUser, cmdAdmin;
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
@@ -155,7 +155,7 @@ public class MurderMystery extends PluginBase {
             while(it.hasNext()){
                 Map.Entry<String, RoomBase> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
-                    entry.getValue().endGame(false);
+                    entry.getValue().endGameEvent(false, 0);
                     getLogger().info(this.language.roomUnloadFailure.replace("%name%", entry.getKey()));
                 }else {
                     getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
@@ -321,8 +321,9 @@ public class MurderMystery extends PluginBase {
                     }
                     String gameMode = config.getString("gameMode", "classic");
                     if (!ROOMCLASS.containsKey(gameMode)) {
-                        //TODO 加载失败提示
-
+                        getLogger().warning(this.language.roomLoadedFailureByGameMode
+                                .replace("%name%", worldName)
+                                .replace("%gameMode%", gameMode));
                         continue;
                     }
                     try {
@@ -349,7 +350,7 @@ public class MurderMystery extends PluginBase {
             Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, RoomBase> entry = it.next();
-                entry.getValue().endGame();
+                entry.getValue().endGameEvent();
                 getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();
             }

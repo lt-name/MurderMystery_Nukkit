@@ -5,7 +5,6 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
-import com.sun.istack.internal.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -49,7 +48,7 @@ public class SavePlayerInventory {
      * @param player 玩家
      * @return LinkedHashMap
      */
-    public static LinkedHashMap<String, Object> InventoryToLinkedHashMap(@NotNull Player player) {
+    public static LinkedHashMap<String, Object> InventoryToLinkedHashMap(Player player) {
         LinkedHashMap<String, Object> Inventory = new LinkedHashMap<>();
         for (int i = -1; i < player.getInventory().getSize() + 4; i++) {
             LinkedList<String> list = new LinkedList<>();

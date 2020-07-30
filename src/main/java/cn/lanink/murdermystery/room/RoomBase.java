@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.room;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.event.*;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.utils.Language;
@@ -235,16 +236,26 @@ public abstract class RoomBase {
         return player.getSkin();
     }
 
+    public final void gameStartEvent() {
+        Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
+        this.gameStart();
+    }
+
     /**
      * 房间开始游戏
      */
-    public abstract void gameStart();
+    protected abstract void gameStart();
 
     /**
      * 结束本局游戏
      */
-    public void endGame() {
-        this.endGame(true);
+    public final void endGameEvent() {
+        this.endGameEvent(true, 0);
+    }
+
+    public final void endGameEvent(boolean normal, int victory) {
+        Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomEndEvent(this, victory));
+        this.endGame(normal, victory);
     }
 
     /**
@@ -252,7 +263,7 @@ public abstract class RoomBase {
      *
      * @param normal 正常关闭
      */
-    public abstract void endGame(boolean normal);
+    protected abstract void endGame(boolean normal, int victory);
 
     /**
      * 计时Task
@@ -281,27 +292,51 @@ public abstract class RoomBase {
      */
     public abstract int getSurvivorPlayerNumber();
 
+    public final void playerDamageEvent(Player damage, Player player) {
+        MurderMysteryPlayerDamageEvent ev = new MurderMysteryPlayerDamageEvent(this, damage, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            this.playerDamage(damage, player);
+        }
+    }
+
     /**
      * 符合游戏条件的攻击
      *
      * @param damage 攻击者
      * @param player 被攻击者
      */
-    public abstract void playerDamage(Player damage, Player player);
+    protected abstract void playerDamage(Player damage, Player player);
+
+    public final void playerDeathEvent(Player player) {
+        MurderMysteryPlayerDeathEvent ev = new MurderMysteryPlayerDeathEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            this.playerDeath(player);
+        }
+    }
 
     /**
      * 玩家死亡
      *
      * @param player 玩家
      */
-    public abstract void playerDeath(Player player);
+    protected abstract void playerDeath(Player player);
+
+    public final void playerCorpseSpawnEvent(Player player) {
+        MurderMysteryPlayerCorpseSpawnEvent ev = new MurderMysteryPlayerCorpseSpawnEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            this.playerCorpseSpawn(player);
+        }
+    }
 
     /**
      * 尸体生成
      *
      * @param player 玩家
      */
-    public abstract void playerCorpseSpawn(Player player);
+    protected abstract void playerCorpseSpawn(Player player);
 
     /**
      * 胜利
@@ -309,12 +344,12 @@ public abstract class RoomBase {
      * @param victoryMode 胜利队伍
      */
     protected void victory(int victoryMode) {
-        if (this.getPlayers().values().size() > 0) {
+        if (this.getPlayers().size() > 0) {
             this.setStatus(3);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
                     new VictoryTask(this.murderMystery, this, victoryMode), 20);
         }else {
-            this.endGame();
+            this.endGameEvent();
         }
     }
 

@@ -32,7 +32,7 @@ public class RoomInfectedMode extends RoomClassicMode {
     }
 
     @Override
-    public void gameStart() {
+    protected void gameStart() {
         Tools.cleanEntity(this.getLevel(), true);
         this.setStatus(2);
         int x=0;
