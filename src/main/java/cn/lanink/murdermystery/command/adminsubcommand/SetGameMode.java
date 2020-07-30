@@ -28,15 +28,16 @@ public class SetGameMode extends BaseSubCommand {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (args.length == 2) {
             Player player = (Player) sender;
-            if (MurderMystery.getRoomClass().containsKey(args[1])) {
+            String gameMode = args[1];
+            if (MurderMystery.hasRoomClass(gameMode)) {
                 Config config = this.murderMystery.getRoomConfig(player.getLevel());
-                config.set("gameMode", args[1]);
+                config.set("gameMode", gameMode);
                 config.save();
                 sender.sendMessage(this.language.adminSetGameMode
-                        .replace("%roomMode%", args[1]));
+                        .replace("%roomMode%", gameMode));
             }else {
                 sender.sendMessage(this.language.adminSetGameModeNotFound
-                        .replace("%roomMode%", args[1]));
+                        .replace("%roomMode%", gameMode));
             }
         }else {
             sender.sendMessage(this.language.cmdHelp.replace("%cmdName%", this.getName()));
@@ -46,7 +47,7 @@ public class SetGameMode extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { new CommandParameter("gameMode", CommandParamType.INT, false) };
+        return new CommandParameter[] { new CommandParameter("gameMode", CommandParamType.TEXT, false) };
     }
 
 }

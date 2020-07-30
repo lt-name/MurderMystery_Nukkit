@@ -96,7 +96,7 @@ public class GuiListener implements Listener {
                     break;
                 case ADMIN_MODE_MENU:
                     this.murderMystery.getServer().dispatchCommand(player, this.murderMystery.getCmdAdmin() + " setgamemode " +
-                            custom.getResponse().getDropdownResponse(0).getElementID());
+                            custom.getResponse().getDropdownResponse(0).getElementContent());
                     break;
             }
         }else if (event.getWindow() instanceof FormWindowModal) {

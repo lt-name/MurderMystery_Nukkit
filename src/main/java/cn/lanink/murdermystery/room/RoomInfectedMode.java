@@ -147,7 +147,7 @@ public class RoomInfectedMode extends RoomClassicMode {
     }
 
     @Override
-    public void playerDamage(Player damage, Player player) {
+    protected void playerDamage(Player damage, Player player) {
         if (this.getPlayers(damage) == 3) {
             if (this.getPlayers(player) == 3) {
                 return;

@@ -42,11 +42,12 @@ public class Tools {
      */
     public static String getStringRoomMode(RoomBase room) {
         switch (room.getGameMode()) {
+            case "classic":
+                return MurderMystery.getInstance().getLanguage().Classic;
             case "infected":
                 return MurderMystery.getInstance().getLanguage().Infected;
-            case "classic":
             default:
-                return MurderMystery.getInstance().getLanguage().Classic;
+                return room.getGameMode();
         }
     }
 

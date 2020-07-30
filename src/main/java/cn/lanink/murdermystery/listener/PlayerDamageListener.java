@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
+import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
@@ -50,7 +51,6 @@ public class PlayerDamageListener implements Listener {
                 if (child.namedTag.getBoolean("isMurderItem")) {
                     if (child.namedTag.getInt("MurderType") == 20) {
                         room.playerDamageEvent(damager, player);
-                        //Server.getInstance().getPluginManager().callEvent(new MurderMysteryPlayerDamageEvent(room, damager, player));
                     }else if (child.namedTag.getInt("MurderType") == 23) {
                         Tools.addSound(player, Sound.RANDOM_ANVIL_LAND);
                         player.sendMessage(this.language.damageSnowball);
@@ -82,7 +82,7 @@ public class PlayerDamageListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+            RoomBase room = this.murderMystery.getRooms().get(player.getLevel().getName());
             if (room == null) return;
             //虚空 游戏开始前拉回 游戏中判断玩家死亡
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
@@ -93,7 +93,8 @@ public class PlayerDamageListener implements Listener {
                 }
             }
             event.setCancelled(true);
-        }else if (event.getEntity() instanceof EntityPlayerCorpse) {
+        }else if (event.getEntity() instanceof EntityPlayerCorpse ||
+                event.getEntity() instanceof EntitySword) {
             event.setCancelled(true);
         }
     }

@@ -36,13 +36,13 @@ import java.util.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "1.0.6-SNAPSHOT git-86a1635";
+    public static final String VERSION = "?";
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;
     private Config config;
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
-    private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOMCLASS = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, RoomBase> rooms = new LinkedHashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
@@ -180,11 +180,15 @@ public class MurderMystery extends PluginBase {
      * @param roomClass 房间类
      */
     public static void registerRoom(String name, Class<? extends RoomBase> roomClass) {
-        ROOMCLASS.put(name, roomClass);
+        ROOM_CLASS.put(name, roomClass);
+    }
+
+    public static boolean hasRoomClass(String name) {
+        return ROOM_CLASS.containsKey(name);
     }
 
     public static LinkedHashMap<String, Class<? extends RoomBase>> getRoomClass() {
-        return ROOMCLASS;
+        return ROOM_CLASS;
     }
 
     public Language getLanguage() {
@@ -320,14 +324,14 @@ public class MurderMystery extends PluginBase {
                         continue;
                     }
                     String gameMode = config.getString("gameMode", "classic");
-                    if (!ROOMCLASS.containsKey(gameMode)) {
+                    if (!ROOM_CLASS.containsKey(gameMode)) {
                         getLogger().warning(this.language.roomLoadedFailureByGameMode
                                 .replace("%name%", worldName)
                                 .replace("%gameMode%", gameMode));
                         continue;
                     }
                     try {
-                        Constructor<? extends RoomBase> constructor =  ROOMCLASS.get(gameMode)
+                        Constructor<? extends RoomBase> constructor =  ROOM_CLASS.get(gameMode)
                                 .getConstructor(Level.class, Config.class);
                         RoomBase roomBase = constructor.newInstance(Server.getInstance().getLevelByName(worldName), config);
                         roomBase.setGameMode(gameMode);

@@ -16,7 +16,7 @@ import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.scheduler.Task;
 
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.Map;
 
 public class GuiCreate {
@@ -72,12 +72,8 @@ public class GuiCreate {
     public static void sendAdminModeMenu(Player player) {
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementDropdown("\n\n\n" +
-                LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getName()), new LinkedList<String>() {
-            {
-                add(LANGUAGE.Classic);
-                add(LANGUAGE.Infected);
-            }
-        }));
+                LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getName()),
+                Arrays.asList(MurderMystery.getRoomClass().keySet().toArray(new String[0]))));
         showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
     }
 
