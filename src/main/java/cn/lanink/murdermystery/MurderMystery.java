@@ -52,7 +52,6 @@ public class MurderMystery extends PluginBase {
     public final Set<Integer> taskList = new HashSet<>();
     private String cmdUser, cmdAdmin;
     private IScoreboard scoreboard;
-    private MetricsLite metricsLite;
     public static final Random RANDOM = new Random();
 
     public static MurderMystery getInstance() { return murderMystery; }
@@ -89,16 +88,9 @@ public class MurderMystery extends PluginBase {
         }
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
-        //加载房间类
+        //注册房间类
         registerRoom("classic", RoomClassicMode.class);
         registerRoom("infected", RoomInfectedMode.class);
-
-        //稍微暂停下，方便服主查看提示信息
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException ignored) {
-
-        }
     }
 
     @Override
@@ -143,7 +135,7 @@ public class MurderMystery extends PluginBase {
             }
         });
         try {
-            if (this.metricsLite == null) this.metricsLite = new MetricsLite(this, 7290);
+            new MetricsLite(this, 7290);
         } catch (Throwable ignore) {
 
         }
