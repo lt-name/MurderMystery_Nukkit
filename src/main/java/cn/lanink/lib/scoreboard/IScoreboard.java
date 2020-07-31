@@ -2,7 +2,7 @@ package cn.lanink.lib.scoreboard;
 
 import cn.nukkit.Player;
 
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author lt_name
@@ -15,7 +15,7 @@ public interface IScoreboard {
      * @param title 标题
      * @param message 信息
      */
-    void showScoreboard(Player player, String title, LinkedList<String> message);
+    void showScoreboard(Player player, String title, List<String> message);
 
     /**
      * 关闭计分板显示

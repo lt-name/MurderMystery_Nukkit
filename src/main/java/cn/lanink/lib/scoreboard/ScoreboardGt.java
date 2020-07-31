@@ -5,7 +5,7 @@ import gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI;
 import gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author lt_name
@@ -15,7 +15,7 @@ public class ScoreboardGt implements IScoreboard {
     private final HashMap<Player, SimpleScoreboard> scoreboards = new HashMap<>();
 
     @Override
-    public void showScoreboard(Player player, String title, LinkedList<String> message) {
+    public void showScoreboard(Player player, String title, List<String> message) {
         SimpleScoreboard simpleScoreboard;
         if (!this.scoreboards.containsKey(player)) {
             simpleScoreboard = ScoreboardAPI.builder().build();
