@@ -1,7 +1,7 @@
 #zh_CN | en_US | ko_KR
 language: zh_CN
-cmdUser: killer
-cmdAdmin: kadmin
+cmdUser: murdermystery
+cmdAdmin: murdermysteryadmin
 # 杀手胜利执行命令(仅杀手执行)
 killerVictoryCmd:
   - me 我胜利了
