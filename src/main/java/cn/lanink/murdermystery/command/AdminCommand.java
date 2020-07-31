@@ -8,8 +8,9 @@ import cn.nukkit.command.CommandSender;
 
 public class AdminCommand extends BaseCommand {
 
-    public AdminCommand(String name) {
+    public AdminCommand(String name, String[] aliases) {
         super(name, "MurderMystery 管理命令");
+        this.setAliases(aliases);
         this.setPermission("MurderMystery.command.admin");
         this.addSubCommand(new SetWaitSpawn("setwaitspawn"));
         this.addSubCommand(new AddRandomSpawn("addrandomspawn"));

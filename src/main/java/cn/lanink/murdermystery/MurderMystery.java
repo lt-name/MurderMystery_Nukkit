@@ -124,8 +124,10 @@ public class MurderMystery extends PluginBase {
         this.loadSkins();
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
-        getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
-        getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
+        getServer().getCommandMap().register("",
+                new UserCommand(this.cmdUser, this.config.getStringList("cmdUserAliases").toArray(new String[0])));
+        getServer().getCommandMap().register("",
+                new AdminCommand(this.cmdAdmin, this.config.getStringList("cmdAdminAliases").toArray(new String[0])));
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(this), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
