@@ -260,10 +260,11 @@ public class RoomClassicMode extends RoomBase {
      * 异步金锭Task 金锭自动兑换弓箭检测
      */
     public void asyncGoldTask() {
-        for (Player player : this.getPlayers().keySet()) {
+        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            if (entry.getValue() == 0) continue;
             int x = 0;
             boolean bow = true;
-            for (Item item : player.getInventory().getContents().values()) {
+            for (Item item : entry.getKey().getInventory().getContents().values()) {
                 if (item.getId() == 266) {
                     x += item.getCount();
                     continue;
@@ -273,10 +274,10 @@ public class RoomClassicMode extends RoomBase {
                 }
             }
             if (x > 9) {
-                player.getInventory().removeItem(Item.get(266, 0, 10));
-                player.getInventory().addItem(Item.get(262, 0, 1));
+                entry.getKey().getInventory().removeItem(Item.get(266, 0, 10));
+                entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
                 if (bow) {
-                    player.getInventory().addItem(Item.get(261, 0, 1));
+                    entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
                 }
             }
         }
