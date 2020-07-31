@@ -2,7 +2,6 @@ package cn.lanink.murdermystery.room;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
-import cn.lanink.murdermystery.event.MurderMysteryRoomAssignIdentityEvent;
 import cn.lanink.murdermystery.tasks.game.GoldTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
 import cn.lanink.murdermystery.tasks.game.TipsTask;
@@ -95,10 +94,11 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 房间开始游戏
      */
-    protected void gameStart() {
+    protected synchronized void gameStart() {
+        if (this.status == 2) return;
         Tools.cleanEntity(this.getLevel(), true);
         this.setStatus(2);
-        this.assignIdentity();
+        this.assignIdentityEvent();
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
             if (x >= this.getRandomSpawn().size()) {
@@ -285,16 +285,12 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 分配玩家身份
      */
-    public void assignIdentity() {
-        MurderMysteryRoomAssignIdentityEvent ev = new MurderMysteryRoomAssignIdentityEvent(this);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) return;
+    protected void assignIdentity() {
         LinkedHashMap<Player, Integer> players = this.getPlayers();
-        Random random = new Random();
-        int random1 = random.nextInt(players.size()) + 1;
+        int random1 = MurderMystery.RANDOM.nextInt(players.size()) + 1;
         int random2;
         do {
-            random2 = random.nextInt(players.size()) + 1;
+            random2 = MurderMystery.RANDOM.nextInt(players.size()) + 1;
         }while (random1 == random2);
         int i = 0;
         for (Player player : players.keySet()) {

@@ -280,10 +280,18 @@ public abstract class RoomBase {
      */
     public abstract void asyncGoldTask();
 
+    public final void assignIdentityEvent() {
+        MurderMysteryRoomAssignIdentityEvent ev = new MurderMysteryRoomAssignIdentityEvent(this);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            this.assignIdentity();
+        }
+    }
+
     /**
      * 分配玩家身份
      */
-    public abstract void assignIdentity();
+    protected abstract void assignIdentity();
 
     /**
      * 获取存活玩家数

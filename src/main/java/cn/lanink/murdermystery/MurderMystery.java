@@ -55,6 +55,7 @@ public class MurderMystery extends PluginBase {
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
     private MetricsLite metricsLite;
+    public static final Random RANDOM = new Random();
 
     public static MurderMystery getInstance() { return murderMystery; }
 

@@ -30,7 +30,6 @@ import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.List;
-import java.util.Random;
 
 
 public class Tools {
@@ -311,16 +310,15 @@ public class Tools {
     public static void spawnFirework(Position position) {
         ItemFirework item = new ItemFirework();
         CompoundTag tag = new CompoundTag();
-        Random random = new Random();
         CompoundTag ex = new CompoundTag();
         ex.putByteArray("FireworkColor",new byte[]{
-                (byte) DyeColor.values()[random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
+                (byte) DyeColor.values()[MurderMystery.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
         });
         ex.putByteArray("FireworkFade",new byte[0]);
-        ex.putBoolean("FireworkFlicker",random.nextBoolean());
-        ex.putBoolean("FireworkTrail",random.nextBoolean());
+        ex.putBoolean("FireworkFlicker",MurderMystery.RANDOM.nextBoolean());
+        ex.putBoolean("FireworkTrail",MurderMystery.RANDOM.nextBoolean());
         ex.putByte("FireworkType",ItemFirework.FireworkExplosion.ExplosionType.values()
-                [random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
+                [MurderMystery.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
         tag.putCompound("Fireworks",(new CompoundTag("Fireworks"))
                 .putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
         item.setNamedTag(tag);
