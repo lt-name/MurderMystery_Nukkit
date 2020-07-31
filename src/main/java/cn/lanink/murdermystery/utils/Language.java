@@ -129,6 +129,7 @@ public class Language {
     public String titleKillerSubtitle = "杀掉所有人";
     public String killerGetSwordTime = "§e杀手将在 %time% 秒后拿到剑！";
     public String killerGetSword = "§e杀手已拿到剑！";
+    public String commonPeopleBecomeDetective = "§a一位平民成为了新的侦探！";
     public String titleVictoryKillerTitle = "§a杀手获得胜利！";
     public String titleVictoryCommonPeopleSubtitle = "§a平民和侦探获得胜利！";
     public String victoryKillerBottom = "§e恭喜杀手获得胜利";
@@ -144,9 +145,8 @@ public class Language {
             "§l§a当前身份:§e %mode% \n" +
             "§l§a存活人数:§e %playerNumber% \n" +
             "§l§a剩余时间:§e %time% §a秒 ";
-    public String gameTimeBottom = "§a身份:§e %mode% \n" +
-            "§a距游戏结束还有:§e %time% §a秒\n" +
-            "当前还有:§e %playerNumber% §a人存活";
+    public String detectiveSurvival = "§l§a侦探存活";
+    public String detectiveDeath = "§l§c侦探死亡,弓已掉落!";
     public String gameEffectCDScoreBoard = "§l§a加速冷却:§e %time% §a秒 ";
     public String gameSwordCDScoreBoard = "§l§a飞剑冷却:§e %time% §a秒 ";
     public String gameScanCDScoreBoard = "§l§a扫描冷却:§e %time% §a秒 ";
@@ -274,6 +274,7 @@ public class Language {
         this.titleKillerSubtitle = config.getString("titleKillerSubtitle", this.titleKillerSubtitle);
         this.killerGetSwordTime = config.getString("killerGetSwordTime", this.killerGetSwordTime);
         this.killerGetSword = config.getString("killerGetSword", this.killerGetSword);
+        this.commonPeopleBecomeDetective = config.getString("commonPeopleBecomeDetective", this.commonPeopleBecomeDetective);
         this.titleVictoryKillerTitle = config.getString("titleVictoryKillerTitle", this.titleVictoryKillerTitle);
         this.titleVictoryCommonPeopleSubtitle = config.getString("titleVictoryCommonPeopleSubtitle", this.titleVictoryCommonPeopleSubtitle);
         this.victoryKillerBottom = config.getString("victoryKillerBottom", this.victoryKillerBottom);
@@ -286,7 +287,8 @@ public class Language {
         this.waitTimeBottom = config.getString("waitTimeBottom", this.waitTimeBottom);
         this.waitBottom = config.getString("waitBottom", this.waitBottom);
         this.gameTimeScoreBoard = config.getString("gameTimeScoreBoard", this.gameTimeScoreBoard);
-        this.gameTimeBottom = config.getString("gameTimeBottom", this.gameTimeBottom);
+        this.detectiveSurvival = config.getString("detectiveSurvival", this.detectiveSurvival);
+        this.detectiveDeath = config.getString("detectiveDeath", this.detectiveDeath);
         this.gameEffectCDScoreBoard = config.getString("gameEffectCDScoreBoard", this.gameEffectCDScoreBoard);
         this.gameSwordCDScoreBoard = config.getString("gameSwordCDScoreBoard", this.gameSwordCDScoreBoard);
         this.gameScanCDScoreBoard = config.getString("gameScanCDScoreBoard", this.gameScanCDScoreBoard);

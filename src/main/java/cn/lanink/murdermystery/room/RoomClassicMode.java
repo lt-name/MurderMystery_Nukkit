@@ -13,6 +13,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -33,6 +34,7 @@ public class RoomClassicMode extends RoomBase {
 
 
     public Player killKillerPlayer = null; //击杀杀手的玩家
+    public EntityItem detectiveBow = null; //掉落的侦探弓
 
     /**
      * 初始化
@@ -128,12 +130,13 @@ public class RoomClassicMode extends RoomBase {
             it.remove();
             quitRoom(entry.getKey());
         }
-        placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
-        placeBlocks.clear();
-        skinNumber.clear();
-        skinCache.clear();
-        killKillerPlayer = null;
-        Tools.cleanEntity(getLevel(), true);
+        this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
+        this.placeBlocks.clear();
+        this.skinNumber.clear();
+        this.skinCache.clear();
+        this.killKillerPlayer = null;
+        this.detectiveBow = null;
+        Tools.cleanEntity(this.level, true);
         initTime();
     }
 
@@ -242,6 +245,17 @@ public class RoomClassicMode extends RoomBase {
         }
         if (this.scanCD > 0) {
             this.scanCD--;
+        }
+        //TODO 需要验证
+        if (this.detectiveBow != null && this.detectiveBow.isClosed()) {
+            Server.getInstance().getScheduler().scheduleTask(this.murderMystery, new Task() {
+                @Override
+                public void onRun(int i) {
+                    EntityItem entityItem = new EntityItem(detectiveBow.chunk, detectiveBow.namedTag);
+                    entityItem.spawnToAll();
+                    detectiveBow = entityItem;
+                }
+            });
         }
     }
 

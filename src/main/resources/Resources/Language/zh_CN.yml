@@ -137,6 +137,7 @@ titleKillerTitle: "§c杀手"
 titleKillerSubtitle: "杀掉所有人"
 killerGetSwordTime: "§e杀手将在 %time% 秒后拿到剑！"
 killerGetSword: "§e杀手已拿到剑！"
+commonPeopleBecomeDetective: "§a一位平民成为了新的侦探！"
 titleVictoryKillerTitle: "§a杀手获得胜利！"
 titleVictoryCommonPeopleSubtitle: "§a平民和侦探获得胜利！"
 victoryKillerBottom: "§e恭喜杀手获得胜利"
@@ -162,10 +163,8 @@ gameTimeScoreBoard: |-
   §l§a当前身份:§e %mode%
   §l§a存活人数:§e %playerNumber%
   §l§a剩余时间:§e %time% §a秒
-gameTimeBottom: |-
-  §a身份:§e %mode%
-  §a距游戏结束还有:§e %time% §a秒
-  当前还有:§e %playerNumber% §a人存活
+detectiveSurvival: "§a侦探存活"
+detectiveDeath: "§l§c侦探死亡,弓已掉落!"
 gameEffectCDScoreBoard: "§l§a加速冷却:§e %time% §a秒 "
 gameSwordCDScoreBoard: "§l§a飞剑冷却:§e %time% §a秒 "
 gameScanCDScoreBoard: "§l§a扫描冷却:§e %time% §a秒 "

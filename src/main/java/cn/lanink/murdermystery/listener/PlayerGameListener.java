@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.RoomClassicMode;
 import cn.lanink.murdermystery.tasks.game.ScanTask;
 import cn.lanink.murdermystery.tasks.game.SwordMoveTask;
 import cn.lanink.murdermystery.utils.Language;
@@ -79,7 +80,7 @@ public class PlayerGameListener implements Listener {
                 public void onRun(int i) {
                     int j = 0; //箭的数量
                     boolean bow = false;
-                    for (Item item : player.getInventory().getContents().values()) {
+                    for (Item item : player.getInventory().slots.values()) {
                         if (item.getId() == 262) {
                             j += item.getCount();
                             continue;
@@ -136,6 +137,10 @@ public class PlayerGameListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+                if (room instanceof RoomClassicMode) {
+                    ((RoomClassicMode) room).detectiveBow = null;
+                }
+                room.getPlayers().keySet().forEach(p -> p.sendMessage(this.language.commonPeopleBecomeDetective));
                 room.getPlayers().put(player, 2);
                 player.getInventory().addItem(Item.get(262, 0, 1));
             }
@@ -412,7 +417,7 @@ public class PlayerGameListener implements Listener {
                         }
                     }
                     room.placeBlocks.add(blockList);
-                    Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+                    Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
                         @Override
                         public void onRun(int i) {
                             room.placeBlocks.remove(blockList);
@@ -438,14 +443,19 @@ public class PlayerGameListener implements Listener {
     public void onItemSpawn(ItemSpawnEvent event) {
         final EntityItem entityItem = event.getEntity();
         if (entityItem == null) return;
+        RoomBase room = this.murderMystery.getRooms().get(entityItem.getLevel().getName());
+        if (room == null) return;
         Item item = entityItem.getItem();
         CompoundTag tag = item.getNamedTag();
         if (tag != null && tag.getBoolean("isMurderItem") &&
                 tag.getInt("MurderType") == 1) {
-            this.murderMystery.getServer().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
+            if (room instanceof RoomClassicMode) {
+                ((RoomClassicMode) room).detectiveBow = entityItem;
+            }
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
                 @Override
                 public void onRun(int i) {
-                    if (entityItem.isClosed()) return;
+                    if (room.getStatus() != 2 || entityItem.isClosed()) return;
                     entityItem.setNameTag(language.itemDetectiveBow);
                     entityItem.setNameTagVisible(true);
                     entityItem.setNameTagAlwaysVisible(true);

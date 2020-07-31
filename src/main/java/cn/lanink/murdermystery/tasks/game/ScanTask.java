@@ -8,7 +8,7 @@ import cn.nukkit.Server;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class ScanTask extends AsyncTask {
@@ -23,7 +23,7 @@ public class ScanTask extends AsyncTask {
 
     @Override
     public void onRun() {
-        ArrayList<EntityText> texts = new ArrayList<>();
+        LinkedList<EntityText> texts = new LinkedList<>();
         for (Map.Entry<Player, Integer> entry : this.room.getPlayers().entrySet()) {
             if (entry.getValue() == 1 || entry.getValue() == 2) {
                 EntityText text = new EntityText(entry.getKey().getChunk(), EntityText.getDefaultNBT(entry.getKey()), entry.getKey());

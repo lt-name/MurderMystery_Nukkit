@@ -8,6 +8,7 @@ import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class WaitTask extends PluginTask<MurderMystery> {
@@ -41,17 +42,15 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     String waitTimeBottom = this.language.waitTimeBottom
                             .replace("%roomMode%", Tools.getStringRoomMode(this.room))
                             .replace("%playerNumber%", room.getPlayers().size() + "")
-                            .replace("%time%", room.waitTime + "");
+                            .replace("%time%", this.room.waitTime + "");
                     if (!waitTimeBottom.trim().equals("")) {
                         player.sendTip(waitTimeBottom);
                     }
-                    LinkedList<String> ms = new LinkedList<>();
-                    for (String string : language.waitTimeScoreBoard.split("\n")) {
-                        ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                                .replace("%playerNumber%", room.getPlayers().size() + "")
-                                .replace("%time%", room.waitTime + ""));
-                    }
-                    owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle, ms);
+                    owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle,
+                            new LinkedList<>(Arrays.asList(this.language.waitTimeScoreBoard
+                                    .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                                    .replace("%playerNumber%", room.getPlayers().size() + "")
+                                    .replace("%time%", room.waitTime + "").split("\n"))));
                 }
             }else {
                 this.room.gameStartEvent();
