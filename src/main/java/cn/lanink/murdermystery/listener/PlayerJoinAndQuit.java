@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -55,6 +56,7 @@ public class PlayerJoinAndQuit implements Listener {
             }
         }
         this.murderMystery.getScoreboard().delCache(player);
+        GuiCreate.UI_CACHE.remove(player);
     }
 
     @EventHandler

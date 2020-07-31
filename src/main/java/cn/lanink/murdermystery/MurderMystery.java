@@ -14,7 +14,6 @@ import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.room.RoomClassicMode;
 import cn.lanink.murdermystery.room.RoomInfectedMode;
 import cn.lanink.murdermystery.ui.GuiListener;
-import cn.lanink.murdermystery.ui.GuiType;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
 import cn.nukkit.Server;
@@ -52,7 +51,6 @@ public class MurderMystery extends PluginBase {
     private final Skin corpseSkin = new Skin();
     public final Set<Integer> taskList = new HashSet<>();
     private String cmdUser, cmdAdmin;
-    private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
     private MetricsLite metricsLite;
     public static final Random RANDOM = new Random();
@@ -217,10 +215,6 @@ public class MurderMystery extends PluginBase {
 
     public String getCmdAdmin() {
         return this.cmdAdmin;
-    }
-
-    public HashMap<Integer, GuiType> getGuiCache() {
-        return this.guiCache;
     }
 
     public Skin getSword() {

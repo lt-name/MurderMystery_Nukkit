@@ -31,9 +31,9 @@ public class GuiListener implements Listener {
         if (player == null || event.getWindow() == null || event.getResponse() == null) {
             return;
         }
-        GuiType cache = this.murderMystery.getGuiCache().get(event.getFormID());
+        GuiType cache = GuiCreate.UI_CACHE.containsKey(player) ? GuiCreate.UI_CACHE.get(player).get(event.getFormID()) : null;
         if (cache == null) return;
-        this.murderMystery.getGuiCache().remove(event.getFormID());
+        GuiCreate.UI_CACHE.get(player).remove(event.getFormID());
         String uName = this.murderMystery.getCmdUser();
         String aName = this.murderMystery.getCmdAdmin();
         if (event.getWindow() instanceof FormWindowSimple) {
