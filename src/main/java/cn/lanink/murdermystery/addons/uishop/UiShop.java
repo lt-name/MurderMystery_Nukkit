@@ -1,8 +1,8 @@
 package cn.lanink.murdermystery.addons.uishop;
 
 import cn.lanink.murdermystery.addons.AddonsBase;
-import cn.lanink.murdermystery.event.MurderRoomStartEvent;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -44,7 +44,7 @@ public class UiShop extends AddonsBase implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onRoomStart(MurderRoomStartEvent event) {
+    public void onRoomStart(MurderMysteryRoomStartEvent event) {
         String[] s = getConfig().get("UiShopItem", "347:0").split(":");
         Item item = Item.get(Integer.parseInt(s[0]), Integer.parseInt(s[1]), 1);
         item.setNamedTag(new CompoundTag().putBoolean("isMurderUiShop", true));
@@ -60,8 +60,8 @@ public class UiShop extends AddonsBase implements Listener {
         Player player = event.getPlayer();
         Item item = event.getItem();
         if (player == null || item == null || item.getNamedTag() == null) return;
-        Room room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room != null && room.getMode() == 2 &&
+        RoomBase room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room != null && room.getStatus() == 2 &&
                 item.getNamedTag().getBoolean("isMurderUiShop") && !this.cache.contains(player)) {
             this.cache.add(player);
             this.showUiShop(player);

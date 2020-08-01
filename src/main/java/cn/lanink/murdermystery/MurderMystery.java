@@ -1,15 +1,19 @@
 package cn.lanink.murdermystery;
 
-import cn.lanink.lib.scoreboard.IScoreboard;
-import cn.lanink.lib.scoreboard.ScoreboardDe;
-import cn.lanink.lib.scoreboard.ScoreboardGt;
 import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
-import cn.lanink.murdermystery.listener.*;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.lib.scoreboard.IScoreboard;
+import cn.lanink.murdermystery.lib.scoreboard.ScoreboardDe;
+import cn.lanink.murdermystery.lib.scoreboard.ScoreboardGt;
+import cn.lanink.murdermystery.listener.PlayerDamageListener;
+import cn.lanink.murdermystery.listener.PlayerGameListener;
+import cn.lanink.murdermystery.listener.PlayerJoinAndQuit;
+import cn.lanink.murdermystery.listener.RoomLevelProtection;
+import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.RoomClassicMode;
+import cn.lanink.murdermystery.room.RoomInfectedMode;
 import cn.lanink.murdermystery.ui.GuiListener;
-import cn.lanink.murdermystery.ui.GuiType;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
 import cn.nukkit.Server;
@@ -24,29 +28,32 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
  * MurderMystery
+ *
  * @author lt_name
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.0.6-SNAPSHOT git-e8acedc";
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;
     private Config config;
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
-    private final LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOM_CLASS = new LinkedHashMap<>();
+    private final LinkedHashMap<String, RoomBase> rooms = new LinkedHashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
-    public final LinkedList<Integer> taskList = new LinkedList<>();
+    public final Set<Integer> taskList = new HashSet<>();
     private String cmdUser, cmdAdmin;
-    private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
+    private List<String> cmdUserAliases, cmdAdminAliases;
     private IScoreboard scoreboard;
-    private MetricsLite metricsLite;
+    public static final Random RANDOM = new Random();
 
     public static MurderMystery getInstance() { return murderMystery; }
 
@@ -66,14 +73,11 @@ public class MurderMystery extends PluginBase {
             getLogger().warning("Skins 文件夹初始化失败");
         }
         saveDefaultConfig();
-        if (addonsManager == null) addonsManager = new AddonsManager(this);
-    }
-
-    @Override
-    public void onEnable() {
-        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        getLogger().info("§l§eVersion: " + VERSION);
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.cmdUser = this.config.getString("cmdUser", "murdermystery");
+        this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
+        this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
+        this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
         //语言文件
         saveResource("Resources/Language/zh_CN.yml", false);
         saveResource("Resources/Language/en_US.yml", false);
@@ -87,6 +91,17 @@ public class MurderMystery extends PluginBase {
             this.language = new Language(new Config());
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
         }
+        //扩展
+        if (addonsManager == null) addonsManager = new AddonsManager(this);
+        //注册房间类
+        registerRoom("classic", RoomClassicMode.class);
+        registerRoom("infected", RoomInfectedMode.class);
+    }
+
+    @Override
+    public void onEnable() {
+        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
+        getLogger().info("§l§eVersion: " + VERSION);
         //加载计分板
         try {
             Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
@@ -104,27 +119,26 @@ public class MurderMystery extends PluginBase {
         this.loadResources();
         this.loadRooms();
         this.loadSkins();
-        this.cmdUser = this.config.getString("cmdUser", "murdermystery");
-        this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
-        getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
-        getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
-        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
+        getServer().getCommandMap().register("",
+                new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
+        getServer().getCommandMap().register("",
+                new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
+        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(this), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
-        getServer().getPluginManager().registerEvents(new MurderListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
-        //延迟5秒启用扩展
-        getServer().getScheduler().scheduleDelayedTask(this, new Task() {
+        //启用扩展-使用task保证在所有插件都加载完后加载扩展
+        getServer().getScheduler().scheduleTask(this, new Task() {
             @Override
             public void onRun(int i) {
                 getLogger().info(language.startLoadingAddons);
                 addonsManager.enableAll();
                 getLogger().info(language.addonsLoaded);
             }
-        }, 100);
+        });
         try {
-            if (this.metricsLite == null) this.metricsLite = new MetricsLite(this, 7290);
+            new MetricsLite(this, 7290);
         } catch (Throwable ignore) {
 
         }
@@ -134,12 +148,12 @@ public class MurderMystery extends PluginBase {
     @Override
     public void onDisable() {
         addonsManager.disableAll();
-        if (this.rooms.values().size() > 0) {
-            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
+        if (this.rooms.size() > 0) {
+            Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, Room> entry = it.next();
+                Map.Entry<String, RoomBase> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
-                    entry.getValue().endGame(false);
+                    entry.getValue().endGameEvent(0);
                     getLogger().info(this.language.roomUnloadFailure.replace("%name%", entry.getKey()));
                 }else {
                     getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
@@ -155,6 +169,24 @@ public class MurderMystery extends PluginBase {
         }
         this.taskList.clear();
         getLogger().info(this.language.pluginDisable);
+    }
+
+    /**
+     * 注册房间类
+     *
+     * @param name 名称
+     * @param roomClass 房间类
+     */
+    public static void registerRoom(String name, Class<? extends RoomBase> roomClass) {
+        ROOM_CLASS.put(name, roomClass);
+    }
+
+    public static boolean hasRoomClass(String name) {
+        return ROOM_CLASS.containsKey(name);
+    }
+
+    public static LinkedHashMap<String, Class<? extends RoomBase>> getRoomClass() {
+        return ROOM_CLASS;
     }
 
     public Language getLanguage() {
@@ -178,12 +210,16 @@ public class MurderMystery extends PluginBase {
         return this.cmdUser;
     }
 
+    public List<String> getCmdUserAliases() {
+        return this.cmdUserAliases;
+    }
+
     public String getCmdAdmin() {
         return this.cmdAdmin;
     }
 
-    public HashMap<Integer, GuiType> getGuiCache() {
-        return this.guiCache;
+    public List<String> getCmdAdminAliases() {
+        return this.cmdAdminAliases;
     }
 
     public Skin getSword() {
@@ -194,7 +230,7 @@ public class MurderMystery extends PluginBase {
         return this.corpseSkin;
     }
 
-    public LinkedHashMap<String, Room> getRooms() {
+    public LinkedHashMap<String, RoomBase> getRooms() {
         return this.rooms;
     }
 
@@ -273,7 +309,8 @@ public class MurderMystery extends PluginBase {
             for (File file1 : s) {
                 String[] fileName = file1.getName().split("\\.");
                 if (fileName.length > 0) {
-                    Config config = getRoomConfig(fileName[0]);
+                    String worldName = fileName[0];
+                    Config config = getRoomConfig(worldName);
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
                             config.getString("waitSpawn", "").trim().equals("") ||
@@ -281,20 +318,30 @@ public class MurderMystery extends PluginBase {
                             config.getStringList("goldSpawn").size() == 0 ||
                             config.getInt("goldSpawnTime", 0) == 0 ||
                             config.getString("world", "").trim().equals("")) {
-                        getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", fileName[0]));
+                        getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", worldName));
                         continue;
                     }
-                    String levelName = config.getString("world");
-                    if (Server.getInstance().getLevelByName(levelName) == null) {
-                        Server.getInstance().loadLevel(levelName);
-                    }
-                    if (Server.getInstance().getLevelByName(levelName) == null) {
-                        getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", fileName[0]));
+                    if (Server.getInstance().getLevelByName(worldName) == null && !Server.getInstance().loadLevel(worldName)) {
+                        getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", worldName));
                         continue;
                     }
-                    Room room = new Room(config);
-                    this.rooms.put(fileName[0], room);
-                    getLogger().info(this.language.roomLoadedSuccess.replace("%name%", fileName[0]));
+                    String gameMode = config.getString("gameMode", "classic");
+                    if (!ROOM_CLASS.containsKey(gameMode)) {
+                        getLogger().warning(this.language.roomLoadedFailureByGameMode
+                                .replace("%name%", worldName)
+                                .replace("%gameMode%", gameMode));
+                        continue;
+                    }
+                    try {
+                        Constructor<? extends RoomBase> constructor =  ROOM_CLASS.get(gameMode)
+                                .getConstructor(Level.class, Config.class);
+                        RoomBase roomBase = constructor.newInstance(Server.getInstance().getLevelByName(worldName), config);
+                        roomBase.setGameMode(gameMode);
+                        this.rooms.put(worldName, roomBase);
+                        getLogger().info(this.language.roomLoadedSuccess.replace("%name%", worldName));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -306,10 +353,10 @@ public class MurderMystery extends PluginBase {
      */
     public void unloadRooms() {
         if (this.rooms.values().size() > 0) {
-            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
+            Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, Room> entry = it.next();
-                entry.getValue().endGame();
+                Map.Entry<String, RoomBase> entry = it.next();
+                entry.getValue().endGameEvent();
                 getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();
             }

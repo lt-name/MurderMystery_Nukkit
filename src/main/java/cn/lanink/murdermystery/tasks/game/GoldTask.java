@@ -1,12 +1,8 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.GameMode;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Tools;
-import cn.nukkit.Player;
-import cn.nukkit.item.Item;
-import cn.nukkit.level.Position;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.scheduler.Task;
 
@@ -15,60 +11,36 @@ import cn.nukkit.scheduler.Task;
  */
 public class GoldTask extends PluginTask<MurderMystery> {
 
-    private final Room room;
+    private final RoomBase room;
     private int goldSpawnTime;
 
-    public GoldTask(MurderMystery owner, Room room) {
+    public GoldTask(MurderMystery owner, RoomBase room) {
         super(owner);
         owner.taskList.add(this.getTaskId());
         this.room = room;
-        this.goldSpawnTime = room.getSetGoldSpawnTime();
+        this.goldSpawnTime = room.setGoldSpawnTime;
     }
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 2) {
+        if (this.room.getStatus() != 2) {
             Tools.cleanEntity(this.room.getLevel());
             this.cancel();
             return;
         }
         if (this.goldSpawnTime < 1) {
-            this.goldSpawnTime = this.room.getSetGoldSpawnTime();
+            this.goldSpawnTime = this.room.setGoldSpawnTime;
             //主线程操作掉落物
-            owner.getServer().getScheduler().scheduleDelayedTask(owner, new Task() {
+            owner.getServer().getScheduler().scheduleTask(owner, new Task() {
                 @Override
                 public void onRun(int i) {
-                    Tools.cleanEntity(room.getLevel());
-                    for (Position spawn : room.getGoldSpawn()) {
-                        room.getLevel().dropItem(spawn, Item.get(266, 0));
-                    }
+                    room.goldSpawn();
                 }
-            }, 1);
+            });
         }else {
             this.goldSpawnTime--;
         }
-        if (this.room.getGameMode() == GameMode.CLASSIC) {
-            for (Player player : room.getPlayers().keySet()) {
-                int x = 0;
-                boolean bow = true;
-                for (Item item : player.getInventory().getContents().values()) {
-                    if (item.getId() == 266) {
-                        x += item.getCount();
-                        continue;
-                    }
-                    if (item.getId() == 261) {
-                        bow = false;
-                    }
-                }
-                if (x > 9) {
-                    player.getInventory().removeItem(Item.get(266, 0, 10));
-                    player.getInventory().addItem(Item.get(262, 0, 1));
-                    if (bow) {
-                        player.getInventory().addItem(Item.get(261, 0, 1));
-                    }
-                }
-            }
-        }
+        this.room.asyncGoldTask();
     }
 
     @Override

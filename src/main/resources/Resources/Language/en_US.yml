@@ -9,6 +9,7 @@ startLoadingRoom: "§eStart loading game rooms..."
 roomLoadedSuccess: "§aSuccessfully loaded the game room: %name% !"
 roomLoadedFailureByConfig: "§cFailed to load the game room: %name% because its configuration file lacks something."
 roomLoadedFailureByLevel: "§cFailed to load the game room: %name% because we cant load its game map."
+roomLoadedFailureByGameMode: "§cRoom: %name% game mode setting error! No game mode found: %gameMode%"
 roomLoadedAllSuccess: "§eAll game rooms have been checked with %number% game rooms loaded successfully!"
 roomUnloadSuccess: "§cThe game room: %name% have been unloaded!"
 roomUnloadFailure: "§cThe game room: %name% can not be unloaded!"
@@ -64,6 +65,7 @@ adminSetWaitTime: "§aWaiting time is set to:%time%"
 adminSetGameTime: "§aTime of each game is set to:%time%"
 adminSetGameTimeShort: "§aThe minimum time of each game should be more than 1 minute!"
 adminSetGameMode: "§aThe mode of this room is set to :%roomMode%"
+adminSetGameModeNotFound: "§cRoom game mode: %mode% does not exist!"
 adminStartRoom: "§aThe game has been forcibly started!"
 adminStartRoomNoPlayer: "§aThe number of the players is less than 3,you can't start game."
 adminStartRoomIsPlaying: "§cThe room is playing!"
@@ -71,10 +73,8 @@ adminLevelNoRoom: "§aYou are not in the game room"
 adminStopRoom: "§aThe room has been forcibly ended!"
 adminReload: "§aConfig reload complete! Please check the information in the background!"
 adminUnload: "§aAll rooms unloaded! Please check the information in the background!"
-roomSafeKick: |-
-  §cRoom is closed abnormally!
-  For the safety of your backpack, please re-enter the server later!
-playerDeathChat: "§c[Death] %player% §b >>> %message%"
+playerChat: "§a[Room]§f %player% + §b >>>§f %message%"
+playerDeathChat: "§c[Death]§f %player% §b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"
 tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room"
 itemDetectiveBow: "§eBow of detectives"
@@ -137,6 +137,8 @@ titleKillerTitle: "§cKiller"
 titleKillerSubtitle: "Kill all the players"
 killerGetSwordTime: "§eKiller will get his sword in %time% seconds!"
 killerGetSword: "§eKiller have already got his sword"
+playerKilledByKiller: "§cA %identity% was killed by a killer!"
+commonPeopleBecomeDetective: "§aA civilian has become a new detective!"
 titleVictoryKillerTitle: "§aKiller Wins!"
 titleVictoryCommonPeopleSubtitle: "§aCivilian and Detective Wins!"
 victoryKillerBottom: "§eCongratulations to the killer for winning"
@@ -159,13 +161,14 @@ waitTimeBottom: |-
 waitBottom: "§cWaiting for more players..."
 gameTimeScoreBoard: |-
   RoomMode: §a %roomMode%
-  §l§aCurrent identity:§e %mode%
+
+  §l§aCurrent identity:§e %identity%
   §l§aNumber of survivors:§e %playerNumber%
   §l§aTime remaining:§e %time% §aseconds
-gameTimeBottom: |-
-  §aIdentify:§e %mode%
-  §aThere is §e %time% §asecond for the game to closed
-  There are:§e %playerNumber% §aplayers survived
+detectiveSurvival: "§aDetective Survival"
+detectiveDeath: |-
+  §l§cThe detective is dead
+  §l§cthe bow has fallen!
 gameEffectCDScoreBoard: "§l§aAccelerate cooling:§e %time% §aseconds "
 gameSwordCDScoreBoard: "§l§aFlyingSword cooling:§e %time% §aseconds "
 gameScanCDScoreBoard: "§l§aScanning cooling:§e %time% §aseconds "

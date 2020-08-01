@@ -10,7 +10,6 @@ public class EntitySword extends EntityHuman {
         super(chunk, nbt);
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);
-        this.setGliding(true);
     }
 
     @Override

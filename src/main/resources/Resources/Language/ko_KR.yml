@@ -11,6 +11,7 @@ startLoadingRoom: "§e방 불러오는 중..."
 roomLoadedSuccess: "§a방: %name%이(가) 불러와 졌습니다!"
 roomLoadedFailureByConfig: "§c방: %name% 설정에 문제가 있어서 불러오지 못하였습니다!"
 roomLoadedFailureByLevel: "§c방: %name%의 월드를 읽지 못하였습니다!"
+roomLoadedFailureByGameMode: "§cRoom: %name% game mode setting error! No game mode found: %gameMode%"
 roomLoadedAllSuccess: "§e방: %number% 불러오기 완료! 방이 현재 적용 완료되었습니다!"
 roomUnloadSuccess: "§c방: %name%이(가) 비활성화되었습니다!"
 roomUnloadFailure: "§c방: %name%이(가) 비정상적으로 종료되었습니다!"
@@ -66,6 +67,7 @@ adminSetWaitTime: "§a대기 시간은 %time%초로 설정되었습니다!"
 adminSetGameTime: "§a각 게임의 시간은 %time%초로 설정되었습니다!"
 adminSetGameTimeShort: "§a최소 게임 시간은 1분 이상 이여야 합니다!"
 adminSetGameMode: "§a이 방의 게임모드는 %roomMode%로 설정되었습니다!"
+adminSetGameModeNotFound: "§c %mode% no translation"
 adminStartRoom: "§a no translation"
 adminStartRoomNoPlayer: "§a준비된 플레이어가 3명 미만일 때는 시작이 불가능합니다!"
 adminStartRoomIsPlaying: "§c no translation"
@@ -73,9 +75,7 @@ adminLevelNoRoom: "§a게임 방에 들어가 있지 않습니다!"
 adminStopRoom: "§a no translation"
 adminReload: "§a설정 다시 불러오기 성공! 백그라운드에서 정보를 확인하세요!"
 adminUnload: "§a모든 방 언로드 성공! 백그라운드에서 정보를 확인하세요!"
-roomSafeKick: |-
-  §c방이 비정상적으로 닫혔습니다!
-  인벤토리 안전을 위해 나중에 서버를 다시 접속해주세요!
+playerChat: "§a[房间]§f %player% + §b >>>§f %message%"
 playerDeathChat: "§c[사망] %player% + §b >>> %message%"
 tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 월드에 참가하세요."
 tpQuitRoomLevel: "§e >> §c명령어를 사용하여 방을 종료하세요."
@@ -139,6 +139,8 @@ titleKillerTitle: "§c머더"
 titleKillerSubtitle: "모든 플레이어를 죽이세요!"
 killerGetSwordTime: "§e머더는 %time%초 후에 칼을 얻을 것입니다!"
 killerGetSword: "§e머더가 칼을 얻었습니다!"
+playerKilledByKiller: "§c一位§e%identity%§c被杀手杀死了！"
+commonPeopleBecomeDetective: "§a一位平民成为了新的侦探！"
 titleVictoryKillerTitle: "§a머더 승리!"
 titleVictoryCommonPeopleSubtitle: "§a시민과 형사 승리!"
 victoryKillerBottom: "§e머더가 모두를 죽여 승리한 것을 축하합니다!"
@@ -161,13 +163,12 @@ waitTimeBottom: |-
 waitBottom: "§c플레이어가 들어올 때까지 기다려주세요, 이 방에는 %playerNumber%명의 플레이어가 있습니다."
 gameTimeScoreBoard: |-
   방 모드: §a %roomMode%
-  §l§a현재 신분:§e %mode%
+
+  §l§a현재 신분:§e %identity%
   §l§a살아남아 있는 사람 수:§e %playerNumber%
   §l§a남은 시간:§e %time% §a초
-gameTimeBottom: |-
-  §a신분:§e %mode%
-  §a게임이 종료되기 §e %time% §a초가 남았습니다.
-  현재:§e %playerNumber% §a명의 플레이어가 살아있습니다.
+detectiveSurvival: "§l§a侦探存活"
+detectiveDeath: "§l§c侦探死亡,弓已掉落!"
 gameEffectCDScoreBoard: "§l§a가속 쿨다운:§e %time% §a초 "
 gameSwordCDScoreBoard: "§l§a플라이 검 쿨다운:§e %time% §a초 "
 gameScanCDScoreBoard: "§l§a스캐너 쿨다운:§e %time% §a초 "

@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.command.adminsubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -28,9 +28,9 @@ public class StopRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        Room room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        RoomBase room = this.murderMystery.getRooms().get(player.getLevel().getName());
         if (room != null) {
-            room.endGame(true);
+            room.endGameEvent();
             sender.sendMessage(this.language.adminStopRoom);
         }else {
             sender.sendMessage(this.language.adminLevelNoRoom);

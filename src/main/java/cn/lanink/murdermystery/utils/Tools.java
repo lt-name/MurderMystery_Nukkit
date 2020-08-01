@@ -4,7 +4,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -27,10 +27,10 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.List;
-import java.util.Random;
 
 
 public class Tools {
@@ -40,14 +40,15 @@ public class Tools {
      * @param room 房间
      * @return 房间模式
      */
-    public static String getStringRoomMode(Room room) {
+    public static String getStringRoomMode(RoomBase room) {
         switch (room.getGameMode()) {
-            case CLASSIC:
+            case "classic":
                 return MurderMystery.getInstance().getLanguage().Classic;
-            case INFECTED:
+            case "infected":
                 return MurderMystery.getInstance().getLanguage().Infected;
+            default:
+                return room.getGameMode();
         }
-        return "error";
     }
 
     /**
@@ -176,13 +177,35 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
-        PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.skin = skin;
-        packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = human.getSkin().getSkinId();
-        packet.uuid = human.getUniqueId();
+        String oldSkinName = human.getSkin().getSkinId();
         human.setSkin(skin);
-        human.getLevel().getPlayers().values().forEach(p -> p.dataPacket(packet));
+        //异步发包并检查
+        human.getLevel().getPlayers().values().forEach(p -> {
+            Server.getInstance().getScheduler().scheduleAsyncTask(MurderMystery.getInstance(), new AsyncTask() {
+                @Override
+                public void onRun() {
+                    PlayerSkinPacket packet = new PlayerSkinPacket();
+                    packet.skin = skin;
+                    packet.newSkinName = skin.getSkinId();
+                    packet.oldSkinName = oldSkinName;
+                    packet.uuid = human.getUniqueId();
+                    int x = 0;
+                    while (p.isOnline() && p.dataPacket(packet, true) != 0 && ++x < 3) {
+                        //防止发送过快崩端
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException ignored) {
+
+                        }
+                        packet = new PlayerSkinPacket();
+                        packet.skin = skin;
+                        packet.newSkinName = skin.getSkinId();
+                        packet.oldSkinName = oldSkinName;
+                        packet.uuid = human.getUniqueId();
+                    }
+                }
+            });
+        });
     }
 
     /**
@@ -219,12 +242,18 @@ public class Tools {
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
     }
 
+    public static void sendMessage(RoomBase roomBase, String string) {
+        for (Player player : roomBase.getPlayers().keySet()) {
+            player.sendMessage(string);
+        }
+    }
+
     /**
      * 添加声音
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(Room room, Sound sound) {
+    public static void addSound(RoomBase room, Sound sound) {
         for (Player player : room.getPlayers().keySet()) {
             addSound(player, sound);
         }
@@ -304,16 +333,15 @@ public class Tools {
     public static void spawnFirework(Position position) {
         ItemFirework item = new ItemFirework();
         CompoundTag tag = new CompoundTag();
-        Random random = new Random();
         CompoundTag ex = new CompoundTag();
         ex.putByteArray("FireworkColor",new byte[]{
-                (byte) DyeColor.values()[random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
+                (byte) DyeColor.values()[MurderMystery.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
         });
         ex.putByteArray("FireworkFade",new byte[0]);
-        ex.putBoolean("FireworkFlicker",random.nextBoolean());
-        ex.putBoolean("FireworkTrail",random.nextBoolean());
+        ex.putBoolean("FireworkFlicker",MurderMystery.RANDOM.nextBoolean());
+        ex.putBoolean("FireworkTrail",MurderMystery.RANDOM.nextBoolean());
         ex.putByte("FireworkType",ItemFirework.FireworkExplosion.ExplosionType.values()
-                [random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
+                [MurderMystery.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
         tag.putCompound("Fireworks",(new CompoundTag("Fireworks"))
                 .putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
         item.setNamedTag(tag);

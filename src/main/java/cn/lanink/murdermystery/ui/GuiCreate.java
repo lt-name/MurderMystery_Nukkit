@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.ui;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.RoomBase;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -16,7 +16,8 @@ import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.scheduler.Task;
 
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GuiCreate {
@@ -24,6 +25,7 @@ public class GuiCreate {
     private static final MurderMystery MURDER_MYSTERY = MurderMystery.getInstance();
     private static final Language LANGUAGE = MURDER_MYSTERY.getLanguage();
     public static final String PLUGIN_NAME = "§l§7[§1M§2u§3r§4d§5e§6r§aM§cy§bs§dt§9e§6r§2y§7]";
+    public static final HashMap<Player, HashMap<Integer, GuiType>> UI_CACHE = new HashMap<>();
 
     /**
      * 显示用户菜单
@@ -72,12 +74,8 @@ public class GuiCreate {
     public static void sendAdminModeMenu(Player player) {
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementDropdown("\n\n\n" +
-                LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getName()), new LinkedList<String>() {
-            {
-                add(LANGUAGE.Classic);
-                add(LANGUAGE.Infected);
-            }
-        }));
+                LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getName()),
+                Arrays.asList(MurderMystery.getRoomClass().keySet().toArray(new String[0]))));
         showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
     }
 
@@ -87,7 +85,7 @@ public class GuiCreate {
      */
     public static void sendRoomListMenu(Player player) {
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        for (Map.Entry<String, Room> entry : MurderMystery.getInstance().getRooms().entrySet()) {
+        for (Map.Entry<String, RoomBase> entry : MurderMystery.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e§l" + entry.getKey() +
                     "\n§r§eMode: " + Tools.getStringRoomMode(entry.getValue()) +
                     " Player: " + entry.getValue().getPlayers().size() + "/16",
@@ -100,12 +98,13 @@ public class GuiCreate {
     /**
      * 加入房间确认(自选)
      * @param player 玩家
+     * @param roomName 房间名字
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         FormWindowModal modal;
-        Room room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
+        RoomBase room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
         if (room != null) {
-            if (room.getMode() == 2 || room.getMode() == 3) {
+            if (room.getStatus() == 2 || room.getStatus() == 3) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
             }else if (room.getPlayers().size() > 15){
@@ -124,12 +123,20 @@ public class GuiCreate {
     }
 
     public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
+        HashMap<Integer, GuiType> map;
+        if (!UI_CACHE.containsKey(player)) {
+            map = new HashMap<>();
+            UI_CACHE.put(player, map);
+        }else {
+            map = UI_CACHE.get(player);
+        }
         int id = player.showFormWindow(window);
-        MURDER_MYSTERY.getGuiCache().put(id, guiType);
+        map.put(id, guiType);
         Server.getInstance().getScheduler().scheduleDelayedTask(MURDER_MYSTERY, new Task() {
             @Override
             public void onRun(int i) {
-                MURDER_MYSTERY.getGuiCache().remove(id);
+                if (UI_CACHE.containsKey(player))
+                    UI_CACHE.get(player).remove(id);
             }
         }, 2400);
     }
