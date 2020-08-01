@@ -51,6 +51,7 @@ public class MurderMystery extends PluginBase {
     private final Skin corpseSkin = new Skin();
     public final Set<Integer> taskList = new HashSet<>();
     private String cmdUser, cmdAdmin;
+    private List<String> cmdUserAliases, cmdAdminAliases;
     private IScoreboard scoreboard;
     public static final Random RANDOM = new Random();
 
@@ -73,6 +74,10 @@ public class MurderMystery extends PluginBase {
         }
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.cmdUser = this.config.getString("cmdUser", "murdermystery");
+        this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
+        this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
+        this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
         //语言文件
         saveResource("Resources/Language/zh_CN.yml", false);
         saveResource("Resources/Language/en_US.yml", false);
@@ -114,12 +119,10 @@ public class MurderMystery extends PluginBase {
         this.loadResources();
         this.loadRooms();
         this.loadSkins();
-        this.cmdUser = this.config.getString("cmdUser", "murdermystery");
-        this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
         getServer().getCommandMap().register("",
-                new UserCommand(this.cmdUser, this.config.getStringList("cmdUserAliases").toArray(new String[0])));
+                new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
         getServer().getCommandMap().register("",
-                new AdminCommand(this.cmdAdmin, this.config.getStringList("cmdAdminAliases").toArray(new String[0])));
+                new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(this), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
@@ -207,8 +210,16 @@ public class MurderMystery extends PluginBase {
         return this.cmdUser;
     }
 
+    public List<String> getCmdUserAliases() {
+        return this.cmdUserAliases;
+    }
+
     public String getCmdAdmin() {
         return this.cmdAdmin;
+    }
+
+    public List<String> getCmdAdminAliases() {
+        return this.cmdAdminAliases;
     }
 
     public Skin getSword() {

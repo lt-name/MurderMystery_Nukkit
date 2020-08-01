@@ -485,14 +485,25 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getMessage() == null) return;
+        String message = event.getMessage();
+        if (player == null || message == null) return;
         RoomBase room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (event.getMessage().startsWith(this.murderMystery.getCmdUser(), 1) ||
-                event.getMessage().startsWith(this.murderMystery.getCmdAdmin(), 1)) {
+        if (message.startsWith(this.murderMystery.getCmdUser(), 1) ||
+                message.startsWith(this.murderMystery.getCmdAdmin(), 1)) {
             return;
+        }
+        for (String string : this.murderMystery.getCmdUserAliases()) {
+            if (message.startsWith(string, 1)) {
+                return;
+            }
+        }
+        for (String string : this.murderMystery.getCmdAdminAliases()) {
+            if (message.startsWith(string, 1)) {
+                return;
+            }
         }
         event.setCancelled(true);
         player.sendMessage(this.language.useCmdInRoom);
