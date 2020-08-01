@@ -317,7 +317,7 @@ public class MurderMystery extends PluginBase {
                             config.getStringList("randomSpawn").size() == 0 ||
                             config.getStringList("goldSpawn").size() == 0 ||
                             config.getInt("goldSpawnTime", 0) == 0 ||
-                            config.getString("world", "").trim().equals("")) {
+                            config.getString("gameMode", "").trim().equals("")) {
                         getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", worldName));
                         continue;
                     }
