@@ -36,33 +36,35 @@ public class TipsTask extends PluginTask<MurderMystery> {
         if (room.getPlayers().size() > 0) {
             int playerNumber = this.room.getSurvivorPlayerNumber();
             boolean detectiveSurvival = room.getPlayers().containsValue(2);
-            String mode;
+            String identity;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                 entry.getKey().setNameTag("");
                 switch (entry.getValue()) {
                     case 1:
-                        mode = owner.getLanguage().commonPeople;
+                        identity = owner.getLanguage().commonPeople;
                         break;
                     case 2:
-                        mode = owner.getLanguage().detective;
+                        identity = owner.getLanguage().detective;
                         break;
                     case 3:
-                        mode = owner.getLanguage().killer;
+                        identity = owner.getLanguage().killer;
                         break;
                     default:
-                        mode = owner.getLanguage().death;
+                        identity = owner.getLanguage().death;
                         break;
                 }
                 LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.gameTimeScoreBoard
                         .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                        .replace("%mode%", mode)
+                        .replace("%identity%", identity)
                         .replace("%playerNumber%", playerNumber + "")
                         .replace("%time%", this.room.gameTime + "").split("\n")));
+                ms.add(" ");
                 if (detectiveSurvival) {
                     ms.addAll(Arrays.asList(this.language.detectiveSurvival.split("\n")));
                 }else {
                     ms.addAll(Arrays.asList(this.language.detectiveDeath.split("\n")));
                 }
+                ms.add("  ");
                 if (entry.getValue() == 3) {
                     if (this.room.effectCD > 0) {
                         ms.add(this.language.gameEffectCDScoreBoard

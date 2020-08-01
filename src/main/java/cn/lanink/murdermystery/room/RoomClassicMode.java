@@ -356,6 +356,9 @@ public class RoomClassicMode extends RoomBase {
             damage.sendMessage(this.language.killPlayer);
             player.sendTitle(this.language.deathTitle,
                     this.language.deathByKillerSubtitle, 20, 60, 20);
+            String tip = this.language.playerKilledByKiller
+                    .replace("%identity%", this.getPlayers(player) == 2 ? this.language.detective : this.language.commonPeople);
+            this.players.keySet().forEach(p -> p.sendMessage(tip));
         }else { //攻击者是平民或侦探
             if (this.getPlayers(player) == 3) {
                 damage.sendMessage(this.language.killKiller);

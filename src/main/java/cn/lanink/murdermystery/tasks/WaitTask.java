@@ -72,7 +72,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
                             .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
-                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle,  ms);
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
             }
         }else {
             this.room.endGameEvent();

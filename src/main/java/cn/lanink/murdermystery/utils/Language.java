@@ -129,6 +129,7 @@ public class Language {
     public String titleKillerSubtitle = "杀掉所有人";
     public String killerGetSwordTime = "§e杀手将在 %time% 秒后拿到剑！";
     public String killerGetSword = "§e杀手已拿到剑！";
+    public String playerKilledByKiller = "§c一位§e%identity%§c被杀手杀死了！";
     public String commonPeopleBecomeDetective = "§a一位平民成为了新的侦探！";
     public String titleVictoryKillerTitle = "§a杀手获得胜利！";
     public String titleVictoryCommonPeopleSubtitle = "§a平民和侦探获得胜利！";
@@ -141,8 +142,8 @@ public class Language {
     public String waitScoreBoard = " 房间模式: §a %roomMode% \n 玩家: §a %playerNumber%/16 \n 最低游戏人数为 5 人 \n 等待玩家加入中";
     public String waitTimeBottom = "§a当前已有: %playerNumber% 位玩家 \n §a游戏还有: %time% 秒开始！";
     public String waitBottom = "§c等待玩家加入中,当前已有: %playerNumber% 位玩家";
-    public String gameTimeScoreBoard = " 房间模式: §a %roomMode% \n" +
-            "§l§a当前身份:§e %mode% \n" +
+    public String gameTimeScoreBoard = "§l§a房间模式: §a %roomMode% \n" +
+            "§l§a我的身份:§e %identity% \n" +
             "§l§a存活人数:§e %playerNumber% \n" +
             "§l§a剩余时间:§e %time% §a秒 ";
     public String detectiveSurvival = "§l§a侦探存活";
@@ -274,6 +275,7 @@ public class Language {
         this.titleKillerSubtitle = config.getString("titleKillerSubtitle", this.titleKillerSubtitle);
         this.killerGetSwordTime = config.getString("killerGetSwordTime", this.killerGetSwordTime);
         this.killerGetSword = config.getString("killerGetSword", this.killerGetSword);
+        this.playerKilledByKiller = config.getString("playerKilledByKiller", this.playerKilledByKiller);
         this.commonPeopleBecomeDetective = config.getString("commonPeopleBecomeDetective", this.commonPeopleBecomeDetective);
         this.titleVictoryKillerTitle = config.getString("titleVictoryKillerTitle", this.titleVictoryKillerTitle);
         this.titleVictoryCommonPeopleSubtitle = config.getString("titleVictoryCommonPeopleSubtitle", this.titleVictoryCommonPeopleSubtitle);

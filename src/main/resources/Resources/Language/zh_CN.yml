@@ -137,6 +137,7 @@ titleKillerTitle: "§c杀手"
 titleKillerSubtitle: "杀掉所有人"
 killerGetSwordTime: "§e杀手将在 %time% 秒后拿到剑！"
 killerGetSword: "§e杀手已拿到剑！"
+playerKilledByKiller: "§c一位§e%identity%§c被杀手杀死了！"
 commonPeopleBecomeDetective: "§a一位平民成为了新的侦探！"
 titleVictoryKillerTitle: "§a杀手获得胜利！"
 titleVictoryCommonPeopleSubtitle: "§a平民和侦探获得胜利！"
@@ -159,8 +160,9 @@ waitTimeBottom: |-
   §a游戏还有: %time% 秒开始！
 waitBottom: "§c等待玩家加入中,当前已有: %playerNumber% 位玩家"
 gameTimeScoreBoard: |-
-  房间模式: §a %roomMode%
-  §l§a当前身份:§e %mode%
+  §l§a房间模式: §a %roomMode%
+
+  §l§a我的身份:§e %identity%
   §l§a存活人数:§e %playerNumber%
   §l§a剩余时间:§e %time% §a秒
 detectiveSurvival: "§a侦探存活"

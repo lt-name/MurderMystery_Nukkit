@@ -137,6 +137,7 @@ titleKillerTitle: "§cKiller"
 titleKillerSubtitle: "Kill all the players"
 killerGetSwordTime: "§eKiller will get his sword in %time% seconds!"
 killerGetSword: "§eKiller have already got his sword"
+playerKilledByKiller: "§cA %identity% was killed by a killer!"
 commonPeopleBecomeDetective: "§aA civilian has become a new detective!"
 titleVictoryKillerTitle: "§aKiller Wins!"
 titleVictoryCommonPeopleSubtitle: "§aCivilian and Detective Wins!"
@@ -160,7 +161,8 @@ waitTimeBottom: |-
 waitBottom: "§cWaiting for more players..."
 gameTimeScoreBoard: |-
   RoomMode: §a %roomMode%
-  §l§aCurrent identity:§e %mode%
+
+  §l§aCurrent identity:§e %identity%
   §l§aNumber of survivors:§e %playerNumber%
   §l§aTime remaining:§e %time% §aseconds
 detectiveSurvival: "§aDetective Survival"

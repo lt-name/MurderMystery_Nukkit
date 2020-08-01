@@ -139,6 +139,7 @@ titleKillerTitle: "§c머더"
 titleKillerSubtitle: "모든 플레이어를 죽이세요!"
 killerGetSwordTime: "§e머더는 %time%초 후에 칼을 얻을 것입니다!"
 killerGetSword: "§e머더가 칼을 얻었습니다!"
+playerKilledByKiller: "§c一位§e%identity%§c被杀手杀死了！"
 commonPeopleBecomeDetective: "§a一位平民成为了新的侦探！"
 titleVictoryKillerTitle: "§a머더 승리!"
 titleVictoryCommonPeopleSubtitle: "§a시민과 형사 승리!"
@@ -162,7 +163,8 @@ waitTimeBottom: |-
 waitBottom: "§c플레이어가 들어올 때까지 기다려주세요, 이 방에는 %playerNumber%명의 플레이어가 있습니다."
 gameTimeScoreBoard: |-
   방 모드: §a %roomMode%
-  §l§a현재 신분:§e %mode%
+
+  §l§a현재 신분:§e %identity%
   §l§a살아남아 있는 사람 수:§e %playerNumber%
   §l§a남은 시간:§e %time% §a초
 detectiveSurvival: "§l§a侦探存活"
