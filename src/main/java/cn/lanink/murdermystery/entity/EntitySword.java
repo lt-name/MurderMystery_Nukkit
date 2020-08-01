@@ -10,7 +10,6 @@ public class EntitySword extends EntityHuman {
         super(chunk, nbt);
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);
-        this.setGliding(true);
     }
 
     @Override
@@ -25,7 +24,7 @@ public class EntitySword extends EntityHuman {
 
     @Override
     public float getHeight() {
-        return 1.5F;
+        return 1;
     }
 
 }

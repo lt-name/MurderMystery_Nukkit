@@ -20,10 +20,13 @@ public class SwordMoveTask extends AsyncTask {
     private final Player player;
     private LinkedList<double[]> math;
     private EntitySword sword;
+    private double yaw, pitch;
 
     public SwordMoveTask(RoomBase room, Player player) {
         this.room = room;
         this.player = player;
+        this.yaw = player.getYaw();
+        this.pitch = player.getPitch();
         Position pos1 = new Position(player.x, player.y + player.getEyeHeight(), player.z, player.getLevel());
         Position pos2 = player.getTargetBlock(15) == null ? null : player.getTargetBlock(15).getLocation();
         if (pos2 == null) return;
@@ -36,7 +39,8 @@ public class SwordMoveTask extends AsyncTask {
                 .putString("ModelId", skin.getSkinId()));
         tag.putFloat("Scale", 0.5F);
         this.sword = new EntitySword(player.getChunk(), tag);
-        this.sword.setRotation(player.getYaw(), player.getPitch());
+        this.sword.setSkin(skin);
+        this.sword.setRotation(this.yaw, this.pitch);
         this.sword.spawnToAll();
         Tools.setHumanSkin(this.sword, skin);
     }
@@ -56,9 +60,6 @@ public class SwordMoveTask extends AsyncTask {
                         if (((entity.x - entity.getWidth() - 0.5) <= p.x) && ((entity.x + entity.getWidth() + 0.5) >= p.x) &&
                                 ((entity.y - entity.getWidth() - 0.5) <= p.y) && ((entity.x + entity.getWidth() + 0.5) >= p.y) &&
                                 ((entity.z - entity.getWidth() - 0.5) <= p.z) && ((entity.z + entity.getWidth() + 0.5) >= p.z)) {
-                        /*if (entity.x >= p.x - entity.getWidth() && entity.x <= p.x + entity.getWidth() &&
-                                entity.y >= p.y - entity.getHeight() && p.y <= entity.y + entity.getHeight() &&
-                                entity.z >= p.z - entity.getWidth() && entity.z <= p.z + entity.getWidth()) {*/
                             this.room.playerDamageEvent(this.player, player2);
                             this.sword.close();
                             return;

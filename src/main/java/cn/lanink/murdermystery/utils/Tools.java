@@ -27,6 +27,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.List;
@@ -176,13 +177,35 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
-        PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.skin = skin;
-        packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = human.getSkin().getSkinId();
-        packet.uuid = human.getUniqueId();
+        String oldSkinName = human.getSkin().getSkinId();
         human.setSkin(skin);
-        human.getLevel().getPlayers().values().forEach(p -> p.dataPacket(packet));
+        //异步发包并检查
+        human.getLevel().getPlayers().values().forEach(p -> {
+            Server.getInstance().getScheduler().scheduleAsyncTask(MurderMystery.getInstance(), new AsyncTask() {
+                @Override
+                public void onRun() {
+                    PlayerSkinPacket packet = new PlayerSkinPacket();
+                    packet.skin = skin;
+                    packet.newSkinName = skin.getSkinId();
+                    packet.oldSkinName = oldSkinName;
+                    packet.uuid = human.getUniqueId();
+                    int x = 0;
+                    while (p.isOnline() && p.dataPacket(packet, true) != 0 && ++x < 3) {
+                        //防止发送过快崩端
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException ignored) {
+
+                        }
+                        packet = new PlayerSkinPacket();
+                        packet.skin = skin;
+                        packet.newSkinName = skin.getSkinId();
+                        packet.oldSkinName = oldSkinName;
+                        packet.uuid = human.getUniqueId();
+                    }
+                }
+            });
+        });
     }
 
     /**
