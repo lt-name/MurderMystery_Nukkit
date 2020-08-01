@@ -1,4 +1,4 @@
-package cn.lanink.lib.scoreboard;
+package cn.lanink.murdermystery.lib.scoreboard;
 
 import cn.nukkit.Player;
 import de.theamychan.scoreboard.api.ScoreboardAPI;
