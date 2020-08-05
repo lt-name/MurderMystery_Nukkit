@@ -209,7 +209,7 @@ public class Tools {
     }
 
     private static void sendDataPacket(Player player, DataPacket dataPacket, boolean needACK, int retransmission) {
-        int id = player.directDataPacket(dataPacket, true);
+        int id = player.directDataPacket(dataPacket, needACK);
         if (needACK && retransmission < 3) {
             Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
                 @Override
