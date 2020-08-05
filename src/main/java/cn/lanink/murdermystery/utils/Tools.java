@@ -28,8 +28,11 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.DyeColor;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 
@@ -177,35 +180,47 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
-        String oldSkinName = human.getSkin().getSkinId();
-        human.setSkin(skin);
-        //异步发包并检查
-        human.getLevel().getPlayers().values().forEach(p -> {
-            Server.getInstance().getScheduler().scheduleAsyncTask(MurderMystery.getInstance(), new AsyncTask() {
-                @Override
-                public void onRun() {
-                    PlayerSkinPacket packet = new PlayerSkinPacket();
-                    packet.skin = skin;
-                    packet.newSkinName = skin.getSkinId();
-                    packet.oldSkinName = oldSkinName;
-                    packet.uuid = human.getUniqueId();
-                    int x = 0;
-                    while (p.isOnline() && p.dataPacket(packet, true) != 0 && ++x < 3) {
-                        //防止发送过快崩端
-                        try {
-                            Thread.sleep(300);
-                        } catch (InterruptedException ignored) {
+        setHumanSkin(human, skin, false);
+    }
 
+    public static void setHumanSkin(EntityHuman human, Skin skin, boolean needACK) {
+        human.setSkin(skin);
+        if (human.getLevel() != null) {
+            for (Player player : human.getLevel().getPlayers().values()) {
+                Server.getInstance().getScheduler().scheduleAsyncTask(MurderMystery.getInstance(), new AsyncTask() {
+                    @Override
+                    public void onRun() {
+                        setHumanSkin(human, skin, player, needACK, 0);
+                    }
+                });
+            }
+        }
+    }
+
+    private static void setHumanSkin(EntityHuman human, Skin skin, Player player, boolean needACK, int retransmission) {
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.skin = skin;
+        packet.newSkinName = skin.getSkinId();
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        int id = player.directDataPacket(packet, true);
+        if (needACK && retransmission < 3) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
+                @Override
+                public void onRun(int i) {
+                    try {
+                        Field field = player.getClass().getDeclaredField("needACK");
+                        field.setAccessible(true);
+                        Int2ObjectOpenHashMap<Boolean> o = (Int2ObjectOpenHashMap<Boolean>) field.get(player);
+                        if (o == null || !o.get(id)) {
+                            setHumanSkin(human, skin, player, true, retransmission + 1);
                         }
-                        packet = new PlayerSkinPacket();
-                        packet.skin = skin;
-                        packet.newSkinName = skin.getSkinId();
-                        packet.oldSkinName = oldSkinName;
-                        packet.uuid = human.getUniqueId();
+                    } catch (Exception ignored) {
+
                     }
                 }
-            });
-        });
+            }, 60, true);
+        }
     }
 
     /**

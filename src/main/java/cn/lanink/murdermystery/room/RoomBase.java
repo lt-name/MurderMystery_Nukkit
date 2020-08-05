@@ -134,7 +134,7 @@ public abstract class RoomBase {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
                 this.skinNumber.put(player, entry.getKey());
-                Tools.setHumanSkin(player, entry.getValue());
+                Tools.setHumanSkin(player, entry.getValue(), true);
                 return;
             }
         }
@@ -147,7 +147,7 @@ public abstract class RoomBase {
      */
     public void restorePlayerSkin(Player player) {
         if (this.skinCache.containsKey(player)) {
-            Tools.setHumanSkin(player, this.skinCache.get(player));
+            Tools.setHumanSkin(player, this.skinCache.get(player), true);
             this.skinCache.remove(player);
         }
         this.skinNumber.remove(player);
