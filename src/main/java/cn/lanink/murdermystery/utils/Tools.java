@@ -25,6 +25,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.scheduler.AsyncTask;
@@ -184,26 +185,31 @@ public class Tools {
     }
 
     public static void setHumanSkin(EntityHuman human, Skin skin, boolean needACK) {
+        String oldSkinName = human.getSkin().getSkinId();
         human.setSkin(skin);
         if (human.getLevel() != null) {
             for (Player player : human.getLevel().getPlayers().values()) {
                 Server.getInstance().getScheduler().scheduleAsyncTask(MurderMystery.getInstance(), new AsyncTask() {
                     @Override
                     public void onRun() {
-                        setHumanSkin(human, skin, player, needACK, 0);
+                        PlayerSkinPacket packet = new PlayerSkinPacket();
+                        packet.skin = skin;
+                        packet.newSkinName = skin.getSkinId();
+                        packet.oldSkinName = oldSkinName;
+                        packet.uuid = human.getUniqueId();
+                        sendDataPacket(player, packet, needACK);
                     }
                 });
             }
         }
     }
 
-    private static void setHumanSkin(EntityHuman human, Skin skin, Player player, boolean needACK, int retransmission) {
-        PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.skin = skin;
-        packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = human.getSkin().getSkinId();
-        packet.uuid = human.getUniqueId();
-        int id = player.directDataPacket(packet, true);
+    public static void sendDataPacket(Player player, DataPacket dataPacket, boolean needACK) {
+        sendDataPacket(player, dataPacket, needACK, 0);
+    }
+
+    private static void sendDataPacket(Player player, DataPacket dataPacket, boolean needACK, int retransmission) {
+        int id = player.directDataPacket(dataPacket, true);
         if (needACK && retransmission < 3) {
             Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
                 @Override
@@ -212,8 +218,8 @@ public class Tools {
                         Field field = player.getClass().getDeclaredField("needACK");
                         field.setAccessible(true);
                         Int2ObjectOpenHashMap<Boolean> o = (Int2ObjectOpenHashMap<Boolean>) field.get(player);
-                        if (o == null || !o.get(id)) {
-                            setHumanSkin(human, skin, player, true, retransmission + 1);
+                        if (o == null || !o.getOrDefault(id, Boolean.FALSE)) {
+                            sendDataPacket(player, dataPacket, true, retransmission + 1);
                         }
                     } catch (Exception ignored) {
 
