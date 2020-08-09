@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.AsyncTask;
@@ -13,10 +13,10 @@ import java.util.Map;
 
 public class ScanTask extends AsyncTask {
 
-    private final RoomBase room;
+    private final BaseRoom room;
     private final Player player;
 
-    public ScanTask(RoomBase room , Player player) {
+    public ScanTask(BaseRoom room , Player player) {
         this.room = room;
         this.player = player;
     }

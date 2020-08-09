@@ -20,7 +20,7 @@ import java.util.Random;
  *
  * @author lt_name
  */
-public class RoomInfectedMode extends RoomClassicMode {
+public class InfectedModeRoom extends ClassicModeRoom {
 
     /**
      * 初始化
@@ -28,7 +28,7 @@ public class RoomInfectedMode extends RoomClassicMode {
      * @param level 世界
      * @param config 配置文件
      */
-    public RoomInfectedMode(Level level, Config config) {
+    public InfectedModeRoom(Level level, Config config) {
         super(level, config);
     }
 

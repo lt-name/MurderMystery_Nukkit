@@ -23,12 +23,14 @@ import java.util.*;
  * @author lt_name
  */
 
-public abstract class RoomBase {
+public abstract class BaseRoom {
 
     private String gameMode = null;
     protected MurderMystery murderMystery = MurderMystery.getInstance();
     protected Language language = MurderMystery.getInstance().getLanguage();
-
+    public static final int ROOM_STATUS_WAIT = 1;
+    public static final int ROOM_STATUS_GAME = 2;
+    public static final int ROOM_STATUS_VICTORY = 3;
     protected int status; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime; //秒
@@ -48,7 +50,7 @@ public abstract class RoomBase {
      * @param level 世界
      * @param config 配置文件
      */
-    public RoomBase(Level level, Config config) {
+    public BaseRoom(Level level, Config config) {
         this.level = level;
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");

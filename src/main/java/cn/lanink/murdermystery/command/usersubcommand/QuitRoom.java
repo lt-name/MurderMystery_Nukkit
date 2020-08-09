@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.command.usersubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -25,7 +25,7 @@ public class QuitRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        for (RoomBase room : this.murderMystery.getRooms().values()) {
+        for (BaseRoom room : this.murderMystery.getRooms().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player);
                 sender.sendMessage(this.language.quitRoom);

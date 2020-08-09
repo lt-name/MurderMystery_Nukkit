@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.addons.uishop;
 
 import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -23,6 +23,9 @@ import cn.nukkit.scheduler.Task;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * @author lt_name
+ */
 public class UiShop extends AddonsBase implements Listener {
 
     private static final int DLC_UI_SHOP = 1111856485;
@@ -59,8 +62,10 @@ public class UiShop extends AddonsBase implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Item item = event.getItem();
-        if (player == null || item == null || item.getNamedTag() == null) return;
-        RoomBase room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (player == null || item == null || item.getNamedTag() == null) {
+            return;
+        }
+        BaseRoom room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room != null && room.getStatus() == 2 &&
                 item.getNamedTag().getBoolean("isMurderUiShop") && !this.cache.contains(player)) {
             this.cache.add(player);

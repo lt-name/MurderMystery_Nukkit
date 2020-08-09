@@ -4,7 +4,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -37,6 +37,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 
+/**
+ * @author lt_name
+ */
 public class Tools {
 
     /**
@@ -44,7 +47,7 @@ public class Tools {
      * @param room 房间
      * @return 房间模式
      */
-    public static String getStringRoomMode(RoomBase room) {
+    public static String getStringRoomMode(BaseRoom room) {
         switch (room.getGameMode()) {
             case "classic":
                 return MurderMystery.getInstance().getLanguage().Classic;
@@ -66,7 +69,7 @@ public class Tools {
         }
         for (String s : cmds) {
             String[] cmd = s.split("&");
-            if ((cmd.length > 1) && (cmd[1].equals("con"))) {
+            if ((cmd.length > 1) && ("con".equals(cmd[1]))) {
                 Server.getInstance().dispatchCommand(new ConsoleCommandSender(), cmd[0].replace("@p", player.getName()));
             } else {
                 Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
@@ -96,6 +99,8 @@ public class Tools {
             case 22:
             case 23:
                 player.getInventory().addItem(getMurderItem(tagNumber));
+                break;
+            default:
                 break;
         }
     }
@@ -171,8 +176,9 @@ public class Tools {
                 item.setCustomName(language.itemSnowball);
                 item.setLore(language.itemSnowballLore.split("\n"));
                 return item;
+            default:
+                return Item.get(0);
         }
-        return null;
     }
 
     /**
@@ -263,8 +269,8 @@ public class Tools {
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
     }
 
-    public static void sendMessage(RoomBase roomBase, String string) {
-        for (Player player : roomBase.getPlayers().keySet()) {
+    public static void sendMessage(BaseRoom baseRoom, String string) {
+        for (Player player : baseRoom.getPlayers().keySet()) {
             player.sendMessage(string);
         }
     }
@@ -274,7 +280,7 @@ public class Tools {
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(RoomBase room, Sound sound) {
+    public static void addSound(BaseRoom room, Sound sound) {
         for (Player player : room.getPlayers().keySet()) {
             addSound(player, sound);
         }
@@ -332,7 +338,9 @@ public class Tools {
      * @return Y
      */
     public static double getFloorY(Player player) {
-        if (player.getFloorY() <= 0) return 1;
+        if (player.getFloorY() <= 0) {
+            return 1;
+        }
         for (int y = 0; y < 15; y++) {
             Level level = player.getLevel();
             Block block = level.getBlock(player.getFloorX(), player.getFloorY() - y, player.getFloorZ());

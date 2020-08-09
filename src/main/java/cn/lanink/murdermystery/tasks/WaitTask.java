@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.tasks;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -13,10 +13,10 @@ import java.util.LinkedList;
 
 public class WaitTask extends PluginTask<MurderMystery> {
 
-    private final RoomBase room;
+    private final BaseRoom room;
     private final Language language;
 
-    public WaitTask(MurderMystery owner, RoomBase room) {
+    public WaitTask(MurderMystery owner, BaseRoom room) {
         super(owner);
         owner.taskList.add(this.getTaskId());
         this.room = room;
@@ -43,7 +43,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                             .replace("%roomMode%", Tools.getStringRoomMode(this.room))
                             .replace("%playerNumber%", room.getPlayers().size() + "")
                             .replace("%time%", this.room.waitTime + "");
-                    if (!waitTimeBottom.trim().equals("")) {
+                    if (!"".equals(waitTimeBottom.trim())) {
                         player.sendTip(waitTimeBottom);
                     }
                     owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle,
@@ -64,7 +64,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 String waitBottom = this.language.waitBottom
                         .replace("%roomMode%", Tools.getStringRoomMode(this.room))
                         .replace("%playerNumber%", room.getPlayers().size() + "");
-                if (!waitBottom.trim().equals("")) {
+                if (!"".equals(waitBottom.trim())) {
                     player.sendActionBar(waitBottom);
                 }
                 LinkedList<String> ms = new LinkedList<>();

@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.command.usersubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -31,15 +31,16 @@ public class JoinRoom extends BaseSubCommand {
                 sender.sendMessage(this.language.joinRoomOnRiding);
                 return true;
             }
-            for (RoomBase room : this.murderMystery.getRooms().values()) {
+            for (BaseRoom room : this.murderMystery.getRooms().values()) {
                 if (room.isPlaying(player)) {
                     sender.sendMessage(this.language.joinRoomOnRoom);
                     return true;
                 }
             }
             if (args.length < 2) {
-                for (RoomBase room : this.murderMystery.getRooms().values()) {
-                    if ((room.getStatus() == 0 || room.getStatus() == 1) && room.getPlayers().size() < 16) {
+                for (BaseRoom room : this.murderMystery.getRooms().values()) {
+                    if ((room.getStatus() == 0 || room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) &&
+                            room.getPlayers().size() < 16) {
                         room.joinRoom(player);
                         sender.sendMessage(this.language.joinRandomRoom);
                         return true;
@@ -49,8 +50,9 @@ public class JoinRoom extends BaseSubCommand {
                 String[] s = args[1].split(":");
                 if (s.length == 2 && s[0].toLowerCase().trim().equals("mode")) {
                     String modeName = s[1].toLowerCase().trim();
-                    for (RoomBase room : this.murderMystery.getRooms().values()) {
-                        if ((room.getStatus() == 0 || room.getStatus() == 1) && room.getPlayers().size() < 16) {
+                    for (BaseRoom room : this.murderMystery.getRooms().values()) {
+                        if ((room.getStatus() == 0 || room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) &&
+                                room.getPlayers().size() < 16) {
                             if (room.getGameMode().equals(modeName)) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.language.joinRandomRoom);
@@ -61,8 +63,9 @@ public class JoinRoom extends BaseSubCommand {
                     sender.sendMessage(this.language.joinRoomIsNotFound);
                     return true;
                 }else if (this.murderMystery.getRooms().containsKey(args[1])) {
-                    RoomBase room = this.murderMystery.getRooms().get(args[1]);
-                    if (room.getStatus() == 2 || room.getStatus() == 3) {
+                    BaseRoom room = this.murderMystery.getRooms().get(args[1]);
+                    if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME ||
+                            room.getStatus() == BaseRoom.ROOM_STATUS_VICTORY) {
                         sender.sendMessage(this.language.joinRoomIsPlaying);
                     }else if (room.getPlayers().values().size() >= 16) {
                         sender.sendMessage(this.language.joinRoomIsFull);

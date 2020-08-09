@@ -6,6 +6,9 @@ import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
+/**
+ * @author lt_name
+ */
 public class AdminCommand extends BaseCommand {
 
     public AdminCommand(String name, String[] aliases) {
@@ -32,7 +35,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Override
-    public void sendUI(CommandSender sender) {
+    public void sendUi(CommandSender sender) {
         GuiCreate.sendAdminMenu((Player) sender);
     }
 

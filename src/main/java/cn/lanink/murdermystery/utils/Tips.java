@@ -9,6 +9,9 @@ import tip.utils.Api;
 
 import java.util.LinkedList;
 
+/**
+ * @author lt_name
+ */
 public class Tips {
 
     /**

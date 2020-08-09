@@ -77,10 +77,17 @@ public abstract class AddonsBase implements CommandExecutor {
         return this.addonsName;
     }
 
+    /**
+     * 启用扩展
+     */
     public abstract void onEnable();
 
+    /**
+     * 卸载扩展
+     */
     public abstract void onDisable();
 
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return false;
     }

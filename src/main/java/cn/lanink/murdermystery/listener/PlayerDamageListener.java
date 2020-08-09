@@ -3,7 +3,7 @@ package cn.lanink.murdermystery.listener;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -17,6 +17,9 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
 
+/**
+ * @author lt_name
+ */
 public class PlayerDamageListener implements Listener {
 
     private final MurderMystery murderMystery;
@@ -39,15 +42,19 @@ public class PlayerDamageListener implements Listener {
             if (damager == null || player == null) {
                 return;
             }
-            RoomBase room = this.murderMystery.getRooms().getOrDefault(damager.getLevel().getName(), null);
-            if (room == null) return;
+            BaseRoom room = this.murderMystery.getRooms().getOrDefault(damager.getLevel().getName(), null);
+            if (room == null) {
+                return;
+            }
             event.setCancelled(true);
             if (event instanceof  EntityDamageByChildEntityEvent) {
                 EntityDamageByChildEntityEvent event1 = (EntityDamageByChildEntityEvent) event;
                 damager = (Player) event1.getDamager();
                 player = (Player) event1.getEntity();
                 Entity child = event1.getChild();
-                if (child == null || child.namedTag == null) return;
+                if (child == null || child.namedTag == null) {
+                    return;
+                }
                 if (child.namedTag.getBoolean("isMurderItem")) {
                     if (child.namedTag.getInt("MurderType") == 20) {
                         room.playerDamageEvent(damager, player);
@@ -82,11 +89,13 @@ public class PlayerDamageListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            RoomBase room = this.murderMystery.getRooms().get(player.getLevel().getName());
-            if (room == null) return;
+            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+            if (room == null) {
+                return;
+            }
             //虚空 游戏开始前拉回 游戏中判断玩家死亡
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (room.getStatus() == 2) {
+                if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME) {
                     room.playerDeathEvent(player);
                 }else {
                     player.teleport(room.getWaitSpawn());

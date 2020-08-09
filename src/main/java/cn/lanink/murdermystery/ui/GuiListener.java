@@ -10,6 +10,9 @@ import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 
+/**
+ * @author lt_name
+ */
 public class GuiListener implements Listener {
 
     private final MurderMystery murderMystery;
@@ -32,7 +35,9 @@ public class GuiListener implements Listener {
             return;
         }
         GuiType cache = GuiCreate.UI_CACHE.containsKey(player) ? GuiCreate.UI_CACHE.get(player).get(event.getFormID()) : null;
-        if (cache == null) return;
+        if (cache == null) {
+            return;
+        }
         GuiCreate.UI_CACHE.get(player).remove(event.getFormID());
         String uName = this.murderMystery.getCmdUser();
         String aName = this.murderMystery.getCmdAdmin();

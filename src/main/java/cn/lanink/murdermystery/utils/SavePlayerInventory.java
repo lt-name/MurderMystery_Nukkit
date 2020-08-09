@@ -22,7 +22,7 @@ public class SavePlayerInventory {
     public static void save(Player player) {
         File file = new File(MurderMystery.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
         Config config = new Config(file, 1);
-        config.set("Inventory", InventoryToLinkedHashMap(player));
+        config.set("Inventory", inventoryToLinkedHashMap(player));
         config.save();
         player.getInventory().clearAll();
     }
@@ -38,7 +38,7 @@ public class SavePlayerInventory {
             if (file.delete()) {
                 player.getInventory().clearAll();
                 player.getUIInventory().clearAll();
-                PutInventory(player, config.get("Inventory", null));
+                putInventory(player, config.get("Inventory", null));
             }
         }
     }
@@ -48,8 +48,8 @@ public class SavePlayerInventory {
      * @param player 玩家
      * @return LinkedHashMap
      */
-    public static LinkedHashMap<String, Object> InventoryToLinkedHashMap(Player player) {
-        LinkedHashMap<String, Object> Inventory = new LinkedHashMap<>();
+    public static LinkedHashMap<String, Object> inventoryToLinkedHashMap(Player player) {
+        LinkedHashMap<String, Object> inventory = new LinkedHashMap<>();
         for (int i = -1; i < player.getInventory().getSize() + 4; i++) {
             LinkedList<String> list = new LinkedList<>();
             Item item;
@@ -62,9 +62,9 @@ public class SavePlayerInventory {
             list.add(item.getCount() + "");
             String tag = item.hasCompoundTag() ? bytesToBase64(item.getCompoundTag()) : "not";
             list.add(tag);
-            Inventory.put(i + "", list);
+            inventory.put(i + "", list);
         }
-        return Inventory;
+        return inventory;
     }
 
     /**
@@ -84,7 +84,7 @@ public class SavePlayerInventory {
      * @param player 玩家
      * @param inventory 物品Map
      */
-    public static void PutInventory(Player player, Map<String, Object> inventory) {
+    public static void putInventory(Player player, Map<String, Object> inventory) {
         if (inventory == null || inventory.isEmpty()) {
             return;
         }
@@ -95,10 +95,12 @@ public class SavePlayerInventory {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (list == null || list.isEmpty()) break;
+            if (list == null || list.isEmpty()) {
+                break;
+            }
             Item item = Item.fromString(list.get(0));
             item.setCount(Integer.parseInt(list.get(1)));
-            if (!String.valueOf(list.get(2)).equals("not")) {
+            if (!"not".equals(String.valueOf(list.get(2)))) {
                 CompoundTag tag = Item.parseCompoundTag(base64ToBytes(list.get(2)));
                 item.setNamedTag(tag);
             }
@@ -119,7 +121,7 @@ public class SavePlayerInventory {
      * @return 字节数组
      */
     public static byte[] base64ToBytes(String hexString) {
-        if (hexString == null || hexString.equals("")) {
+        if (hexString == null || "".equals(hexString)) {
             return null;
         }
         return Base64.getDecoder().decode(hexString);

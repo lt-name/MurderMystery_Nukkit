@@ -1,6 +1,6 @@
 package cn.lanink.murdermystery.event;
 
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
@@ -13,7 +13,7 @@ public class MurderMysteryPlayerDeathEvent extends MurderMysteryRoomPlayerEvent 
         return handlers;
     }
 
-    public MurderMysteryPlayerDeathEvent(RoomBase room, Player player) {
+    public MurderMysteryPlayerDeathEvent(BaseRoom room, Player player) {
         this.room = room;
         this.player = player;
     }

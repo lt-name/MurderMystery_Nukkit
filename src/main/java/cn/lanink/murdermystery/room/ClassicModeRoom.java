@@ -30,7 +30,7 @@ import java.util.*;
  *
  * @author lt_name
  */
-public class RoomClassicMode extends RoomBase {
+public class ClassicModeRoom extends BaseRoom {
 
 
     public Player killKillerPlayer = null; //击杀杀手的玩家
@@ -42,7 +42,7 @@ public class RoomClassicMode extends RoomBase {
      * @param level 世界
      * @param config 配置文件
      */
-    public RoomClassicMode(Level level, Config config) {
+    public ClassicModeRoom(Level level, Config config) {
         super(level, config);
     }
 
@@ -51,6 +51,7 @@ public class RoomClassicMode extends RoomBase {
      *
      * @param player 玩家
      */
+    @Override
     public void joinRoom(Player player) {
         if (this.players.values().size() < 16) {
             if (this.status == 0) {
@@ -62,7 +63,7 @@ public class RoomClassicMode extends RoomBase {
             if (player.teleport(this.getWaitSpawn())) {
                 this.setRandomSkin(player);
                 Tools.giveItem(player, 10);
-                if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+                if (this.murderMystery.isHasTips()) {
                     Tips.closeTipsShow(this.level.getName(), player);
                 }
                 player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
@@ -77,11 +78,10 @@ public class RoomClassicMode extends RoomBase {
      *
      * @param player 玩家
      */
+    @Override
     public void quitRoom(Player player) {
-        if (this.isPlaying(player)) {
-            this.players.remove(player);
-        }
-        if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+        this.players.remove(player);
+        if (this.murderMystery.isHasTips()) {
             Tips.removeTipsConfig(this.level.getName(), player);
         }
         MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
@@ -96,8 +96,11 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 房间开始游戏
      */
+    @Override
     protected synchronized void gameStart() {
-        if (this.status == 2) return;
+        if (this.status == 2) {
+            return;
+        }
         Tools.cleanEntity(this.getLevel(), true);
         this.setStatus(2);
         this.assignIdentityEvent();
@@ -121,6 +124,7 @@ public class RoomClassicMode extends RoomBase {
      * 结束本局游戏
      * @param victory 胜利队伍
      */
+    @Override
     public synchronized void endGame(int victory) {
         this.status = 0;
         this.victoryReward(victory);
@@ -141,7 +145,9 @@ public class RoomClassicMode extends RoomBase {
     }
 
     protected void victoryReward(int victory) {
-        if (victory == 0) return;
+        if (victory == 0) {
+            return;
+        }
         Player killerVictory = null;
         Set<Player> commonPeopleVictory = new HashSet<>();
         Set<Player> defeatPlayers = new HashSet<>();
@@ -224,6 +230,8 @@ public class RoomClassicMode extends RoomBase {
                     case 3:
                         killer = true;
                         break;
+                    default:
+                        break;
                 }
             }
             if (killer) {
@@ -273,9 +281,12 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 异步金锭Task 金锭自动兑换弓箭检测
      */
+    @Override
     public void asyncGoldTask() {
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-            if (entry.getValue() == 0) continue;
+            if (entry.getValue() == 0) {
+                continue;
+            }
             int x = 0;
             boolean bow = true;
             for (Item item : entry.getKey().getInventory().getContents().values()) {
@@ -300,6 +311,7 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 分配玩家身份
      */
+    @Override
     protected void assignIdentity() {
         LinkedHashMap<Player, Integer> players = this.getPlayers();
         int random1 = MurderMystery.RANDOM.nextInt(players.size()) + 1;
@@ -349,8 +361,11 @@ public class RoomClassicMode extends RoomBase {
      * @param damage 攻击者
      * @param player 被攻击者
      */
+    @Override
     protected void playerDamage(Player damage, Player player) {
-        if (this.getPlayers(player) == 0) return;
+        if (this.getPlayers(player) == 0) {
+            return;
+        }
         //攻击者是杀手
         if (this.getPlayers(damage) == 3) {
             damage.sendMessage(this.language.killPlayer);
@@ -381,6 +396,7 @@ public class RoomClassicMode extends RoomBase {
      *
      * @param player 玩家
      */
+    @Override
     protected void playerDeath(Player player) {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
@@ -400,6 +416,7 @@ public class RoomClassicMode extends RoomBase {
      *
      * @param player 玩家
      */
+    @Override
     protected void playerCorpseSpawn(Player player) {
         Skin skin = this.getPlayerSkin(player);
         switch(skin.getSkinData().data.length) {

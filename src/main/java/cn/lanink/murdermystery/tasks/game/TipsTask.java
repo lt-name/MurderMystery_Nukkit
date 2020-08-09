@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -17,10 +17,10 @@ import java.util.Map;
  */
 public class TipsTask extends PluginTask<MurderMystery> {
 
-    private final RoomBase room;
+    private final BaseRoom room;
     private final Language language;
 
-    public TipsTask(MurderMystery owner, RoomBase room) {
+    public TipsTask(MurderMystery owner, BaseRoom room) {
         super(owner);
         owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
@@ -29,7 +29,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != 2) {
+        if (this.room.getStatus() != BaseRoom.ROOM_STATUS_GAME) {
             this.cancel();
             return;
         }

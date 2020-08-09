@@ -1,6 +1,6 @@
 package cn.lanink.murdermystery.event;
 
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.event.HandlerList;
 
@@ -19,7 +19,7 @@ public class MurderMysteryRoomEndEvent extends MurderMysteryRoomEvent {
         return handlers;
     }
 
-    public MurderMysteryRoomEndEvent(RoomBase room, int victoryMode) {
+    public MurderMysteryRoomEndEvent(BaseRoom room, int victoryMode) {
         this.room = room;
         this.victoryMode = victoryMode;
         if (victoryMode == 0) return;
@@ -40,7 +40,7 @@ public class MurderMysteryRoomEndEvent extends MurderMysteryRoomEvent {
         }
     }
 
-    public MurderMysteryRoomEndEvent(RoomBase room, int victoryMode, Set<Player> victoryPlayers, Set<Player> defeatPlayers) {
+    public MurderMysteryRoomEndEvent(BaseRoom room, int victoryMode, Set<Player> victoryPlayers, Set<Player> defeatPlayers) {
         this.room = room;
         this.victoryMode = victoryMode;
         if (victoryMode == 0) {

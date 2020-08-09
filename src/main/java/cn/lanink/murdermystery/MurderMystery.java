@@ -10,9 +10,9 @@ import cn.lanink.murdermystery.listener.PlayerDamageListener;
 import cn.lanink.murdermystery.listener.PlayerGameListener;
 import cn.lanink.murdermystery.listener.PlayerJoinAndQuit;
 import cn.lanink.murdermystery.listener.RoomLevelProtection;
-import cn.lanink.murdermystery.room.RoomBase;
-import cn.lanink.murdermystery.room.RoomClassicMode;
-import cn.lanink.murdermystery.room.RoomInfectedMode;
+import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.ClassicModeRoom;
+import cn.lanink.murdermystery.room.InfectedModeRoom;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
@@ -38,14 +38,14 @@ import java.util.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "1.0.6-SNAPSHOT git-e8acedc";
+    public static final String VERSION = "?";
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;
     private Config config;
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
-    private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOM_CLASS = new LinkedHashMap<>();
-    private final LinkedHashMap<String, RoomBase> rooms = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
+    private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
@@ -54,6 +54,7 @@ public class MurderMystery extends PluginBase {
     private List<String> cmdUserAliases, cmdAdminAliases;
     private IScoreboard scoreboard;
     public static final Random RANDOM = new Random();
+    private boolean hasTips = false;
 
     public static MurderMystery getInstance() { return murderMystery; }
 
@@ -94,8 +95,8 @@ public class MurderMystery extends PluginBase {
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
         //注册房间类
-        registerRoom("classic", RoomClassicMode.class);
-        registerRoom("infected", RoomInfectedMode.class);
+        registerRoom("classic", ClassicModeRoom.class);
+        registerRoom("infected", InfectedModeRoom.class);
     }
 
     @Override
@@ -105,16 +106,32 @@ public class MurderMystery extends PluginBase {
         //加载计分板
         try {
             Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
+            if (getServer().getPluginManager().getPlugin("ScoreboardPlugin").isDisabled()) {
+                throw new Exception("Not Loaded");
+            }
             this.scoreboard = new ScoreboardDe();
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             try {
                 Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
+                if (getServer().getPluginManager().getPlugin("ScoreboardAPI").isDisabled()) {
+                    throw new Exception("Not Loaded");
+                }
                 this.scoreboard = new ScoreboardGt();
-            } catch (ClassNotFoundException ignored) {
+            } catch (Exception ignored) {
                 getLogger().error(this.language.scoreboardAPINotFound);
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
+        }
+        //检查Tips
+        try {
+            Class.forName("tip.Main");
+            if (getServer().getPluginManager().getPlugin("Tips").isDisabled()) {
+                throw new Exception("Not Loaded");
+            }
+            this.hasTips = true;
+        } catch (Exception ignored) {
+
         }
         this.loadResources();
         this.loadRooms();
@@ -149,9 +166,9 @@ public class MurderMystery extends PluginBase {
     public void onDisable() {
         addonsManager.disableAll();
         if (this.rooms.size() > 0) {
-            Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
+            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, RoomBase> entry = it.next();
+                Map.Entry<String, BaseRoom> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
                     entry.getValue().endGameEvent(0);
                     getLogger().info(this.language.roomUnloadFailure.replace("%name%", entry.getKey()));
@@ -177,7 +194,7 @@ public class MurderMystery extends PluginBase {
      * @param name 名称
      * @param roomClass 房间类
      */
-    public static void registerRoom(String name, Class<? extends RoomBase> roomClass) {
+    public static void registerRoom(String name, Class<? extends BaseRoom> roomClass) {
         ROOM_CLASS.put(name, roomClass);
     }
 
@@ -185,7 +202,7 @@ public class MurderMystery extends PluginBase {
         return ROOM_CLASS.containsKey(name);
     }
 
-    public static LinkedHashMap<String, Class<? extends RoomBase>> getRoomClass() {
+    public static LinkedHashMap<String, Class<? extends BaseRoom>> getRoomClass() {
         return ROOM_CLASS;
     }
 
@@ -204,6 +221,10 @@ public class MurderMystery extends PluginBase {
     @Override
     public Config getConfig() {
         return this.config;
+    }
+
+    public boolean isHasTips() {
+        return hasTips;
     }
 
     public String getCmdUser() {
@@ -230,7 +251,7 @@ public class MurderMystery extends PluginBase {
         return this.corpseSkin;
     }
 
-    public LinkedHashMap<String, RoomBase> getRooms() {
+    public LinkedHashMap<String, BaseRoom> getRooms() {
         return this.rooms;
     }
 
@@ -333,11 +354,11 @@ public class MurderMystery extends PluginBase {
                         continue;
                     }
                     try {
-                        Constructor<? extends RoomBase> constructor =  ROOM_CLASS.get(gameMode)
+                        Constructor<? extends BaseRoom> constructor =  ROOM_CLASS.get(gameMode)
                                 .getConstructor(Level.class, Config.class);
-                        RoomBase roomBase = constructor.newInstance(Server.getInstance().getLevelByName(worldName), config);
-                        roomBase.setGameMode(gameMode);
-                        this.rooms.put(worldName, roomBase);
+                        BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(worldName), config);
+                        baseRoom.setGameMode(gameMode);
+                        this.rooms.put(worldName, baseRoom);
                         getLogger().info(this.language.roomLoadedSuccess.replace("%name%", worldName));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -353,9 +374,9 @@ public class MurderMystery extends PluginBase {
      */
     public void unloadRooms() {
         if (this.rooms.values().size() > 0) {
-            Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
+            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, RoomBase> entry = it.next();
+                Map.Entry<String, BaseRoom> entry = it.next();
                 entry.getValue().endGameEvent();
                 getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();

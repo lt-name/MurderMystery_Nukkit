@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntitySword;
-import cn.lanink.murdermystery.room.RoomBase;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
@@ -16,22 +16,23 @@ import java.util.LinkedList;
 
 public class SwordMoveTask extends AsyncTask {
 
-    private final RoomBase room;
+    private final BaseRoom room;
     private final Player player;
     private LinkedList<double[]> math;
     private EntitySword sword;
-    private double yaw, pitch;
 
-    public SwordMoveTask(RoomBase room, Player player) {
+    public SwordMoveTask(BaseRoom room, Player player) {
         this.room = room;
         this.player = player;
-        this.yaw = player.getYaw();
-        this.pitch = player.getPitch();
         Position pos1 = new Position(player.x, player.y + player.getEyeHeight(), player.z, player.getLevel());
         Position pos2 = player.getTargetBlock(15) == null ? null : player.getTargetBlock(15).getLocation();
-        if (pos2 == null) return;
+        if (pos2 == null) {
+            return;
+        }
         this.math = this.mathLine(pos1, pos2);
-        if (this.math == null || this.math.size() == 0) return;
+        if (this.math == null || this.math.size() == 0) {
+            return;
+        }
         Skin skin = MurderMystery.getInstance().getSword();
         CompoundTag tag = EntitySword.getDefaultNBT(Location.fromObject(pos1, player.getLevel(), player.getYaw(), player.getPitch()));
         tag.putCompound("Skin",new CompoundTag()
@@ -40,7 +41,7 @@ public class SwordMoveTask extends AsyncTask {
         tag.putFloat("Scale", 0.5F);
         this.sword = new EntitySword(player.getChunk(), tag);
         this.sword.setSkin(skin);
-        this.sword.setRotation(this.yaw, this.pitch);
+        this.sword.setRotation(player.getYaw(), player.getPitch());
         this.sword.spawnToAll();
         Tools.setHumanSkin(this.sword, skin);
     }
@@ -56,7 +57,9 @@ public class SwordMoveTask extends AsyncTask {
                 for (Entity entity : p.level.getEntities()) {
                     if (entity instanceof Player) {
                         Player player2 = (Player) entity;
-                        if (player2 == this.player) continue;
+                        if (player2 == this.player) {
+                            continue;
+                        }
                         if (((entity.x - entity.getWidth() - 0.5) <= p.x) && ((entity.x + entity.getWidth() + 0.5) >= p.x) &&
                                 ((entity.y - entity.getWidth() - 0.5) <= p.y) && ((entity.x + entity.getWidth() + 0.5) >= p.y) &&
                                 ((entity.z - entity.getWidth() - 0.5) <= p.z) && ((entity.z + entity.getWidth() + 0.5) >= p.z)) {
