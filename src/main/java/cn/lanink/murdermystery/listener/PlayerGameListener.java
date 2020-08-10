@@ -615,6 +615,7 @@ public class PlayerGameListener implements Listener {
             }
             if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME &&
                     room.getPlayers(player) == 0) {
+                player.dataPacket(event.getPacket());
                 event.setCancelled(true);
             }
         }
