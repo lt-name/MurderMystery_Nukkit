@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.room;
 
 import cn.lanink.murdermystery.utils.Tools;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
@@ -164,6 +165,8 @@ public class InfectedModeRoom extends ClassicModeRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(3);
+        player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false);
+        player.getAdventureSettings().update();
         Tools.hidePlayer(this, player);
         Tools.playSound(this, Sound.GAME_PLAYER_HURT);
         this.playerRespawnTime.put(player, 10);

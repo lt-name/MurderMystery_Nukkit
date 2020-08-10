@@ -159,6 +159,10 @@ public class PlayerGameListener implements Listener {
         }
         if (event.getInventory() != null && event.getInventory() instanceof PlayerInventory) {
             Player player = (Player) event.getInventory().getHolder();
+            if (player.getGamemode() != 0) {
+                event.setCancelled(true);
+                return;
+            }
             CompoundTag tag = event.getItem().getItem() == null ? null : event.getItem().getItem().getNamedTag();
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 1) {
                 if (room.getPlayers(player) != 1) {
@@ -232,6 +236,10 @@ public class PlayerGameListener implements Listener {
                 event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_AIR) {
             event.setCancelled(true);
             player.setAllowModifyWorld(false);
+        }
+        if (player.getGamemode() != 0) {
+            event.setCancelled(true);
+            return;
         }
         if (room.getStatus() == 2) {
             if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {

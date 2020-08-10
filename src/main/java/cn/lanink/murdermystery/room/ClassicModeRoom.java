@@ -8,6 +8,7 @@ import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -410,6 +411,8 @@ public class ClassicModeRoom extends BaseRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(3);
+        player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false);
+        player.getAdventureSettings().update();
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 2) {
             this.getLevel().dropItem(player, Tools.getMurderItem(1));
