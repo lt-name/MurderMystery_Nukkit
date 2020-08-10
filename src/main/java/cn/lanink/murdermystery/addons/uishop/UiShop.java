@@ -48,14 +48,20 @@ public class UiShop extends AddonsBase implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onRoomStart(MurderMysteryRoomStartEvent event) {
-        String[] s = getConfig().get("UiShopItem", "347:0").split(":");
-        Item item = Item.get(Integer.parseInt(s[0]), Integer.parseInt(s[1]), 1);
-        item.setNamedTag(new CompoundTag().putBoolean("isMurderUiShop", true));
-        item.setCustomName(getConfig().getString("UiShopItemName", "§a道具商店"));
-        item.setLore(getConfig().getString("UiShopItemLore", "便携道具商店\n购买各种道具来帮助你获取胜利！").split("\n"));
-        for (Player player : event.getRoom().getPlayers().keySet()) {
-            player.getInventory().addItem(item);
-        }
+        BaseRoom room = event.getRoom();
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.getMurderMystery(), new Task() {
+            @Override
+            public void onRun(int i) {
+                String[] s = getConfig().get("UiShopItem", "347:0").split(":");
+                Item item = Item.get(Integer.parseInt(s[0]), Integer.parseInt(s[1]), 1);
+                item.setNamedTag(new CompoundTag().putBoolean("isMurderUiShop", true));
+                item.setCustomName(getConfig().getString("UiShopItemName", "§a道具商店"));
+                item.setLore(getConfig().getString("UiShopItemLore", "便携道具商店\n购买各种道具来帮助你获取胜利！").split("\n"));
+                for (Player player : room.getPlayers().keySet()) {
+                    player.getInventory().addItem(item);
+                }
+            }
+        }, 1);
     }
 
     @EventHandler(priority = EventPriority.LOW)
