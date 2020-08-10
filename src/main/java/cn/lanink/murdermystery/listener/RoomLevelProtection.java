@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
@@ -12,6 +13,7 @@ import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.StartBrewEvent;
+import cn.nukkit.event.level.ChunkUnloadEvent;
 import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerDropItemEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
@@ -166,6 +168,22 @@ public class RoomLevelProtection implements Listener {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
         if (level != null && this.murderMystery.getRooms().containsKey(level.getName())) {
             event.setCancelled(false);
+        }
+    }
+
+    /**
+     * 区块卸载事件
+     *
+     * @param event 事件
+     */
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event) {
+        if (event.getLevel() != null && this.murderMystery.getRooms().containsKey(event.getLevel().getName())) {
+            for (Entity entity : event.getChunk().getEntities().values()) {
+                if (!(entity instanceof Player)) {
+                    entity.close();
+                }
+            }
         }
     }
 

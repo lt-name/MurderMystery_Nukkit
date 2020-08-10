@@ -16,6 +16,7 @@ import cn.lanink.murdermystery.room.InfectedModeRoom;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
+import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -175,6 +176,7 @@ public class MurderMystery extends PluginBase {
                 }else {
                     getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
                 }
+                Tools.cleanEntity(entry.getValue().getLevel(), true);
                 it.remove();
             }
         }

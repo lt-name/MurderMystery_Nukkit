@@ -21,12 +21,16 @@ import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
+import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
+import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
@@ -37,6 +41,7 @@ import java.util.Random;
 
 /**
  * 游戏监听器
+ *
  * @author lt_name
  */
 public class PlayerGameListener implements Listener {
@@ -582,6 +587,29 @@ public class PlayerGameListener implements Listener {
         }
         event.setMessage("");
         event.setCancelled(true);
+    }
+
+    /**
+     * 数据包接收事件
+     * 不接收已死亡玩家的操作声音
+     *
+     * @param event 事件
+     */
+    @EventHandler
+    public void onDataPacketReceive(DataPacketReceiveEvent event) {
+        if (event.getPacket() instanceof LevelSoundEventPacket ||
+                event.getPacket() instanceof LevelSoundEventPacketV1 ||
+                event.getPacket() instanceof LevelSoundEventPacketV2) {
+            Player player = event.getPlayer();
+            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+            if (room == null || !room.isPlaying(player)) {
+                return;
+            }
+            if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME &&
+                    room.getPlayers(player) == 0) {
+                event.setCancelled(true);
+            }
+        }
     }
 
 }
