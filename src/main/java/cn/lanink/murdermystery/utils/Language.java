@@ -79,8 +79,8 @@ public class Language {
     public String adminStopRoom = "§a已强制结束房间！";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
-    public String playerChat = "§a[房间]§f %player% + §b >>>§f %message%";
-    public String playerDeathChat = "§c[死亡]§f %player% + §b >>>§f %message%";
+    public String playerChat = "§a[房间]§f %player%§b >>>§f %message%";
+    public String playerDeathChat = "§c[死亡]§f %player%§b >>>§f %message%";
     public String tpJoinRoomLevel = "§e >> §c要进入游戏地图，请先加入游戏！";
     public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
     //道具
@@ -151,6 +151,7 @@ public class Language {
     public String gameEffectCDScoreBoard = "§l§a加速冷却:§e %time% §a秒 ";
     public String gameSwordCDScoreBoard = "§l§a飞剑冷却:§e %time% §a秒 ";
     public String gameScanCDScoreBoard = "§l§a扫描冷却:§e %time% §a秒 ";
+    public String playerRespawnTime = "§c复活倒计时: %time%";
     //UI相关
     public String userMenuButton1 = "§e随机加入房间";
     public String userMenuButton2 = "§e退出当前房间";
@@ -294,6 +295,7 @@ public class Language {
         this.gameEffectCDScoreBoard = config.getString("gameEffectCDScoreBoard", this.gameEffectCDScoreBoard);
         this.gameSwordCDScoreBoard = config.getString("gameSwordCDScoreBoard", this.gameSwordCDScoreBoard);
         this.gameScanCDScoreBoard = config.getString("gameScanCDScoreBoard", this.gameScanCDScoreBoard);
+        this.playerRespawnTime = config.getString("playerRespawnTime", this.playerRespawnTime);
         this.userMenuButton1 = config.getString("userMenuButton1", this.userMenuButton1);
         this.userMenuButton2 = config.getString("userMenuButton2", this.userMenuButton2);
         this.userMenuButton3 = config.getString("userMenuButton3", this.userMenuButton3);

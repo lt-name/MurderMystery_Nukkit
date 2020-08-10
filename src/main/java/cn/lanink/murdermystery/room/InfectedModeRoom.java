@@ -1,17 +1,16 @@
 package cn.lanink.murdermystery.room;
 
-import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.tasks.game.GoldTask;
-import cn.lanink.murdermystery.tasks.game.TimeTask;
-import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.Tools;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -21,6 +20,8 @@ import java.util.Random;
  * @author lt_name
  */
 public class InfectedModeRoom extends ClassicModeRoom {
+
+    private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
 
     /**
      * 初始化
@@ -33,26 +34,9 @@ public class InfectedModeRoom extends ClassicModeRoom {
     }
 
     @Override
-    protected void gameStart() {
-        Tools.cleanEntity(this.getLevel(), true);
-        this.setStatus(2);
-        int x=0;
-        for (Player player : this.getPlayers().keySet()) {
-            if (x >= this.getRandomSpawn().size()) {
-                x = 0;
-            }
-            player.teleport(this.getRandomSpawn().get(x));
-            x++;
-            player.getInventory().clearAll();
-            this.players.put(player, 2);
-            Tools.giveItem(player, 1);
-        }
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                MurderMystery.getInstance(), new TimeTask(this.murderMystery, this), 20,true);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                MurderMystery.getInstance(), new GoldTask(this.murderMystery, this), 20, true);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                MurderMystery.getInstance(), new TipsTask(this.murderMystery, this), 18, true);
+    protected synchronized void endGame(int victory) {
+        this.playerRespawnTime.clear();
+        super.endGame(victory);
     }
 
     @Override
@@ -62,7 +46,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
 
     @Override
     public void asyncTimeTask() {
-        //开局20秒后给物品
+        //开局20秒选出杀手
         int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
             if (time <= 5 && time >= 1) {
@@ -78,14 +62,22 @@ public class InfectedModeRoom extends ClassicModeRoom {
                         entry.setValue(3);
                         entry.getKey().sendTitle(this.language.titleKillerTitle,
                                 this.language.titleKillerSubtitle, 10, 40, 10);
-                        entry.getKey().getInventory().clearAll();
-                        entry.getKey().getInventory().setItem(1, Tools.getMurderItem(2));
-                        Effect effect = Effect.getEffect(2).setAmplifier(1).setDuration(200);
-                        effect.setColor(0, 255, 0);
-                        entry.getKey().addEffect(effect);
+                        this.playerRespawn(entry.getKey());
                         break;
                     }
                     x++;
+                }
+            }
+        }
+        //复活计时
+        for (Map.Entry<Player, Integer> entry : this.playerRespawnTime.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
+                if (entry.getValue() == 0) {
+                    this.playerRespawn(entry.getKey());
+                }else {
+                    entry.getKey().sendTip(this.language.playerRespawnTime
+                            .replace("%time%", entry.getValue() + ""));
                 }
             }
         }
@@ -102,8 +94,8 @@ public class InfectedModeRoom extends ClassicModeRoom {
                         break;
                     case 3:
                         killer = true;
-                        if (this.gameTime % 10 == 0) {
-                            Effect effect = Effect.getEffect(1).setDuration(300)
+                        if (this.gameTime % 20 == 0) {
+                            Effect effect = Effect.getEffect(1).setDuration(1000)
                                     .setAmplifier(1).setVisible(true);
                             effect.setColor(0, 255, 0);
                             entry.getKey().addEffect(effect);
@@ -124,21 +116,20 @@ public class InfectedModeRoom extends ClassicModeRoom {
         }else {
             this.victory(1);
         }
-        //杀手CD计算
-        if (this.effectCD > 0) {
-            this.effectCD--;
-        }
-        if (this.swordCD > 0) {
-            this.swordCD--;
-        }
-        if (this.scanCD > 0) {
-            this.scanCD--;
-        }
     }
 
     @Override
     public void asyncGoldTask() {
 
+    }
+
+    @Override
+    protected void assignIdentity() {
+        for (Player player : this.players.keySet()) {
+            player.getInventory().clearAll();
+            this.players.put(player, 2);
+            Tools.giveItem(player, 1);
+        }
     }
 
     @Override
@@ -166,11 +157,38 @@ public class InfectedModeRoom extends ClassicModeRoom {
                 return;
             }
         }
-        player.getLevel().addSound(player, Sound.GAME_PLAYER_HURT);
-        player.teleport(this.getRandomSpawn().get(new Random().nextInt(this.getRandomSpawn().size())));
+        this.playerDeathEvent(player);
+    }
+
+    @Override
+    protected void playerDeath(Player player) {
         player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
+        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
+        player.setGamemode(3);
+        Tools.setPlayerInvisible(player, true);
+        Tools.addSound(this, Sound.GAME_PLAYER_HURT);
+        this.playerRespawnTime.put(player, 10);
+    }
+
+    public void playerRespawn(Player player) {
+        Tools.rePlayerState(player, true);
         player.getInventory().setItem(1, Tools.getMurderItem(2));
-        player.addEffect(Effect.getEffect(2).setAmplifier(2).setDuration(60));
+        Effect effect = Effect.getEffect(2).setAmplifier(2).setDuration(60); //缓慢
+        effect.setColor(0, 255, 0);
+        player.addEffect(effect);
+        effect = Effect.getEffect(15).setAmplifier(2).setDuration(60); //失明
+        effect.setColor(0, 255, 0);
+        player.addEffect(effect);
+        player.teleport(this.getRandomSpawn().get(new Random().nextInt(this.getRandomSpawn().size())));
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
+            @Override
+            public void onRun(int i) {
+                Effect effect = Effect.getEffect(1).setDuration(1000).setAmplifier(1).setVisible(true); // 速度
+                effect.setColor(0, 255, 0);
+                player.addEffect(effect);
+            }
+        }, 60);
     }
 
 }

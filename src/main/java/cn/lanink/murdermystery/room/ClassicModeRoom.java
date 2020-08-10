@@ -125,7 +125,7 @@ public class ClassicModeRoom extends BaseRoom {
      * @param victory 胜利队伍
      */
     @Override
-    public synchronized void endGame(int victory) {
+    protected synchronized void endGame(int victory) {
         this.status = 0;
         this.victoryReward(victory);
         Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
@@ -441,8 +441,5 @@ public class ClassicModeRoom extends BaseRoom {
         ent.spawnToAll();
         ent.updateMovement();
     }
-
-
-
 
 }
