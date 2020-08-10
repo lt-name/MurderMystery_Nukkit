@@ -8,7 +8,6 @@ import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
-import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -52,8 +51,8 @@ public class ClassicModeRoom extends BaseRoom {
      * @param player 玩家
      */
     @Override
-    public void joinRoom(Player player) {
-        if (this.players.values().size() < 16) {
+    public synchronized void joinRoom(Player player) {
+        if (this.players.size() < 16) {
             if (this.status == 0) {
                 this.initTask();
             }
@@ -79,7 +78,7 @@ public class ClassicModeRoom extends BaseRoom {
      * @param player 玩家
      */
     @Override
-    public void quitRoom(Player player) {
+    public synchronized void quitRoom(Player player) {
         this.players.remove(player);
         if (this.murderMystery.isHasTips()) {
             Tips.removeTipsConfig(this.level.getName(), player);
@@ -91,6 +90,10 @@ public class ClassicModeRoom extends BaseRoom {
         this.restorePlayerSkin(player);
         this.skinNumber.remove(player);
         this.skinCache.remove(player);
+        for (Player p : this.players.keySet()) {
+            p.showPlayer(player);
+            player.showPlayer(p);
+        }
     }
 
     /**
@@ -127,8 +130,14 @@ public class ClassicModeRoom extends BaseRoom {
     @Override
     protected synchronized void endGame(int victory) {
         this.status = 0;
+        for (Player p1 : this.players.keySet()) {
+            for (Player p2 : this.players.keySet()) {
+                p1.showPlayer(p2);
+                p2.showPlayer(p1);
+            }
+        }
         this.victoryReward(victory);
-        Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
+        Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry<Player, Integer> entry = it.next();
             it.remove();
@@ -203,7 +212,7 @@ public class ClassicModeRoom extends BaseRoom {
             if (time <= 5 && time >= 1) {
                 Tools.sendMessage(this, this.language.killerGetSwordTime
                         .replace("%time%", time + ""));
-                Tools.addSound(this, Sound.RANDOM_CLICK);
+                Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
                 Tools.sendMessage(this, this.language.killerGetSword);
@@ -400,14 +409,13 @@ public class ClassicModeRoom extends BaseRoom {
     protected void playerDeath(Player player) {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
-        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(3);
+        Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 2) {
             this.getLevel().dropItem(player, Tools.getMurderItem(1));
         }
         this.players.put(player, 0);
-        Tools.setPlayerInvisible(player, true);
-        Tools.addSound(this, Sound.GAME_PLAYER_HURT);
+        Tools.playSound(this, Sound.GAME_PLAYER_HURT);
         this.playerCorpseSpawnEvent(player);
     }
 

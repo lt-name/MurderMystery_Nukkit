@@ -36,7 +36,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
             if (this.room.waitTime > 0) {
                 this.room.waitTime--;
                 if (this.room.waitTime <= 5) {
-                    Tools.addSound(this.room, Sound.RANDOM_CLICK);
+                    Tools.playSound(this.room, Sound.RANDOM_CLICK);
                 }
                 for (Player player : this.room.getPlayers().keySet()) {
                     String waitTimeBottom = this.language.waitTimeBottom

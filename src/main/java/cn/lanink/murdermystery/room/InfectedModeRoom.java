@@ -1,7 +1,6 @@
 package cn.lanink.murdermystery.room;
 
 import cn.lanink.murdermystery.utils.Tools;
-import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
@@ -51,7 +50,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
         if (time >= 0) {
             if (time <= 5 && time >= 1) {
                 Tools.sendMessage(this, this.language.killerGetSwordTime.replace("%time%", time + ""));
-                Tools.addSound(this, Sound.RANDOM_CLICK);
+                Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
                 Tools.sendMessage(this, this.language.killerGetSword);
@@ -164,14 +163,14 @@ public class InfectedModeRoom extends ClassicModeRoom {
     protected void playerDeath(Player player) {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
-        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(3);
-        Tools.setPlayerInvisible(player, true);
-        Tools.addSound(this, Sound.GAME_PLAYER_HURT);
+        Tools.hidePlayer(this, player);
+        Tools.playSound(this, Sound.GAME_PLAYER_HURT);
         this.playerRespawnTime.put(player, 10);
     }
 
     public void playerRespawn(Player player) {
+        Tools.showPlayer(this, player);
         Tools.rePlayerState(player, true);
         player.getInventory().setItem(1, Tools.getMurderItem(2));
         Effect effect = Effect.getEffect(2).setAmplifier(2).setDuration(60); //缓慢

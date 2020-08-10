@@ -5,7 +5,6 @@ import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
 import cn.lanink.murdermystery.room.BaseRoom;
-import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -43,7 +42,32 @@ import java.util.List;
 public class Tools {
 
     /**
+     * 显示玩家
+     *
+     * @param room 房间
+     * @param player 玩家
+     */
+    public static void showPlayer(BaseRoom room, Player player) {
+        for (Player p : room.getPlayers().keySet()) {
+            p.showPlayer(player);
+        }
+    }
+
+    /**
+     * 隐藏玩家
+     *
+     * @param room 房间
+     * @param player 玩家
+     */
+    public static void hidePlayer(BaseRoom room, Player player) {
+        for (Player p : room.getPlayers().keySet()) {
+            p.hidePlayer(player);
+        }
+    }
+
+    /**
      * 获取字符串房间模式
+     *
      * @param room 房间
      * @return 房间模式
      */
@@ -60,6 +84,7 @@ public class Tools {
 
     /**
      * 执行命令
+     *
      * @param player 玩家
      * @param cmds 命令
      */
@@ -79,6 +104,7 @@ public class Tools {
 
     /**
      * 给玩家道具
+     *
      * @param player 玩家
      * @param tagNumber 物品编号
      */
@@ -107,6 +133,7 @@ public class Tools {
 
     /**
      * 根据编号获取物品
+     *
      * @param tagNumber 道具编号
      * @return 物品
      */
@@ -183,6 +210,7 @@ public class Tools {
 
     /**
      * 设置Human实体皮肤
+     *
      * @param human 实体
      * @param skin 皮肤
      */
@@ -237,6 +265,8 @@ public class Tools {
 
     /**
      * 设置玩家是否隐身
+     *
+     * @deprecated
      * @param player 玩家
      * @param invisible 是否隐身
      */
@@ -246,16 +276,15 @@ public class Tools {
 
     /**
      * 重置玩家状态
+     *
      * @param player 玩家
      * @param joinRoom 是否为加入房间
      */
     public static void rePlayerState(Player player, boolean joinRoom) {
-        player.setGamemode(0);
         player.removeAllEffects();
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         if (joinRoom) {
-            setPlayerInvisible(player, false);
             player.setNameTag("");
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
@@ -264,10 +293,9 @@ public class Tools {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
-            setPlayerInvisible(player, false);
             player.setAllowModifyWorld(true);
         }
-        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
+        player.setGamemode(0);
     }
 
     public static void sendMessage(BaseRoom baseRoom, String string) {
@@ -277,17 +305,18 @@ public class Tools {
     }
 
     /**
-     * 添加声音
+     * 播放声音
+     *
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(BaseRoom room, Sound sound) {
+    public static void playSound(BaseRoom room, Sound sound) {
         for (Player player : room.getPlayers().keySet()) {
-            addSound(player, sound);
+            playSound(player, sound);
         }
     }
 
-    public static void addSound(Player player, Sound sound) {
+    public static void playSound(Player player, Sound sound) {
         PlaySoundPacket packet = new PlaySoundPacket();
         packet.name = sound.getSound();
         packet.volume = 1.0F;
@@ -304,6 +333,7 @@ public class Tools {
 
     /**
      * 清理实体
+     *
      * @param level 世界
      * @param cleanAll 是否清理全部
      */
@@ -335,6 +365,7 @@ public class Tools {
     /**
      * 获取底部 Y
      * 调用前应判断非空
+     *
      * @param player 玩家
      * @return Y
      */
@@ -357,6 +388,7 @@ public class Tools {
 
     /**
      * 放烟花
+     *
      * GitHub：https://github.com/PetteriM1/FireworkShow
      * @param position 位置
      */

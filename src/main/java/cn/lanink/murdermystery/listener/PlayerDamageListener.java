@@ -59,7 +59,7 @@ public class PlayerDamageListener implements Listener {
                     if (child.namedTag.getInt("MurderType") == 20) {
                         room.playerDamageEvent(damager, player);
                     }else if (child.namedTag.getInt("MurderType") == 23) {
-                        Tools.addSound(player, Sound.RANDOM_ANVIL_LAND);
+                        Tools.playSound(player, Sound.RANDOM_ANVIL_LAND);
                         player.sendMessage(this.language.damageSnowball);
                         Effect effect = Effect.getEffect(2);
                         effect.setAmplifier(2);
