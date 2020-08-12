@@ -39,7 +39,7 @@ import java.util.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.0.6-SNAPSHOT git-e61c4a0";
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;
@@ -281,6 +281,7 @@ public class MurderMystery extends PluginBase {
         File fileImg = new File(getDataFolder() + "/Resources/Sword/skin.png");
         File fileJson = new File(getDataFolder() + "/Resources/Sword/skin.json");
         Skin skin = new Skin();
+        skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         skin.setTrusted(true);
         BufferedImage skinData;
         try {
@@ -308,6 +309,7 @@ public class MurderMystery extends PluginBase {
             getLogger().warning(this.language.swordFailure);
         }
         //默认尸体皮肤
+        this.corpseSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         skinData = null;
         try {
             skinData = ImageIO.read(this.getResource("skin.png"));
@@ -413,6 +415,7 @@ public class MurderMystery extends PluginBase {
                 File skinFile = new File(getDataFolder() + "/Skins/" + skinName + "/skin.png");
                 if (skinFile.exists()) {
                     Skin skin = new Skin();
+                    skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
                     skin.setTrusted(true);
                     BufferedImage skinData = null;
                     try {
