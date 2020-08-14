@@ -4,13 +4,13 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.room.Room;
-import cn.nukkit.AdventureSettings;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.entity.item.EntityItem;
@@ -26,31 +26,67 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.DyeColor;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
+import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Random;
 
 
+/**
+ * @author lt_name
+ */
 public class Tools {
+
+    private Tools() {
+
+    }
+
+    /**
+     * 显示玩家
+     *
+     * @param room 房间
+     * @param player 玩家
+     */
+    public static void showPlayer(BaseRoom room, Player player) {
+        for (Player p : room.getPlayers().keySet()) {
+            p.showPlayer(player);
+        }
+    }
+
+    /**
+     * 隐藏玩家
+     *
+     * @param room 房间
+     * @param player 玩家
+     */
+    public static void hidePlayer(BaseRoom room, Player player) {
+        for (Player p : room.getPlayers().keySet()) {
+            p.hidePlayer(player);
+        }
+    }
 
     /**
      * 获取字符串房间模式
+     *
      * @param room 房间
      * @return 房间模式
      */
-    public static String getStringRoomMode(Room room) {
+    public static String getStringRoomMode(BaseRoom room) {
         switch (room.getGameMode()) {
-            case CLASSIC:
+            case "classic":
                 return MurderMystery.getInstance().getLanguage().Classic;
-            case INFECTED:
+            case "infected":
                 return MurderMystery.getInstance().getLanguage().Infected;
+            default:
+                return room.getGameMode();
         }
-        return "error";
     }
 
     /**
      * 执行命令
+     *
      * @param player 玩家
      * @param cmds 命令
      */
@@ -60,7 +96,7 @@ public class Tools {
         }
         for (String s : cmds) {
             String[] cmd = s.split("&");
-            if ((cmd.length > 1) && (cmd[1].equals("con"))) {
+            if ((cmd.length > 1) && ("con".equals(cmd[1]))) {
                 Server.getInstance().dispatchCommand(new ConsoleCommandSender(), cmd[0].replace("@p", player.getName()));
             } else {
                 Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
@@ -70,6 +106,7 @@ public class Tools {
 
     /**
      * 给玩家道具
+     *
      * @param player 玩家
      * @param tagNumber 物品编号
      */
@@ -91,11 +128,14 @@ public class Tools {
             case 23:
                 player.getInventory().addItem(getMurderItem(tagNumber));
                 break;
+            default:
+                break;
         }
     }
 
     /**
      * 根据编号获取物品
+     *
      * @param tagNumber 道具编号
      * @return 物品
      */
@@ -165,41 +205,63 @@ public class Tools {
                 item.setCustomName(language.itemSnowball);
                 item.setLore(language.itemSnowballLore.split("\n"));
                 return item;
+            default:
+                return Item.get(0);
         }
-        return null;
     }
 
     /**
-     * 设置玩家皮肤
-     * @param player 玩家
+     * 设置Human实体皮肤
+     *
+     * @param human 实体
      * @param skin 皮肤
      */
-    public static void setPlayerSkin(Player player, Skin skin) {
+    public static void setHumanSkin(EntityHuman human, Skin skin) {
+        setHumanSkin(human, skin, false);
+    }
+
+    public static void setHumanSkin(EntityHuman human, Skin skin, boolean needACK) {
+        if (human.getLevel() != null) {
+            for (Player player : human.getLevel().getPlayers().values()) {
+                setHumanSkin(player, human, skin, needACK, 0);
+            }
+        }
+        human.setSkin(skin);
+    }
+
+    private static void setHumanSkin(Player player, EntityHuman human, Skin skin, boolean needACK, int retransmission) {
         PlayerSkinPacket packet = new PlayerSkinPacket();
         packet.skin = skin;
         packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = player.getSkin().getSkinId();
-        packet.uuid = player.getUniqueId();
-        player.setSkin(skin);
-        player.dataPacket(packet);
-    }
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        int id = player.dataPacket(packet, needACK);
+        if (needACK && !human.isClosed() && retransmission < 3) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
+                @Override
+                public void onRun(int i) {
+                    try {
+                        Field field = player.getClass().getDeclaredField("needACK");
+                        field.setAccessible(true);
+                        Int2ObjectOpenHashMap<Boolean> o = (Int2ObjectOpenHashMap<Boolean>) field.get(player);
+                        if (o == null || !o.getOrDefault(id, Boolean.FALSE)) {
+                            setHumanSkin(player, human, skin, true, retransmission + 1);
+                        }
+                    } catch (Exception ignored) {
 
-    /**
-     * 设置玩家是否隐身
-     * @param player 玩家
-     * @param invisible 是否隐身
-     */
-    public static void setPlayerInvisible(Player player, boolean invisible) {
-        player.setDataFlag(0, 5, invisible);
+                    }
+                }
+            }, 60, true);
+        }
     }
 
     /**
      * 重置玩家状态
+     *
      * @param player 玩家
      * @param joinRoom 是否为加入房间
      */
     public static void rePlayerState(Player player, boolean joinRoom) {
-        player.setGamemode(0);
         player.removeAllEffects();
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
@@ -212,24 +274,30 @@ public class Tools {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
-            setPlayerInvisible(player, false);
             player.setAllowModifyWorld(true);
         }
-        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
+        player.setGamemode(0);
+    }
+
+    public static void sendMessage(BaseRoom baseRoom, String string) {
+        for (Player player : baseRoom.getPlayers().keySet()) {
+            player.sendMessage(string);
+        }
     }
 
     /**
-     * 添加声音
+     * 播放声音
+     *
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(Room room, Sound sound) {
+    public static void playSound(BaseRoom room, Sound sound) {
         for (Player player : room.getPlayers().keySet()) {
-            addSound(player, sound);
+            playSound(player, sound);
         }
     }
 
-    public static void addSound(Player player, Sound sound) {
+    public static void playSound(Player player, Sound sound) {
         PlaySoundPacket packet = new PlaySoundPacket();
         packet.name = sound.getSound();
         packet.volume = 1.0F;
@@ -246,6 +314,7 @@ public class Tools {
 
     /**
      * 清理实体
+     *
      * @param level 世界
      * @param cleanAll 是否清理全部
      */
@@ -277,11 +346,14 @@ public class Tools {
     /**
      * 获取底部 Y
      * 调用前应判断非空
+     *
      * @param player 玩家
      * @return Y
      */
     public static double getFloorY(Player player) {
-        if (player.getFloorY() <= 0) return 1;
+        if (player.getFloorY() <= 0) {
+            return 1;
+        }
         for (int y = 0; y < 15; y++) {
             Level level = player.getLevel();
             Block block = level.getBlock(player.getFloorX(), player.getFloorY() - y, player.getFloorZ());
@@ -297,22 +369,22 @@ public class Tools {
 
     /**
      * 放烟花
+     *
      * GitHub：https://github.com/PetteriM1/FireworkShow
      * @param position 位置
      */
     public static void spawnFirework(Position position) {
         ItemFirework item = new ItemFirework();
         CompoundTag tag = new CompoundTag();
-        Random random = new Random();
         CompoundTag ex = new CompoundTag();
         ex.putByteArray("FireworkColor",new byte[]{
-                (byte) DyeColor.values()[random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
+                (byte) DyeColor.values()[MurderMystery.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
         });
         ex.putByteArray("FireworkFade",new byte[0]);
-        ex.putBoolean("FireworkFlicker",random.nextBoolean());
-        ex.putBoolean("FireworkTrail",random.nextBoolean());
+        ex.putBoolean("FireworkFlicker",MurderMystery.RANDOM.nextBoolean());
+        ex.putBoolean("FireworkTrail",MurderMystery.RANDOM.nextBoolean());
         ex.putByte("FireworkType",ItemFirework.FireworkExplosion.ExplosionType.values()
-                [random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
+                [MurderMystery.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
         tag.putCompound("Fireworks",(new CompoundTag("Fireworks"))
                 .putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
         item.setNamedTag(tag);

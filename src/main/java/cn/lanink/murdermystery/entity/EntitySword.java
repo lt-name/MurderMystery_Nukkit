@@ -12,4 +12,19 @@ public class EntitySword extends EntityHuman {
         this.setNameTagAlwaysVisible(false);
     }
 
+    @Override
+    public float getLength() {
+        return 1;
+    }
+
+    @Override
+    public float getWidth() {
+        return 1;
+    }
+
+    @Override
+    public float getHeight() {
+        return 1;
+    }
+
 }

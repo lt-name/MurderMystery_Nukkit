@@ -9,6 +9,7 @@ startLoadingRoom: "§e开始加载房间..."
 roomLoadedSuccess: "§a房间：%name% 已加载！"
 roomLoadedFailureByConfig: "§c房间：%name% 配置不完整，加载失败！"
 roomLoadedFailureByLevel: "§c房间：%name% 地图读取失败！"
+roomLoadedFailureByGameMode: "§c房间：%name% 游戏模式设置错误！没有找到游戏模式: %gameMode%"
 roomLoadedAllSuccess: "§e房间加载完成！当前已加载 %number% 个房间！"
 roomUnloadSuccess: "§c房间：%name% 已卸载！"
 roomUnloadFailure: "§c房间：%name% 非正常结束！"
@@ -25,7 +26,7 @@ cmdHelp: "§a查看帮助：/%cmdName% help"
 userHelp: |-
   §eMurderMystery--命令帮助
   §a/%cmdName% §e打开ui
-  §a/%cmdName% join 房间名称 §e加入游戏
+  §a/%cmdName% join <房间名称> §e加入游戏
   §a/%cmdName% quit §e退出游戏
   §a/%cmdName% list §e查看房间列表
 noPermission: "§c你没有权限！"
@@ -35,7 +36,7 @@ joinRoomOnRiding: "§a请勿在骑乘状态下进入房间！"
 joinRandomRoom: "§a已为你随机分配房间！"
 joinRoomIsPlaying: "§a该房间正在游戏中，请稍后"
 joinRoomIsFull: "§a该房间已满人，请稍后"
-joinRoomIsNotFound: "§a该房间不存在！"
+joinRoomIsNotFound: "§a暂无符合条件的房间！"
 joinRoomNotAvailable: "§a暂无房间可用！"
 quitRoom: "§a你已退出房间"
 quitRoomNotInRoom: "§a你本来就不在游戏房间！"
@@ -48,10 +49,11 @@ adminHelp: |-
   §a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点
   §a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点
   §a/%cmdName% setgoldspawntime 数字 §e设置金锭生成间隔
-  §a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间
-  §a/%cmdName% setgametime 数字 §e设置每轮游戏最长时间
-  §a/%cmdName% setgamemode 模式 §e设置房间游戏模式
+  §a/%cmdName% setwaittime <时间> §e设置游戏人数达到最少人数后的等待时间
+  §a/%cmdName% setgametime <时间> §e设置每轮游戏最长时间
+  §a/%cmdName% setgamemode <模式> §e设置房间游戏模式
   §a/%cmdName% startroom §e开始所在地图的房间游戏
+  §a/%cmdName% stoproom §e强制关闭所在地图的房间
   §a/%cmdName% reloadroom §e重载所有房间
   §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置
 adminSetSpawn: "§a默认出生点设置成功！"
@@ -62,15 +64,17 @@ adminSetGoldSpawnTime: "§a金锭产出间隔已设置为： %time%"
 adminSetWaitTime: "§a等待时间已设置为：%time%"
 adminSetGameTime: "§a游戏时间已设置为：%time%"
 adminSetGameTimeShort: "§a游戏时间最小不能低于1分钟！"
-adminSetGameMode: "§a房间模式已设置为: %roomMode%"
-adminStartNoPlayer: "§a房间人数不足三人,无法开始游戏！"
+adminSetGameMode: "§a房间游戏模式已设置为: %roomMode%"
+adminSetGameModeNotFound: "§c房间游戏模式: %mode% 不存在！"
+adminStartRoom: "§a已强制开启游戏！"
+adminStartRoomNoPlayer: "§a房间人数不足三人,无法开始游戏！"
+adminStartRoomIsPlaying: "§c房间已经开始了！"
 adminLevelNoRoom: "§a当前地图不是游戏房间！"
+adminStopRoom: "§a已强制结束房间！"
 adminReload: "§a配置重载完成！请在后台查看信息！"
 adminUnload: "§a已卸载所有房间！请在后台查看信息！"
-roomSafeKick: |-
-  §c房间非正常关闭!
-  为了您的背包安全，请稍后重进服务器！
-playerDeathChat: "§c[死亡] %player% + §b >>> %message%"
+playerChat: "§a[房间]§f %player%§b >>>§f %message%"
+playerDeathChat: "§c[死亡]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
 tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 itemDetectiveBow: "§e侦探之弓"
@@ -133,6 +137,8 @@ titleKillerTitle: "§c杀手"
 titleKillerSubtitle: "杀掉所有人"
 killerGetSwordTime: "§e杀手将在 %time% 秒后拿到剑！"
 killerGetSword: "§e杀手已拿到剑！"
+playerKilledByKiller: "§c一位§e%identity%§c被杀手杀死了！"
+commonPeopleBecomeDetective: "§a一位平民成为了新的侦探！"
 titleVictoryKillerTitle: "§a杀手获得胜利！"
 titleVictoryCommonPeopleSubtitle: "§a平民和侦探获得胜利！"
 victoryKillerBottom: "§e恭喜杀手获得胜利"
@@ -154,17 +160,17 @@ waitTimeBottom: |-
   §a游戏还有: %time% 秒开始！
 waitBottom: "§c等待玩家加入中,当前已有: %playerNumber% 位玩家"
 gameTimeScoreBoard: |-
-  房间模式: §a %roomMode%
-  §l§a当前身份:§e %mode%
+  §l§a房间模式: §a %roomMode%
+
+  §l§a我的身份:§e %identity%
   §l§a存活人数:§e %playerNumber%
   §l§a剩余时间:§e %time% §a秒
-gameTimeBottom: |-
-  §a身份:§e %mode%
-  §a距游戏结束还有:§e %time% §a秒
-  当前还有:§e %playerNumber% §a人存活
+detectiveSurvival: "§a侦探存活"
+detectiveDeath: "§l§c侦探死亡,弓已掉落!"
 gameEffectCDScoreBoard: "§l§a加速冷却:§e %time% §a秒 "
 gameSwordCDScoreBoard: "§l§a飞剑冷却:§e %time% §a秒 "
 gameScanCDScoreBoard: "§l§a扫描冷却:§e %time% §a秒 "
+playerRespawnTime: "§c复活倒计时: %time%"
 userMenuButton1: "§e随机加入房间"
 userMenuButton2: "§e退出当前房间"
 userMenuButton3: "§e查看房间列表"

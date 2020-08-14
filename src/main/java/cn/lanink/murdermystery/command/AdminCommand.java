@@ -6,10 +6,14 @@ import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
+/**
+ * @author lt_name
+ */
 public class AdminCommand extends BaseCommand {
 
-    public AdminCommand(String name) {
+    public AdminCommand(String name, String[] aliases) {
         super(name, "MurderMystery 管理命令");
+        this.setAliases(aliases);
         this.setPermission("MurderMystery.command.admin");
         this.addSubCommand(new SetWaitSpawn("setwaitspawn"));
         this.addSubCommand(new AddRandomSpawn("addrandomspawn"));
@@ -19,6 +23,7 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetGameTime("setgametime"));
         this.addSubCommand(new SetGameMode("setgamemode"));
         this.addSubCommand(new StartRoom("startroom"));
+        this.addSubCommand(new StopRoom("stoproom"));
         this.addSubCommand(new ReloadRoom("reloadroom"));
         this.addSubCommand(new UnloadRoom("unloadroom"));
         this.loadCommandBase();
@@ -30,7 +35,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Override
-    public void sendUI(CommandSender sender) {
+    public void sendUi(CommandSender sender) {
         GuiCreate.sendAdminMenu((Player) sender);
     }
 

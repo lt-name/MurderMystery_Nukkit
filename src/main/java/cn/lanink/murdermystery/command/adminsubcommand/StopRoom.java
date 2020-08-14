@@ -6,9 +6,12 @@ import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 
-public class StartRoom extends BaseSubCommand {
+/**
+ * @author lt_name
+ */
+public class StopRoom extends BaseSubCommand {
 
-    public StartRoom(String name) {
+    public StopRoom(String name) {
         super(name);
     }
 
@@ -27,17 +30,8 @@ public class StartRoom extends BaseSubCommand {
         Player player = (Player) sender;
         BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
         if (room != null) {
-            //少于三人将进入死循环！
-            if (room.getPlayers().size() >= 3) {
-                if (room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) {
-                    room.gameStartEvent();
-                    sender.sendMessage(this.language.adminStartRoom);
-                }else {
-                    sender.sendMessage(this.language.adminStartRoomIsPlaying);
-                }
-            }else {
-                sender.sendMessage(this.language.adminStartRoomNoPlayer);
-            }
+            room.endGameEvent();
+            sender.sendMessage(this.language.adminStopRoom);
         }else {
             sender.sendMessage(this.language.adminLevelNoRoom);
         }
@@ -48,5 +42,4 @@ public class StartRoom extends BaseSubCommand {
     public CommandParameter[] getParameters() {
         return new CommandParameter[0];
     }
-
 }

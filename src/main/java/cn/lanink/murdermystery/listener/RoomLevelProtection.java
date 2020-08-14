@@ -2,7 +2,9 @@ package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
@@ -11,9 +13,11 @@ import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.StartBrewEvent;
+import cn.nukkit.event.level.ChunkUnloadEvent;
 import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerDropItemEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
+import cn.nukkit.event.player.PlayerGameModeChangeEvent;
 import cn.nukkit.level.Level;
 
 
@@ -152,6 +156,34 @@ public class RoomLevelProtection implements Listener {
         if (level != null && this.murderMystery.getRooms().containsKey(level.getName())) {
             event.setKeepInventory(true);
             event.setKeepExperience(true);
+        }
+    }
+
+    /**
+     * 玩家游戏模式改变事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
+        if (level != null && this.murderMystery.getRooms().containsKey(level.getName())) {
+            event.setCancelled(false);
+        }
+    }
+
+    /**
+     * 区块卸载事件
+     *
+     * @param event 事件
+     */
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event) {
+        if (event.getLevel() != null && this.murderMystery.getRooms().containsKey(event.getLevel().getName())) {
+            for (Entity entity : event.getChunk().getEntities().values()) {
+                if (!(entity instanceof Player)) {
+                    entity.close();
+                }
+            }
         }
     }
 

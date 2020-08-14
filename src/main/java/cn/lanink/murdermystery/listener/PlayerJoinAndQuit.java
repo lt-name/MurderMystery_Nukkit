@@ -1,10 +1,12 @@
 package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
@@ -19,17 +21,23 @@ import java.util.LinkedHashMap;
  */
 public class PlayerJoinAndQuit implements Listener {
 
+    private final MurderMystery murderMystery;
+
+    public PlayerJoinAndQuit(MurderMystery murderMystery) {
+        this.murderMystery = murderMystery;
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player != null && MurderMystery.getInstance().getRooms().containsKey(player.getLevel().getName())) {
-            MurderMystery.getInstance().getServer().getScheduler().scheduleDelayedTask(new Task() {
+        if (player != null && this.murderMystery.getRooms().containsKey(player.getLevel().getName())) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
                 @Override
                 public void onRun(int i) {
                     if (player.isOnline()) {
                         Tools.rePlayerState(player ,false);
                         SavePlayerInventory.restore(player);
-                        player.teleport(MurderMystery.getInstance().getServer().getDefaultLevel().getSafeSpawn());
+                        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                     }
                 }
             }, 120);
@@ -42,12 +50,13 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null) {
             return;
         }
-        for (Room room : MurderMystery.getInstance().getRooms().values()) {
+        for (BaseRoom room : this.murderMystery.getRooms().values()) {
             if (room.isPlaying(player)) {
-                room.quitRoom(player, false);
+                room.quitRoom(player);
             }
         }
-        MurderMystery.getInstance().getScoreboard().delCache(player);
+        this.murderMystery.getScoreboard().delCache(player);
+        GuiCreate.UI_CACHE.remove(player);
     }
 
     @EventHandler
@@ -57,14 +66,14 @@ public class PlayerJoinAndQuit implements Listener {
         String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getName();
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
-            LinkedHashMap<String, Room> room =  MurderMystery.getInstance().getRooms();
+            LinkedHashMap<String, BaseRoom> room = this.murderMystery.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(MurderMystery.getInstance().getLanguage().tpQuitRoomLevel);
+                player.sendMessage(this.murderMystery.getLanguage().tpQuitRoomLevel);
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(MurderMystery.getInstance().getLanguage().tpJoinRoomLevel);
+                player.sendMessage(this.murderMystery.getLanguage().tpJoinRoomLevel);
             }
         }
     }

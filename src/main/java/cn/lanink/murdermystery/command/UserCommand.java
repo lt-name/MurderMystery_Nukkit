@@ -8,10 +8,14 @@ import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
+/**
+ * @author lt_name
+ */
 public class UserCommand extends BaseCommand {
 
-    public UserCommand(String name) {
+    public UserCommand(String name, String[] aliases) {
         super(name, "MurderMystery 命令");
+        this.setAliases(aliases);
         this.setPermission("MurderMystery.command.user");
         this.addSubCommand(new JoinRoom("join"));
         this.addSubCommand(new QuitRoom("quit"));
@@ -25,7 +29,7 @@ public class UserCommand extends BaseCommand {
     }
 
     @Override
-    public void sendUI(CommandSender sender) {
+    public void sendUi(CommandSender sender) {
         GuiCreate.sendUserMenu((Player) sender);
     }
 

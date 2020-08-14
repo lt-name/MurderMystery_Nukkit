@@ -29,6 +29,7 @@ https://nukkitx.com/resources/scoreboardapl.170/
 * /kadmin setgametime number Set the maximum time of each game round​
 * /kadmin setgamemode mode Set room game mode​
 * /kadmin startroom Start Game​
+* /kadmin stoproom End Game
 * /kadmin reloadroom Reload all the rooms​
 * /kadmin unloadroom Close all rooms and uninstall config
 

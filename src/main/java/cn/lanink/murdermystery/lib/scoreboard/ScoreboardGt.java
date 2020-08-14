@@ -1,11 +1,11 @@
-package cn.lanink.lib.scoreboard;
+package cn.lanink.murdermystery.lib.scoreboard;
 
 import cn.nukkit.Player;
 import gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI;
 import gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author lt_name
@@ -15,18 +15,14 @@ public class ScoreboardGt implements IScoreboard {
     private final HashMap<Player, SimpleScoreboard> scoreboards = new HashMap<>();
 
     @Override
-    public void showScoreboard(Player player, String title, LinkedList<String> message) {
+    public void showScoreboard(Player player, String title, List<String> message) {
         SimpleScoreboard simpleScoreboard;
         if (!this.scoreboards.containsKey(player)) {
             simpleScoreboard = ScoreboardAPI.builder().build();
         }else {
             simpleScoreboard = this.scoreboards.get(player);
             simpleScoreboard.clearCache();
-            if (simpleScoreboard.getAllScores().size() > message.size()) {
-                for (int line = message.size(); line < simpleScoreboard.getAllScores().size(); line++) {
-                    simpleScoreboard.resetScore(line);
-                }
-            }
+            simpleScoreboard.resetAllScores();
         }
         simpleScoreboard.setDisplayName(title);
         for (int line = 0; line < message.size(); line++) {

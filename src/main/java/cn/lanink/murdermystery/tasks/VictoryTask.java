@@ -1,8 +1,7 @@
 package cn.lanink.murdermystery.tasks;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.event.MurderRoomEndEvent;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -15,12 +14,12 @@ import java.util.Map;
 
 public class VictoryTask extends PluginTask<MurderMystery> {
 
-    private final Room room;
+    private final BaseRoom room;
     private final Language language;
     private int victoryTime;
     private final int victory;
 
-    public VictoryTask(MurderMystery owner, Room room, int victory) {
+    public VictoryTask(MurderMystery owner, BaseRoom room, int victory) {
         super(owner);
         owner.taskList.add(this.getTaskId());
         this.room = room;
@@ -31,14 +30,12 @@ public class VictoryTask extends PluginTask<MurderMystery> {
             if (victory == 3) {
                 entry.getKey().sendTitle(owner.getLanguage().titleVictoryKillerTitle,
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(this.language.victoryKillerBottom);
                 LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryKillerScoreBoard.split("\n")));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
                         this.language.scoreBoardTitle, ms);
             }else {
                 entry.getKey().sendTitle(this.language.titleVictoryCommonPeopleSubtitle,
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(this.language.victoryCommonPeopleBottom);
                 LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryCommonPeopleScoreBoard.split("\n")));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
                         this.language.scoreBoardTitle, ms);
@@ -48,17 +45,25 @@ public class VictoryTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 3) {
+        if (this.room.getStatus() != BaseRoom.ROOM_STATUS_VICTORY) {
             this.cancel();
             return;
         }
         if (this.victoryTime < 1) {
             this.cancel();
-            owner.getServer().getPluginManager().callEvent(new MurderRoomEndEvent(this.room, this.victory));
-            this.room.endGame();
+            this.room.endGameEvent(this.victory);
         }else {
             this.victoryTime--;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                String bottom;
+                if (victory == 3) {
+                    bottom = this.language.victoryKillerBottom;
+                }else {
+                    bottom = this.language.victoryCommonPeopleBottom;
+                }
+                if (!bottom.trim().equals("")) {
+                    entry.getKey().sendTip(bottom);
+                }
                 if (entry.getValue() != 0) {
                     if (this.victory == 1 && entry.getValue() == 3) {
                         continue;

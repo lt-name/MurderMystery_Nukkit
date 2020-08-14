@@ -7,6 +7,9 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.Config;
 
+/**
+ * @author lt_name
+ */
 public class SetGameTime extends BaseSubCommand {
 
     public SetGameTime(String name) {

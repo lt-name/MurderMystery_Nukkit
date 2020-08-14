@@ -1,4 +1,4 @@
-package cn.lanink.lib.scoreboard;
+package cn.lanink.murdermystery.lib.scoreboard;
 
 import cn.nukkit.Player;
 import de.theamychan.scoreboard.api.ScoreboardAPI;
@@ -7,7 +7,7 @@ import de.theamychan.scoreboard.network.Scoreboard;
 import de.theamychan.scoreboard.network.ScoreboardDisplay;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author lt_name
@@ -17,7 +17,7 @@ public class ScoreboardDe implements IScoreboard {
     private final HashMap<Player, Scoreboard> scoreboards = new HashMap<>();
 
     @Override
-    public void showScoreboard(Player player, String title, LinkedList<String> message) {
+    public void showScoreboard(Player player, String title, List<String> message) {
         Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
         ScoreboardDisplay scoreboardDisplay = scoreboard.addDisplay(DisplaySlot.SIDEBAR, title, title);
         if (this.scoreboards.containsKey(player)) {

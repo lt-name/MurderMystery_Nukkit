@@ -27,8 +27,6 @@ public class SetWaitSpawn extends BaseSubCommand {
         Player player = (Player) sender;
         Config config = this.murderMystery.getRoomConfig(player.getLevel());
         String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
-        String world = player.getLevel().getName();
-        config.set("world", world);
         config.set("waitSpawn", spawn);
         config.save();
         sender.sendMessage(this.language.adminSetSpawn);

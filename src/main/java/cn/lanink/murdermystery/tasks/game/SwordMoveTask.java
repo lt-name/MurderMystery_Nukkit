@@ -2,12 +2,12 @@ package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntitySword;
-import cn.lanink.murdermystery.event.MurderPlayerDamageEvent;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
@@ -16,21 +16,25 @@ import java.util.LinkedList;
 
 public class SwordMoveTask extends AsyncTask {
 
-    private final Room room;
+    private final BaseRoom room;
     private final Player player;
     private LinkedList<double[]> math;
     private EntitySword sword;
 
-    public SwordMoveTask(Room room, Player player) {
+    public SwordMoveTask(BaseRoom room, Player player) {
         this.room = room;
         this.player = player;
-        Position pos1 = new Position(player.x + 0.5D, player.y + player.getEyeHeight(), player.z + 0.5D, player.getLevel());
+        Position pos1 = new Position(player.x, player.y + player.getEyeHeight(), player.z, player.getLevel());
         Position pos2 = player.getTargetBlock(15) == null ? null : player.getTargetBlock(15).getLocation();
-        if (pos2 == null) return;
+        if (pos2 == null) {
+            return;
+        }
         this.math = this.mathLine(pos1, pos2);
-        if (this.math == null || this.math.size() == 0) return;
+        if (this.math == null || this.math.size() == 0) {
+            return;
+        }
         Skin skin = MurderMystery.getInstance().getSword();
-        CompoundTag tag = EntitySword.getDefaultNBT(pos1);
+        CompoundTag tag = EntitySword.getDefaultNBT(Location.fromObject(pos1, player.getLevel(), player.getYaw(), player.getPitch()));
         tag.putCompound("Skin",new CompoundTag()
                 .putByteArray("Data", skin.getSkinData().data)
                 .putString("ModelId", skin.getSkinId()));
@@ -39,6 +43,7 @@ public class SwordMoveTask extends AsyncTask {
         this.sword.setSkin(skin);
         this.sword.setRotation(player.getYaw(), player.getPitch());
         this.sword.spawnToAll();
+        Tools.setHumanSkin(this.sword, skin);
     }
 
     @Override
@@ -51,16 +56,16 @@ public class SwordMoveTask extends AsyncTask {
                 this.sword.updateMovement();
                 for (Entity entity : p.level.getEntities()) {
                     if (entity instanceof Player) {
-                        if (entity.x >= p.x - entity.getWidth() && entity.x <= p.x + entity.getWidth() &&
-                                entity.y >= p.y - entity.getHeight() && p.y <= entity.y + entity.getHeight() &&
-                                entity.z >= p.z - entity.getWidth() && entity.z <= p.z + entity.getWidth()) {
-                            Player player2 = (Player) entity;
-                            if (player2 != this.player) {
-                                Server.getInstance().getPluginManager().callEvent(
-                                        new MurderPlayerDamageEvent(this.room, this.player, player2));
-                                this.sword.close();
-                                return;
-                            }
+                        Player player2 = (Player) entity;
+                        if (player2 == this.player) {
+                            continue;
+                        }
+                        if (((entity.x - entity.getWidth() - 0.5) <= p.x) && ((entity.x + entity.getWidth() + 0.5) >= p.x) &&
+                                ((entity.y - entity.getWidth() - 0.5) <= p.y) && ((entity.x + entity.getWidth() + 0.5) >= p.y) &&
+                                ((entity.z - entity.getWidth() - 0.5) <= p.z) && ((entity.z + entity.getWidth() + 0.5) >= p.z)) {
+                            this.room.playerDamageEvent(this.player, player2);
+                            this.sword.close();
+                            return;
                         }
                     }
                 }

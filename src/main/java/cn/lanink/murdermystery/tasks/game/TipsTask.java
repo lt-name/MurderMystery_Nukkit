@@ -1,13 +1,13 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.GameMode;
-import cn.lanink.murdermystery.room.Room;
+import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -17,10 +17,10 @@ import java.util.Map;
  */
 public class TipsTask extends PluginTask<MurderMystery> {
 
-    private final Room room;
+    private final BaseRoom room;
     private final Language language;
 
-    public TipsTask(MurderMystery owner, Room room) {
+    public TipsTask(MurderMystery owner, BaseRoom room) {
         super(owner);
         owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
@@ -29,65 +29,53 @@ public class TipsTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 2) {
+        if (this.room.getStatus() != BaseRoom.ROOM_STATUS_GAME) {
             this.cancel();
             return;
         }
-        if (room.getPlayers().values().size() > 0) {
-            int playerNumber = 0;
-            if (room.getGameMode() == GameMode.INFECTED) {
-                for (Integer integer : room.getPlayers().values()) {
-                    if (integer == 2) {
-                        playerNumber++;
-                    }
-                }
-            }else {
-                for (Integer integer : room.getPlayers().values()) {
-                    if (integer != 0) {
-                        playerNumber++;
-                    }
-                }
-            }
-            String mode;
+        if (room.getPlayers().size() > 0) {
+            int playerNumber = this.room.getSurvivorPlayerNumber();
+            boolean detectiveSurvival = room.getPlayers().containsValue(2);
+            String identity;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                 entry.getKey().setNameTag("");
                 switch (entry.getValue()) {
                     case 1:
-                        mode = owner.getLanguage().commonPeople;
+                        identity = owner.getLanguage().commonPeople;
                         break;
                     case 2:
-                        mode = owner.getLanguage().detective;
+                        identity = owner.getLanguage().detective;
                         break;
                     case 3:
-                        mode = owner.getLanguage().killer;
+                        identity = owner.getLanguage().killer;
                         break;
                     default:
-                        mode = owner.getLanguage().death;
+                        identity = owner.getLanguage().death;
                         break;
                 }
-                entry.getKey().sendActionBar(language.gameTimeBottom
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.gameTimeScoreBoard
                         .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                        .replace("%mode%", mode)
+                        .replace("%identity%", identity)
                         .replace("%playerNumber%", playerNumber + "")
-                        .replace("%time%", room.gameTime + ""));
-                LinkedList<String> ms = new LinkedList<>();
-                for (String string : language.gameTimeScoreBoard.split("\n")) {
-                    ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                            .replace("%mode%", mode)
-                            .replace("%playerNumber%", playerNumber + "")
-                            .replace("%time%", room.gameTime + ""));
+                        .replace("%time%", this.room.gameTime + "").split("\n")));
+                ms.add(" ");
+                if (detectiveSurvival) {
+                    ms.addAll(Arrays.asList(this.language.detectiveSurvival.split("\n")));
+                }else {
+                    ms.addAll(Arrays.asList(this.language.detectiveDeath.split("\n")));
                 }
-                if (entry.getValue() == 3 && this.room.getGameMode() != GameMode.INFECTED) {
-                    if (room.effectCD > 0) {
-                        ms.add(language.gameEffectCDScoreBoard
+                ms.add("  ");
+                if (entry.getValue() == 3) {
+                    if (this.room.effectCD > 0) {
+                        ms.add(this.language.gameEffectCDScoreBoard
                                 .replace("%time%", room.effectCD + ""));
                     }
-                    if (room.swordCD > 0) {
-                        ms.add(language.gameSwordCDScoreBoard
+                    if (this.room.swordCD > 0) {
+                        ms.add(this.language.gameSwordCDScoreBoard
                                 .replace("%time%", room.swordCD + ""));
                     }
-                    if (room.scanCD > 0) {
-                        ms.add(language.gameScanCDScoreBoard
+                    if (this.room.scanCD > 0) {
+                        ms.add(this.language.gameScanCDScoreBoard
                                 .replace("%time%", room.scanCD + ""));
                     }
                 }
