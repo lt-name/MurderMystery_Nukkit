@@ -109,10 +109,10 @@ itemShieldWallLore: |-
   일시적으로 보호막을 생성할 수 있습니다.
   잘 작동하지는 않지만 중요할 때 생명을 구할 수 있습니다.
   : 땅에 놓기
-itemSnowball: "§a구속기"
+itemSnowball: "§a구속 눈덩이"
 itemSnowballLore: "명중하면 목표물이 2초 구속됩니다."
 useItemScan: "§a모든 플레이어의 위치가 섹션에 표시됩니다!"
-damageSnowball: "§a구속기에 맞았습니다! "
+damageSnowball: "§a구속 눈덩이에 맞았습니다! "
 useItemSwordCD: "§a플라잉 검 쿨다운 중"
 useItemScanCD: "§a스캐너 쿨다운 중"
 exchangeItemsOnlyOne: "오직 한 개의 %name%만 가질 수 있습니다."
