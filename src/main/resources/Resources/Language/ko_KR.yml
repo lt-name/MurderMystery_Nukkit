@@ -28,7 +28,7 @@ cmdHelp: "§a도움말 보는 방법:/%cmdName% help"
 userHelp: |-
   §e머더 미스터리--도움말
   §a/%cmdName% §eUI 열기
-  §a/%cmdName% join <NameOfRoom> §e게임 참가하기
+  §a/%cmdName% join <방 이름> §e게임 참가하기
   §a/%cmdName% quit §e게임 나가기
   §a/%cmdName% list §e방 목록 보기
 noPermission: "§c이 명령어를 실행하기 위한 권한이 부족합니다!"
@@ -50,12 +50,12 @@ adminHelp: |-
   §a/%cmdName% setwaitspawn §e현재 위치를 게임 대기 지점으로 설정하기
   §a/%cmdName% addrandomspawn  §e현재 위치를 게임 랜덤 위치로 추가하기
   §a/%cmdName% addgoldspawn §e  현재 위치를 금괴 생성 지점으로 추가하기
-  §a/%cmdName% setgoldspawntime number §e금괴 생성 간격 설정하기
-  §a/%cmdName% setwaittime number §e플레이어 수가 채워진 후 대기 시간 설정하기
-  §a/%cmdName% setgametime number §e각 게임 라운드의 최대 시간 설정하기
-  §a/%cmdName% setgamemode mode §e방 게임 모드 설정하기
+  §a/%cmdName% setgoldspawntime <초> §e금괴 생성 간격 설정하기
+  §a/%cmdName% setwaittime <초> §e플레이어 수가 채워진 후 대기 시간 설정하기
+  §a/%cmdName% setgametime <초> §e각 게임 라운드의 최대 시간 설정하기
+  §a/%cmdName% setgamemode <모드> §e방 게임 모드 설정하기
   §a/%cmdName% startroom §e게임 시작하기
-  §a/%cmdName% stoproom §eEnd Game
+  §a/%cmdName% stoproom §e게임 종료하기
   §a/%cmdName% reloadroom §e모든 방을 다시 불러오기
   §a/%cmdName% unloadroom §e모든 방을 닫고 설정 제거하기
 adminSetSpawn: "§a기본 플레이어 생성 지점이 성공적으로 설정되었습니다!"
@@ -67,15 +67,15 @@ adminSetWaitTime: "§a대기 시간은 %time%초로 설정되었습니다!"
 adminSetGameTime: "§a각 게임의 시간은 %time%초로 설정되었습니다!"
 adminSetGameTimeShort: "§a최소 게임 시간은 1분 이상 이여야 합니다!"
 adminSetGameMode: "§a이 방의 게임모드는 %roomMode%로 설정되었습니다!"
-adminSetGameModeNotFound: "§c %mode% no translation"
-adminStartRoom: "§a no translation"
+adminSetGameModeNotFound: "§c방 게임 모드: %mode%은(는) 존재하지 않습니다!"
+adminStartRoom: "§a게임이 강제로 시작되었습니다!"
 adminStartRoomNoPlayer: "§a준비된 플레이어가 3명 미만일 때는 시작이 불가능합니다!"
-adminStartRoomIsPlaying: "§c no translation"
+adminStartRoomIsPlaying: "§c이미 게임은 진행 중입니다!"
 adminLevelNoRoom: "§a게임 방에 들어가 있지 않습니다!"
-adminStopRoom: "§a no translation"
+adminStopRoom: "§a게임이 강제로 종료되었습니다!"
 adminReload: "§a설정 다시 불러오기 성공! 백그라운드에서 정보를 확인하세요!"
 adminUnload: "§a모든 방 언로드 성공! 백그라운드에서 정보를 확인하세요!"
-playerChat: "§a[房间]§f %player%§b >>>§f %message%"
+playerChat: "§a[방]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[사망] %player§b >>> %message%"
 tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 월드에 참가하세요."
 tpQuitRoomLevel: "§e >> §c명령어를 사용하여 방을 종료하세요."
@@ -106,13 +106,13 @@ itemPotionLore: |-
   사용법: 마시기
 itemShieldWall: "§a보호막 생성기"
 itemShieldWallLore: |-
-  잠깐의 보호막을 생성할 수 있습니다.
+  일시적으로 보호막을 생성할 수 있습니다.
   잘 작동하지는 않지만 중요할 때 생명을 구할 수 있습니다.
   : 땅에 놓기
-itemSnowball: "§a구속기"
+itemSnowball: "§a구속 눈덩이"
 itemSnowballLore: "명중하면 목표물이 2초 구속됩니다."
 useItemScan: "§a모든 플레이어의 위치가 섹션에 표시됩니다!"
-damageSnowball: "§a구속기에 맞았습니다! "
+damageSnowball: "§a구속 눈덩이에 맞았습니다! "
 useItemSwordCD: "§a플라잉 검 쿨다운 중"
 useItemScanCD: "§a스캐너 쿨다운 중"
 exchangeItemsOnlyOne: "오직 한 개의 %name%만 가질 수 있습니다."
@@ -139,8 +139,8 @@ titleKillerTitle: "§c머더"
 titleKillerSubtitle: "모든 플레이어를 죽이세요!"
 killerGetSwordTime: "§e머더는 %time%초 후에 칼을 얻을 것입니다!"
 killerGetSword: "§e머더가 칼을 얻었습니다!"
-playerKilledByKiller: "§c一位§e%identity%§c被杀手杀死了！"
-commonPeopleBecomeDetective: "§a一位平民成为了新的侦探！"
+playerKilledByKiller: "§c한 §e%identity%§c(이)가 머더에게 살해당했습니다!"
+commonPeopleBecomeDetective: "§a한 시민이 새로운 형사가 되었습니다!"
 titleVictoryKillerTitle: "§a머더 승리!"
 titleVictoryCommonPeopleSubtitle: "§a시민과 형사 승리!"
 victoryKillerBottom: "§e머더가 모두를 죽여 승리한 것을 축하합니다!"
@@ -167,12 +167,12 @@ gameTimeScoreBoard: |-
   §l§a현재 신분:§e %identity%
   §l§a살아남아 있는 사람 수:§e %playerNumber%
   §l§a남은 시간:§e %time% §a초
-detectiveSurvival: "§l§a侦探存活"
-detectiveDeath: "§l§c侦探死亡,弓已掉落!"
+detectiveSurvival: "§l§a형사가 살아남았습니다"
+detectiveDeath: "§l§c형사가 사망하여, 활이 떨어졌습니다!"
 gameEffectCDScoreBoard: "§l§a가속 쿨다운:§e %time% §a초 "
 gameSwordCDScoreBoard: "§l§a플라이 검 쿨다운:§e %time% §a초 "
 gameScanCDScoreBoard: "§l§a스캐너 쿨다운:§e %time% §a초 "
-playerRespawnTime: "§cRespawnTime: %time%"
+playerRespawnTime: "§c재생성 시간: %time%"
 userMenuButton1: "§e무작위로 방 들어가기"
 userMenuButton2: "§e이 방 나가기"
 userMenuButton3: "§e모든 방 목록 보기"
