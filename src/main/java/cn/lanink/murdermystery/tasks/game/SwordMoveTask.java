@@ -29,6 +29,9 @@ public class SwordMoveTask extends AsyncTask {
         if (pos2 == null) {
             return;
         }
+        pos2.x += 0.5D;
+        pos2.y += 0.5D;
+        pos2.z += 0.5D;
         this.math = this.mathLine(pos1, pos2);
         if (this.math == null || this.math.size() == 0) {
             return;
@@ -61,7 +64,7 @@ public class SwordMoveTask extends AsyncTask {
                             continue;
                         }
                         if (((entity.x - entity.getWidth() - 0.5) <= p.x) && ((entity.x + entity.getWidth() + 0.5) >= p.x) &&
-                                ((entity.y - entity.getWidth() - 0.5) <= p.y) && ((entity.x + entity.getWidth() + 0.5) >= p.y) &&
+                                ((entity.y - 0.5) <= p.y) && ((entity.x + entity.getHeight() + 0.5) >= p.y) &&
                                 ((entity.z - entity.getWidth() - 0.5) <= p.z) && ((entity.z + entity.getWidth() + 0.5) >= p.z)) {
                             this.room.playerDamageEvent(this.player, player2);
                             this.sword.close();
@@ -70,7 +73,9 @@ public class SwordMoveTask extends AsyncTask {
                     }
                 }
             }
-        } catch (InterruptedException ignored){ }
+        } catch (Exception ignored) {
+
+        }
         this.sword.close();
     }
 
