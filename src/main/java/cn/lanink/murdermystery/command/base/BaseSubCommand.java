@@ -58,6 +58,6 @@ public abstract class BaseSubCommand {
      * 指令参数.
      * @return  提示参数
      * */
-    abstract public CommandParameter[] getParameters();
+    public abstract CommandParameter[] getParameters();
 
 }
