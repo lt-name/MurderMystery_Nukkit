@@ -323,7 +323,7 @@ public class ClassicModeRoom extends BaseRoom {
      */
     @Override
     protected void assignIdentity() {
-        LinkedHashMap<Player, Integer> players = this.getPlayers();
+        HashMap<Player, Integer> players = this.getPlayers();
         int random1 = MurderMystery.RANDOM.nextInt(players.size()) + 1;
         int random2;
         do {

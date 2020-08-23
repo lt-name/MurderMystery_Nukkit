@@ -39,7 +39,8 @@ import java.util.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "1.0.6-SNAPSHOT git-e61c4a0";
+    public static final String VERSION = "?";
+    public static boolean debug = false;
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;
@@ -50,7 +51,7 @@ public class MurderMystery extends PluginBase {
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
-    public final Set<Integer> taskList = new HashSet<>();
+    public final HashSet<Integer> taskList = new HashSet<>();
     private String cmdUser, cmdAdmin;
     private List<String> cmdUserAliases, cmdAdminAliases;
     private IScoreboard scoreboard;
@@ -76,14 +77,20 @@ public class MurderMystery extends PluginBase {
         }
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        if (config.getBoolean("debug", false)) {
+            debug = true;
+            getLogger().warning("警告：您开启了debug模式！");
+            getLogger().warning("Warning: You have turned on debug mode!");
+        }
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
-        //语言文件
+        //语言文件 (按时间排序/Sort by time)
         saveResource("Resources/Language/zh_CN.yml", false);
         saveResource("Resources/Language/en_US.yml", false);
         saveResource("Resources/Language/ko_KR.yml", false);
+        saveResource("Resources/Language/vi_VN.yml", false);
         String s = this.config.getString("language", "zh_CN");
         File languageFile = new File(getDataFolder() + "/Resources/Language/" + s + ".yml");
         if (languageFile.exists()) {

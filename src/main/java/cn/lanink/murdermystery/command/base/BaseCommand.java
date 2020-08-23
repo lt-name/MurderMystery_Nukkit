@@ -87,11 +87,11 @@ public abstract class BaseCommand extends Command {
 
     protected void loadCommandBase(){
         this.commandParameters.clear();
-        for(BaseSubCommand subCommand : this.subCommand){
+        for(BaseSubCommand subCommand : this.subCommand) {
             LinkedList<CommandParameter> parameters = new LinkedList<>();
             parameters.add(new CommandParameter(subCommand.getName(), new String[]{subCommand.getName()}));
             parameters.addAll(Arrays.asList(subCommand.getParameters()));
-            this.commandParameters.put(subCommand.getName(),parameters.toArray(new CommandParameter[0]));
+            this.commandParameters.put(subCommand.getName(), parameters.toArray(new CommandParameter[0]));
         }
     }
 

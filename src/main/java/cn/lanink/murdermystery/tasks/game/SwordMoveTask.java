@@ -5,10 +5,12 @@ import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 
@@ -29,6 +31,9 @@ public class SwordMoveTask extends AsyncTask {
         if (pos2 == null) {
             return;
         }
+        pos2.x += 0.5D;
+        pos2.y += 0.5D;
+        pos2.z += 0.5D;
         this.math = this.mathLine(pos1, pos2);
         if (this.math == null || this.math.size() == 0) {
             return;
@@ -60,9 +65,11 @@ public class SwordMoveTask extends AsyncTask {
                         if (player2 == this.player) {
                             continue;
                         }
-                        if (((entity.x - entity.getWidth() - 0.5) <= p.x) && ((entity.x + entity.getWidth() + 0.5) >= p.x) &&
-                                ((entity.y - entity.getWidth() - 0.5) <= p.y) && ((entity.x + entity.getWidth() + 0.5) >= p.y) &&
-                                ((entity.z - entity.getWidth() - 0.5) <= p.z) && ((entity.z + entity.getWidth() + 0.5) >= p.z)) {
+                        if (p.distance(entity) < 1.5 || p.distance(new Vector3(entity.x, entity.y + entity.getHeight(), entity.z)) < 1.5) {
+                            if (MurderMystery.debug) {
+                                Server.getInstance().getLogger().info("距离：" + p.distance(entity));
+                                Server.getInstance().getLogger().info("距离（加高度）：" + p.distance(new Vector3(entity.x, entity.y + entity.getHeight(), entity.z)));
+                            }
                             this.room.playerDamageEvent(this.player, player2);
                             this.sword.close();
                             return;
@@ -70,7 +77,9 @@ public class SwordMoveTask extends AsyncTask {
                     }
                 }
             }
-        } catch (InterruptedException ignored){ }
+        } catch (Exception ignored) {
+
+        }
         this.sword.close();
     }
 

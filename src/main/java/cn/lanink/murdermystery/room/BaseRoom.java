@@ -40,9 +40,9 @@ public abstract class BaseRoom {
     protected final Position waitSpawn;
     protected Level level;
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
-    protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1平民 2侦探 3杀手
-    protected final LinkedHashMap<Player, Integer> skinNumber = new LinkedHashMap<>(); //玩家使用皮肤编号，用于防止重复使用
-    protected final LinkedHashMap<Player, Skin> skinCache = new LinkedHashMap<>(); //缓存玩家皮肤，用于退出房间时还原
+    protected final HashMap<Player, Integer> players = new HashMap<>(); //0未分配 1平民 2侦探 3杀手
+    protected final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
+    protected final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
 
     /**
      * 初始化
@@ -136,7 +136,7 @@ public abstract class BaseRoom {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
                 this.skinNumber.put(player, entry.getKey());
-                Tools.setHumanSkin(player, entry.getValue(), true);
+                Tools.setHumanSkin(player, entry.getValue());
                 return;
             }
         }
@@ -149,7 +149,7 @@ public abstract class BaseRoom {
      */
     public void restorePlayerSkin(Player player) {
         if (this.skinCache.containsKey(player)) {
-            Tools.setHumanSkin(player, this.skinCache.get(player), true);
+            Tools.setHumanSkin(player, this.skinCache.get(player));
             this.skinCache.remove(player);
         }
         this.skinNumber.remove(player);
@@ -180,7 +180,7 @@ public abstract class BaseRoom {
     /**
      * @return 玩家列表
      */
-    public LinkedHashMap<Player, Integer> getPlayers() {
+    public HashMap<Player, Integer> getPlayers() {
         return this.players;
     }
 

@@ -19,6 +19,8 @@ import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
@@ -595,6 +597,54 @@ public class PlayerGameListener implements Listener {
         }
         event.setMessage("");
         event.setCancelled(true);
+    }
+
+    /**
+     * 玩家打开库存事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        Player player = event.getPlayer();
+        if (player == null || event.getInventory() == null) {
+            return;
+        }
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        switch (event.getInventory().getType()) {
+            case UI:
+            case PLAYER:
+                break;
+            default:
+                event.setCancelled(true);
+                break;
+        }
+    }
+
+    /**
+     * 玩家点击背包栏格子事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        Player player = event.getPlayer();
+        if (player == null || event.getInventory() == null) {
+            return;
+        }
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        switch (event.getInventory().getType()) {
+            case UI:
+            case PLAYER:
+                break;
+            default:
+                event.setCancelled(true);
+                break;
+        }
     }
 
     /**

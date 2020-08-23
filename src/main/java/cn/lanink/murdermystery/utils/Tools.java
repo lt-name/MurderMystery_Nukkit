@@ -214,10 +214,6 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
-        setHumanSkin(human, skin, false);
-    }
-
-    public static void setHumanSkin(EntityHuman human, Skin skin, boolean needACK) {
         if (human.getLevel() != null) {
             for (Player player : human.getLevel().getPlayers().values()) {
                 PlayerSkinPacket packet = new PlayerSkinPacket();
@@ -229,15 +225,6 @@ public class Tools {
             }
         }
         human.setSkin(skin);
-    }
-
-    private static void setHumanSkin(Player player, EntityHuman human, Skin skin, boolean needACK, int retransmission) {
-        PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.skin = skin;
-        packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = human.getSkin().getSkinId();
-        packet.uuid = human.getUniqueId();
-        player.dataPacket(packet);
     }
 
     /**
