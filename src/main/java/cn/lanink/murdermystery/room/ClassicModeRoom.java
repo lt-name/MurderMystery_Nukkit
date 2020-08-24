@@ -8,15 +8,14 @@ import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
+import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -41,7 +40,7 @@ public class ClassicModeRoom extends BaseRoom {
      * @param level 世界
      * @param config 配置文件
      */
-    public ClassicModeRoom(Level level, Config config) {
+    public ClassicModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);
         //经典模式人数低于三将进入死循环！
         if (minPlayers < 3) {
@@ -133,6 +132,7 @@ public class ClassicModeRoom extends BaseRoom {
      */
     @Override
     protected synchronized void endGame(int victory) {
+        int oldStatus = this.status;
         this.status = 0;
         for (Player p1 : this.players.keySet()) {
             for (Player p2 : this.players.keySet()) {
@@ -147,14 +147,19 @@ public class ClassicModeRoom extends BaseRoom {
             it.remove();
             quitRoom(entry.getKey());
         }
-        this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
+        //this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
         this.placeBlocks.clear();
         this.skinNumber.clear();
         this.skinCache.clear();
         this.killKillerPlayer = null;
         this.detectiveBow = null;
-        Tools.cleanEntity(this.level, true);
         initTime();
+        switch (oldStatus) {
+            case ROOM_STATUS_GAME:
+            case ROOM_STATUS_VICTORY:
+                this.restoreLevel();
+                break;
+        }
     }
 
     protected void victoryReward(int victory) {
@@ -286,7 +291,7 @@ public class ClassicModeRoom extends BaseRoom {
     @Override
     public void goldSpawn() {
         Tools.cleanEntity(this.getLevel());
-        for (Position spawn : this.getGoldSpawn()) {
+        for (Vector3 spawn : this.getGoldSpawn()) {
             this.getLevel().dropItem(spawn, Item.get(266, 0));
         }
     }

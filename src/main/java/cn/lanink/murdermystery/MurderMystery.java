@@ -366,8 +366,7 @@ public class MurderMystery extends PluginBase {
                         continue;
                     }
                     try {
-                        Constructor<? extends BaseRoom> constructor =  ROOM_CLASS.get(gameMode)
-                                .getConstructor(Level.class, Config.class);
+                        Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
                         BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(worldName), config);
                         baseRoom.setGameMode(gameMode);
                         this.rooms.put(worldName, baseRoom);
@@ -412,6 +411,14 @@ public class MurderMystery extends PluginBase {
             }
         } catch (Exception e) {
             this.getServer().getScheduler().cancelTask(this);
+        }
+    }
+
+    public void unloadRoom(String roomName) {
+        if (this.rooms.containsKey(roomName)) {
+            this.rooms.get(roomName).endGameEvent();
+            this.rooms.remove(roomName);
+            getLogger().info(this.language.roomUnloadSuccess.replace("%name%", roomName));
         }
     }
 
