@@ -59,12 +59,14 @@ public class MurderMystery extends PluginBase {
     private IScoreboard scoreboard;
     public static final Random RANDOM = new Random();
     private boolean hasTips = false;
+    private String worldBackupPath;
 
     public static MurderMystery getInstance() { return murderMystery; }
 
     @Override
     public void onLoad() {
         if (murderMystery == null) murderMystery = this;
+        this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         File file3 = new File(this.getDataFolder() + "/Skins");
@@ -233,6 +235,10 @@ public class MurderMystery extends PluginBase {
     @Override
     public Config getConfig() {
         return this.config;
+    }
+
+    public String getWorldBackupPath() {
+        return this.worldBackupPath;
     }
 
     public boolean isHasTips() {

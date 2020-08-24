@@ -17,8 +17,9 @@ public class Language {
     public String roomLoadedFailureByConfig = "§c房间：%name% 配置不完整，加载失败！";
     public String roomLoadedFailureByLevel = "§c房间：%name% 地图读取失败！";
     public String roomLoadedFailureByGameMode = "§c房间：%name% 游戏模式设置错误！没有找到游戏模式: %gameMode%";
-    public String roomLevelBackupNotExist = "§a房间：%name% 未检测到地图备份，正在备份地图中...";
+    public String roomLevelBackup = "§a房间：%name% 未检测到地图备份，正在备份地图中...";
     public String roomLevelBackupExist = "§a房间：%name% 检测到地图备份！";
+    public String roomLevelBackupNotExist = "§a房间：%name% 地图备份不存在！无法还原地图！";
     public String roomLevelRestoreLevelFailure = "§c房间：%name% 地图还原失败！";
     public String roomLoadedAllSuccess = "§e房间加载完成！当前已加载 %number% 个房间！";
     public String roomUnloadSuccess = "§c房间：%name% 已卸载！";
@@ -196,8 +197,9 @@ public class Language {
         this.roomLoadedFailureByConfig = config.getString("roomLoadedFailureByConfig", this.roomLoadedFailureByConfig);
         this.roomLoadedFailureByLevel = config.getString("roomLoadedFailureByLevel", this.roomLoadedFailureByLevel);
         this.roomLoadedFailureByGameMode = config.getString("roomLoadedFailureByGameMode", this.roomLoadedFailureByGameMode);
-        this.roomLevelBackupNotExist = config.getString("roomLevelBackupNotExist", this.roomLevelBackupNotExist);
+        this.roomLevelBackup = config.getString("roomLevelBackup", this.roomLevelBackup);
         this.roomLevelBackupExist = config.getString("roomLevelBackupExist", this.roomLevelBackupExist);
+        this.roomLevelBackupNotExist = config.getString("roomLevelBackupNotExist", this.roomLevelBackupNotExist);
         this.roomLevelRestoreLevelFailure = config.getString("roomLevelRestoreLevelFailure", this.roomLevelRestoreLevelFailure);
         this.roomLoadedAllSuccess = config.getString("roomLoadedAllSuccess", this.roomLoadedAllSuccess);
         this.roomUnloadSuccess = config.getString("roomUnloadSuccess", this.roomUnloadSuccess);

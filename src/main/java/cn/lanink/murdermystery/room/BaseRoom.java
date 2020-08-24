@@ -61,10 +61,10 @@ public abstract class BaseRoom {
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
         this.level = level;
         this.levelName = level.getFolderName();
-        File backup = new File(this.murderMystery.getDataFolder() + "/RoomsLevel/" + this.levelName);
+        File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
             Server.getInstance().unloadLevel(this.level);
-            this.murderMystery.getLogger().info(this.language.roomLevelBackupNotExist.replace("%name%", this.levelName));
+            this.murderMystery.getLogger().info(this.language.roomLevelBackup.replace("%name%", this.levelName));
             if (Tools.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                 Server.getInstance().loadLevel(this.levelName);
                 this.level = Server.getInstance().getLevelByName(this.levelName);
@@ -310,11 +310,15 @@ public abstract class BaseRoom {
     protected void restoreLevel() {
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
         if (MurderMystery.debug) {
-            murderMystery.getLogger().info("§b房间：" + this.levelName + " 正在还原地图...");
+            murderMystery.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");
         }
         Server.getInstance().unloadLevel(this.level);
         File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
-        File backup = new File(this.murderMystery.getDataFolder() + "/RoomsLevel/" + this.levelName);
+        File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
+        if (!backup.exists()) {
+            this.murderMystery.getLogger().error(this.language.roomLevelBackupNotExist.replace("%name%", this.levelName));
+            this.murderMystery.unloadRoom(this.levelName);
+        }
         CompletableFuture.runAsync(() -> {
             if (Tools.deleteFile(levelFile) && Tools.copyDir(backup, levelFile)) {
                 Server.getInstance().loadLevel(this.levelName);
@@ -325,10 +329,10 @@ public abstract class BaseRoom {
                 }
                 this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
                 if (MurderMystery.debug) {
-                    murderMystery.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
+                    this.murderMystery.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
                 }
             }else {
-                murderMystery.getLogger().warning(this.language.roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
+                this.murderMystery.getLogger().error(this.language.roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
                 this.murderMystery.unloadRoom(this.levelName);
             }
         });
