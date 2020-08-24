@@ -6,8 +6,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.block.BlockBreakEvent;
-import cn.nukkit.event.block.ItemFrameDropItemEvent;
+import cn.nukkit.event.block.*;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
@@ -71,6 +70,42 @@ public class RoomLevelProtection implements Listener {
         if (level != null && this.murderMystery.getRooms().containsKey(level.getName())) {
             event.setCancelled();
             player.setAllowModifyWorld(false);
+        }
+    }
+
+    /**
+     * 方块自然衰落事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onBlockFade(BlockFadeEvent event) {
+        Level level = event.getBlock() == null ? null : event.getBlock().getLevel();
+        if (level != null && this.murderMystery.getRooms().containsKey(level.getName())) {
+            event.setCancelled();
+        }
+    }
+
+    /**
+     * 方块被烧毁事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onBlockBurn(BlockBurnEvent event) {
+        Level level = event.getBlock() == null ? null : event.getBlock().getLevel();
+        if (level != null && this.murderMystery.getRooms().containsKey(level.getName())) {
+            event.setCancelled();
+        }
+    }
+
+    /**
+     * 方块被点燃事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onBlockIgnite(BlockIgniteEvent event) {
+        Level level = event.getBlock() == null ? null : event.getBlock().getLevel();
+        if (level != null && this.murderMystery.getRooms().containsKey(level.getName())) {
+            event.setCancelled();
         }
     }
 

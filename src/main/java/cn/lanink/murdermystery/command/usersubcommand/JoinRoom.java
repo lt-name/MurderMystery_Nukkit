@@ -40,7 +40,7 @@ public class JoinRoom extends BaseSubCommand {
             if (args.length < 2) {
                 for (BaseRoom room : this.murderMystery.getRooms().values()) {
                     if ((room.getStatus() == 0 || room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) &&
-                            room.getPlayers().size() < 16) {
+                            room.getPlayers().size() < room.getMaxPlayers()) {
                         room.joinRoom(player);
                         sender.sendMessage(this.language.joinRandomRoom);
                         return true;
@@ -52,7 +52,7 @@ public class JoinRoom extends BaseSubCommand {
                     String modeName = s[1].toLowerCase().trim();
                     for (BaseRoom room : this.murderMystery.getRooms().values()) {
                         if ((room.getStatus() == 0 || room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) &&
-                                room.getPlayers().size() < 16) {
+                                room.getPlayers().size() < room.getMaxPlayers()) {
                             if (room.getGameMode().equals(modeName)) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.language.joinRandomRoom);
@@ -67,7 +67,7 @@ public class JoinRoom extends BaseSubCommand {
                     if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME ||
                             room.getStatus() == BaseRoom.ROOM_STATUS_VICTORY) {
                         sender.sendMessage(this.language.joinRoomIsPlaying);
-                    }else if (room.getPlayers().values().size() >= 16) {
+                    }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                         sender.sendMessage(this.language.joinRoomIsFull);
                     } else {
                         room.joinRoom(player);

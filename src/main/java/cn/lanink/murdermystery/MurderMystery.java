@@ -21,7 +21,9 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
+import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
+import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 
@@ -30,6 +32,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -51,7 +54,6 @@ public class MurderMystery extends PluginBase {
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
-    public final HashSet<Integer> taskList = new HashSet<>();
     private String cmdUser, cmdAdmin;
     private List<String> cmdUserAliases, cmdAdminAliases;
     private IScoreboard scoreboard;
@@ -81,6 +83,11 @@ public class MurderMystery extends PluginBase {
             debug = true;
             getLogger().warning("警告：您开启了debug模式！");
             getLogger().warning("Warning: You have turned on debug mode!");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+
+            }
         }
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
@@ -190,10 +197,6 @@ public class MurderMystery extends PluginBase {
         this.rooms.clear();
         this.roomConfigs.clear();
         this.skins.clear();
-        for (int id : this.taskList) {
-            getServer().getScheduler().cancelTask(id);
-        }
-        this.taskList.clear();
         getLogger().info(this.language.pluginDisable);
     }
 
@@ -233,7 +236,7 @@ public class MurderMystery extends PluginBase {
     }
 
     public boolean isHasTips() {
-        return hasTips;
+        return this.hasTips;
     }
 
     public String getCmdUser() {
@@ -382,7 +385,7 @@ public class MurderMystery extends PluginBase {
      * 卸载所有房间
      */
     public void unloadRooms() {
-        if (this.rooms.values().size() > 0) {
+        if (this.rooms.size() > 0) {
             Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, BaseRoom> entry = it.next();
@@ -393,10 +396,23 @@ public class MurderMystery extends PluginBase {
             this.rooms.clear();
         }
         this.roomConfigs.clear();
-        for (int id : this.taskList) {
-            getServer().getScheduler().cancelTask(id);
+        //只是为了兼容那些不规范的插件！
+        try {
+            Field field = ServerScheduler.class.getDeclaredField("taskMap");
+            field.setAccessible(true);
+            Map<Integer, TaskHandler> map = (Map<Integer, TaskHandler>) field.get(this.getServer().getScheduler());
+            for (TaskHandler taskHandler : map.values()) {
+                if (taskHandler.getPlugin() == this) {
+                    taskHandler.cancel();
+                    if (debug) {
+                        this.getLogger().info("Cancel Task:  name: " + taskHandler.getTask().getClass().getName() +
+                                "  id: " + taskHandler.getTaskId());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            this.getServer().getScheduler().cancelTask(this);
         }
-        this.taskList.clear();
     }
 
     /**

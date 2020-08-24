@@ -18,7 +18,6 @@ public class WaitTask extends PluginTask<MurderMystery> {
 
     public WaitTask(MurderMystery owner, BaseRoom room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
         this.language = owner.getLanguage();
     }
@@ -29,8 +28,8 @@ public class WaitTask extends PluginTask<MurderMystery> {
             this.cancel();
             return;
         }
-        if (this.room.getPlayers().size() >= 5) {
-            if (this.room.getPlayers().size() == 16 && this.room.waitTime > 10) {
+        if (this.room.getPlayers().size() >= this.room.getMinPlayers()) {
+            if (this.room.getPlayers().size() == this.room.getMaxPlayers() && this.room.waitTime > 10) {
                 this.room.waitTime = 10;
             }
             if (this.room.waitTime > 0) {
@@ -41,7 +40,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 for (Player player : this.room.getPlayers().keySet()) {
                     String waitTimeBottom = this.language.waitTimeBottom
                             .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                            .replace("%playerNumber%", room.getPlayers().size() + "")
+                            .replace("%playerNumber%", this.room.getPlayers().size() + "")
                             .replace("%time%", this.room.waitTime + "");
                     if (!"".equals(waitTimeBottom.trim())) {
                         player.sendTip(waitTimeBottom);
@@ -49,8 +48,9 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle,
                             new LinkedList<>(Arrays.asList(this.language.waitTimeScoreBoard
                                     .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                                    .replace("%playerNumber%", room.getPlayers().size() + "")
-                                    .replace("%time%", room.waitTime + "").split("\n"))));
+                                    .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                                    .replace("%maxPlayers%", this.room.getMaxPlayers() + "")
+                                    .replace("%time%", this.room.waitTime + "").split("\n"))));
                 }
             }else {
                 this.room.gameStartEvent();
@@ -63,29 +63,21 @@ public class WaitTask extends PluginTask<MurderMystery> {
             for (Player player : this.room.getPlayers().keySet()) {
                 String waitBottom = this.language.waitBottom
                         .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                        .replace("%playerNumber%", room.getPlayers().size() + "");
+                        .replace("%playerNumber%", this.room.getPlayers().size() + "");
                 if (!"".equals(waitBottom.trim())) {
                     player.sendActionBar(waitBottom);
                 }
-                LinkedList<String> ms = new LinkedList<>();
-                for (String string : this.language.waitScoreBoard.split("\n")) {
-                    ms.add(string.replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                            .replace("%playerNumber%", room.getPlayers().size() + ""));
-                }
-                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle,
+                        new LinkedList<>(Arrays.asList(this.language.waitScoreBoard
+                                .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                                .replace("%playerNumber%", room.getPlayers().size() + "")
+                                .replace("%minPlayers%", this.room.getMinPlayers() + "")
+                                .replace("%maxPlayers%", this.room.getMaxPlayers() + "").split("\n"))));
             }
         }else {
             this.room.endGameEvent();
             this.cancel();
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

@@ -52,6 +52,8 @@ adminHelp: |-
   §a/%cmdName% setwaittime number §eĐặt thời gian chờ sau khi số lượng người chơi đạt mức tối thiểu
   §a/%cmdName% setgametime number §eĐặt thời gian tối đa của mỗi vòng trò chơi
   §a/%cmdName% setgamemode mode §eĐặt chế độ chơi của phòng
+  §a/%cmdName% setminplayers <minPlayers> §eSet the minimum number of people in the room
+  §a/%cmdName% setmaxplayers <maxPlayers> §eSet the maximum number of people in the room
   §a/%cmdName% startroom §eBắt đầu trò chơi
   §a/%cmdName% stoproom §eKết thúc trò chơi
   §a/%cmdName% reloadroom §eTải lại toàn bộ phòng
@@ -66,8 +68,10 @@ adminSetGameTime: "§aThời gian của mỗi game đã được đặt là:%tim
 adminSetGameTimeShort: "§aThời gian tối thiểu của mỗi trò chơi phải hơn 1 phút!"
 adminSetGameMode: "§aChế đội của phòng đã được đặt thành :%roomMode%"
 adminSetGameModeNotFound: "§cChế độ trò chơi: %mode% trong phòng không tồn tại!"
+adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
+adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
 adminStartRoom: "§aTrò chơi buộc phải bắt đầu!"
-adminStartRoomNoPlayer: "§aSố lượng người chơi ít hơn 3 không thể bắt đầu trò chơi."
+adminStartRoomNoPlayer: "§aSố lượng người chơi ít hơn %minPlayers% không thể bắt đầu trò chơi."
 adminStartRoomIsPlaying: "§cPhòng đang chơi!"
 adminLevelNoRoom: "§aBạn không ở trong phòng"
 adminStopRoom: "§aTrò chơi đã buộc phải kết thúc!"
@@ -148,12 +152,12 @@ victoryCommonPeopleScoreBoard: "§eDân thường và thám tử chiến thắng
 scoreBoardTitle: "§eMurderMystery"
 waitTimeScoreBoard: |-
   Chế độ phòng: §a %roomMode%
-  Người chơi: §a %playerNumber%/16
+  Người chơi: §a %playerNumber%/%maxPlayers%
   §aBắt đầu đếm ngược: §l§e %time%
 waitScoreBoard: |-
   Chế độ phòng: §a %roomMode%
-  Người chơi: §a %playerNumber%/16
-  Cần nhiều hơn 5 người chơi.
+  Người chơi: §a %playerNumber%/%maxPlayers%
+  Cần nhiều hơn %minPlayers% người chơi.
   Trạng thái: Chờ
 waitTimeBottom: |-
   §aSố người chơi: %playerNumber% 

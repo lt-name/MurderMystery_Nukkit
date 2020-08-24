@@ -31,6 +31,9 @@ public class InfectedModeRoom extends ClassicModeRoom {
      */
     public InfectedModeRoom(Level level, Config config) {
         super(level, config);
+        if (minPlayers < 2) {
+            this.minPlayers = 2;
+        }
     }
 
     @Override

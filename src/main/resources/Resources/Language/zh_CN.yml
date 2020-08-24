@@ -48,10 +48,12 @@ adminHelp: |-
   §a/%cmdName% setwaitspawn §e设置当前位置为游戏出生点
   §a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点
   §a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点
-  §a/%cmdName% setgoldspawntime 数字 §e设置金锭生成间隔
+  §a/%cmdName% setgoldspawntime <时间> §e设置金锭生成间隔
   §a/%cmdName% setwaittime <时间> §e设置游戏人数达到最少人数后的等待时间
   §a/%cmdName% setgametime <时间> §e设置每轮游戏最长时间
   §a/%cmdName% setgamemode <模式> §e设置房间游戏模式
+  §a/%cmdName% setminplayers <人数> §e设置房间最少人数
+  §a/%cmdName% setmaxplayers <人数> §e设置房间最多人数
   §a/%cmdName% startroom §e开始所在地图的房间游戏
   §a/%cmdName% stoproom §e强制关闭所在地图的房间
   §a/%cmdName% reloadroom §e重载所有房间
@@ -66,8 +68,10 @@ adminSetGameTime: "§a游戏时间已设置为：%time%"
 adminSetGameTimeShort: "§a游戏时间最小不能低于1分钟！"
 adminSetGameMode: "§a房间游戏模式已设置为: %roomMode%"
 adminSetGameModeNotFound: "§c房间游戏模式: %mode% 不存在！"
+adminSetMinPlayers: "§a房间最少人数已设置为: %minPlayers%"
+adminSetMaxPlayers: "§a房间最多人数已设置为: %maxPlayers%"
 adminStartRoom: "§a已强制开启游戏！"
-adminStartRoomNoPlayer: "§a房间人数不足三人,无法开始游戏！"
+adminStartRoomNoPlayer: "§a房间人数不足%minPlayers%人,无法开始游戏！"
 adminStartRoomIsPlaying: "§c房间已经开始了！"
 adminLevelNoRoom: "§a当前地图不是游戏房间！"
 adminStopRoom: "§a已强制结束房间！"
@@ -148,12 +152,12 @@ victoryCommonPeopleScoreBoard: "§e恭喜平民和侦探获得胜利！"
 scoreBoardTitle: "§e密室杀手"
 waitTimeScoreBoard: |-
   房间模式: §a %roomMode%
-  玩家: §a %playerNumber%/16
+  玩家: §a %playerNumber%/%maxPlayers%
   §a开始倒计时： §l§e %time%
 waitScoreBoard: |-
   房间模式: §a %roomMode%
-  玩家: §a %playerNumber%/16
-  最低游戏人数为 5 人
+  玩家: §a %playerNumber%/%maxPlayers%
+  最低游戏人数为 %minPlayers% 人
   等待玩家加入中
 waitTimeBottom: |-
   §a当前已有: %playerNumber% 位玩家

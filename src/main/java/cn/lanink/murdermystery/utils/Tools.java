@@ -5,6 +5,7 @@ import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
 import cn.lanink.murdermystery.room.BaseRoom;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -265,6 +266,10 @@ public class Tools {
         player.removeAllEffects();
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
+        player.setGamemode(0);
+        player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false);
+        player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false);
+        player.getAdventureSettings().update();
         if (joinRoom) {
             player.setNameTag("");
             player.setNameTagVisible(false);
@@ -274,9 +279,7 @@ public class Tools {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
-            player.setAllowModifyWorld(true);
         }
-        player.setGamemode(0);
     }
 
     public static void sendMessage(BaseRoom baseRoom, String string) {

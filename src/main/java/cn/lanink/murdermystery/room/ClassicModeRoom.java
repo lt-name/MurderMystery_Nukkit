@@ -32,7 +32,6 @@ import java.util.*;
  */
 public class ClassicModeRoom extends BaseRoom {
 
-
     public Player killKillerPlayer = null; //击杀杀手的玩家
     public EntityItem detectiveBow = null; //掉落的侦探弓
 
@@ -44,6 +43,10 @@ public class ClassicModeRoom extends BaseRoom {
      */
     public ClassicModeRoom(Level level, Config config) {
         super(level, config);
+        //经典模式人数低于三将进入死循环！
+        if (minPlayers < 3) {
+            this.minPlayers = 3;
+        }
     }
 
     /**
@@ -53,7 +56,7 @@ public class ClassicModeRoom extends BaseRoom {
      */
     @Override
     public synchronized void joinRoom(Player player) {
-        if (this.players.size() < 16) {
+        if (this.players.size() < this.getMaxPlayers()) {
             if (this.status == 0) {
                 this.initTask();
             }

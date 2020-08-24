@@ -32,6 +32,7 @@ public abstract class BaseRoom {
     public static final int ROOM_STATUS_GAME = 2;
     public static final int ROOM_STATUS_VICTORY = 3;
     protected int status; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
+    protected int minPlayers, maxPlayers; //房间人数
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime; //秒
     public int effectCD, swordCD, scanCD; //杀手技能CD
@@ -52,6 +53,8 @@ public abstract class BaseRoom {
      */
     public BaseRoom(Level level, Config config) {
         this.level = level;
+        this.minPlayers = config.getInt("minPlayers", 3);
+        this.maxPlayers = config.getInt("maxPlayers", 16);
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.setGoldSpawnTime = config.getInt("goldSpawnTime");
@@ -88,6 +91,20 @@ public abstract class BaseRoom {
 
     public final String getGameMode() {
         return this.gameMode;
+    }
+
+    /**
+     * @return 房间最少人数
+     */
+    public int getMinPlayers() {
+        return this.minPlayers;
+    }
+
+    /**
+     * @return 房间最多人数
+     */
+    public int getMaxPlayers() {
+        return this.maxPlayers;
     }
 
     /**

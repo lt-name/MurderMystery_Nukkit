@@ -5,7 +5,6 @@ import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Location;
@@ -67,8 +66,10 @@ public class SwordMoveTask extends AsyncTask {
                         }
                         if (p.distance(entity) < 1.5 || p.distance(new Vector3(entity.x, entity.y + entity.getHeight(), entity.z)) < 1.5) {
                             if (MurderMystery.debug) {
-                                Server.getInstance().getLogger().info("距离：" + p.distance(entity));
-                                Server.getInstance().getLogger().info("距离（加高度）：" + p.distance(new Vector3(entity.x, entity.y + entity.getHeight(), entity.z)));
+                                MurderMystery.getInstance().getLogger().info(this.getClass().getName() +
+                                        " 距离：" + p.distance(entity));
+                                MurderMystery.getInstance().getLogger().info(this.getClass().getName() +
+                                        " 距离（加高度）：" + p.distance(new Vector3(entity.x, entity.y + entity.getHeight(), entity.z)));
                             }
                             this.room.playerDamageEvent(this.player, player2);
                             this.sword.close();

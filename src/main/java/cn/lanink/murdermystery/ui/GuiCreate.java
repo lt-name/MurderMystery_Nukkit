@@ -88,7 +88,7 @@ public class GuiCreate {
         for (Map.Entry<String, BaseRoom> entry : MurderMystery.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e§l" + entry.getKey() +
                     "\n§r§eMode: " + Tools.getStringRoomMode(entry.getValue()) +
-                    " Player: " + entry.getValue().getPlayers().size() + "/16",
+                    " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
                     new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
         simple.addButton(new ElementButton(LANGUAGE.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));

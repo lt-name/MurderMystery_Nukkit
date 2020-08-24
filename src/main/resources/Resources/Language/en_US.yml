@@ -48,10 +48,12 @@ adminHelp: |-
   §a/%cmdName% setwaitspawn §eSet the current location as the spawnpoint of the game
   §a/%cmdName% addrandomspawn  §eAdd the current location as the waiting spawnpoint of the game
   §a/%cmdName% addgoldspawn §e  Add the current location as the gold ingot generation point
-  §a/%cmdName% setgoldspawntime number §eSet gold ingot generation interval
-  §a/%cmdName% setwaittime number §eSet the waiting time after the number of players is enough
-  §a/%cmdName% setgametime number §eSet the maximum time of each game round
-  §a/%cmdName% setgamemode mode §eSet room game mode
+  §a/%cmdName% setgoldspawntime <time> §eSet gold ingot generation interval
+  §a/%cmdName% setwaittime <time> §eSet the waiting time after the number of players is enough
+  §a/%cmdName% setgametime <time> §eSet the maximum time of each game round
+  §a/%cmdName% setgamemode <mode> §eSet room game mode
+  §a/%cmdName% setminplayers <minPlayers> §eSet the minimum number of people in the room
+  §a/%cmdName% setmaxplayers <maxPlayers> §eSet the maximum number of people in the room
   §a/%cmdName% startroom §eStart Game
   §a/%cmdName% stoproom §eEnd Game
   §a/%cmdName% reloadroom §eReload all the rooms
@@ -66,8 +68,10 @@ adminSetGameTime: "§aTime of each game is set to:%time%"
 adminSetGameTimeShort: "§aThe minimum time of each game should be more than 1 minute!"
 adminSetGameMode: "§aThe mode of this room is set to :%roomMode%"
 adminSetGameModeNotFound: "§cRoom game mode: %mode% does not exist!"
+adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
+adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
 adminStartRoom: "§aThe game has been forcibly started!"
-adminStartRoomNoPlayer: "§aThe number of the players is less than 3,you can't start game."
+adminStartRoomNoPlayer: "§aThe number of the players is less than %minPlayers%,you can't start game."
 adminStartRoomIsPlaying: "§cThe room is playing!"
 adminLevelNoRoom: "§aYou are not in the game room"
 adminStopRoom: "§aThe room has been forcibly ended!"
@@ -148,12 +152,12 @@ victoryCommonPeopleScoreBoard: "§eCivilian and Detective Wins!"
 scoreBoardTitle: "§eMurderMystery"
 waitTimeScoreBoard: |-
   Room Mode: §a %roomMode%
-  Player: §a %playerNumber%/16
+  Player: §a %playerNumber%/%maxPlayers%
   §aStart countdown: §l§e %time%
 waitScoreBoard: |-
   Room Mode: §a %roomMode%
-  Player: §a %playerNumber%/16
-  Need more than 5 players.
+  Player: §a %playerNumber%/%maxPlayers%
+  Need more than %minPlayers% players.
   Status: Waiting
 waitTimeBottom: |-
   §aNumber of players: %playerNumber% 
