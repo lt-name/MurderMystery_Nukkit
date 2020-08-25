@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.room;
 
+import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -31,7 +32,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
      */
     public InfectedModeRoom(Level level, Config config) {
         super(level, config);
-        if (minPlayers < 2) {
+        if (MurderMystery.debug) {
             this.minPlayers = 2;
         }
     }
@@ -107,6 +108,10 @@ public class InfectedModeRoom extends ClassicModeRoom {
                 }
             }
             if (time >= 0) {
+                if (this.players.size() < 2) {
+                    this.endGameEvent();
+                    return;
+                }
                 killer = true;
             }
             if (killer) {
