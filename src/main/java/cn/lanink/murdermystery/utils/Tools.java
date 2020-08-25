@@ -419,29 +419,26 @@ public class Tools {
         return deleteFile(new File(file));
     }
 
-    public static boolean deleteFile(File file) {
-        File[] files = file.listFiles();
-        if (files != null) {
-            for (File file1 : files) {
-                if (file1.isDirectory()) {
-                    deleteFile(file1);
-                } else {
-                    if (!file1.delete()) {
-                        if (MurderMystery.debug) {
-                            MurderMystery.getInstance().getLogger().error("§c" + file1.getName() + "删除失败");
-                        }
-                        return false;
+    public static boolean deleteFile(File deleteFile) {
+        try {
+            File[] files = deleteFile.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteFile(file);
+                    }else if (!file.delete()) {
+                        throw new IOException("文件: " + file.getName() + " 创建失败！");
                     }
                 }
             }
-        }
-        if (!file.delete()) {
-            if (MurderMystery.debug) {
-                MurderMystery.getInstance().getLogger().error("§c" + file.getName() + "删除失败");
+            if (!deleteFile.delete()) {
+                throw new IOException("文件: " + deleteFile.getName() + " 创建失败！");
             }
-            return false;
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     public static boolean copyDir(String from, String to) {
@@ -458,20 +455,20 @@ public class Tools {
 
     public static boolean copyDir(File from, File to) {
         try {
-            File [] fileArray = from.listFiles();
-            if (!to.exists() && !to.mkdirs()) {
-                throw new IOException("文件夹: " + to.getName() + " 创建失败！");
-            }
-            if (fileArray != null) {
-                for (File file : fileArray) {
+            File [] files = from.listFiles();
+            if (files != null) {
+                if (!to.exists() && !to.mkdirs()) {
+                    throw new IOException("文件夹: " + to.getName() + " 创建失败！");
+                }
+                for (File file : files) {
                     if (file.isDirectory()) {
-                        copyDir(file.getPath(), new File(to, file.getName()).getPath());
+                        copyDir(file, new File(to, file.getName()));
                     }else {
                         Utils.copyFile(file, new File(to, file.getName()));
                     }
                 }
+                return true;
             }
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
