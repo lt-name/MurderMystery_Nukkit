@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.room;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.utils.Tools;
+import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -30,7 +31,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
      * @param level 世界
      * @param config 配置文件
      */
-    public InfectedModeRoom(Level level, Config config) {
+    public InfectedModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);
         if (MurderMystery.debug) {
             this.minPlayers = 2;

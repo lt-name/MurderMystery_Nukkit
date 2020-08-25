@@ -59,12 +59,15 @@ public class MurderMystery extends PluginBase {
     private IScoreboard scoreboard;
     public static final Random RANDOM = new Random();
     private boolean hasTips = false;
+    private String worldBackupPath;
+    private boolean restoreWorld = false;
 
     public static MurderMystery getInstance() { return murderMystery; }
 
     @Override
     public void onLoad() {
         if (murderMystery == null) murderMystery = this;
+        this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         File file3 = new File(this.getDataFolder() + "/Skins");
@@ -89,6 +92,7 @@ public class MurderMystery extends PluginBase {
 
             }
         }
+        this.restoreWorld = this.config.getBoolean("restoreWorld", false);
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
@@ -235,8 +239,16 @@ public class MurderMystery extends PluginBase {
         return this.config;
     }
 
+    public String getWorldBackupPath() {
+        return this.worldBackupPath;
+    }
+
     public boolean isHasTips() {
         return this.hasTips;
+    }
+
+    public boolean isRestoreWorld() {
+        return this.restoreWorld;
     }
 
     public String getCmdUser() {
@@ -268,7 +280,7 @@ public class MurderMystery extends PluginBase {
     }
 
     public Config getRoomConfig(Level level) {
-        return getRoomConfig(level.getName());
+        return getRoomConfig(level.getFolderName());
     }
 
     private Config getRoomConfig(String level) {
@@ -366,8 +378,7 @@ public class MurderMystery extends PluginBase {
                         continue;
                     }
                     try {
-                        Constructor<? extends BaseRoom> constructor =  ROOM_CLASS.get(gameMode)
-                                .getConstructor(Level.class, Config.class);
+                        Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
                         BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(worldName), config);
                         baseRoom.setGameMode(gameMode);
                         this.rooms.put(worldName, baseRoom);
@@ -412,6 +423,14 @@ public class MurderMystery extends PluginBase {
             }
         } catch (Exception e) {
             this.getServer().getScheduler().cancelTask(this);
+        }
+    }
+
+    public void unloadRoom(String roomName) {
+        if (this.rooms.containsKey(roomName)) {
+            this.rooms.get(roomName).endGameEvent();
+            this.rooms.remove(roomName);
+            getLogger().info(this.language.roomUnloadSuccess.replace("%name%", roomName));
         }
     }
 
