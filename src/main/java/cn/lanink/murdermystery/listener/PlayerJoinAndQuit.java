@@ -30,7 +30,7 @@ public class PlayerJoinAndQuit implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player != null && this.murderMystery.getRooms().containsKey(player.getLevel().getName())) {
+        if (player != null && this.murderMystery.getRooms().containsKey(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
                 @Override
                 public void onRun(int i) {
@@ -62,8 +62,8 @@ public class PlayerJoinAndQuit implements Listener {
     @EventHandler
     public void onPlayerTp(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
-        String fromLevel = event.getFrom().getLevel() == null ? null : event.getFrom().getLevel().getName();
-        String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getName();
+        String fromLevel = event.getFrom().getLevel() == null ? null : event.getFrom().getLevel().getFolderName();
+        String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getFolderName();
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
             LinkedHashMap<String, BaseRoom> room = this.murderMystery.getRooms();

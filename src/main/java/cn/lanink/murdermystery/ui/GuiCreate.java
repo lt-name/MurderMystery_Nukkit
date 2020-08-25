@@ -44,7 +44,7 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminMenu(Player player) {
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getName()));
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getFolderName()));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton1, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
