@@ -32,12 +32,17 @@ public class WaitTask extends PluginTask<MurderMystery> {
             if (this.room.getPlayers().size() == this.room.getMaxPlayers() && this.room.waitTime > 10) {
                 this.room.waitTime = 10;
             }
+            this.room.waitTime--;
             if (this.room.waitTime > 0) {
-                this.room.waitTime--;
-                if (this.room.waitTime <= 5) {
+                if (this.room.waitTime <= 10) {
                     Tools.playSound(this.room, Sound.RANDOM_CLICK);
+                    String title = "§e";
+                    if (this.room.waitTime <= 3) {
+                        title = "§c";
+                    }
+                    title += this.room.waitTime;
                     for (Player player : this.room.getPlayers().keySet()) {
-                        player.sendTitle("§e" + this.room.waitTime, "", 0, 20, 0);
+                        player.sendTitle(title, "", 0, 15, 5);
                     }
                 }
                 for (Player player : this.room.getPlayers().keySet()) {
