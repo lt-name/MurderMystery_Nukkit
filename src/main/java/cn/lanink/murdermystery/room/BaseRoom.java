@@ -308,6 +308,9 @@ public abstract class BaseRoom {
      * 还原房间地图
      */
     protected void restoreLevel() {
+        if (!this.murderMystery.isRestoreLevel()) {
+            return;
+        }
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
         if (MurderMystery.debug) {
             murderMystery.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");

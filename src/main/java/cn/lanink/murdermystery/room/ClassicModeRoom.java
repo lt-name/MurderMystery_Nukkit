@@ -12,6 +12,7 @@ import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.item.Item;
@@ -147,7 +148,7 @@ public class ClassicModeRoom extends BaseRoom {
             it.remove();
             quitRoom(entry.getKey());
         }
-        //this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
+        this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
         this.placeBlocks.clear();
         this.skinNumber.clear();
         this.skinCache.clear();
