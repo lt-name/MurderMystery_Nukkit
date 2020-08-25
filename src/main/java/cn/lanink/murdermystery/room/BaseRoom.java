@@ -307,8 +307,8 @@ public abstract class BaseRoom {
     /**
      * 还原房间地图
      */
-    protected void restoreLevel() {
-        if (!this.murderMystery.isRestoreLevel()) {
+    protected void restoreWorld() {
+        if (!this.murderMystery.isRestoreWorld()) {
             return;
         }
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;

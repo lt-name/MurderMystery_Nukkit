@@ -1,7 +1,7 @@
 #zh_CN | en_US | ko_KR | vi_VN
 language: zh_CN
 #是否在结束游戏后还原地图
-restoreLevel: false
+restoreWorld: false
 cmdUser: murdermystery
 cmdUserAliases:
   - killer

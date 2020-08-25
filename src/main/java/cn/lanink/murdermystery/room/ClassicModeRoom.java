@@ -158,7 +158,7 @@ public class ClassicModeRoom extends BaseRoom {
         switch (oldStatus) {
             case ROOM_STATUS_GAME:
             case ROOM_STATUS_VICTORY:
-                this.restoreLevel();
+                this.restoreWorld();
                 break;
         }
     }

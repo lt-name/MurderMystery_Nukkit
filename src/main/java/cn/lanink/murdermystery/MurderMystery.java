@@ -60,7 +60,7 @@ public class MurderMystery extends PluginBase {
     public static final Random RANDOM = new Random();
     private boolean hasTips = false;
     private String worldBackupPath;
-    private boolean restoreLevel = false;
+    private boolean restoreWorld = false;
 
     public static MurderMystery getInstance() { return murderMystery; }
 
@@ -92,7 +92,7 @@ public class MurderMystery extends PluginBase {
 
             }
         }
-        this.restoreLevel = this.config.getBoolean("restoreLevel", false);
+        this.restoreWorld = this.config.getBoolean("restoreWorld", false);
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
@@ -247,8 +247,8 @@ public class MurderMystery extends PluginBase {
         return this.hasTips;
     }
 
-    public boolean isRestoreLevel() {
-        return this.restoreLevel;
+    public boolean isRestoreWorld() {
+        return this.restoreWorld;
     }
 
     public String getCmdUser() {
