@@ -45,7 +45,7 @@ public abstract class BaseRoom {
     protected final List<Vector3> goldSpawn = new ArrayList<>();
     protected final Position waitSpawn;
     protected Level level;
-    protected final String levelName;
+    private final String levelName;
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
     protected final HashMap<Player, Integer> players = new HashMap<>(); //0未分配 1平民 2侦探 3杀手
     protected final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
@@ -61,18 +61,20 @@ public abstract class BaseRoom {
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
         this.level = level;
         this.levelName = level.getFolderName();
-        File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
-        if (!backup.exists()) {
-            Server.getInstance().unloadLevel(this.level);
-            this.murderMystery.getLogger().info(this.language.roomLevelBackup.replace("%name%", this.levelName));
-            if (Tools.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
-                Server.getInstance().loadLevel(this.levelName);
-                this.level = Server.getInstance().getLevelByName(this.levelName);
+        if (!this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
+            File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
+            if (!backup.exists()) {
+                Server.getInstance().unloadLevel(this.level);
+                this.murderMystery.getLogger().info(this.language.roomLevelBackup.replace("%name%", this.levelName));
+                if (Tools.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
+                    Server.getInstance().loadLevel(this.levelName);
+                    this.level = Server.getInstance().getLevelByName(this.levelName);
+                }else {
+                    throw new RoomLoadException("房间地图备份失败！ / The room world backup failed!");
+                }
             }else {
-                throw new RoomLoadException("房间地图备份失败！ / The room world backup failed!");
+                this.murderMystery.getLogger().info(this.language.roomLevelBackupExist.replace("%name%", this.levelName));
             }
-        }else {
-            this.murderMystery.getLogger().info(this.language.roomLevelBackupExist.replace("%name%", this.levelName));
         }
         this.minPlayers = config.getInt("minPlayers", 3);
         this.maxPlayers = config.getInt("maxPlayers", 16);
@@ -263,6 +265,10 @@ public abstract class BaseRoom {
         return this.level;
     }
 
+    public final String getLevelName() {
+        return this.levelName;
+    }
+
     /**
      * 获取玩家在游戏中使用的皮肤
      * @param player 玩家
@@ -278,6 +284,25 @@ public abstract class BaseRoom {
     public final void gameStartEvent() {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
         this.gameStart();
+        //自动扩容
+        if (this.murderMystery.isAutomaticExpansionRoom()) {
+            CompletableFuture.runAsync(() -> {
+                LinkedList<String> cache = new LinkedList<>();
+                int x = 0;
+                for (Map.Entry<String, BaseRoom> entry : this.murderMystery.getRooms().entrySet()) {
+                    if (this.getGameMode().equals(entry.getValue().getGameMode())) {
+                        cache.add(entry.getKey());
+                        if (entry.getValue().getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED ||
+                                entry.getValue().getStatus() == ROOM_STATUS_WAIT) {
+                            x++;
+                        }
+                    }
+                }
+                if (x == 0 && cache.size() > 0) {
+                    this.murderMystery.addTemporaryRoom(cache.get(MurderMystery.RANDOM.nextInt(cache.size())));
+                }
+            }, MurderMystery.checkRoomThreadPool);
+        }
     }
 
     /**
@@ -295,6 +320,10 @@ public abstract class BaseRoom {
     public final synchronized void endGameEvent(int victory) {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomEndEvent(this, victory));
         this.endGame(victory);
+        if (this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
+            this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
+            this.murderMystery.removeTemporaryRoom(this.levelName);
+        }
     }
 
     /**
@@ -308,7 +337,8 @@ public abstract class BaseRoom {
      * 还原房间地图
      */
     protected void restoreWorld() {
-        if (!this.murderMystery.isRestoreWorld()) {
+        if (!this.murderMystery.isRestoreWorld() ||
+                this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
             return;
         }
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
