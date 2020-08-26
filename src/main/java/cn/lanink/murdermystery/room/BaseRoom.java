@@ -25,7 +25,6 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author lt_name
  */
-
 public abstract class BaseRoom {
 
     private String gameMode = null;
@@ -64,8 +63,8 @@ public abstract class BaseRoom {
         if (!this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
             File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
             if (!backup.exists()) {
-                Server.getInstance().unloadLevel(this.level);
                 this.murderMystery.getLogger().info(this.language.roomLevelBackup.replace("%name%", this.levelName));
+                Server.getInstance().unloadLevel(this.level);
                 if (Tools.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                     Server.getInstance().loadLevel(this.levelName);
                     this.level = Server.getInstance().getLevelByName(this.levelName);

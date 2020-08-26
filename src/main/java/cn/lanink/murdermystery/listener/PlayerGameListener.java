@@ -250,14 +250,16 @@ public class PlayerGameListener implements Listener {
                     if (tag != null && tag.getBoolean("isMurderItem")) {
                         if (tag.getInt("MurderType") == 2) {
                             if (room.swordCD < 1) {
-                                Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery, new SwordMoveTask(room, player));
+                                Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery,
+                                        new SwordMoveTask(room, player));
                                 room.swordCD = 5;
                             }else {
                                 player.sendMessage(this.language.useItemSwordCD);
                             }
                         }else if (tag.getInt("MurderType") == 3) {
                             if (room.scanCD < 1) {
-                                Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery, new ScanTask(room, player));
+                                Server.getInstance().getScheduler().scheduleTask(this.murderMystery,
+                                        new ScanTask(this.murderMystery, room, player));
                                 room.scanCD = 60;
                             }else {
                                 player.sendMessage(this.language.useItemScanCD);
