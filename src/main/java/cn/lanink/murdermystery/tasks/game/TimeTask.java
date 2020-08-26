@@ -14,7 +14,6 @@ public class TimeTask extends PluginTask<MurderMystery> {
 
     public TimeTask(MurderMystery owner, BaseRoom room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
     }
 
@@ -25,14 +24,6 @@ public class TimeTask extends PluginTask<MurderMystery> {
             return;
         }
         this.room.asyncTimeTask();
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

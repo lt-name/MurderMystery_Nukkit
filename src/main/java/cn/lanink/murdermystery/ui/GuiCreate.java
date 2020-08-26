@@ -44,7 +44,7 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminMenu(Player player) {
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getName()));
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getFolderName()));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton1, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
@@ -88,7 +88,7 @@ public class GuiCreate {
         for (Map.Entry<String, BaseRoom> entry : MurderMystery.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e§l" + entry.getKey() +
                     "\n§r§eMode: " + Tools.getStringRoomMode(entry.getValue()) +
-                    " Player: " + entry.getValue().getPlayers().size() + "/16",
+                    " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
                     new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
         simple.addButton(new ElementButton(LANGUAGE.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));

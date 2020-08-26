@@ -1,5 +1,14 @@
 #zh_CN | en_US | ko_KR | vi_VN
 language: zh_CN
+#结束游戏后还原地图
+#注意：仅在首次加载房间时备份地图！
+#Restore the map(world) after the game is over
+#Note: The map(world) is only backed up when loading the room for the first time!
+restoreWorld: false
+#自动扩容房间数量 保证至少有一个空闲房间
+#Automatically expand the number of rooms to ensure at least one free room
+automaticExpansionRoom: false
+#插件命令 Plugin commands
 cmdUser: murdermystery
 cmdUserAliases:
   - killer

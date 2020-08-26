@@ -70,7 +70,7 @@ public class PlayerGameListener implements Listener {
             if (player == null || event.getProjectile() == null) {
                 return;
             }
-            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
             if (room == null || room.getStatus() != BaseRoom.ROOM_STATUS_GAME) {
                 return;
             }
@@ -130,7 +130,7 @@ public class PlayerGameListener implements Listener {
         if (entity == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(entity.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(entity.getLevel().getFolderName());
         if (room == null || room.getStatus() != BaseRoom.ROOM_STATUS_GAME) {
             return;
         }
@@ -155,7 +155,7 @@ public class PlayerGameListener implements Listener {
         if (level == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().getOrDefault(level.getName(), null);
+        BaseRoom room = this.murderMystery.getRooms().get(level.getFolderName());
         if (room == null) {
             return;
         }
@@ -195,7 +195,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || item == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room == null || "infected".equals(room.getGameMode())) {
             return;
         }
@@ -230,7 +230,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || block == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().getOrDefault(player.getLevel().getName(), null);
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -250,14 +250,16 @@ public class PlayerGameListener implements Listener {
                     if (tag != null && tag.getBoolean("isMurderItem")) {
                         if (tag.getInt("MurderType") == 2) {
                             if (room.swordCD < 1) {
-                                Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery, new SwordMoveTask(room, player));
+                                Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery,
+                                        new SwordMoveTask(room, player));
                                 room.swordCD = 5;
                             }else {
                                 player.sendMessage(this.language.useItemSwordCD);
                             }
                         }else if (tag.getInt("MurderType") == 3) {
                             if (room.scanCD < 1) {
-                                Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery, new ScanTask(room, player));
+                                Server.getInstance().getScheduler().scheduleTask(this.murderMystery,
+                                        new ScanTask(this.murderMystery, room, player));
                                 room.scanCD = 60;
                             }else {
                                 player.sendMessage(this.language.useItemScanCD);
@@ -364,7 +366,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || item == null || item.getNamedTag() == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room == null || room.getStatus() != 2) {
             return;
         }
@@ -415,10 +417,10 @@ public class PlayerGameListener implements Listener {
             return;
         }
         Level level = player.getLevel();
-        if (level == null || !this.murderMystery.getRooms().containsKey(level.getName())) {
+        if (level == null || !this.murderMystery.getRooms().containsKey(level.getFolderName())) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(level.getName());
+        BaseRoom room = this.murderMystery.getRooms().get(level.getFolderName());
         CompoundTag tag = item.getNamedTag();
         if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME && tag != null &&
                 tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 22) {
@@ -493,7 +495,7 @@ public class PlayerGameListener implements Listener {
         if (entityItem == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(entityItem.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(entityItem.getLevel().getFolderName());
         if (room == null) {
             return;
         }
@@ -543,7 +545,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || message == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -576,7 +578,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || string == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room == null || !room.isPlaying(player) || room.getStatus() != BaseRoom.ROOM_STATUS_GAME) {
             return;
         }
@@ -609,7 +611,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || event.getInventory() == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -633,7 +635,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || event.getInventory() == null) {
             return;
         }
-        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -659,7 +661,7 @@ public class PlayerGameListener implements Listener {
                 event.getPacket() instanceof LevelSoundEventPacketV1 ||
                 event.getPacket() instanceof LevelSoundEventPacketV2) {
             Player player = event.getPlayer();
-            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
             if (room == null || !room.isPlaying(player)) {
                 return;
             }

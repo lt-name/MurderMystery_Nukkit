@@ -12,6 +12,10 @@ roomLoadedSuccess: "§a방: %name%이(가) 불러와 졌습니다!"
 roomLoadedFailureByConfig: "§c방: %name% 설정에 문제가 있어서 불러오지 못하였습니다!"
 roomLoadedFailureByLevel: "§c방: %name%의 월드를 읽지 못하였습니다!"
 roomLoadedFailureByGameMode: "§cRoom: %name% game mode setting error! No game mode found: %gameMode%"
+roomLevelBackup: "§aRoom: %name% did not detect the world backup, the map is being backed up..."
+roomLevelBackupExist: "§aRoom: %name% detected world backup!"
+roomLevelBackupNotExist: "§A Room: %name% world backup does not exist! Unable to restore the world!"
+roomLevelRestoreLevelFailure: "§cRoom: %name% world restoration failed!"
 roomLoadedAllSuccess: "§e방: %number% 불러오기 완료! 방이 현재 적용 완료되었습니다!"
 roomUnloadSuccess: "§c방: %name%이(가) 비활성화되었습니다!"
 roomUnloadFailure: "§c방: %name%이(가) 비정상적으로 종료되었습니다!"
@@ -54,6 +58,8 @@ adminHelp: |-
   §a/%cmdName% setwaittime <초> §e플레이어 수가 채워진 후 대기 시간 설정하기
   §a/%cmdName% setgametime <초> §e각 게임 라운드의 최대 시간 설정하기
   §a/%cmdName% setgamemode <모드> §e방 게임 모드 설정하기
+  §a/%cmdName% setminplayers <minPlayers> §eSet the minimum number of people in the room
+  §a/%cmdName% setmaxplayers <maxPlayers> §eSet the maximum number of people in the room
   §a/%cmdName% startroom §e게임 시작하기
   §a/%cmdName% stoproom §e게임 종료하기
   §a/%cmdName% reloadroom §e모든 방을 다시 불러오기
@@ -68,8 +74,10 @@ adminSetGameTime: "§a각 게임의 시간은 %time%초로 설정되었습니다
 adminSetGameTimeShort: "§a최소 게임 시간은 1분 이상 이여야 합니다!"
 adminSetGameMode: "§a이 방의 게임모드는 %roomMode%로 설정되었습니다!"
 adminSetGameModeNotFound: "§c방 게임 모드: %mode%은(는) 존재하지 않습니다!"
+adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
+adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
 adminStartRoom: "§a게임이 강제로 시작되었습니다!"
-adminStartRoomNoPlayer: "§a준비된 플레이어가 3명 미만일 때는 시작이 불가능합니다!"
+adminStartRoomNoPlayer: "§a준비된 플레이어가 %minPlayers%명 미만일 때는 시작이 불가능합니다!"
 adminStartRoomIsPlaying: "§c이미 게임은 진행 중입니다!"
 adminLevelNoRoom: "§a게임 방에 들어가 있지 않습니다!"
 adminStopRoom: "§a게임이 강제로 종료되었습니다!"
@@ -150,12 +158,12 @@ victoryCommonPeopleScoreBoard: "§e시민과 형사를 축하해주세요!"
 scoreBoardTitle: "§e머더 미스터리"
 waitTimeScoreBoard: |-
   방 모드: §a %roomMode%
-  인원: §a %playerNumber%/16
+  인원: §a %playerNumber%/%maxPlayers%
   §a시작 카운트다운: §l§e %time%
 waitScoreBoard: |-
   방 모드: §a %roomMode%
-  인원: §a %playerNumber%/16
-  시작하려면 5명 이상이 필요합니다.
+  인원: §a %playerNumber%/%maxPlayers%
+  시작하려면 %minPlayers%명 이상이 필요합니다.
   플레이어가 들어올 때까지 기다려주세요.
 waitTimeBottom: |-
   §a인원: %playerNumber% 

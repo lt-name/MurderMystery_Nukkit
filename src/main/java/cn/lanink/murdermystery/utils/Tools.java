@@ -5,6 +5,7 @@ import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
 import cn.lanink.murdermystery.room.BaseRoom;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -27,7 +28,10 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -237,6 +241,10 @@ public class Tools {
         player.removeAllEffects();
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
+        player.setGamemode(0);
+        player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false);
+        player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false);
+        player.getAdventureSettings().update();
         if (joinRoom) {
             player.setNameTag("");
             player.setNameTagVisible(false);
@@ -246,9 +254,7 @@ public class Tools {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
-            player.setAllowModifyWorld(true);
         }
-        player.setGamemode(0);
     }
 
     public static void sendMessage(BaseRoom baseRoom, String string) {
@@ -379,6 +385,71 @@ public class Tools {
         nbt.putCompound("FireworkItem", NBTIO.putItemHelper(item));
         EntityFirework entity = new EntityFirework(position.getLevel().getChunk((int)position.x >> 4, (int)position.z >> 4), nbt);
         entity.spawnToAll();
+    }
+
+    public static boolean deleteFile(String file) {
+        return deleteFile(new File(file));
+    }
+
+    public static boolean deleteFile(File deleteFile) {
+        try {
+            if (!deleteFile.exists()) {
+                return true;
+            }
+            File[] files = deleteFile.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteFile(file);
+                    }else if (!file.delete()) {
+                        throw new IOException("文件: " + file.getName() + " 删除失败！");
+                    }
+                }
+            }
+            if (!deleteFile.delete()) {
+                throw new IOException("文件: " + deleteFile.getName() + " 删除失败！");
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean copyDir(String from, String to) {
+        return copyDir(new File(from), new File(to));
+    }
+
+    public static boolean copyDir(String from, File to) {
+        return copyDir(new File(from), to);
+    }
+
+    public static boolean copyDir(File from, String to) {
+        return copyDir(from, new File(to));
+    }
+
+    public static boolean copyDir(File from, File to) {
+        try {
+            File [] files = from.listFiles();
+            if (files != null) {
+                if (!to.exists() && !to.mkdirs()) {
+                    throw new IOException("文件夹: " + to.getName() + " 创建失败！");
+                }
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        copyDir(file, new File(to, file.getName()));
+                    }else {
+                        Utils.copyFile(file, new File(to, file.getName()));
+                    }
+                }
+                return true;
+            }else {
+                Utils.copyFile(from, to);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

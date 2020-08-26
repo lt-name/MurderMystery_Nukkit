@@ -17,6 +17,10 @@ public class Language {
     public String roomLoadedFailureByConfig = "§c房间：%name% 配置不完整，加载失败！";
     public String roomLoadedFailureByLevel = "§c房间：%name% 地图读取失败！";
     public String roomLoadedFailureByGameMode = "§c房间：%name% 游戏模式设置错误！没有找到游戏模式: %gameMode%";
+    public String roomLevelBackup = "§a房间：%name% 未检测到地图备份，正在备份地图中...";
+    public String roomLevelBackupExist = "§a房间：%name% 检测到地图备份！";
+    public String roomLevelBackupNotExist = "§a房间：%name% 地图备份不存在！无法还原地图！";
+    public String roomLevelRestoreLevelFailure = "§c房间：%name% 地图还原失败！";
     public String roomLoadedAllSuccess = "§e房间加载完成！当前已加载 %number% 个房间！";
     public String roomUnloadSuccess = "§c房间：%name% 已卸载！";
     public String roomUnloadFailure = "§c房间：%name% 非正常结束！";
@@ -54,10 +58,12 @@ public class Language {
             "§a/%cmdName% setwaitspawn §e设置当前位置为游戏出生点 \n" +
             "§a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点 \n" +
             "§a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点 \n" +
-            "§a/%cmdName% setgoldspawntime 数字 §e设置金锭生成间隔 \n" +
-            "§a/%cmdName% setwaittime 数字 §e设置游戏人数达到最少人数后的等待时间 \n" +
-            "§a/%cmdName% setgametime 数字 §e设置每轮游戏最长时间 \n" +
-            "§a/%cmdName% setgamemode 模式 §e设置房间游戏模式 \n" +
+            "§a/%cmdName% setgoldspawntime <时间> §e设置金锭生成间隔 \n" +
+            "§a/%cmdName% setwaittime <时间> §e设置游戏人数达到最少人数后的等待时间 \n" +
+            "§a/%cmdName% setgametime <时间> §e设置每轮游戏最长时间 \n" +
+            "§a/%cmdName% setgamemode <模式> §e设置房间游戏模式 \n" +
+            "§a/%cmdName% setminplayers <人数> §e设置房间最少人数 \n" +
+            "§a/%cmdName% setmaxplayers <人数> §e设置房间最多人数 \n" +
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
             "§a/%cmdName% stoproom §e强制关闭所在地图的房间 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n" +
@@ -72,8 +78,10 @@ public class Language {
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
     public String adminSetGameMode = "§a房间游戏模式已设置为: %roomMode%";
     public String adminSetGameModeNotFound = "§c房间游戏模式: %mode% 不存在！";
+    public String adminSetMinPlayers = "§a房间最少人数已设置为: %minPlayers%";
+    public String adminSetMaxPlayers = "§a房间最多人数已设置为: %maxPlayers%";
     public String adminStartRoom = "§a已强制开启游戏！";
-    public String adminStartRoomNoPlayer = "§a房间人数不足三人,无法开始游戏！";
+    public String adminStartRoomNoPlayer = "§a房间人数不足%minPlayers%人,无法开始游戏！";
     public String adminStartRoomIsPlaying = "§c房间已经开始了！";
     public String adminLevelNoRoom = "§a当前地图不是游戏房间！";
     public String adminStopRoom = "§a已强制结束房间！";
@@ -138,8 +146,12 @@ public class Language {
     public String victoryCommonPeopleBottom = "§e恭喜平民和侦探获得胜利！";
     public String victoryCommonPeopleScoreBoard = "§e恭喜平民和侦探获得胜利！";
     public String scoreBoardTitle = "§e密室杀手";
-    public String waitTimeScoreBoard = " 房间模式: §a %roomMode% \n 玩家: §a %playerNumber%/16 \n §a开始倒计时： §l§e %time%";
-    public String waitScoreBoard = " 房间模式: §a %roomMode% \n 玩家: §a %playerNumber%/16 \n 最低游戏人数为 5 人 \n 等待玩家加入中";
+    public String waitTimeScoreBoard = "房间模式: §a %roomMode% \n" +
+            "玩家: §a %playerNumber%/%maxPlayers% \n" +
+            "§a开始倒计时： §l§e %time%";
+    public String waitScoreBoard = "房间模式: §a %roomMode% \n" +
+            "玩家: §a %playerNumber%/%maxPlayers% \n" +
+            "最低游戏人数为 %minPlayers% 人 \n 等待玩家加入中";
     public String waitTimeBottom = "§a当前已有: %playerNumber% 位玩家 \n §a游戏还有: %time% 秒开始！";
     public String waitBottom = "§c等待玩家加入中,当前已有: %playerNumber% 位玩家";
     public String gameTimeScoreBoard = "§l§a房间模式: §a %roomMode% \n" +
@@ -185,6 +197,10 @@ public class Language {
         this.roomLoadedFailureByConfig = config.getString("roomLoadedFailureByConfig", this.roomLoadedFailureByConfig);
         this.roomLoadedFailureByLevel = config.getString("roomLoadedFailureByLevel", this.roomLoadedFailureByLevel);
         this.roomLoadedFailureByGameMode = config.getString("roomLoadedFailureByGameMode", this.roomLoadedFailureByGameMode);
+        this.roomLevelBackup = config.getString("roomLevelBackup", this.roomLevelBackup);
+        this.roomLevelBackupExist = config.getString("roomLevelBackupExist", this.roomLevelBackupExist);
+        this.roomLevelBackupNotExist = config.getString("roomLevelBackupNotExist", this.roomLevelBackupNotExist);
+        this.roomLevelRestoreLevelFailure = config.getString("roomLevelRestoreLevelFailure", this.roomLevelRestoreLevelFailure);
         this.roomLoadedAllSuccess = config.getString("roomLoadedAllSuccess", this.roomLoadedAllSuccess);
         this.roomUnloadSuccess = config.getString("roomUnloadSuccess", this.roomUnloadSuccess);
         this.roomUnloadFailure = config.getString("roomUnloadFailure", this.roomUnloadFailure);
@@ -223,6 +239,8 @@ public class Language {
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
         this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
         this.adminSetGameModeNotFound = config.getString("adminSetGameModeNotFound", this.adminSetGameModeNotFound);
+        this.adminSetMinPlayers = config.getString("adminSetMinPlayers", this.adminSetMinPlayers);
+        this.adminSetMaxPlayers = config.getString("adminSetMaxPlayers", this.adminSetMaxPlayers);
         this.adminStartRoom = config.getString("adminStartRoom", this.adminStartRoom);
         this.adminStartRoomNoPlayer = config.getString("adminStartRoomNoPlayer", this.adminStartRoomNoPlayer);
         this.adminStartRoomIsPlaying = config.getString("adminStartRoomIsPlaying", this.adminStartRoomIsPlaying);

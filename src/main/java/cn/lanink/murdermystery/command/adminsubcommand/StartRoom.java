@@ -27,8 +27,7 @@ public class StartRoom extends BaseSubCommand {
         Player player = (Player) sender;
         BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
         if (room != null) {
-            //少于三人将进入死循环！
-            if (room.getPlayers().size() >= 3) {
+            if (room.getPlayers().size() >= room.getMinPlayers()) {
                 if (room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) {
                     room.gameStartEvent();
                     sender.sendMessage(this.language.adminStartRoom);
@@ -36,7 +35,8 @@ public class StartRoom extends BaseSubCommand {
                     sender.sendMessage(this.language.adminStartRoomIsPlaying);
                 }
             }else {
-                sender.sendMessage(this.language.adminStartRoomNoPlayer);
+                sender.sendMessage(this.language.adminStartRoomNoPlayer
+                        .replace("%minPlayers%", room.getMinPlayers() + ""));
             }
         }else {
             sender.sendMessage(this.language.adminLevelNoRoom);

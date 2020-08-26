@@ -42,7 +42,7 @@ public class PlayerDamageListener implements Listener {
             if (damager == null || player == null) {
                 return;
             }
-            BaseRoom room = this.murderMystery.getRooms().getOrDefault(damager.getLevel().getName(), null);
+            BaseRoom room = this.murderMystery.getRooms().get(damager.getLevel().getFolderName());
             if (room == null) {
                 return;
             }
@@ -89,7 +89,7 @@ public class PlayerDamageListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
             if (room == null) {
                 return;
             }
