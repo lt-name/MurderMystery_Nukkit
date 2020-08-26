@@ -34,6 +34,9 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * MurderMystery
@@ -44,30 +47,48 @@ public class MurderMystery extends PluginBase {
 
     public static final String VERSION = "?";
     public static boolean debug = false;
+    public static final Random RANDOM = new Random();
+    public static final ThreadPoolExecutor checkRoomThreadPool = new ThreadPoolExecutor(
+            2,
+            4,
+            30,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(),
+            new ThreadPoolExecutor.DiscardPolicy());
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
     private Language language;
     private Config config;
+    private Config temporaryRoomsConfig; //文件保存，防止崩服丢失数据
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
+    private List<String> temporaryRooms; //临时房间
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
     private String cmdUser, cmdAdmin;
     private List<String> cmdUserAliases, cmdAdminAliases;
     private IScoreboard scoreboard;
-    public static final Random RANDOM = new Random();
     private boolean hasTips = false;
+
+    private String serverWorldPath;
     private String worldBackupPath;
+    private String roomConfigPath;
+
     private boolean restoreWorld = false;
+    private boolean automaticExpansionRoom = false;
 
     public static MurderMystery getInstance() { return murderMystery; }
 
     @Override
     public void onLoad() {
         if (murderMystery == null) murderMystery = this;
+
+        this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
         this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
+        this.roomConfigPath = this.getDataFolder() + "/Rooms/";
+
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         File file3 = new File(this.getDataFolder() + "/Skins");
@@ -81,7 +102,7 @@ public class MurderMystery extends PluginBase {
             getLogger().warning("Skins 文件夹初始化失败");
         }
         saveDefaultConfig();
-        this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
         if (config.getBoolean("debug", false)) {
             debug = true;
             getLogger().warning("警告：您开启了debug模式！");
@@ -92,7 +113,11 @@ public class MurderMystery extends PluginBase {
 
             }
         }
+        this.temporaryRoomsConfig = new Config(this.getDataFolder() + "/temporaryRoomList.yml", Config.YAML);
+        this.temporaryRooms = this.temporaryRoomsConfig.getStringList("temporaryRooms");
+        this.removeAllTemporaryRoom();
         this.restoreWorld = this.config.getBoolean("restoreWorld", false);
+        this.automaticExpansionRoom = this.config.getBoolean("automaticExpansionRoom", false);
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
@@ -197,8 +222,10 @@ public class MurderMystery extends PluginBase {
                 Tools.cleanEntity(entry.getValue().getLevel(), true);
                 it.remove();
             }
+            this.rooms.clear();
         }
-        this.rooms.clear();
+        this.removeAllTemporaryRoom();
+        this.temporaryRooms.clear();
         this.roomConfigs.clear();
         this.skins.clear();
         getLogger().info(this.language.pluginDisable);
@@ -239,8 +266,16 @@ public class MurderMystery extends PluginBase {
         return this.config;
     }
 
+    public String getServerWorldPath() {
+        return this.serverWorldPath;
+    }
+
     public String getWorldBackupPath() {
         return this.worldBackupPath;
+    }
+
+    public String getRoomConfigPath() {
+        return this.roomConfigPath;
     }
 
     public boolean isHasTips() {
@@ -249,6 +284,10 @@ public class MurderMystery extends PluginBase {
 
     public boolean isRestoreWorld() {
         return this.restoreWorld;
+    }
+
+    public boolean isAutomaticExpansionRoom() {
+        return this.automaticExpansionRoom;
     }
 
     public String getCmdUser() {
@@ -277,6 +316,52 @@ public class MurderMystery extends PluginBase {
 
     public LinkedHashMap<String, BaseRoom> getRooms() {
         return this.rooms;
+    }
+
+    public List<String> getTemporaryRooms() {
+        return this.temporaryRooms;
+    }
+
+    public synchronized void addTemporaryRoom(String template) {
+        String newRoom = template + "Temporary" + (this.temporaryRooms.size() + 1);
+        this.temporaryRooms.add(newRoom);
+        this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
+        this.temporaryRoomsConfig.save();
+        Tools.copyDir(this.getRoomConfigPath() + template + ".yml",
+                this.getRoomConfigPath() + newRoom + ".yml");
+        Tools.copyDir(this.getWorldBackupPath() + template,
+                this.getServerWorldPath() + newRoom);
+        if (MurderMystery.debug) {
+            this.getLogger().info("自动扩充房间: " + template + " -> " + newRoom);
+        }
+        //主线程操作
+        Server.getInstance().getScheduler().scheduleTask(this, () -> murderMystery.loadRoom(newRoom));
+    }
+
+    public void removeAllTemporaryRoom() {
+        for (String name : new ArrayList<>(this.temporaryRooms)) {
+            this.removeTemporaryRoom(name);
+        }
+    }
+
+    public synchronized void removeTemporaryRoom(String levelName) {
+        if (!this.temporaryRooms.contains(levelName)) {
+            return;
+        }
+        this.temporaryRooms.remove(levelName);
+        this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
+        this.temporaryRoomsConfig.save();
+        this.unloadRoom(levelName);
+        Level level = this.getServer().getLevelByName(levelName);
+        if (level != null) {
+            this.getServer().unloadLevel(level);
+        }
+        Tools.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
+        Tools.deleteFile(this.getServerWorldPath() + levelName);
+        Tools.deleteFile(this.getWorldBackupPath() + levelName);
+        if (debug) {
+            this.getLogger().info("临时房间: " + levelName + " 已删除");
+        }
     }
 
     public Config getRoomConfig(Level level) {
@@ -347,49 +432,52 @@ public class MurderMystery extends PluginBase {
     /**
      * 加载所有房间
      */
-    private void loadRooms() {
+    public void loadRooms() {
         getLogger().info(this.language.startLoadingRoom);
         File[] s = new File(getDataFolder() + "/Rooms").listFiles();
         if (s != null && s.length > 0) {
             for (File file1 : s) {
                 String[] fileName = file1.getName().split("\\.");
                 if (fileName.length > 0) {
-                    String worldName = fileName[0];
-                    Config config = getRoomConfig(worldName);
-                    if (config.getInt("waitTime", 0) == 0 ||
-                            config.getInt("gameTime", 0) == 0 ||
-                            config.getString("waitSpawn", "").trim().equals("") ||
-                            config.getStringList("randomSpawn").size() == 0 ||
-                            config.getStringList("goldSpawn").size() == 0 ||
-                            config.getInt("goldSpawnTime", 0) == 0 ||
-                            config.getString("gameMode", "").trim().equals("")) {
-                        getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", worldName));
-                        continue;
-                    }
-                    if (Server.getInstance().getLevelByName(worldName) == null && !Server.getInstance().loadLevel(worldName)) {
-                        getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", worldName));
-                        continue;
-                    }
-                    String gameMode = config.getString("gameMode", "classic");
-                    if (!ROOM_CLASS.containsKey(gameMode)) {
-                        getLogger().warning(this.language.roomLoadedFailureByGameMode
-                                .replace("%name%", worldName)
-                                .replace("%gameMode%", gameMode));
-                        continue;
-                    }
-                    try {
-                        Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
-                        BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(worldName), config);
-                        baseRoom.setGameMode(gameMode);
-                        this.rooms.put(worldName, baseRoom);
-                        getLogger().info(this.language.roomLoadedSuccess.replace("%name%", worldName));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    this.loadRoom(fileName[0]);
                 }
             }
         }
         getLogger().info(this.language.roomLoadedAllSuccess.replace(" %number%", this.rooms.size() + ""));
+    }
+
+    public void loadRoom(String name) {
+        Config config = getRoomConfig(name);
+        if (config.getInt("waitTime", 0) == 0 ||
+                config.getInt("gameTime", 0) == 0 ||
+                config.getString("waitSpawn", "").trim().equals("") ||
+                config.getStringList("randomSpawn").size() == 0 ||
+                config.getStringList("goldSpawn").size() == 0 ||
+                config.getInt("goldSpawnTime", 0) == 0 ||
+                config.getString("gameMode", "").trim().equals("")) {
+            getLogger().warning(this.language.roomLoadedFailureByConfig.replace("%name%", name));
+            return;
+        }
+        if (Server.getInstance().getLevelByName(name) == null && !Server.getInstance().loadLevel(name)) {
+            getLogger().warning(this.language.roomLoadedFailureByLevel.replace("%name%", name));
+            return;
+        }
+        String gameMode = config.getString("gameMode", "classic");
+        if (!ROOM_CLASS.containsKey(gameMode)) {
+            getLogger().warning(this.language.roomLoadedFailureByGameMode
+                    .replace("%name%", name)
+                    .replace("%gameMode%", gameMode));
+            return;
+        }
+        try {
+            Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
+            BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(name), config);
+            baseRoom.setGameMode(gameMode);
+            this.rooms.put(name, baseRoom);
+            getLogger().info(this.language.roomLoadedSuccess.replace("%name%", name));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

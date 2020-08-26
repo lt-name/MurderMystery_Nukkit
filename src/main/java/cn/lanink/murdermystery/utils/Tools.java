@@ -421,6 +421,9 @@ public class Tools {
 
     public static boolean deleteFile(File deleteFile) {
         try {
+            if (!deleteFile.exists()) {
+                return true;
+            }
             File[] files = deleteFile.listFiles();
             if (files != null) {
                 for (File file : files) {
