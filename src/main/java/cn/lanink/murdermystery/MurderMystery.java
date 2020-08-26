@@ -335,9 +335,7 @@ public class MurderMystery extends PluginBase {
             this.getLogger().info("自动扩充房间: " + template + " -> " + newRoom);
         }
         //主线程操作
-        Server.getInstance().getScheduler().scheduleTask(this, () -> {
-            murderMystery.loadRoom(newRoom);
-        });
+        Server.getInstance().getScheduler().scheduleTask(this, () -> murderMystery.loadRoom(newRoom));
     }
 
     public void removeAllTemporaryRoom() {
@@ -350,9 +348,10 @@ public class MurderMystery extends PluginBase {
         if (!this.temporaryRooms.contains(levelName)) {
             return;
         }
-        if (this.getRooms().containsKey(levelName)) {
-            this.unloadRoom(levelName);
-        }
+        this.temporaryRooms.remove(levelName);
+        this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
+        this.temporaryRoomsConfig.save();
+        this.unloadRoom(levelName);
         Level level = this.getServer().getLevelByName(levelName);
         if (level != null) {
             this.getServer().unloadLevel(level);
@@ -360,9 +359,6 @@ public class MurderMystery extends PluginBase {
         Tools.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
         Tools.deleteFile(this.getServerWorldPath() + levelName);
         Tools.deleteFile(this.getWorldBackupPath() + levelName);
-        this.temporaryRooms.remove(levelName);
-        this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
-        this.temporaryRoomsConfig.save();
         if (debug) {
             this.getLogger().info("临时房间: " + levelName + " 已删除");
         }
@@ -520,9 +516,8 @@ public class MurderMystery extends PluginBase {
 
     public void unloadRoom(String roomName) {
         if (this.rooms.containsKey(roomName)) {
-            BaseRoom room = this.rooms.get(roomName);
+            this.rooms.get(roomName).endGameEvent();
             this.rooms.remove(roomName);
-            room.endGameEvent();
             getLogger().info(this.language.roomUnloadSuccess.replace("%name%", roomName));
         }
     }
