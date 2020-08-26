@@ -427,12 +427,12 @@ public class Tools {
                     if (file.isDirectory()) {
                         deleteFile(file);
                     }else if (!file.delete()) {
-                        throw new IOException("文件: " + file.getName() + " 创建失败！");
+                        throw new IOException("文件: " + file.getName() + " 删除失败！");
                     }
                 }
             }
             if (!deleteFile.delete()) {
-                throw new IOException("文件: " + deleteFile.getName() + " 创建失败！");
+                throw new IOException("文件: " + deleteFile.getName() + " 删除失败！");
             }
             return true;
         } catch (Exception e) {
