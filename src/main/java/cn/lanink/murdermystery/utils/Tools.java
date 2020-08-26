@@ -468,6 +468,8 @@ public class Tools {
                     }
                 }
                 return true;
+            }else {
+                Utils.copyFile(from, to);
             }
         } catch (Exception e) {
             e.printStackTrace();
