@@ -40,6 +40,13 @@ public class InfectedModeRoom extends ClassicModeRoom {
     }
 
     @Override
+    public void enableListener() {
+        this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
+    }
+
+    @Override
     protected synchronized void endGame(int victory) {
         this.playerRespawnTime.clear();
         super.endGame(victory);
@@ -128,11 +135,6 @@ public class InfectedModeRoom extends ClassicModeRoom {
         }else {
             this.victory(1);
         }
-    }
-
-    @Override
-    public void goldExchange() {
-
     }
 
     @Override

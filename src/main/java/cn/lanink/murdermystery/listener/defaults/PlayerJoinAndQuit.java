@@ -1,4 +1,4 @@
-package cn.lanink.murdermystery.listener;
+package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
@@ -40,7 +40,7 @@ public class PlayerJoinAndQuit implements Listener {
                         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                     }
                 }
-            }, 120);
+            }, 20);
         }
     }
 

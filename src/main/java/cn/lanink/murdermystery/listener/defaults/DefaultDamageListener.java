@@ -1,15 +1,15 @@
-package cn.lanink.murdermystery.listener;
+package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
+import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
-import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -20,14 +20,18 @@ import cn.nukkit.potion.Effect;
 /**
  * @author lt_name
  */
-public class PlayerDamageListener implements Listener {
+public class DefaultDamageListener extends BaseMurderMysteryListener {
 
-    private final MurderMystery murderMystery;
     private final Language language;
 
-    public PlayerDamageListener(MurderMystery murderMystery) {
-        this.murderMystery = murderMystery;
+    public DefaultDamageListener(MurderMystery murderMystery) {
+        super(murderMystery);
         this.language = murderMystery.getLanguage();
+    }
+
+    @Override
+    public String getListenerName() {
+        return "DefaultDamageListener";
     }
 
     /**
@@ -42,7 +46,7 @@ public class PlayerDamageListener implements Listener {
             if (damager == null || player == null) {
                 return;
             }
-            BaseRoom room = this.murderMystery.getRooms().get(damager.getLevel().getFolderName());
+            BaseRoom room = this.getListenerRooms().get(damager.getLevel().getFolderName());
             if (room == null) {
                 return;
             }
@@ -89,7 +93,7 @@ public class PlayerDamageListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
+            BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
             if (room == null) {
                 return;
             }

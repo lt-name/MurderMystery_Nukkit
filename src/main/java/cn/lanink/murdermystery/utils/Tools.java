@@ -285,8 +285,8 @@ public class Tools {
         }
     }
 
-    public static void sendMessage(BaseRoom baseRoom, String string) {
-        for (Player player : baseRoom.getPlayers().keySet()) {
+    public static void sendMessage(BaseRoom room, String string) {
+        for (Player player : room.getPlayers().keySet()) {
             player.sendMessage(string);
         }
     }

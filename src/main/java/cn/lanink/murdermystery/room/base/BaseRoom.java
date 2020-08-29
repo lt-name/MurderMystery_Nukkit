@@ -7,6 +7,8 @@ import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
 import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.Language;
+import cn.lanink.murdermystery.utils.SavePlayerInventory;
+import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.Player;
@@ -99,6 +101,7 @@ public abstract class BaseRoom implements IRoomStatus {
                     Integer.parseInt(s[2])));
         }
         this.initTime();
+        this.enableListener();
         this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
     }
 
@@ -152,6 +155,15 @@ public abstract class BaseRoom implements IRoomStatus {
     }
 
     /**
+     * 启用监听器
+     */
+    public void enableListener() {
+        this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
+    }
+
+    /**
      * 初始化Task
      */
     protected void initTask() {
@@ -196,14 +208,50 @@ public abstract class BaseRoom implements IRoomStatus {
      *
      * @param player 玩家
      */
-    public abstract void joinRoom(Player player);
+    public synchronized void joinRoom(Player player) {
+        if (this.players.size() < this.getMaxPlayers()) {
+            if (this.status == 0) {
+                this.initTask();
+            }
+            this.players.put(player, 0);
+            Tools.rePlayerState(player, true);
+            SavePlayerInventory.save(player);
+            if (player.teleport(this.getWaitSpawn())) {
+                this.setRandomSkin(player);
+                Tools.giveItem(player, 10);
+                if (this.murderMystery.isHasTips()) {
+                    Tips.closeTipsShow(this.level.getName(), player);
+                }
+                player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
+                this.autoExpansionRoom();
+            }else {
+                this.quitRoom(player);
+            }
+        }
+    }
 
     /**
      * 退出房间
      *
      * @param player 玩家
      */
-    public abstract void quitRoom(Player player);
+    public synchronized void quitRoom(Player player) {
+        this.players.remove(player);
+        if (this.murderMystery.isHasTips()) {
+            Tips.removeTipsConfig(this.level.getName(), player);
+        }
+        MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
+        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        Tools.rePlayerState(player, false);
+        SavePlayerInventory.restore(player);
+        this.restorePlayerSkin(player);
+        this.skinNumber.remove(player);
+        this.skinCache.remove(player);
+        for (Player p : this.players.keySet()) {
+            p.showPlayer(player);
+            player.showPlayer(p);
+        }
+    }
 
     /**
      * @return boolean 玩家是否在游戏里
@@ -251,7 +299,7 @@ public abstract class BaseRoom implements IRoomStatus {
     /**
      * @return 金锭产出地点
      */
-        public List<Vector3> getGoldSpawnVector3List() {
+    public List<Vector3> getGoldSpawnVector3List() {
         return this.goldSpawnVector3List;
     }
 

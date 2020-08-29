@@ -6,8 +6,6 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.IAsyncTipsTask;
 import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.lanink.murdermystery.room.base.ITimeTask;
-import cn.lanink.murdermystery.utils.SavePlayerInventory;
-import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
@@ -53,56 +51,10 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
         }
     }
 
-    /**
-     * 加入房间
-     *
-     * @param player 玩家
-     */
     @Override
-    public synchronized void joinRoom(Player player) {
-        if (this.players.size() < this.getMaxPlayers()) {
-            if (this.status == 0) {
-                this.initTask();
-            }
-            this.players.put(player, 0);
-            Tools.rePlayerState(player, true);
-            SavePlayerInventory.save(player);
-            if (player.teleport(this.getWaitSpawn())) {
-                this.setRandomSkin(player);
-                Tools.giveItem(player, 10);
-                if (this.murderMystery.isHasTips()) {
-                    Tips.closeTipsShow(this.level.getName(), player);
-                }
-                player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
-                this.autoExpansionRoom();
-            }else {
-                this.quitRoom(player);
-            }
-        }
-    }
-
-    /**
-     * 退出房间
-     *
-     * @param player 玩家
-     */
-    @Override
-    public synchronized void quitRoom(Player player) {
-        this.players.remove(player);
-        if (this.murderMystery.isHasTips()) {
-            Tips.removeTipsConfig(this.level.getName(), player);
-        }
-        MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
-        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-        Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(player);
-        this.restorePlayerSkin(player);
-        this.skinNumber.remove(player);
-        this.skinCache.remove(player);
-        for (Player p : this.players.keySet()) {
-            p.showPlayer(player);
-            player.showPlayer(p);
-        }
+    public void enableListener() {
+        super.enableListener();
+        this.murderMystery.getMurderMysteryListeners().get("ClassicGameListener").addListenerRoom(this);
     }
 
     /**
