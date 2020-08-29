@@ -2,9 +2,10 @@ package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntitySword;
-import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Location;
@@ -12,6 +13,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.scheduler.Task;
 
 import java.util.LinkedList;
 
@@ -72,7 +74,12 @@ public class SwordMoveTask extends AsyncTask {
                                         " 距离（加高度）：" + p.distance(new Vector3(entity.x, entity.y + entity.getHeight(), entity.z)));
                             }
                             this.room.playerDamageEvent(this.player, player2);
-                            this.sword.close();
+                            Server.getInstance().getScheduler().scheduleTask(MurderMystery.getInstance(), new Task() {
+                                @Override
+                                public void onRun(int i) {
+                                    sword.close();
+                                }
+                            });
                             return;
                         }
                     }
@@ -81,7 +88,12 @@ public class SwordMoveTask extends AsyncTask {
         } catch (Exception ignored) {
 
         }
-        this.sword.close();
+        Server.getInstance().getScheduler().scheduleTask(MurderMystery.getInstance(), new Task() {
+            @Override
+            public void onRun(int i) {
+                sword.close();
+            }
+        });
     }
 
     private LinkedList<double[]> mathLine(Position pos1, Position pos2) {

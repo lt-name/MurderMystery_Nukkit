@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.addons.uishop;
 
 import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
-import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.ui.GuiCreate;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;

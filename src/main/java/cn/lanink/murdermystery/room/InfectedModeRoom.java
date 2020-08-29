@@ -15,6 +15,7 @@ import cn.nukkit.utils.Config;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 感染模式房间类
@@ -50,7 +51,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
     }
 
     @Override
-    public void asyncTimeTask() {
+    public void timeTask() {
         //开局20秒选出杀手
         int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
@@ -89,46 +90,48 @@ public class InfectedModeRoom extends ClassicModeRoom {
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
-            int playerNumber = 0;
-            boolean killer = false;
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                switch (entry.getValue()) {
-                    case 1:
-                    case 2:
-                        playerNumber++;
-                        break;
-                    case 3:
-                        killer = true;
-                        if (this.gameTime % 20 == 0) {
-                            Effect effect = Effect.getEffect(1).setDuration(1000)
-                                    .setAmplifier(1).setVisible(true);
-                            effect.setColor(0, 255, 0);
-                            entry.getKey().addEffect(effect);
-                        }
-                        break;
+            CompletableFuture.runAsync(() -> {
+                int playerNumber = 0;
+                boolean killer = false;
+                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                    switch (entry.getValue()) {
+                        case 1:
+                        case 2:
+                            playerNumber++;
+                            break;
+                        case 3:
+                            killer = true;
+                            if (this.gameTime % 20 == 0) {
+                                Effect effect = Effect.getEffect(1).setDuration(1000)
+                                        .setAmplifier(1).setVisible(true);
+                                effect.setColor(0, 255, 0);
+                                entry.getKey().addEffect(effect);
+                            }
+                            break;
+                    }
                 }
-            }
-            if (time >= 0) {
-                if (this.players.size() < 2) {
-                    this.endGameEvent();
-                    return;
+                if (time >= 0) {
+                    if (this.players.size() < 2) {
+                        this.endGameEvent();
+                        return;
+                    }
+                    killer = true;
                 }
-                killer = true;
-            }
-            if (killer) {
-                if (playerNumber == 0) {
-                    this.victory(3);
+                if (killer) {
+                    if (playerNumber == 0) {
+                        this.victory(3);
+                    }
+                }else {
+                    this.victory(1);
                 }
-            }else {
-                this.victory(1);
-            }
+            });
         }else {
             this.victory(1);
         }
     }
 
     @Override
-    public void asyncGoldTask() {
+    public void goldExchange() {
 
     }
 

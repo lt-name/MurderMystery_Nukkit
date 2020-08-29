@@ -1,8 +1,8 @@
 package cn.lanink.murdermystery.listener;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.room.ClassicModeRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.tasks.game.ScanTask;
 import cn.lanink.murdermystery.tasks.game.SwordMoveTask;
 import cn.lanink.murdermystery.utils.Language;

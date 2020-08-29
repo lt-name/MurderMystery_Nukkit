@@ -10,9 +10,9 @@ import cn.lanink.murdermystery.listener.PlayerDamageListener;
 import cn.lanink.murdermystery.listener.PlayerGameListener;
 import cn.lanink.murdermystery.listener.PlayerJoinAndQuit;
 import cn.lanink.murdermystery.listener.RoomLevelProtection;
-import cn.lanink.murdermystery.room.BaseRoom;
 import cn.lanink.murdermystery.room.ClassicModeRoom;
 import cn.lanink.murdermystery.room.InfectedModeRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
@@ -34,9 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * MurderMystery
@@ -63,7 +61,7 @@ public class MurderMystery extends PluginBase {
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
-    private List<String> temporaryRooms; //临时房间
+    private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
@@ -114,7 +112,7 @@ public class MurderMystery extends PluginBase {
             }
         }
         this.temporaryRoomsConfig = new Config(this.getDataFolder() + "/temporaryRoomList.yml", Config.YAML);
-        this.temporaryRooms = this.temporaryRoomsConfig.getStringList("temporaryRooms");
+        this.temporaryRooms = new CopyOnWriteArrayList<>(this.temporaryRoomsConfig.getStringList("temporaryRooms"));
         this.removeAllTemporaryRoom();
         this.restoreWorld = this.config.getBoolean("restoreWorld", false);
         this.automaticExpansionRoom = this.config.getBoolean("automaticExpansionRoom", false);
@@ -348,20 +346,22 @@ public class MurderMystery extends PluginBase {
         if (!this.temporaryRooms.contains(levelName)) {
             return;
         }
-        this.temporaryRooms.remove(levelName);
-        this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
-        this.temporaryRoomsConfig.save();
         this.unloadRoom(levelName);
         Level level = this.getServer().getLevelByName(levelName);
         if (level != null) {
             this.getServer().unloadLevel(level);
         }
-        Tools.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
-        Tools.deleteFile(this.getServerWorldPath() + levelName);
-        Tools.deleteFile(this.getWorldBackupPath() + levelName);
-        if (debug) {
-            this.getLogger().info("临时房间: " + levelName + " 已删除");
-        }
+        CompletableFuture.runAsync(() -> {
+            Tools.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
+            Tools.deleteFile(this.getServerWorldPath() + levelName);
+            Tools.deleteFile(this.getWorldBackupPath() + levelName);
+            this.temporaryRooms.remove(levelName);
+            this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
+            this.temporaryRoomsConfig.save();
+            if (debug) {
+                this.getLogger().info("临时房间: " + levelName + " 已删除");
+            }
+        });
     }
 
     public Config getRoomConfig(Level level) {
