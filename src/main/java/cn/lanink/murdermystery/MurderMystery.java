@@ -64,6 +64,7 @@ public class MurderMystery extends PluginBase {
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
+    private static final HashSet<Class<? extends IMurderMysteryListener>> LISTENER_CLASS = new HashSet<>();
     private final HashMap<String, IMurderMysteryListener> murderMysteryListeners = new HashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
@@ -139,6 +140,11 @@ public class MurderMystery extends PluginBase {
         }
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
+        //注册监听器
+        registerListener(RoomLevelProtection.class);
+        registerListener(DefaultGameListener.class);
+        registerListener(DefaultDamageListener.class);
+        registerListener(ClassicGameListener.class);
         //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("infected", InfectedModeRoom.class);
@@ -183,11 +189,8 @@ public class MurderMystery extends PluginBase {
         getServer().getCommandMap().register("",
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
-        this.registerListener(new RoomLevelProtection(this));
-        this.registerListener(new DefaultGameListener(this));
-        this.registerListener(new DefaultDamageListener(this));
-        this.registerListener(new ClassicGameListener(this));
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.loadAllListener();
         this.loadResources();
         this.loadRooms();
         this.loadSkins();
@@ -243,11 +246,27 @@ public class MurderMystery extends PluginBase {
         ROOM_CLASS.put(name, roomClass);
     }
 
-    public void registerListener(IMurderMysteryListener iMurderMysteryListener) {
+    public static void registerListener(Class<? extends IMurderMysteryListener> listenerClass) {
+        LISTENER_CLASS.add(listenerClass);
+    }
+
+    public void loadAllListener() {
+        for (Class<? extends IMurderMysteryListener> listenerClass : LISTENER_CLASS) {
+            try {
+                Constructor<? extends IMurderMysteryListener> constructor = listenerClass.getConstructor(MurderMystery.class);
+                IMurderMysteryListener murderMysteryListener = constructor.newInstance(this);
+                this.loadListener(murderMysteryListener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void loadListener(IMurderMysteryListener iMurderMysteryListener) {
         this.murderMysteryListeners.put(iMurderMysteryListener.getListenerName(), iMurderMysteryListener);
         this.getServer().getPluginManager().registerEvents(iMurderMysteryListener, this);
         if (debug) {
-            this.getLogger().info("registerListener: " + iMurderMysteryListener.getListenerName());
+            this.getLogger().info("[debug] registerListener: " + iMurderMysteryListener.getListenerName());
         }
     }
 
