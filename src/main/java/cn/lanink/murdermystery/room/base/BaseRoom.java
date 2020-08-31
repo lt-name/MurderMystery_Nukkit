@@ -205,17 +205,16 @@ public abstract class BaseRoom implements IRoomStatus {
         this.skinNumber.remove(player);
     }
 
-
-    public synchronized void joinRoom(Player player) {
-        this.joinRoom(player, false);
-    }
-
     /**
      * @return 是否可以加入房间
      */
     public boolean canJoin() {
         return (this.status == ROOM_STATUS_TASK_NEED_INITIALIZED || this.status == ROOM_STATUS_WAIT) &&
                 this.players.size() < this.getMaxPlayers();
+    }
+
+    public synchronized void joinRoom(Player player) {
+        this.joinRoom(player, false);
     }
 
     /**

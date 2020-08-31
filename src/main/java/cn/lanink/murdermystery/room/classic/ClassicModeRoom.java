@@ -97,7 +97,13 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
         while(it.hasNext()) {
             Map.Entry<Player, Integer> entry = it.next();
             it.remove();
-            quitRoom(entry.getKey());
+            this.quitRoom(entry.getKey());
+        }
+        Iterator<Player> it2 = this.spectatorPlayers.iterator();
+        while(it2.hasNext()) {
+            Player player = it2.next();
+            it2.remove();
+            this.quitRoom(player);
         }
         this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
         this.placeBlocks.clear();
