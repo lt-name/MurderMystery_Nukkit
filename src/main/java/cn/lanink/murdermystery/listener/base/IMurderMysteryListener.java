@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public interface IMurderMysteryListener extends Listener {
 
+    void setListenerName(String name);
+
     String getListenerName();
 
     Map<String, BaseRoom> getListenerRooms();

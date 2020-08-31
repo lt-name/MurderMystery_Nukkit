@@ -1,4 +1,4 @@
-package cn.lanink.murdermystery.room;
+package cn.lanink.murdermystery.room.classic;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;

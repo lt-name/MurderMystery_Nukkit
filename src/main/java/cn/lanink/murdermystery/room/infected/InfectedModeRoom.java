@@ -1,6 +1,7 @@
-package cn.lanink.murdermystery.room;
+package cn.lanink.murdermystery.room.infected;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;

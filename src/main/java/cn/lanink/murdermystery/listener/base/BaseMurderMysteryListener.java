@@ -12,10 +12,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class BaseMurderMysteryListener implements IMurderMysteryListener {
 
     protected MurderMystery murderMystery;
+    private String listenerName;
     protected ConcurrentHashMap<String, BaseRoom> listenerRooms = new ConcurrentHashMap<>();
 
     public BaseMurderMysteryListener(MurderMystery murderMystery) {
         this.murderMystery = murderMystery;
+    }
+
+    @Override
+    public void setListenerName(String name) {
+        this.listenerName = name;
+    }
+
+    @Override
+    public String getListenerName() {
+        return this.listenerName;
     }
 
     public Map<String, BaseRoom> getListenerRooms() {

@@ -2,9 +2,9 @@ package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
-import cn.lanink.murdermystery.room.ClassicModeRoom;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.IRoomStatus;
+import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -50,11 +50,6 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
     public DefaultGameListener(MurderMystery murderMystery) {
         super(murderMystery);
         this.language = murderMystery.getLanguage();
-    }
-
-    @Override
-    public String getListenerName() {
-        return "DefaultGameListener";
     }
 
     /**

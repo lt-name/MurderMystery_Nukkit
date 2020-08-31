@@ -30,11 +30,6 @@ public class RoomLevelProtection extends BaseMurderMysteryListener {
         super(murderMystery);
     }
 
-    @Override
-    public String getListenerName() {
-        return "RoomLevelProtection";
-    }
-
     /**
      * 物品合成事件
      * @param event 事件

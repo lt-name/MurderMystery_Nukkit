@@ -32,11 +32,6 @@ public class ClassicGameListener extends BaseMurderMysteryListener {
         this.language = murderMystery.getLanguage();
     }
 
-    @Override
-    public String getListenerName() {
-        return "ClassicGameListener";
-    }
-
     /**
      * 玩家手持物品事件
      * @param event 事件

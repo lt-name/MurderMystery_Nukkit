@@ -12,9 +12,9 @@ import cn.lanink.murdermystery.listener.defaults.DefaultDamageListener;
 import cn.lanink.murdermystery.listener.defaults.DefaultGameListener;
 import cn.lanink.murdermystery.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.murdermystery.listener.defaults.RoomLevelProtection;
-import cn.lanink.murdermystery.room.ClassicModeRoom;
-import cn.lanink.murdermystery.room.InfectedModeRoom;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
+import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
@@ -64,7 +64,7 @@ public class MurderMystery extends PluginBase {
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
-    private static final HashSet<Class<? extends IMurderMysteryListener>> LISTENER_CLASS = new HashSet<>();
+    private static final HashMap<String, Class<? extends IMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
     private final HashMap<String, IMurderMysteryListener> murderMysteryListeners = new HashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
@@ -141,10 +141,10 @@ public class MurderMystery extends PluginBase {
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
         //注册监听器
-        registerListener(RoomLevelProtection.class);
-        registerListener(DefaultGameListener.class);
-        registerListener(DefaultDamageListener.class);
-        registerListener(ClassicGameListener.class);
+        registerListener("RoomLevelProtection", RoomLevelProtection.class);
+        registerListener("DefaultGameListener", DefaultGameListener.class);
+        registerListener("DefaultDamageListener", DefaultDamageListener.class);
+        registerListener("ClassicGameListener", ClassicGameListener.class);
         //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("infected", InfectedModeRoom.class);
@@ -246,15 +246,16 @@ public class MurderMystery extends PluginBase {
         ROOM_CLASS.put(name, roomClass);
     }
 
-    public static void registerListener(Class<? extends IMurderMysteryListener> listenerClass) {
-        LISTENER_CLASS.add(listenerClass);
+    public static void registerListener(String name, Class<? extends IMurderMysteryListener> listenerClass) {
+        LISTENER_CLASS.put(name, listenerClass);
     }
 
     public void loadAllListener() {
-        for (Class<? extends IMurderMysteryListener> listenerClass : LISTENER_CLASS) {
+        for (Map.Entry<String, Class<? extends IMurderMysteryListener>> entry : LISTENER_CLASS.entrySet()) {
             try {
-                Constructor<? extends IMurderMysteryListener> constructor = listenerClass.getConstructor(MurderMystery.class);
+                Constructor<? extends IMurderMysteryListener> constructor = entry.getValue().getConstructor(MurderMystery.class);
                 IMurderMysteryListener murderMysteryListener = constructor.newInstance(this);
+                murderMysteryListener.setListenerName(entry.getKey());
                 this.loadListener(murderMysteryListener);
             } catch (Exception e) {
                 e.printStackTrace();

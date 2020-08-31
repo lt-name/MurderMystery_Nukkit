@@ -29,11 +29,6 @@ public class DefaultDamageListener extends BaseMurderMysteryListener {
         this.language = murderMystery.getLanguage();
     }
 
-    @Override
-    public String getListenerName() {
-        return "DefaultDamageListener";
-    }
-
     /**
      * 实体受到另一实体伤害事件
      * @param event 事件
