@@ -204,12 +204,20 @@ public abstract class BaseRoom implements IRoomStatus {
     }
 
     /**
+     * @return 是否可以加入房间
+     */
+    public boolean canJoin() {
+        return (this.status == ROOM_STATUS_TASK_NEED_INITIALIZED || this.status == ROOM_STATUS_WAIT) &&
+                this.players.size() < this.getMaxPlayers();
+    }
+
+    /**
      * 加入房间
      *
      * @param player 玩家
      */
     public synchronized void joinRoom(Player player) {
-        if (this.players.size() < this.getMaxPlayers()) {
+        if (this.canJoin()) {
             if (this.status == 0) {
                 this.initTask();
             }

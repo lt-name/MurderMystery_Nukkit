@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.ui;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -104,10 +105,11 @@ public class GuiCreate {
         FormWindowModal modal;
         BaseRoom room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
         if (room != null) {
-            if (room.getStatus() == 2 || room.getStatus() == 3) {
+            if (room.getStatus() != IRoomStatus.ROOM_STATUS_TASK_NEED_INITIALIZED &&
+                    room.getStatus() != IRoomStatus.ROOM_STATUS_WAIT) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
-            }else if (room.getPlayers().size() > 15){
+            }else if (room.getPlayers().size() > room.getMaxPlayers()) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, LANGUAGE.joinRoomIsFull, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
             }else {
