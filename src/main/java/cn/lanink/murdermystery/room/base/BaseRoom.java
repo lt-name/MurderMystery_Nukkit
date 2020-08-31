@@ -11,6 +11,7 @@ import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.lanink.murdermystery.utils.exception.RoomLoadException;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -47,6 +48,7 @@ public abstract class BaseRoom implements IRoomStatus {
     private final String levelName;
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
     protected final ConcurrentHashMap<Player, Integer> players = new ConcurrentHashMap<>(); //0未分配 1平民 2侦探 3杀手
+    protected final HashSet<Player> spectatorPlayers = new HashSet<>(); //旁观玩家
     protected final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
     protected final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
 
@@ -170,7 +172,7 @@ public abstract class BaseRoom implements IRoomStatus {
         if (this.status != 1) {
             this.setStatus(1);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    MurderMystery.getInstance(), new WaitTask(MurderMystery.getInstance(), this), 20);
+                    MurderMystery.getInstance(), new WaitTask(this.murderMystery, this), 20);
         }
     }
 
@@ -203,31 +205,49 @@ public abstract class BaseRoom implements IRoomStatus {
         this.skinNumber.remove(player);
     }
 
+
+    public synchronized void joinRoom(Player player) {
+        this.joinRoom(player, false);
+    }
+
     /**
      * 加入房间
      *
      * @param player 玩家
+     * @param spectator 观战
      */
-    public synchronized void joinRoom(Player player) {
-        if (this.players.size() < this.getMaxPlayers()) {
-            if (this.status == 0) {
-                this.initTask();
-            }
+    public void joinRoom(Player player, boolean spectator) {
+        if (this.status < 0 || this.status > 2) {
+            return;
+        }
+        if (this.status == 0) {
+            this.initTask();
+        }
+        SavePlayerInventory.save(player);
+        Tools.rePlayerState(player, true);
+        Tools.giveItem(player, 10);
+        if (this.murderMystery.isHasTips()) {
+            Tips.closeTipsShow(this.level.getName(), player);
+        }
+        player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
+        if (spectator || this.status == ROOM_STATUS_GAME || this.players.size() >= this.getMaxPlayers()) {
+            this.spectatorPlayers.add(player);
+            player.teleport(this.randomSpawn.get(MurderMystery.RANDOM.nextInt(this.randomSpawn.size())));
+            player.setGamemode(3);
+            player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false);
+            player.getAdventureSettings().update();
+            Tools.hidePlayer(this, player);
+        }else {
             this.players.put(player, 0);
-            Tools.rePlayerState(player, true);
-            SavePlayerInventory.save(player);
-            if (player.teleport(this.getWaitSpawn())) {
-                this.setRandomSkin(player);
-                Tools.giveItem(player, 10);
-                if (this.murderMystery.isHasTips()) {
-                    Tips.closeTipsShow(this.level.getName(), player);
-                }
-                player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
-                this.autoExpansionRoom();
-            }else {
+            this.setRandomSkin(player);
+            player.teleport(this.getWaitSpawn());
+            this.autoExpansionRoom();
+        }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+            if (player.level != this.level) {
                 this.quitRoom(player);
             }
-        }
+        }, 20);
     }
 
     /**
@@ -240,13 +260,17 @@ public abstract class BaseRoom implements IRoomStatus {
         if (this.murderMystery.isHasTips()) {
             Tips.removeTipsConfig(this.level.getName(), player);
         }
+        if (this.spectatorPlayers.contains(player)) {
+            this.spectatorPlayers.remove(player);
+        }else {
+            this.restorePlayerSkin(player);
+            this.skinNumber.remove(player);
+            this.skinCache.remove(player);
+        }
         MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(player);
-        this.restorePlayerSkin(player);
-        this.skinNumber.remove(player);
-        this.skinCache.remove(player);
         for (Player p : this.players.keySet()) {
             p.showPlayer(player);
             player.showPlayer(p);
@@ -254,11 +278,19 @@ public abstract class BaseRoom implements IRoomStatus {
     }
 
     /**
-     * @return boolean 玩家是否在游戏里
      * @param player 玩家
+     * @return boolean 玩家是否在游戏里
      */
     public boolean isPlaying(Player player) {
         return this.players.containsKey(player);
+    }
+
+    /**
+     * @param player 玩家
+     * @return 是否是旁观者（观战）
+     */
+    public boolean isSpectator(Player player) {
+        return this.spectatorPlayers.contains(player);
     }
 
     /**
@@ -310,6 +342,9 @@ public abstract class BaseRoom implements IRoomStatus {
         return this.level;
     }
 
+    /**
+     * @return 游戏世界名称
+     */
     public final String getLevelName() {
         return this.levelName;
     }

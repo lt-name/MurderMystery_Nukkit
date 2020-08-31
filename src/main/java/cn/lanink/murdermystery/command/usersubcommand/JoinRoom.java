@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.command.usersubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -32,14 +33,15 @@ public class JoinRoom extends BaseSubCommand {
                 return true;
             }
             for (BaseRoom room : this.murderMystery.getRooms().values()) {
-                if (room.isPlaying(player)) {
+                if (room.isPlaying(player) || room.isSpectator(player)) {
                     sender.sendMessage(this.language.joinRoomOnRoom);
                     return true;
                 }
             }
             if (args.length < 2) {
                 for (BaseRoom room : this.murderMystery.getRooms().values()) {
-                    if ((room.getStatus() == 0 || room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) &&
+                    if ((room.getStatus() == IRoomStatus.ROOM_STATUS_TASK_NEED_INITIALIZED ||
+                            room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) &&
                             room.getPlayers().size() < room.getMaxPlayers()) {
                         room.joinRoom(player);
                         sender.sendMessage(this.language.joinRandomRoom);
@@ -51,7 +53,8 @@ public class JoinRoom extends BaseSubCommand {
                 if (s.length == 2 && s[0].toLowerCase().trim().equals("mode")) {
                     String modeName = s[1].toLowerCase().trim();
                     for (BaseRoom room : this.murderMystery.getRooms().values()) {
-                        if ((room.getStatus() == 0 || room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) &&
+                        if ((room.getStatus() == IRoomStatus.ROOM_STATUS_TASK_NEED_INITIALIZED ||
+                                room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) &&
                                 room.getPlayers().size() < room.getMaxPlayers()) {
                             if (room.getGameMode().equals(modeName)) {
                                 room.joinRoom(player);

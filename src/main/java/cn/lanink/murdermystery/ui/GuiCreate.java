@@ -101,6 +101,7 @@ public class GuiCreate {
      * @param roomName 房间名字
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
+        //TODO 观战
         FormWindowModal modal;
         BaseRoom room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
         if (room != null) {
