@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.command.usersubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -41,7 +42,9 @@ public class JoinSpectator extends BaseSubCommand {
             }
             if (this.murderMystery.getRooms().containsKey(args[1])) {
                 BaseRoom room = this.murderMystery.getRooms().get(args[1]);
-                room.joinRoom(player, true);
+                if (room.getStatus() != IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
+                    room.joinRoom(player, true);
+                }
             }else {
                 sender.sendMessage(this.language.joinRoomIsNotFound);
             }

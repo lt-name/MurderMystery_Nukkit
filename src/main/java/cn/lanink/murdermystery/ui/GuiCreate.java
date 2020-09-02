@@ -109,10 +109,10 @@ public class GuiCreate {
             if (room.getStatus() != IRoomStatus.ROOM_STATUS_TASK_NEED_INITIALIZED &&
                     room.getStatus() != IRoomStatus.ROOM_STATUS_WAIT) {
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+                        PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying, LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
             }else if (room.getPlayers().size() > room.getMaxPlayers()) {
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomIsFull, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+                        PLUGIN_NAME, LANGUAGE.joinRoomIsFull, LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
             }else {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, LANGUAGE.joinRoomOK.replace("%name%", "\"" + roomName + "\""),

@@ -107,6 +107,7 @@ public class GuiListener implements Listener {
         }else if (event.getWindow() instanceof FormWindowModal) {
             FormWindowModal modal = (FormWindowModal) event.getWindow();
             if (cache == GuiType.ROOM_JOIN_OK) {
+                //TODO
                 if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(this.language.buttonReturn)) {
                     String[] s = modal.getContent().split("\"");
                     MurderMystery.getInstance().getServer().dispatchCommand(

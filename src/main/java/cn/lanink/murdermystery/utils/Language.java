@@ -180,6 +180,8 @@ public class Language {
     public String adminTimeMenuInputText2 = "等待时间（秒）";
     public String adminTimeMenuInputText3 = "游戏时间（秒）";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
+    //TODO
+    public String buttonSpectator = "§a观战";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
 
