@@ -37,7 +37,10 @@ public class Language {
     public String cmdHelp = "§a查看帮助：/%cmdName% help";
     public String userHelp = "§eMurderMystery--命令帮助 \n" +
             "§a/%cmdName% §e打开ui \n" +
-            "§a/%cmdName% join 房间名称 §e加入游戏 \n" +
+            "§a/%cmdName% join §e加入随机游戏\n" +
+            "§a/%cmdName% join mode:<游戏模式> §e加入指定模式游戏\n" +
+            "§a/%cmdName% join <房间名称> §e加入游戏 \n" +
+            "§a/%cmdName% joinspectator <房间名称> §e观战" +
             "§a/%cmdName% quit §e退出游戏 \n" +
             "§a/%cmdName% list §e查看房间列表";
     public String noPermission = "§c你没有权限！";

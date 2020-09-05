@@ -32,7 +32,10 @@ cmdHelp: "§a도움말 보는 방법:/%cmdName% help"
 userHelp: |-
   §e머더 미스터리--도움말
   §a/%cmdName% §eUI 열기
+  §a/%cmdName% join §eJoin a random game
+  §a/%cmdName% join mode:<gameMode> §eJoin the specified mode game
   §a/%cmdName% join <방 이름> §e게임 참가하기
+  §a/%cmdName% joinspectator <roomName> §eWatch the battle
   §a/%cmdName% quit §e게임 나가기
   §a/%cmdName% list §e방 목록 보기
 noPermission: "§c이 명령어를 실행하기 위한 권한이 부족합니다!"

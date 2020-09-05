@@ -30,7 +30,10 @@ cmdHelp: "§eĐể biết thêm thông tin, vui lòng nhập: §b/%cmdName% help
 userHelp: |-
   §eMurderMystery-HELP
   §a/%cmdName% §eMở UI
+  §a/%cmdName% join §eJoin a random game
+  §a/%cmdName% join mode:<gameMode> §eJoin the specified mode game
   §a/%cmdName% join <tênPhòng> §etham gia trò chơi
+  §a/%cmdName% joinspectator <roomName> §eWatch the battle
   §a/%cmdName% quit §eThoát khỏi game
   §a/%cmdName% list §eXem danh sách tất cả các phòng
 noPermission: "§cBạn không có quyền để làm điều này!"

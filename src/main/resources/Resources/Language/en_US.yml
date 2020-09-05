@@ -30,7 +30,10 @@ cmdHelp: "§eFor more help,please type: §b/%cmdName% help"
 userHelp: |-
   §eMurderMystery-HELP
   §a/%cmdName% §eOpen Game UI
+  §a/%cmdName% join §eJoin a random game
+  §a/%cmdName% join mode:<gameMode> §eJoin the specified mode game
   §a/%cmdName% join <roomName> §eJoin a Game
+  §a/%cmdName% joinspectator <roomName> §eWatch the battle
   §a/%cmdName% quit §eQuit a Game
   §a/%cmdName% list §eSee Lists of All Game Rooms
 noPermission: "§cSORRY!But you don't have enough permission!"

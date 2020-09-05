@@ -30,7 +30,10 @@ cmdHelp: "§a查看帮助：/%cmdName% help"
 userHelp: |-
   §eMurderMystery--命令帮助
   §a/%cmdName% §e打开ui
+  §a/%cmdName% join §e加入随机游戏
+  §a/%cmdName% join mode:<游戏模式> §e加入指定模式游戏
   §a/%cmdName% join <房间名称> §e加入游戏
+  §a/%cmdName% joinspectator <房间名称> §e观战
   §a/%cmdName% quit §e退出游戏
   §a/%cmdName% list §e查看房间列表
 noPermission: "§c你没有权限！"
