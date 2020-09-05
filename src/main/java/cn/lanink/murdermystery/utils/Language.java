@@ -45,8 +45,9 @@ public class Language {
     public String joinRoomOnRoom = "§c你已经在一个房间中了!";
     public String joinRoomOnRiding = "§a请勿在骑乘状态下进入房间！";
     public String joinRandomRoom = "§a已为你随机分配房间！";
-    public String joinRoomIsPlaying = "§a该房间正在游戏中，请稍后";
-    public String joinRoomIsFull = "§a该房间已满人，请稍后";
+    public String joinRoomIsNeedInitialized = "§a房间初始化中，请稍后...";
+    public String joinRoomIsPlaying = "§a该房间正在游戏中，请稍后...";
+    public String joinRoomIsFull = "§a该房间已满人，请稍后...";
     public String joinRoomIsNotFound = "§a暂无符合条件的房间！";
     public String joinRoomNotAvailable = "§a暂无房间可用！";
     public String quitRoom = "§a你已退出房间";
@@ -180,7 +181,6 @@ public class Language {
     public String adminTimeMenuInputText2 = "等待时间（秒）";
     public String adminTimeMenuInputText3 = "游戏时间（秒）";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
-    //TODO
     public String buttonSpectator = "§a观战";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
@@ -222,6 +222,7 @@ public class Language {
         this.joinRoomOnRoom = config.getString("joinRoomOnRoom", this.joinRoomOnRoom);
         this.joinRoomOnRiding = config.getString("joinRoomOnRiding", this.joinRoomOnRiding);
         this.joinRandomRoom = config.getString("joinRandomRoom", this.joinRandomRoom);
+        this.joinRoomIsNeedInitialized = config.getString("joinRoomIsNeedInitialized", this.joinRoomIsNeedInitialized);
         this.joinRoomIsPlaying = config.getString("joinRoomIsPlaying", this.joinRoomIsPlaying);
         this.joinRoomIsFull = config.getString("joinRoomIsFull", this.joinRoomIsFull);
         this.joinRoomIsNotFound = config.getString("joinRoomIsNotFound", this.joinRoomIsNotFound);
@@ -331,6 +332,7 @@ public class Language {
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
+        this.buttonSpectator = config.getString("buttonSpectator", this.buttonSpectator);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
     }

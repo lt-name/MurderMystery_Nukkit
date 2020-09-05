@@ -44,6 +44,8 @@ public class JoinSpectator extends BaseSubCommand {
                 BaseRoom room = this.murderMystery.getRooms().get(args[1]);
                 if (room.getStatus() != IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
                     room.joinRoom(player, true);
+                }else {
+                    sender.sendMessage(this.language.joinRoomIsNeedInitialized);
                 }
             }else {
                 sender.sendMessage(this.language.joinRoomIsNotFound);

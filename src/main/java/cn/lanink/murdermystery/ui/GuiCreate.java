@@ -104,23 +104,28 @@ public class GuiCreate {
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         //TODO 观战
         FormWindowModal modal;
-        BaseRoom room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
+        roomName = roomName.replace("§e§l", "").trim();
+        BaseRoom room = MurderMystery.getInstance().getRooms().get(roomName);
         if (room != null) {
-            if (room.getStatus() != IRoomStatus.ROOM_STATUS_TASK_NEED_INITIALIZED &&
-                    room.getStatus() != IRoomStatus.ROOM_STATUS_WAIT) {
+            if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
+                modal = new FormWindowModal(PLUGIN_NAME, LANGUAGE.joinRoomIsNeedInitialized, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+            }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
+                    room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying, LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
-            }else if (room.getPlayers().size() > room.getMaxPlayers()) {
+                        PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying + "§7§k@" + roomName,
+                        LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
+            }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomIsFull, LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
+                        PLUGIN_NAME, LANGUAGE.joinRoomIsFull + "§7§k@" + roomName,
+                        LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
             }else {
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomOK.replace("%name%", "\"" + roomName + "\""),
+                        PLUGIN_NAME,
+                        LANGUAGE.joinRoomOK.replace("%name%", "\"" + roomName + "\"") + "§7§k@" + roomName,
                         LANGUAGE.buttonOK, LANGUAGE.buttonReturn);
             }
         }else {
-            modal = new FormWindowModal(
-                    PLUGIN_NAME, LANGUAGE.joinRoomIsNotFound, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+            modal = new FormWindowModal(PLUGIN_NAME, LANGUAGE.joinRoomIsNotFound, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
         }
         showFormWindow(player, modal, GuiType.ROOM_JOIN_OK);
     }

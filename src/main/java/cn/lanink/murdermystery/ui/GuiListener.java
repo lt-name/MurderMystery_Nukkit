@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.ui;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.utils.Language;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
@@ -107,14 +108,19 @@ public class GuiListener implements Listener {
         }else if (event.getWindow() instanceof FormWindowModal) {
             FormWindowModal modal = (FormWindowModal) event.getWindow();
             if (cache == GuiType.ROOM_JOIN_OK) {
-                //TODO
-                if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(this.language.buttonReturn)) {
-                    String[] s = modal.getContent().split("\"");
-                    MurderMystery.getInstance().getServer().dispatchCommand(
-                            player, uName + " join " + s[1].replace("§e§l", "").trim());
-                }else {
-                    GuiCreate.sendRoomListMenu(player);
+                try {
+                    String roomName = modal.getContent().split("§7§k@")[1];
+                    if (this.language.buttonOK.equals(modal.getResponse().getClickedButtonText())) {
+                        Server.getInstance().dispatchCommand(player, uName + " join " + roomName);
+                        return;
+                    }else if (this.language.buttonSpectator.equals(modal.getResponse().getClickedButtonText())) {
+                        Server.getInstance().dispatchCommand(player, uName + " joinspectator " + roomName);
+                        return;
+                    }
+                } catch (Exception ignored) {
+
                 }
+                GuiCreate.sendRoomListMenu(player);
             }
         }
     }
