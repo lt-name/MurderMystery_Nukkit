@@ -122,6 +122,7 @@ public class Language {
     public String killer = "杀手";
     public String detective = "侦探";
     public String death = "死亡";
+    public String spectator = "旁观";
     //游戏提示信息
     public String killPlayer = "§a你成功击杀了一位玩家！";
     public String killKiller = "§a你成功击杀了杀手！";
@@ -282,6 +283,7 @@ public class Language {
         this.killer = config.getString("killer", this.killer);
         this.detective = config.getString("detective", this.detective);
         this.death = config.getString("death", this.death);
+        this.spectator = config.getString("spectator", this.spectator);
         this.killPlayer = config.getString("killPlayer", this.killPlayer);
         this.killKiller = config.getString("killKiller", this.killKiller);
         this.deathTitle = config.getString("deathTitle", this.deathTitle);

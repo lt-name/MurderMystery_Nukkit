@@ -347,6 +347,22 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
             }
             this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
         }
+        //旁观玩家只显示部分信息
+        identity = this.language.spectator;
+        for (Player player : this.spectatorPlayers) {
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.gameTimeScoreBoard
+                    .replace("%roomMode%", Tools.getStringRoomMode(this))
+                    .replace("%identity%", identity)
+                    .replace("%playerNumber%", playerNumber + "")
+                    .replace("%time%", this.gameTime + "").split("\n")));
+            ms.add(" ");
+            if (detectiveSurvival) {
+                ms.addAll(Arrays.asList(this.language.detectiveSurvival.split("\n")));
+            }else {
+                ms.addAll(Arrays.asList(this.language.detectiveDeath.split("\n")));
+            }
+            this.murderMystery.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+        }
     }
 
     /**

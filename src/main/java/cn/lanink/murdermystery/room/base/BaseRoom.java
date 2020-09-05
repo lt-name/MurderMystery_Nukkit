@@ -48,7 +48,7 @@ public abstract class BaseRoom implements IRoomStatus {
     private final String levelName;
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
     protected final ConcurrentHashMap<Player, Integer> players = new ConcurrentHashMap<>(); //0未分配 1平民 2侦探 3杀手
-    protected final HashSet<Player> spectatorPlayers = new HashSet<>(); //旁观玩家
+    protected final Set<Player> spectatorPlayers = Collections.synchronizedSet(new HashSet<>()); //旁观玩家
     protected final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
     protected final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
 
