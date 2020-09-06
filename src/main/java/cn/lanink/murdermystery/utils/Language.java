@@ -93,6 +93,7 @@ public class Language {
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
     public String playerChat = "§a[房间]§f %player%§b >>>§f %message%";
     public String playerDeathChat = "§c[死亡]§f %player%§b >>>§f %message%";
+    public String playerSpectatorChat = "§a[旁观]§f %player%§b >>>§f %message%";
     public String tpJoinRoomLevel = "§e >> §c要进入游戏地图，请先加入游戏！";
     public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
     //道具
@@ -257,6 +258,7 @@ public class Language {
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
         this.playerChat = config.getString("playerChat", this.playerChat);
         this.playerDeathChat = config.getString("playerDeathChat", this.playerDeathChat);
+        this.playerSpectatorChat = config.getString("playerSpectatorChat", this.playerSpectatorChat);
         this.tpJoinRoomLevel = config.getString("tpJoinRoomLevel", this.tpJoinRoomLevel);
         this.tpQuitRoomLevel = config.getString("tpQuitRoomLevel", this.tpQuitRoomLevel);
         this.itemDetectiveBow = config.getString("itemDetectiveBow", this.itemDetectiveBow);

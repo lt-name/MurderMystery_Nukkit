@@ -89,6 +89,7 @@ adminReload: "§a설정 다시 불러오기 성공! 백그라운드에서 정보
 adminUnload: "§a모든 방 언로드 성공! 백그라운드에서 정보를 확인하세요!"
 playerChat: "§a[방]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[사망] %player§b >>> %message%"
+playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 월드에 참가하세요."
 tpQuitRoomLevel: "§e >> §c명령어를 사용하여 방을 종료하세요."
 itemDetectiveBow: "§e형사들의 활"

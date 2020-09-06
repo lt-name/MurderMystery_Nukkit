@@ -274,7 +274,7 @@ public abstract class BaseRoom implements IRoomStatus {
             this.skinNumber.remove(player);
             this.skinCache.remove(player);
         }
-        MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
+        this.murderMystery.getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(player);
@@ -321,7 +321,7 @@ public abstract class BaseRoom implements IRoomStatus {
      * @return 身份
      */
     public int getPlayers(Player player) {
-        if (isPlaying(player)) {
+        if (this.isPlaying(player)) {
             return this.players.get(player);
         }else {
             return 0;
