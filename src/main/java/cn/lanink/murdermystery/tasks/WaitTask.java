@@ -44,21 +44,30 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     for (Player player : this.room.getPlayers().keySet()) {
                         player.sendTitle(title, "", 0, 15, 5);
                     }
+                    for (Player player : this.room.getSpectatorPlayers()) {
+                        player.sendTitle(title, "", 0, 15, 5);
+                    }
                 }
+                String waitTimeBottom = this.language.waitTimeBottom
+                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                        .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                        .replace("%time%", this.room.waitTime + "");
+                LinkedList<String> ms =  new LinkedList<>(Arrays.asList(this.language.waitTimeScoreBoard
+                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                        .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                        .replace("%maxPlayers%", this.room.getMaxPlayers() + "")
+                        .replace("%time%", this.room.waitTime + "").split("\n")));
                 for (Player player : this.room.getPlayers().keySet()) {
-                    String waitTimeBottom = this.language.waitTimeBottom
-                            .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                            .replace("%playerNumber%", this.room.getPlayers().size() + "")
-                            .replace("%time%", this.room.waitTime + "");
                     if (!"".equals(waitTimeBottom.trim())) {
                         player.sendTip(waitTimeBottom);
                     }
-                    owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle,
-                            new LinkedList<>(Arrays.asList(this.language.waitTimeScoreBoard
-                                    .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                                    .replace("%playerNumber%", this.room.getPlayers().size() + "")
-                                    .replace("%maxPlayers%", this.room.getMaxPlayers() + "")
-                                    .replace("%time%", this.room.waitTime + "").split("\n"))));
+                    owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle, ms);
+                }
+                for (Player player : this.room.getSpectatorPlayers()) {
+                    if (!"".equals(waitTimeBottom.trim())) {
+                        player.sendTip(waitTimeBottom);
+                    }
+                    owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle, ms);
                 }
             }else {
                 this.room.gameStartEvent();
@@ -68,21 +77,27 @@ public class WaitTask extends PluginTask<MurderMystery> {
             if (this.room.waitTime != this.room.setWaitTime) {
                 this.room.waitTime = this.room.setWaitTime;
             }
+            String waitBottom = this.language.waitBottom
+                    .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                    .replace("%playerNumber%", this.room.getPlayers().size() + "");
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.waitScoreBoard
+                    .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                    .replace("%playerNumber%", room.getPlayers().size() + "")
+                    .replace("%minPlayers%", this.room.getMinPlayers() + "")
+                    .replace("%maxPlayers%", this.room.getMaxPlayers() + "").split("\n")));
             for (Player player : this.room.getPlayers().keySet()) {
-                String waitBottom = this.language.waitBottom
-                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                        .replace("%playerNumber%", this.room.getPlayers().size() + "");
                 if (!"".equals(waitBottom.trim())) {
-                    player.sendActionBar(waitBottom);
+                    player.sendTip(waitBottom);
                 }
-                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle,
-                        new LinkedList<>(Arrays.asList(this.language.waitScoreBoard
-                                .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                                .replace("%playerNumber%", room.getPlayers().size() + "")
-                                .replace("%minPlayers%", this.room.getMinPlayers() + "")
-                                .replace("%maxPlayers%", this.room.getMaxPlayers() + "").split("\n"))));
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
             }
-        }else {
+            for (Player player : this.room.getSpectatorPlayers()) {
+                if (!"".equals(waitBottom.trim())) {
+                    player.sendTip(waitBottom);
+                }
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+            }
+        }else if (this.room.getPlayers().isEmpty() && this.room.getSpectatorPlayers().isEmpty()) {
             this.room.endGameEvent();
             this.cancel();
         }

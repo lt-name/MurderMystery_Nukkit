@@ -76,6 +76,10 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
             player.teleport(this.getRandomSpawn().get(x));
             x++;
         }
+        LinkedList<Player> gamePlayers = new LinkedList<>(this.spectatorPlayers);
+        for (Player player : this.getSpectatorPlayers()) {
+            player.teleport(gamePlayers.get(MurderMystery.RANDOM.nextInt(gamePlayers.size())));
+        }
     }
 
     /**

@@ -26,7 +26,7 @@ public class QuitRoom extends BaseSubCommand {
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
         for (BaseRoom room : this.murderMystery.getRooms().values()) {
-            if (room.isPlaying(player)) {
+            if (room.isPlaying(player) || room.isSpectator(player)) {
                 room.quitRoom(player);
                 sender.sendMessage(this.language.quitRoom);
                 return true;
