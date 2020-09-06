@@ -308,6 +308,13 @@ public abstract class BaseRoom implements IRoomStatus {
     }
 
     /**
+     * @return 观战玩家
+     */
+    public Set<Player> getSpectatorPlayers() {
+        return this.spectatorPlayers;
+    }
+
+    /**
      * 获取玩家身份
      *
      * @param player 玩家
