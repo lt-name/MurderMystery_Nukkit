@@ -102,7 +102,6 @@ public class GuiCreate {
      * @param roomName 房间名字
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
-        //TODO 观战
         FormWindowModal modal;
         roomName = roomName.replace("§e§l", "").trim();
         BaseRoom room = MurderMystery.getInstance().getRooms().get(roomName);
@@ -111,9 +110,13 @@ public class GuiCreate {
                 modal = new FormWindowModal(PLUGIN_NAME, LANGUAGE.joinRoomIsNeedInitialized, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
             }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
                     room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
+                String button1 = LANGUAGE.buttonSpectator;
+                if (room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
+                    button1 = LANGUAGE.buttonReturn;
+                }
                 modal = new FormWindowModal(
                         PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying + "§7§k@" + roomName,
-                        LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
+                        button1, LANGUAGE.buttonReturn);
             }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, LANGUAGE.joinRoomIsFull + "§7§k@" + roomName,
