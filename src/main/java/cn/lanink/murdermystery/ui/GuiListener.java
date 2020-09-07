@@ -18,12 +18,10 @@ public class GuiListener implements Listener {
 
     private final Server server;
     private final MurderMystery murderMystery;
-    private final Language language;
 
     public GuiListener(MurderMystery murderMystery) {
         this.server = murderMystery.getServer();
         this.murderMystery = murderMystery;
-        this.language = murderMystery.getLanguage();
     }
 
     /**
@@ -37,6 +35,7 @@ public class GuiListener implements Listener {
         if (player == null || event.getWindow() == null || event.getResponse() == null) {
             return;
         }
+        Language language = this.murderMystery.getLanguage(player);
         GuiType cache = GuiCreate.UI_CACHE.containsKey(player) ? GuiCreate.UI_CACHE.get(player).get(event.getFormID()) : null;
         if (cache == null) {
             return;
@@ -61,7 +60,7 @@ public class GuiListener implements Listener {
                     }
                     break;
                 case ROOM_LIST_MENU:
-                    if (simple.getResponse().getClickedButton().getText().equals(this.language.buttonReturn)) {
+                    if (simple.getResponse().getClickedButton().getText().equals(language.buttonReturn)) {
                         GuiCreate.sendUserMenu(player);
                     }else {
                         GuiCreate.sendRoomJoinOkMenu(player,
@@ -119,10 +118,10 @@ public class GuiListener implements Listener {
             if (cache == GuiType.ROOM_JOIN_OK) {
                 try {
                     String roomName = modal.getContent().split("§7§k@")[1];
-                    if (this.language.buttonOK.equals(modal.getResponse().getClickedButtonText())) {
+                    if (language.buttonOK.equals(modal.getResponse().getClickedButtonText())) {
                         this.server.dispatchCommand(player, uName + " join " + roomName);
                         return;
-                    }else if (this.language.buttonSpectator.equals(modal.getResponse().getClickedButtonText())) {
+                    }else if (language.buttonSpectator.equals(modal.getResponse().getClickedButtonText())) {
                         this.server.dispatchCommand(player, uName + " joinspectator " + roomName);
                         return;
                     }
