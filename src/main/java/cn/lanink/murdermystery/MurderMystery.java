@@ -133,7 +133,7 @@ public class MurderMystery extends PluginBase {
         saveResource("Resources/Language/vi_VN.yml", false);
         this.defaultLanguage = this.config.getString("defaultLanguage", "zh_CN");
         this.languageMappingTable.putAll(this.config.get("languageMappingTable", new HashMap<>()));
-        File[] files = new File(getDataFolder() + "/Language").listFiles();
+        File[] files = new File(getDataFolder() + "/Resources/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
                 String name = file.getName().split("\\.")[0];
