@@ -11,6 +11,8 @@ public enum GuiType {
     ADMIN_MENU,
     //设置时间界面
     ADMIN_TIME_MENU,
+    //设置房间游戏人数界面
+    ADMIN_PLAYERS_MENU,
     //设置房间游戏模式界面
     ADMIN_MODE_MENU,
     //房间列表

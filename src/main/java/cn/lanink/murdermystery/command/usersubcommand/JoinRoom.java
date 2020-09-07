@@ -1,11 +1,15 @@
 package cn.lanink.murdermystery.command.usersubcommand;
 
+import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+
+import java.util.LinkedList;
 
 public class JoinRoom extends BaseSubCommand {
 
@@ -38,34 +42,52 @@ public class JoinRoom extends BaseSubCommand {
                 }
             }
             if (args.length < 2) {
+                LinkedList<BaseRoom> rooms = new LinkedList<>();
                 for (BaseRoom room : this.murderMystery.getRooms().values()) {
-                    if ((room.getStatus() == 0 || room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) &&
-                            room.getPlayers().size() < room.getMaxPlayers()) {
-                        room.joinRoom(player);
-                        sender.sendMessage(this.language.joinRandomRoom);
-                        return true;
+                    if (room.canJoin()) {
+                        if (room.getPlayers().size() > 0) {
+                            room.joinRoom(player);
+                            sender.sendMessage(this.language.joinRandomRoom);
+                            return true;
+                        }
+                        rooms.add(room);
                     }
+                }
+                if (rooms.size() > 0) {
+                    BaseRoom room = rooms.get(MurderMystery.RANDOM.nextInt(rooms.size()));
+                    room.joinRoom(player);
+                    sender.sendMessage(this.language.joinRandomRoom);
+                    return true;
                 }
             }else {
                 String[] s = args[1].split(":");
                 if (s.length == 2 && s[0].toLowerCase().trim().equals("mode")) {
                     String modeName = s[1].toLowerCase().trim();
+                    LinkedList<BaseRoom> rooms = new LinkedList<>();
                     for (BaseRoom room : this.murderMystery.getRooms().values()) {
-                        if ((room.getStatus() == 0 || room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) &&
-                                room.getPlayers().size() < room.getMaxPlayers()) {
-                            if (room.getGameMode().equals(modeName)) {
+                        if (room.canJoin() && room.getGameMode().equals(modeName)) {
+                            if (room.getPlayers().size() > 0) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.language.joinRandomRoom);
                                 return true;
                             }
+                            rooms.add(room);
                         }
+                    }
+                    if (rooms.size() > 0) {
+                        BaseRoom room = rooms.get(MurderMystery.RANDOM.nextInt(rooms.size()));
+                        room.joinRoom(player);
+                        sender.sendMessage(this.language.joinRandomRoom);
+                        return true;
                     }
                     sender.sendMessage(this.language.joinRoomIsNotFound);
                     return true;
                 }else if (this.murderMystery.getRooms().containsKey(args[1])) {
                     BaseRoom room = this.murderMystery.getRooms().get(args[1]);
-                    if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME ||
-                            room.getStatus() == BaseRoom.ROOM_STATUS_VICTORY) {
+                    if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
+                        sender.sendMessage(this.language.joinRoomIsNeedInitialized);
+                    }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
+                            room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
                         sender.sendMessage(this.language.joinRoomIsPlaying);
                     }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                         sender.sendMessage(this.language.joinRoomIsFull);

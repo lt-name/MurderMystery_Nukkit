@@ -6,13 +6,12 @@ import cn.lanink.murdermystery.command.UserCommand;
 import cn.lanink.murdermystery.lib.scoreboard.IScoreboard;
 import cn.lanink.murdermystery.lib.scoreboard.ScoreboardDe;
 import cn.lanink.murdermystery.lib.scoreboard.ScoreboardGt;
-import cn.lanink.murdermystery.listener.PlayerDamageListener;
-import cn.lanink.murdermystery.listener.PlayerGameListener;
-import cn.lanink.murdermystery.listener.PlayerJoinAndQuit;
-import cn.lanink.murdermystery.listener.RoomLevelProtection;
-import cn.lanink.murdermystery.room.BaseRoom;
-import cn.lanink.murdermystery.room.ClassicModeRoom;
-import cn.lanink.murdermystery.room.InfectedModeRoom;
+import cn.lanink.murdermystery.listener.base.IMurderMysteryListener;
+import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
+import cn.lanink.murdermystery.listener.defaults.*;
+import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
+import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
@@ -34,9 +33,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * MurderMystery
@@ -63,7 +60,9 @@ public class MurderMystery extends PluginBase {
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
-    private List<String> temporaryRooms; //临时房间
+    private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
+    private static final HashMap<String, Class<? extends IMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
+    private final HashMap<String, IMurderMysteryListener> murderMysteryListeners = new HashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
@@ -114,7 +113,7 @@ public class MurderMystery extends PluginBase {
             }
         }
         this.temporaryRoomsConfig = new Config(this.getDataFolder() + "/temporaryRoomList.yml", Config.YAML);
-        this.temporaryRooms = this.temporaryRoomsConfig.getStringList("temporaryRooms");
+        this.temporaryRooms = new CopyOnWriteArrayList<>(this.temporaryRoomsConfig.getStringList("temporaryRooms"));
         this.removeAllTemporaryRoom();
         this.restoreWorld = this.config.getBoolean("restoreWorld", false);
         this.automaticExpansionRoom = this.config.getBoolean("automaticExpansionRoom", false);
@@ -138,6 +137,12 @@ public class MurderMystery extends PluginBase {
         }
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
+        //注册监听器
+        registerListener("RoomLevelProtection", RoomLevelProtection.class);
+        registerListener("DefaultGameListener", DefaultGameListener.class);
+        registerListener("DefaultChatListener", DefaultChatListener.class);
+        registerListener("DefaultDamageListener", DefaultDamageListener.class);
+        registerListener("ClassicGameListener", ClassicGameListener.class);
         //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("infected", InfectedModeRoom.class);
@@ -177,18 +182,16 @@ public class MurderMystery extends PluginBase {
         } catch (Exception ignored) {
 
         }
-        this.loadResources();
-        this.loadRooms();
-        this.loadSkins();
         getServer().getCommandMap().register("",
                 new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
         getServer().getCommandMap().register("",
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
-        getServer().getPluginManager().registerEvents(new RoomLevelProtection(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.loadAllListener();
+        this.loadResources();
+        this.loadRooms();
+        this.loadSkins();
         //启用扩展-使用task保证在所有插件都加载完后加载扩展
         getServer().getScheduler().scheduleTask(this, new Task() {
             @Override
@@ -241,12 +244,41 @@ public class MurderMystery extends PluginBase {
         ROOM_CLASS.put(name, roomClass);
     }
 
+    public static void registerListener(String name, Class<? extends IMurderMysteryListener> listenerClass) {
+        LISTENER_CLASS.put(name, listenerClass);
+    }
+
+    public void loadAllListener() {
+        for (Map.Entry<String, Class<? extends IMurderMysteryListener>> entry : LISTENER_CLASS.entrySet()) {
+            try {
+                Constructor<? extends IMurderMysteryListener> constructor = entry.getValue().getConstructor(MurderMystery.class);
+                IMurderMysteryListener murderMysteryListener = constructor.newInstance(this);
+                murderMysteryListener.setListenerName(entry.getKey());
+                this.loadListener(murderMysteryListener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void loadListener(IMurderMysteryListener iMurderMysteryListener) {
+        this.murderMysteryListeners.put(iMurderMysteryListener.getListenerName(), iMurderMysteryListener);
+        this.getServer().getPluginManager().registerEvents(iMurderMysteryListener, this);
+        if (debug) {
+            this.getLogger().info("[debug] registerListener: " + iMurderMysteryListener.getListenerName());
+        }
+    }
+
     public static boolean hasRoomClass(String name) {
         return ROOM_CLASS.containsKey(name);
     }
 
     public static LinkedHashMap<String, Class<? extends BaseRoom>> getRoomClass() {
         return ROOM_CLASS;
+    }
+
+    public HashMap<String, IMurderMysteryListener> getMurderMysteryListeners() {
+        return this.murderMysteryListeners;
     }
 
     public Language getLanguage() {
@@ -348,20 +380,22 @@ public class MurderMystery extends PluginBase {
         if (!this.temporaryRooms.contains(levelName)) {
             return;
         }
-        this.temporaryRooms.remove(levelName);
-        this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
-        this.temporaryRoomsConfig.save();
         this.unloadRoom(levelName);
         Level level = this.getServer().getLevelByName(levelName);
         if (level != null) {
             this.getServer().unloadLevel(level);
         }
-        Tools.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
-        Tools.deleteFile(this.getServerWorldPath() + levelName);
-        Tools.deleteFile(this.getWorldBackupPath() + levelName);
-        if (debug) {
-            this.getLogger().info("临时房间: " + levelName + " 已删除");
-        }
+        CompletableFuture.runAsync(() -> {
+            Tools.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
+            Tools.deleteFile(this.getServerWorldPath() + levelName);
+            Tools.deleteFile(this.getWorldBackupPath() + levelName);
+            this.temporaryRooms.remove(levelName);
+            this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
+            this.temporaryRoomsConfig.save();
+            if (debug) {
+                this.getLogger().info("临时房间: " + levelName + " 已删除");
+            }
+        });
     }
 
     public Config getRoomConfig(Level level) {
@@ -491,6 +525,9 @@ public class MurderMystery extends PluginBase {
             while(it.hasNext()){
                 Map.Entry<String, BaseRoom> entry = it.next();
                 entry.getValue().endGameEvent();
+                for (IMurderMysteryListener listener : this.murderMysteryListeners.values()) {
+                    listener.removeListenerRoom(entry.getValue());
+                }
                 getLogger().info(this.language.roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();
             }
@@ -519,6 +556,9 @@ public class MurderMystery extends PluginBase {
     public void unloadRoom(String roomName) {
         if (this.rooms.containsKey(roomName)) {
             this.rooms.get(roomName).endGameEvent();
+            for (IMurderMysteryListener listener : this.murderMysteryListeners.values()) {
+                listener.removeListenerRoom(roomName);
+            }
             this.rooms.remove(roomName);
             getLogger().info(this.language.roomUnloadSuccess.replace("%name%", roomName));
         }

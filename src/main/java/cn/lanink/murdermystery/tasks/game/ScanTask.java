@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.PluginTask;

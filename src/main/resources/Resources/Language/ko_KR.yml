@@ -32,7 +32,10 @@ cmdHelp: "§a도움말 보는 방법:/%cmdName% help"
 userHelp: |-
   §e머더 미스터리--도움말
   §a/%cmdName% §eUI 열기
+  §a/%cmdName% join §eJoin a random game
+  §a/%cmdName% join mode:<gameMode> §eJoin the specified mode game
   §a/%cmdName% join <방 이름> §e게임 참가하기
+  §a/%cmdName% joinspectator <roomName> §eWatch the battle
   §a/%cmdName% quit §e게임 나가기
   §a/%cmdName% list §e방 목록 보기
 noPermission: "§c이 명령어를 실행하기 위한 권한이 부족합니다!"
@@ -40,6 +43,7 @@ joinRoom: "§a%name%님이 방에 입장하였습니다!"
 joinRoomOnRoom: "§c이미 방 안에 있습니다!"
 joinRoomOnRiding: "§a탑승하고 있는 동안에는 입장할 수 없습니다!"
 joinRandomRoom: "§a임의로 배정된 방입니다!"
+joinRoomIsNeedInitialized: "§aThe room is initializing, please wait..."
 joinRoomIsPlaying: "§a이 방은 이미 게임 진행 중입니다, 잠시 후 다시 시도해주세요!"
 joinRoomIsFull: "§a이 방은 꽉 찼습니다, 잠시 후 다시 시도해주세요!"
 joinRoomIsNotFound: "§a방을 찾을 수 없습니다!"
@@ -85,6 +89,7 @@ adminReload: "§a설정 다시 불러오기 성공! 백그라운드에서 정보
 adminUnload: "§a모든 방 언로드 성공! 백그라운드에서 정보를 확인하세요!"
 playerChat: "§a[방]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[사망] %player§b >>> %message%"
+playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 월드에 참가하세요."
 tpQuitRoomLevel: "§e >> §c명령어를 사용하여 방을 종료하세요."
 itemDetectiveBow: "§e형사들의 활"
@@ -132,6 +137,7 @@ commonPeople: "시민"
 killer: "머더"
 detective: "형사"
 death: "사망"
+spectator: "Spectator"
 killPlayer: "§a한 명을 죽였습니다!"
 killKiller: "§a머더를 죽였습니다!"
 deathTitle: "§c사망"
@@ -189,12 +195,14 @@ adminMenuButton1: "§e기본 생성 지점 지정하기"
 adminMenuButton2: "§e무작위 생성 지점 추가하기"
 adminMenuButton3: "§e금괴 생성 지점 추가하기"
 adminMenuButton4: "§e시간 관련 설정하기"
-adminMenuButton5: "§e방 모드 설정하기"
-adminMenuButton6: "§e모든 방들 다시 불러오기"
-adminMenuButton7: "§c모든 방들 지우기"
+adminMenuButton5: "§eSet the number of players"
+adminMenuButton6: "§e방 모드 설정하기"
+adminMenuButton7: "§e모든 방들 다시 불러오기"
+adminMenuButton8: "§c모든 방들 지우기"
 adminTimeMenuInputText1: "각 금괴 생성 간격"
 adminTimeMenuInputText2: "대기 시간"
 adminTimeMenuInputText3: "게임 진행 시간"
 joinRoomOK: "§l§a방 참가하기: %name% §l§a"
+buttonSpectator: "§aSpectator"
 buttonOK: "§a수락"
 buttonReturn: "§c뒤로 돌아가기"

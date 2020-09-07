@@ -1,12 +1,17 @@
-package cn.lanink.murdermystery.room;
+package cn.lanink.murdermystery.room.base;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.event.*;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
+import cn.lanink.murdermystery.tasks.game.TimeTask;
+import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.Language;
+import cn.lanink.murdermystery.utils.SavePlayerInventory;
+import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.lanink.murdermystery.utils.exception.RoomLoadException;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -18,6 +23,7 @@ import cn.nukkit.utils.Config;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 房间抽象类
@@ -25,28 +31,24 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author lt_name
  */
-public abstract class BaseRoom {
+public abstract class BaseRoom implements IRoomStatus {
 
     private String gameMode = null;
     protected MurderMystery murderMystery = MurderMystery.getInstance();
     protected Language language = MurderMystery.getInstance().getLanguage();
-    public static final int ROOM_STATUS_LEVEL_NOT_LOADED = -1;
-    public static final int ROOM_STATUS_TASK_NEED_INITIALIZED = 0;
-    public static final int ROOM_STATUS_WAIT = 1;
-    public static final int ROOM_STATUS_GAME = 2;
-    public static final int ROOM_STATUS_VICTORY = 3;
-    protected int status; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
+    protected int status;
     protected int minPlayers, maxPlayers; //房间人数
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime; //秒
     public int effectCD, swordCD, scanCD; //杀手技能CD
     protected final List<Position> randomSpawn = new ArrayList<>();
-    protected final List<Vector3> goldSpawn = new ArrayList<>();
+    protected final List<Vector3> goldSpawnVector3List = new ArrayList<>();
     protected final Position waitSpawn;
     protected Level level;
     private final String levelName;
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
-    protected final HashMap<Player, Integer> players = new HashMap<>(); //0未分配 1平民 2侦探 3杀手
+    protected final ConcurrentHashMap<Player, Integer> players = new ConcurrentHashMap<>(); //0未分配 1平民 2侦探 3杀手
+    protected final Set<Player> spectatorPlayers = Collections.synchronizedSet(new HashSet<>()); //旁观玩家
     protected final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
     protected final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
 
@@ -95,12 +97,13 @@ public abstract class BaseRoom {
         }
         for (String string : config.getStringList("goldSpawn")) {
             String[] s = string.split(":");
-            this.goldSpawn.add(new Vector3(
+            this.goldSpawnVector3List.add(new Vector3(
                     Integer.parseInt(s[0]),
                     Integer.parseInt(s[1]),
                     Integer.parseInt(s[2])));
         }
         this.initTime();
+        this.enableListener();
         this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
     }
 
@@ -112,6 +115,20 @@ public abstract class BaseRoom {
 
     public final String getGameMode() {
         return this.gameMode;
+    }
+
+    /**
+     * @param status 房间状态
+     */
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    /**
+     * @return 房间状态
+     */
+    public int getStatus() {
+        return this.status;
     }
 
     /**
@@ -140,28 +157,24 @@ public abstract class BaseRoom {
     }
 
     /**
+     * 启用监听器
+     */
+    public void enableListener() {
+        this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
+    }
+
+    /**
      * 初始化Task
      */
     protected void initTask() {
         if (this.status != 1) {
             this.setStatus(1);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    MurderMystery.getInstance(), new WaitTask(MurderMystery.getInstance(), this), 20);
+                    MurderMystery.getInstance(), new WaitTask(this.murderMystery, this), 20);
         }
-    }
-
-    /**
-     * @param status 房间状态
-     */
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    /**
-     * @return 房间状态
-     */
-    public int getStatus() {
-        return this.status;
     }
 
     /**
@@ -194,32 +207,112 @@ public abstract class BaseRoom {
     }
 
     /**
+     * @return 是否可以加入房间
+     */
+    public boolean canJoin() {
+        return (this.status == ROOM_STATUS_TASK_NEED_INITIALIZED || this.status == ROOM_STATUS_WAIT) &&
+                this.players.size() < this.getMaxPlayers();
+    }
+
+    public synchronized void joinRoom(Player player) {
+        this.joinRoom(player, false);
+    }
+
+    /**
      * 加入房间
      *
      * @param player 玩家
+     * @param spectator 观战
      */
-    public abstract void joinRoom(Player player);
+    public void joinRoom(Player player, boolean spectator) {
+        if (this.status < 0 || this.status > 2) {
+            return;
+        }
+        if (this.status == 0) {
+            this.initTask();
+        }
+        SavePlayerInventory.save(player);
+        Tools.rePlayerState(player, true);
+        Tools.giveItem(player, 10);
+        if (this.murderMystery.isHasTips()) {
+            Tips.closeTipsShow(this.level.getName(), player);
+        }
+        player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
+        if (spectator || this.status == ROOM_STATUS_GAME || this.players.size() >= this.getMaxPlayers()) {
+            this.spectatorPlayers.add(player);
+            player.teleport(this.randomSpawn.get(MurderMystery.RANDOM.nextInt(this.randomSpawn.size())));
+            player.setGamemode(3);
+            player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false);
+            player.getAdventureSettings().update();
+            Tools.hidePlayer(this, player);
+        }else {
+            this.players.put(player, 0);
+            this.setRandomSkin(player);
+            player.teleport(this.getWaitSpawn());
+            this.autoExpansionRoom();
+        }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+            if (player.level != this.level) {
+                this.quitRoom(player);
+            }
+        }, 20);
+    }
 
     /**
      * 退出房间
      *
      * @param player 玩家
      */
-    public abstract void quitRoom(Player player);
+    public synchronized void quitRoom(Player player) {
+        this.players.remove(player);
+        if (this.murderMystery.isHasTips()) {
+            Tips.removeTipsConfig(this.level.getName(), player);
+        }
+        if (this.spectatorPlayers.contains(player)) {
+            this.spectatorPlayers.remove(player);
+        }else {
+            this.restorePlayerSkin(player);
+            this.skinNumber.remove(player);
+            this.skinCache.remove(player);
+        }
+        this.murderMystery.getScoreboard().closeScoreboard(player);
+        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        Tools.rePlayerState(player, false);
+        SavePlayerInventory.restore(player);
+        for (Player p : this.players.keySet()) {
+            p.showPlayer(player);
+            player.showPlayer(p);
+        }
+    }
 
     /**
-     * @return boolean 玩家是否在游戏里
      * @param player 玩家
+     * @return boolean 玩家是否在游戏里
      */
     public boolean isPlaying(Player player) {
         return this.players.containsKey(player);
     }
 
     /**
+     * @param player 玩家
+     * @return 是否是旁观者（观战）
+     */
+    public boolean isSpectator(Player player) {
+        return this.spectatorPlayers.contains(player);
+    }
+
+    /**
      * @return 玩家列表
      */
-    public HashMap<Player, Integer> getPlayers() {
+    public ConcurrentHashMap<Player, Integer> getPlayers() {
         return this.players;
+    }
+
+    /**
+     * @return 观战玩家
+     */
+    public Set<Player> getSpectatorPlayers() {
+        return this.spectatorPlayers;
     }
 
     /**
@@ -229,7 +322,7 @@ public abstract class BaseRoom {
      * @return 身份
      */
     public int getPlayers(Player player) {
-        if (isPlaying(player)) {
+        if (this.isPlaying(player)) {
             return this.players.get(player);
         }else {
             return 0;
@@ -253,8 +346,8 @@ public abstract class BaseRoom {
     /**
      * @return 金锭产出地点
      */
-        public List<Vector3> getGoldSpawn() {
-        return this.goldSpawn;
+    public List<Vector3> getGoldSpawnVector3List() {
+        return this.goldSpawnVector3List;
     }
 
     /**
@@ -264,6 +357,9 @@ public abstract class BaseRoom {
         return this.level;
     }
 
+    /**
+     * @return 游戏世界名称
+     */
     public final String getLevelName() {
         return this.levelName;
     }
@@ -280,34 +376,27 @@ public abstract class BaseRoom {
         return player.getSkin();
     }
 
-    public final void gameStartEvent() {
+    public synchronized final void gameStartEvent() {
+        if (this.status == ROOM_STATUS_GAME || this.status == ROOM_STATUS_VICTORY) {
+            return;
+        }
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
         this.gameStart();
-        //自动扩容
-        if (this.murderMystery.isAutomaticExpansionRoom()) {
-            CompletableFuture.runAsync(() -> {
-                LinkedList<String> cache = new LinkedList<>();
-                int x = 0;
-                for (Map.Entry<String, BaseRoom> entry : this.murderMystery.getRooms().entrySet()) {
-                    if (this.getGameMode().equals(entry.getValue().getGameMode())) {
-                        cache.add(entry.getKey());
-                        if (entry.getValue().getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED ||
-                                entry.getValue().getStatus() == ROOM_STATUS_WAIT) {
-                            x++;
-                        }
-                    }
-                }
-                if (x == 0 && cache.size() > 0) {
-                    this.murderMystery.addTemporaryRoom(cache.get(MurderMystery.RANDOM.nextInt(cache.size())));
-                }
-            }, MurderMystery.checkRoomThreadPool);
-        }
+        this.scheduleTask();
+        this.autoExpansionRoom();
     }
 
     /**
      * 房间开始游戏
      */
     protected abstract void gameStart();
+
+    public void scheduleTask() {
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                MurderMystery.getInstance(), new TimeTask(this.murderMystery, this.getTimeTask()), 20);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                MurderMystery.getInstance(), new TipsTask(this.murderMystery, this.getTipsTask()), 18, true);
+    }
 
     /**
      * 结束本局游戏
@@ -317,6 +406,9 @@ public abstract class BaseRoom {
     }
 
     public final synchronized void endGameEvent(int victory) {
+        if (this.status == ROOM_STATUS_LEVEL_NOT_LOADED) {
+            return;
+        }
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomEndEvent(this, victory));
         this.endGame(victory);
         if (this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
@@ -333,57 +425,14 @@ public abstract class BaseRoom {
     protected abstract void endGame(int victory);
 
     /**
-     * 还原房间地图
+     * @return 计时Task
      */
-    protected void restoreWorld() {
-        if (!this.murderMystery.isRestoreWorld() ||
-                this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
-            return;
-        }
-        this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
-        if (MurderMystery.debug) {
-            murderMystery.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");
-        }
-        Server.getInstance().unloadLevel(this.level);
-        File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
-        File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
-        if (!backup.exists()) {
-            this.murderMystery.getLogger().error(this.language.roomLevelBackupNotExist.replace("%name%", this.levelName));
-            this.murderMystery.unloadRoom(this.levelName);
-        }
-        CompletableFuture.runAsync(() -> {
-            if (Tools.deleteFile(levelFile) && Tools.copyDir(backup, levelFile)) {
-                Server.getInstance().loadLevel(this.levelName);
-                this.level = Server.getInstance().getLevelByName(this.levelName);
-                this.waitSpawn.setLevel(this.level);
-                for (Position position : this.randomSpawn) {
-                    position.setLevel(this.level);
-                }
-                this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
-                if (MurderMystery.debug) {
-                    this.murderMystery.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
-                }
-            }else {
-                this.murderMystery.getLogger().error(this.language.roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
-                this.murderMystery.unloadRoom(this.levelName);
-            }
-        });
-    }
+    public abstract ITimeTask getTimeTask();
 
     /**
-     * 计时Task
+     * @return 显示Task
      */
-    public abstract void asyncTimeTask();
-
-    /**
-     * 金锭生成
-     */
-    public abstract void goldSpawn();
-
-    /**
-     * 异步金锭Task
-     */
-    public abstract void asyncGoldTask();
+    public abstract IAsyncTipsTask getTipsTask();
 
     public final void assignIdentityEvent() {
         MurderMysteryRoomAssignIdentityEvent ev = new MurderMysteryRoomAssignIdentityEvent(this);
@@ -457,13 +506,76 @@ public abstract class BaseRoom {
      * @param victoryMode 胜利队伍
      */
     protected void victory(int victoryMode) {
-        if (this.status != 3 && this.getPlayers().size() > 0) {
-            this.setStatus(3);
+        if (this.status != ROOM_STATUS_VICTORY && this.getPlayers().size() > 0) {
+            this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
                     new VictoryTask(this.murderMystery, this, victoryMode), 20);
         }else {
             this.endGameEvent();
         }
+    }
+
+    /**
+     * 检查是否需要生成临时房间
+     */
+    protected void autoExpansionRoom() {
+        if (this.murderMystery.isAutomaticExpansionRoom()) {
+            CompletableFuture.runAsync(() -> {
+                LinkedList<String> cache = new LinkedList<>();
+                int x = 0;
+                for (Map.Entry<String, BaseRoom> entry : this.murderMystery.getRooms().entrySet()) {
+                    if (this.getGameMode().equals(entry.getValue().getGameMode())) {
+                        cache.add(entry.getKey());
+                        if ((entry.getValue().getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED ||
+                                entry.getValue().getStatus() == ROOM_STATUS_WAIT) &&
+                                entry.getValue().players.size() < entry.getValue().getMaxPlayers()) {
+                            x++;
+                        }
+                    }
+                }
+                if (x == 0 && cache.size() > 0) {
+                    this.murderMystery.addTemporaryRoom(cache.get(MurderMystery.RANDOM.nextInt(cache.size())));
+                }
+            }, MurderMystery.checkRoomThreadPool);
+        }
+    }
+
+    /**
+     * 还原房间地图
+     */
+    protected void restoreWorld() {
+        if (!this.murderMystery.isRestoreWorld() ||
+                this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
+            return;
+        }
+        this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
+        if (MurderMystery.debug) {
+            murderMystery.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");
+        }
+        Server.getInstance().unloadLevel(this.level);
+        File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
+        File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
+        if (!backup.exists()) {
+            this.murderMystery.getLogger().error(this.language.roomLevelBackupNotExist.replace("%name%", this.levelName));
+            this.murderMystery.unloadRoom(this.levelName);
+        }
+        CompletableFuture.runAsync(() -> {
+            if (Tools.deleteFile(levelFile) && Tools.copyDir(backup, levelFile)) {
+                Server.getInstance().loadLevel(this.levelName);
+                this.level = Server.getInstance().getLevelByName(this.levelName);
+                this.waitSpawn.setLevel(this.level);
+                for (Position position : this.randomSpawn) {
+                    position.setLevel(this.level);
+                }
+                this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
+                if (MurderMystery.debug) {
+                    this.murderMystery.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
+                }
+            }else {
+                this.murderMystery.getLogger().error(this.language.roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
+                this.murderMystery.unloadRoom(this.levelName);
+            }
+        });
     }
 
 }

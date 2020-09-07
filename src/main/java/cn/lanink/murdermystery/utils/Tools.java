@@ -4,7 +4,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -54,6 +54,9 @@ public class Tools {
         for (Player p : room.getPlayers().keySet()) {
             p.showPlayer(player);
         }
+        for (Player p : room.getSpectatorPlayers()) {
+            p.showPlayer(player);
+        }
     }
 
     /**
@@ -64,6 +67,9 @@ public class Tools {
      */
     public static void hidePlayer(BaseRoom room, Player player) {
         for (Player p : room.getPlayers().keySet()) {
+            p.hidePlayer(player);
+        }
+        for (Player p : room.getSpectatorPlayers()) {
             p.hidePlayer(player);
         }
     }
@@ -257,8 +263,8 @@ public class Tools {
         }
     }
 
-    public static void sendMessage(BaseRoom baseRoom, String string) {
-        for (Player player : baseRoom.getPlayers().keySet()) {
+    public static void sendMessage(BaseRoom room, String string) {
+        for (Player player : room.getPlayers().keySet()) {
             player.sendMessage(string);
         }
     }

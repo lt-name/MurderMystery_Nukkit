@@ -1,7 +1,8 @@
 package cn.lanink.murdermystery.ui;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -49,9 +50,10 @@ public class GuiCreate {
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton6,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton7, new ElementButtonImageData("path", "textures/ui/redX1")));
+        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
+        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
+        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton7,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
+        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton8, new ElementButtonImageData("path", "textures/ui/redX1")));
         showFormWindow(player, simple, GuiType.ADMIN_MENU);
     }
 
@@ -65,6 +67,17 @@ public class GuiCreate {
         custom.addElement(new ElementInput(LANGUAGE.adminTimeMenuInputText2, "", "60"));
         custom.addElement(new ElementInput(LANGUAGE.adminTimeMenuInputText3, "", "300"));
         showFormWindow(player, custom, GuiType.ADMIN_TIME_MENU);
+    }
+
+    /**
+     * 设置房间游戏人数菜单
+     * @param player 玩家
+     */
+    public static void sendAdminPlayersMenu(Player player) {
+        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        custom.addElement(new ElementInput(LANGUAGE.adminPlayersMenuInputText1, "", "5"));
+        custom.addElement(new ElementInput(LANGUAGE.adminPlayersMenuInputText2, "", "16"));
+        showFormWindow(player, custom, GuiType.ADMIN_PLAYERS_MENU);
     }
 
     /**
@@ -102,22 +115,32 @@ public class GuiCreate {
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         FormWindowModal modal;
-        BaseRoom room = MurderMystery.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
+        roomName = roomName.replace("§e§l", "").trim();
+        BaseRoom room = MurderMystery.getInstance().getRooms().get(roomName);
         if (room != null) {
-            if (room.getStatus() == 2 || room.getStatus() == 3) {
+            if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
+                modal = new FormWindowModal(PLUGIN_NAME, LANGUAGE.joinRoomIsNeedInitialized, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+            }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
+                    room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
+                String button1 = LANGUAGE.buttonSpectator;
+                if (room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
+                    button1 = LANGUAGE.buttonReturn;
+                }
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
-            }else if (room.getPlayers().size() > 15){
+                        PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying + "§7§k@" + roomName,
+                        button1, LANGUAGE.buttonReturn);
+            }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomIsFull, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+                        PLUGIN_NAME, LANGUAGE.joinRoomIsFull + "§7§k@" + roomName,
+                        LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
             }else {
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomOK.replace("%name%", "\"" + roomName + "\""),
+                        PLUGIN_NAME,
+                        LANGUAGE.joinRoomOK.replace("%name%", "\"" + roomName + "\"") + "§7§k@" + roomName,
                         LANGUAGE.buttonOK, LANGUAGE.buttonReturn);
             }
         }else {
-            modal = new FormWindowModal(
-                    PLUGIN_NAME, LANGUAGE.joinRoomIsNotFound, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+            modal = new FormWindowModal(PLUGIN_NAME, LANGUAGE.joinRoomIsNotFound, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
         }
         showFormWindow(player, modal, GuiType.ROOM_JOIN_OK);
     }

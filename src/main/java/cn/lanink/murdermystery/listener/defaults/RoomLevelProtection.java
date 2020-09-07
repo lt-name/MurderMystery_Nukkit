@@ -1,11 +1,11 @@
-package cn.lanink.murdermystery.listener;
+package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
-import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.*;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.entity.ProjectileHitEvent;
@@ -24,12 +24,10 @@ import cn.nukkit.level.Level;
  * 游戏世界保护
  * @author lt_name
  */
-public class RoomLevelProtection implements Listener {
-
-    private final MurderMystery murderMystery;
+public class RoomLevelProtection extends BaseMurderMysteryListener {
 
     public RoomLevelProtection(MurderMystery murderMystery) {
-        this.murderMystery = murderMystery;
+        super(murderMystery);
     }
 
     /**
@@ -39,7 +37,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onCraft(CraftItemEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -51,7 +49,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onStartBrew(StartBrewEvent event) {
         Level level = event.getBrewingStand() == null ? null : event.getBrewingStand().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -67,7 +65,7 @@ public class RoomLevelProtection implements Listener {
             return;
         }
         Level level = event.getPlayer().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
             player.setAllowModifyWorld(false);
         }
@@ -80,7 +78,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onBlockFade(BlockFadeEvent event) {
         Level level = event.getBlock() == null ? null : event.getBlock().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -92,7 +90,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onBlockBurn(BlockBurnEvent event) {
         Level level = event.getBlock() == null ? null : event.getBlock().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -104,7 +102,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onBlockIgnite(BlockIgniteEvent event) {
         Level level = event.getBlock() == null ? null : event.getBlock().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -116,7 +114,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -128,7 +126,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onFrameDropItem(ItemFrameDropItemEvent event) {
         Level level = event.getItemFrame() == null ? null : event.getItemFrame().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -140,7 +138,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onFoodLevelChange(PlayerFoodLevelChangeEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -152,7 +150,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onDropItem(PlayerDropItemEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -164,7 +162,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onPickupArrow(InventoryPickupArrowEvent event) {
         Level level = event.getArrow() == null ? null : event.getArrow().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -176,7 +174,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.getEntity().close();
         }
     }
@@ -188,7 +186,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setKeepInventory(true);
             event.setKeepExperience(true);
         }
@@ -201,7 +199,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
-        if (level != null && this.murderMystery.getRooms().containsKey(level.getFolderName())) {
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
             event.setCancelled(false);
         }
     }
@@ -213,7 +211,7 @@ public class RoomLevelProtection implements Listener {
      */
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        if (event.getLevel() != null && this.murderMystery.getRooms().containsKey(event.getLevel().getFolderName())) {
+        if (event.getLevel() != null && this.getListenerRooms().containsKey(event.getLevel().getFolderName())) {
             for (Entity entity : event.getChunk().getEntities().values()) {
                 if (!(entity instanceof Player)) {
                     entity.close();

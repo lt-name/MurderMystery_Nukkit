@@ -1,6 +1,6 @@
 package cn.lanink.murdermystery.event;
 
-import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.event.HandlerList;
 
 public class MurderMysteryRoomStartEvent extends MurderMysteryRoomEvent {

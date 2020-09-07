@@ -1,12 +1,11 @@
-package cn.lanink.murdermystery.room;
+package cn.lanink.murdermystery.room.classic;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
-import cn.lanink.murdermystery.tasks.game.GoldTask;
-import cn.lanink.murdermystery.tasks.game.TimeTask;
-import cn.lanink.murdermystery.tasks.game.TipsTask;
-import cn.lanink.murdermystery.utils.SavePlayerInventory;
-import cn.lanink.murdermystery.utils.Tips;
+import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.IAsyncTipsTask;
+import cn.lanink.murdermystery.room.base.IRoomStatus;
+import cn.lanink.murdermystery.room.base.ITimeTask;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
@@ -24,14 +23,17 @@ import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 经典模式房间类
  *
  * @author lt_name
  */
-public class ClassicModeRoom extends BaseRoom {
+public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTask {
 
+    protected int goldSpawnTime;
     public Player killKillerPlayer = null; //击杀杀手的玩家
     public EntityItem detectiveBow = null; //掉落的侦探弓
 
@@ -49,55 +51,10 @@ public class ClassicModeRoom extends BaseRoom {
         }
     }
 
-    /**
-     * 加入房间
-     *
-     * @param player 玩家
-     */
     @Override
-    public synchronized void joinRoom(Player player) {
-        if (this.players.size() < this.getMaxPlayers()) {
-            if (this.status == 0) {
-                this.initTask();
-            }
-            this.players.put(player, 0);
-            Tools.rePlayerState(player, true);
-            SavePlayerInventory.save(player);
-            if (player.teleport(this.getWaitSpawn())) {
-                this.setRandomSkin(player);
-                Tools.giveItem(player, 10);
-                if (this.murderMystery.isHasTips()) {
-                    Tips.closeTipsShow(this.level.getName(), player);
-                }
-                player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
-            }else {
-                this.quitRoom(player);
-            }
-        }
-    }
-
-    /**
-     * 退出房间
-     *
-     * @param player 玩家
-     */
-    @Override
-    public synchronized void quitRoom(Player player) {
-        this.players.remove(player);
-        if (this.murderMystery.isHasTips()) {
-            Tips.removeTipsConfig(this.level.getName(), player);
-        }
-        MurderMystery.getInstance().getScoreboard().closeScoreboard(player);
-        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-        Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(player);
-        this.restorePlayerSkin(player);
-        this.skinNumber.remove(player);
-        this.skinCache.remove(player);
-        for (Player p : this.players.keySet()) {
-            p.showPlayer(player);
-            player.showPlayer(p);
-        }
+    public void enableListener() {
+        super.enableListener();
+        this.murderMystery.getMurderMysteryListeners().get("ClassicGameListener").addListenerRoom(this);
     }
 
     /**
@@ -105,11 +62,11 @@ public class ClassicModeRoom extends BaseRoom {
      */
     @Override
     protected synchronized void gameStart() {
-        if (this.status == 2) {
+        if (this.status == ROOM_STATUS_GAME) {
             return;
         }
         Tools.cleanEntity(this.getLevel(), true);
-        this.setStatus(2);
+        this.setStatus(ROOM_STATUS_GAME);
         this.assignIdentityEvent();
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
@@ -119,12 +76,10 @@ public class ClassicModeRoom extends BaseRoom {
             player.teleport(this.getRandomSpawn().get(x));
             x++;
         }
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                MurderMystery.getInstance(), new TimeTask(this.murderMystery, this), 20,true);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                MurderMystery.getInstance(), new GoldTask(this.murderMystery, this), 20, true);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                MurderMystery.getInstance(), new TipsTask(this.murderMystery, this), 18, true);
+        LinkedList<Player> gamePlayers = new LinkedList<>(this.players.keySet());
+        for (Player player : this.getSpectatorPlayers()) {
+            player.teleport(gamePlayers.get(MurderMystery.RANDOM.nextInt(gamePlayers.size())));
+        }
     }
 
     /**
@@ -146,7 +101,13 @@ public class ClassicModeRoom extends BaseRoom {
         while(it.hasNext()) {
             Map.Entry<Player, Integer> entry = it.next();
             it.remove();
-            quitRoom(entry.getKey());
+            this.quitRoom(entry.getKey());
+        }
+        Iterator<Player> it2 = this.spectatorPlayers.iterator();
+        while(it2.hasNext()) {
+            Player player = it2.next();
+            it2.remove();
+            this.quitRoom(player);
         }
         this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
         this.placeBlocks.clear();
@@ -154,10 +115,10 @@ public class ClassicModeRoom extends BaseRoom {
         this.skinCache.clear();
         this.killKillerPlayer = null;
         this.detectiveBow = null;
-        initTime();
+        this.initTime();
         switch (oldStatus) {
-            case ROOM_STATUS_GAME:
-            case ROOM_STATUS_VICTORY:
+            case IRoomStatus.ROOM_STATUS_GAME:
+            case IRoomStatus.ROOM_STATUS_VICTORY:
                 this.restoreWorld();
                 break;
         }
@@ -211,11 +172,21 @@ public class ClassicModeRoom extends BaseRoom {
         }, 20);
     }
 
+    @Override
+    public ITimeTask getTimeTask() {
+        return this; //本类已经实现了ITimeTask接口
+    }
+
+    @Override
+    public IAsyncTipsTask getTipsTask() {
+        return this; //本类已经实现了ITipsTask接口
+    }
+
     /**
      * 计时Task
      */
     @Override
-    public void asyncTimeTask() {
+    public void timeTask() {
         //开局20秒后给物品
         int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
@@ -238,28 +209,30 @@ public class ClassicModeRoom extends BaseRoom {
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
-            int playerNumber = 0;
-            boolean killer = false;
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                switch (entry.getValue()) {
-                    case 1:
-                    case 2:
-                        playerNumber++;
-                        break;
-                    case 3:
-                        killer = true;
-                        break;
-                    default:
-                        break;
+            CompletableFuture.runAsync(() -> {
+                int playerNumber = 0;
+                boolean killer = false;
+                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                    switch (entry.getValue()) {
+                        case 1:
+                        case 2:
+                            playerNumber++;
+                            break;
+                        case 3:
+                            killer = true;
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
-            if (killer) {
-                if (playerNumber == 0) {
-                    this.victory(3);
+                if (killer) {
+                    if (playerNumber == 0) {
+                        this.victory(3);
+                    }
+                }else {
+                    this.victory(1);
                 }
-            }else {
-                this.victory(1);
-            }
+            });
         }else {
             this.victory(1);
         }
@@ -275,55 +248,124 @@ public class ClassicModeRoom extends BaseRoom {
         }
         //TODO 需要验证
         if (this.detectiveBow != null && this.detectiveBow.isClosed()) {
-            Server.getInstance().getScheduler().scheduleTask(this.murderMystery, new Task() {
-                @Override
-                public void onRun(int i) {
-                    EntityItem entityItem = new EntityItem(detectiveBow.chunk, detectiveBow.namedTag);
-                    entityItem.spawnToAll();
-                    detectiveBow = entityItem;
-                }
-            });
+            EntityItem entityItem = new EntityItem(detectiveBow.chunk, detectiveBow.namedTag);
+            entityItem.spawnToAll();
+            detectiveBow = entityItem;
         }
+        this.goldSpawn();
+        this.goldExchange();
     }
 
     /**
      * 金锭生成
      */
-    @Override
     public void goldSpawn() {
-        Tools.cleanEntity(this.getLevel());
-        for (Vector3 spawn : this.getGoldSpawn()) {
-            this.getLevel().dropItem(spawn, Item.get(266, 0));
+        if (this.goldSpawnTime > 0) {
+            this.goldSpawnTime--;
+        }else {
+            this.goldSpawnTime = this.setGoldSpawnTime;
+            Tools.cleanEntity(this.getLevel());
+            for (Vector3 spawn : this.goldSpawnVector3List) {
+                this.getLevel().dropItem(spawn, Item.get(266, 0));
+            }
         }
     }
 
     /**
-     * 异步金锭Task 金锭自动兑换弓箭检测
+     * 金锭自动兑换弓箭检测
      */
-    @Override
-    public void asyncGoldTask() {
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-            if (entry.getValue() == 0) {
-                continue;
-            }
-            int x = 0;
-            boolean bow = true;
-            for (Item item : entry.getKey().getInventory().getContents().values()) {
-                if (item.getId() == 266) {
-                    x += item.getCount();
+    public void goldExchange() {
+        CompletableFuture.runAsync(() -> {
+            for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+                if (entry.getValue() == 0) {
                     continue;
                 }
-                if (item.getId() == 261) {
-                    bow = false;
+                int x = 0;
+                boolean bow = true;
+                for (Item item : entry.getKey().getInventory().getContents().values()) {
+                    if (item.getId() == 266) {
+                        x += item.getCount();
+                        continue;
+                    }
+                    if (item.getId() == 261) {
+                        bow = false;
+                    }
+                }
+                if (x > 9) {
+                    entry.getKey().getInventory().removeItem(Item.get(266, 0, 10));
+                    entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
+                    if (bow) {
+                        entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
+                    }
                 }
             }
-            if (x > 9) {
-                entry.getKey().getInventory().removeItem(Item.get(266, 0, 10));
-                entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
-                if (bow) {
-                    entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
+        });
+    }
+
+    @Override
+    public void asyncTipsTask() {
+        int playerNumber = this.getSurvivorPlayerNumber();
+        boolean detectiveSurvival = this.players.containsValue(2);
+        String identity;
+        for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+            entry.getKey().setNameTag("");
+            switch (entry.getValue()) {
+                case 1:
+                    identity = this.murderMystery.getLanguage().commonPeople;
+                    break;
+                case 2:
+                    identity = this.murderMystery.getLanguage().detective;
+                    break;
+                case 3:
+                    identity = this.murderMystery.getLanguage().killer;
+                    break;
+                default:
+                    identity = this.murderMystery.getLanguage().death;
+                    break;
+            }
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.gameTimeScoreBoard
+                    .replace("%roomMode%", Tools.getStringRoomMode(this))
+                    .replace("%identity%", identity)
+                    .replace("%playerNumber%", playerNumber + "")
+                    .replace("%time%", this.gameTime + "").split("\n")));
+            ms.add(" ");
+            if (detectiveSurvival) {
+                ms.addAll(Arrays.asList(this.language.detectiveSurvival.split("\n")));
+            }else {
+                ms.addAll(Arrays.asList(this.language.detectiveDeath.split("\n")));
+            }
+            ms.add("  ");
+            if (entry.getValue() == 3) {
+                if (this.effectCD > 0) {
+                    ms.add(this.language.gameEffectCDScoreBoard
+                            .replace("%time%", this.effectCD + ""));
+                }
+                if (this.swordCD > 0) {
+                    ms.add(this.language.gameSwordCDScoreBoard
+                            .replace("%time%", this.swordCD + ""));
+                }
+                if (this.scanCD > 0) {
+                    ms.add(this.language.gameScanCDScoreBoard
+                            .replace("%time%", this.scanCD + ""));
                 }
             }
+            this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+        }
+        //旁观玩家只显示部分信息
+        identity = this.language.spectator;
+        for (Player player : this.spectatorPlayers) {
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.gameTimeScoreBoard
+                    .replace("%roomMode%", Tools.getStringRoomMode(this))
+                    .replace("%identity%", identity)
+                    .replace("%playerNumber%", playerNumber + "")
+                    .replace("%time%", this.gameTime + "").split("\n")));
+            ms.add(" ");
+            if (detectiveSurvival) {
+                ms.addAll(Arrays.asList(this.language.detectiveSurvival.split("\n")));
+            }else {
+                ms.addAll(Arrays.asList(this.language.detectiveDeath.split("\n")));
+            }
+            this.murderMystery.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
         }
     }
 
@@ -332,7 +374,7 @@ public class ClassicModeRoom extends BaseRoom {
      */
     @Override
     protected void assignIdentity() {
-        HashMap<Player, Integer> players = this.getPlayers();
+        ConcurrentHashMap<Player, Integer> players = this.getPlayers();
         int random1 = MurderMystery.RANDOM.nextInt(players.size()) + 1;
         int random2;
         do {

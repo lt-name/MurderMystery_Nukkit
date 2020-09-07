@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.BaseRoom;
+import cn.lanink.murdermystery.room.base.ITimeTask;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
@@ -10,20 +10,20 @@ import cn.nukkit.scheduler.PluginTask;
  */
 public class TimeTask extends PluginTask<MurderMystery> {
 
-    private final BaseRoom room;
+    private final ITimeTask task;
 
-    public TimeTask(MurderMystery owner, BaseRoom room) {
+    public TimeTask(MurderMystery owner, ITimeTask task) {
         super(owner);
-        this.room = room;
+        this.task = task;
     }
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != BaseRoom.ROOM_STATUS_GAME) {
+        if (this.task.getStatus() != ITimeTask.ROOM_STATUS_GAME) {
             this.cancel();
             return;
         }
-        this.room.asyncTimeTask();
+        this.task.timeTask();
     }
 
 }
