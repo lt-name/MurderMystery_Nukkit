@@ -6,6 +6,7 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.IAsyncTipsTask;
 import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.lanink.murdermystery.room.base.ITimeTask;
+import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
@@ -24,7 +25,6 @@ import cn.nukkit.utils.Config;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 经典模式房间类
@@ -191,12 +191,23 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
         int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
             if (time <= 5 && time >= 1) {
-                Tools.sendMessage(this, this.language.killerGetSwordTime
-                        .replace("%time%", time + ""));
+                for (Player player : this.getPlayers().keySet()) {
+                    player.sendMessage(this.murderMystery.getLanguage(player)
+                            .killerGetSwordTime.replace("%time%", time + ""));
+                }
+                for (Player player : this.getSpectatorPlayers()) {
+                    player.sendMessage(this.murderMystery.getLanguage(player)
+                            .killerGetSwordTime.replace("%time%", time + ""));
+                }
                 Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
-                Tools.sendMessage(this, this.language.killerGetSword);
+                for (Player player : this.getPlayers().keySet()) {
+                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                }
+                for (Player player : this.getSpectatorPlayers()) {
+                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                }
                 for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
                     if (entry.getValue() == 2) {
                         Tools.giveItem(entry.getKey(), 1);
@@ -309,63 +320,64 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
         String identity;
         for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
             entry.getKey().setNameTag("");
+            Language language = this.murderMystery.getLanguage(entry.getKey());
             switch (entry.getValue()) {
                 case 1:
-                    identity = this.murderMystery.getLanguage().commonPeople;
+                    identity = language.commonPeople;
                     break;
                 case 2:
-                    identity = this.murderMystery.getLanguage().detective;
+                    identity = language.detective;
                     break;
                 case 3:
-                    identity = this.murderMystery.getLanguage().killer;
+                    identity = language.killer;
                     break;
                 default:
-                    identity = this.murderMystery.getLanguage().death;
+                    identity = language.death;
                     break;
             }
-            LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.gameTimeScoreBoard
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.gameTimeScoreBoard
                     .replace("%roomMode%", Tools.getStringRoomMode(this))
                     .replace("%identity%", identity)
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
             if (detectiveSurvival) {
-                ms.addAll(Arrays.asList(this.language.detectiveSurvival.split("\n")));
+                ms.addAll(Arrays.asList(language.detectiveSurvival.split("\n")));
             }else {
-                ms.addAll(Arrays.asList(this.language.detectiveDeath.split("\n")));
+                ms.addAll(Arrays.asList(language.detectiveDeath.split("\n")));
             }
             ms.add("  ");
             if (entry.getValue() == 3) {
                 if (this.effectCD > 0) {
-                    ms.add(this.language.gameEffectCDScoreBoard
+                    ms.add(language.gameEffectCDScoreBoard
                             .replace("%time%", this.effectCD + ""));
                 }
                 if (this.swordCD > 0) {
-                    ms.add(this.language.gameSwordCDScoreBoard
+                    ms.add(language.gameSwordCDScoreBoard
                             .replace("%time%", this.swordCD + ""));
                 }
                 if (this.scanCD > 0) {
-                    ms.add(this.language.gameScanCDScoreBoard
+                    ms.add(language.gameScanCDScoreBoard
                             .replace("%time%", this.scanCD + ""));
                 }
             }
-            this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+            this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.scoreBoardTitle, ms);
         }
         //旁观玩家只显示部分信息
-        identity = this.language.spectator;
         for (Player player : this.spectatorPlayers) {
-            LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.gameTimeScoreBoard
+            Language language = this.murderMystery.getLanguage(player);
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.gameTimeScoreBoard
                     .replace("%roomMode%", Tools.getStringRoomMode(this))
-                    .replace("%identity%", identity)
+                    .replace("%identity%", language.spectator)
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
             if (detectiveSurvival) {
-                ms.addAll(Arrays.asList(this.language.detectiveSurvival.split("\n")));
+                ms.addAll(Arrays.asList(language.detectiveSurvival.split("\n")));
             }else {
-                ms.addAll(Arrays.asList(this.language.detectiveDeath.split("\n")));
+                ms.addAll(Arrays.asList(language.detectiveDeath.split("\n")));
             }
-            this.murderMystery.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+            this.murderMystery.getScoreboard().showScoreboard(player, language.scoreBoardTitle, ms);
         }
     }
 
@@ -374,34 +386,33 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
      */
     @Override
     protected void assignIdentity() {
-        ConcurrentHashMap<Player, Integer> players = this.getPlayers();
-        int random1 = MurderMystery.RANDOM.nextInt(players.size()) + 1;
+        int random1 = MurderMystery.RANDOM.nextInt(this.getPlayers().size()) + 1;
         int random2;
         do {
-            random2 = MurderMystery.RANDOM.nextInt(players.size()) + 1;
+            random2 = MurderMystery.RANDOM.nextInt(this.getPlayers().size()) + 1;
         }while (random1 == random2);
         int i = 0;
-        for (Player player : players.keySet()) {
+        for (Player player : this.getPlayers().keySet()) {
             player.getInventory().clearAll();
             player.getUIInventory().clearAll();
             i++;
             //侦探
             if (i == random1) {
                 this.players.put(player, 2);
-                player.sendTitle(this.language.titleDetectiveTitle,
-                        this.language.titleDetectiveSubtitle, 10, 40, 10);
+                player.sendTitle(this.murderMystery.getLanguage(player).titleDetectiveTitle,
+                        this.murderMystery.getLanguage(player).titleDetectiveSubtitle, 10, 40, 10);
                 continue;
             }
             //杀手
             if (i == random2) {
                 this.players.put(player, 3);
-                player.sendTitle(this.language.titleKillerTitle,
-                        this.language.titleKillerSubtitle, 10, 40, 10);
+                player.sendTitle(this.murderMystery.getLanguage(player).titleKillerTitle,
+                        this.murderMystery.getLanguage(player).titleKillerSubtitle, 10, 40, 10);
                 continue;
             }
             this.players.put(player, 1);
-            player.sendTitle(this.language.titleCommonPeopleTitle,
-                    this.language.titleCommonPeopleSubtitle, 10, 40, 10);
+            player.sendTitle(this.murderMystery.getLanguage(player).titleCommonPeopleTitle,
+                    this.murderMystery.getLanguage(player).titleCommonPeopleSubtitle, 10, 40, 10);
         }
     }
 
@@ -429,23 +440,25 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
         }
         //攻击者是杀手
         if (this.getPlayers(damage) == 3) {
-            damage.sendMessage(this.language.killPlayer);
-            player.sendTitle(this.language.deathTitle,
-                    this.language.deathByKillerSubtitle, 20, 60, 20);
-            String tip = this.language.playerKilledByKiller
-                    .replace("%identity%", this.getPlayers(player) == 2 ? this.language.detective : this.language.commonPeople);
-            this.players.keySet().forEach(p -> p.sendMessage(tip));
+            damage.sendMessage(this.murderMystery.getLanguage(damage).killPlayer);
+            player.sendTitle(this.murderMystery.getLanguage(player).deathTitle,
+                    this.murderMystery.getLanguage(player).deathByKillerSubtitle, 20, 60, 20);
+            for (Player p : this.getPlayers().keySet()) {
+                Language language = murderMystery.getLanguage(p);
+                p.sendMessage(language.playerKilledByKiller
+                        .replace("%identity%", this.getPlayers(player) == 2 ? language.detective : language.commonPeople));
+            }
         }else { //攻击者是平民或侦探
             if (this.getPlayers(player) == 3) {
-                damage.sendMessage(this.language.killKiller);
+                damage.sendMessage(this.murderMystery.getLanguage(damage).killKiller);
                 this.killKillerPlayer = damage;
-                player.sendTitle(this.language.deathTitle,
-                        this.language.killerDeathSubtitle, 10, 20, 20);
+                player.sendTitle(this.murderMystery.getLanguage(player).deathTitle,
+                        this.murderMystery.getLanguage(player).killerDeathSubtitle, 10, 20, 20);
             } else {
-                damage.sendTitle(this.language.deathTitle,
-                        this.language.deathByDamageTeammateSubtitle, 20, 60, 20);
-                player.sendTitle(this.language.deathTitle,
-                        this.language.deathByTeammateSubtitle, 20, 60, 20);
+                damage.sendTitle(this.murderMystery.getLanguage(damage).deathTitle,
+                        this.murderMystery.getLanguage(damage).deathByDamageTeammateSubtitle, 20, 60, 20);
+                player.sendTitle(this.murderMystery.getLanguage(player).deathTitle,
+                        this.murderMystery.getLanguage(player).deathByTeammateSubtitle, 20, 60, 20);
                 this.playerDeathEvent(damage);
             }
         }

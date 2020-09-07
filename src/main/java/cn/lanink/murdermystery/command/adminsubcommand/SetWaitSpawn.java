@@ -29,7 +29,7 @@ public class SetWaitSpawn extends BaseSubCommand {
         String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
         config.set("waitSpawn", spawn);
         config.save();
-        sender.sendMessage(this.language.adminSetSpawn);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetSpawn);
         return true;
     }
 

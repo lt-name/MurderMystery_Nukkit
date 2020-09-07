@@ -65,18 +65,30 @@ public class InfectedModeRoom extends ClassicModeRoom {
         int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
             if (time <= 5 && time >= 1) {
-                Tools.sendMessage(this, this.language.killerGetSwordTime.replace("%time%", time + ""));
+                for (Player player : this.getPlayers().keySet()) {
+                    player.sendMessage(this.murderMystery.getLanguage(player)
+                            .killerGetSwordTime.replace("%time%", time + ""));
+                }
+                for (Player player : this.getSpectatorPlayers()) {
+                    player.sendMessage(this.murderMystery.getLanguage(player)
+                            .killerGetSwordTime.replace("%time%", time + ""));
+                }
                 Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
-                Tools.sendMessage(this, this.language.killerGetSword);
+                for (Player player : this.getPlayers().keySet()) {
+                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                }
+                for (Player player : this.getSpectatorPlayers()) {
+                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                }
                 int y = new Random().nextInt(this.getPlayers().size());
                 int x = 0;
                 for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
                     if (x == y) {
                         entry.setValue(3);
-                        entry.getKey().sendTitle(this.language.titleKillerTitle,
-                                this.language.titleKillerSubtitle, 10, 40, 10);
+                        entry.getKey().sendTitle(this.murderMystery.getLanguage(entry.getKey()).titleKillerTitle,
+                                this.murderMystery.getLanguage(entry.getKey()).titleKillerSubtitle, 10, 40, 10);
                         this.playerRespawn(entry.getKey());
                         break;
                     }
@@ -91,7 +103,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
                 if (entry.getValue() == 0) {
                     this.playerRespawn(entry.getKey());
                 }else {
-                    entry.getKey().sendTip(this.language.playerRespawnTime
+                    entry.getKey().sendTip(this.murderMystery.getLanguage(entry.getKey()).playerRespawnTime
                             .replace("%time%", entry.getValue() + ""));
                 }
             }
@@ -166,8 +178,8 @@ public class InfectedModeRoom extends ClassicModeRoom {
                 return;
             }
             this.players.put(player, 3);
-            player.sendTitle(this.language.titleKillerTitle,
-                    this.language.titleKillerSubtitle, 10, 40, 10);
+            player.sendTitle(this.murderMystery.getLanguage(player).titleKillerTitle,
+                    this.murderMystery.getLanguage(player).titleKillerSubtitle, 10, 40, 10);
         }else {
             if (this.getPlayers(player) != 3) {
                 return;

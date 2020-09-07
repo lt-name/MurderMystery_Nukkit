@@ -28,11 +28,11 @@ public class QuitRoom extends BaseSubCommand {
         for (BaseRoom room : this.murderMystery.getRooms().values()) {
             if (room.isPlaying(player) || room.isSpectator(player)) {
                 room.quitRoom(player);
-                sender.sendMessage(this.language.quitRoom);
+                sender.sendMessage(this.murderMystery.getLanguage(sender).quitRoom);
                 return true;
             }
         }
-        sender.sendMessage(this.language.quitRoomNotInRoom);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).quitRoomNotInRoom);
         return true;
     }
 

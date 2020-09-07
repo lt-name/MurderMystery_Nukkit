@@ -31,9 +31,9 @@ public class StopRoom extends BaseSubCommand {
         BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room != null) {
             room.endGameEvent();
-            sender.sendMessage(this.language.adminStopRoom);
+            sender.sendMessage(this.murderMystery.getLanguage(sender).adminStopRoom);
         }else {
-            sender.sendMessage(this.language.adminLevelNoRoom);
+            sender.sendMessage(this.murderMystery.getLanguage(sender).adminLevelNoRoom);
         }
         return true;
     }

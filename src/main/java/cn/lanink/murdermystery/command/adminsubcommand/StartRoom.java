@@ -30,16 +30,16 @@ public class StartRoom extends BaseSubCommand {
             if (room.getPlayers().size() >= room.getMinPlayers()) {
                 if (room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) {
                     room.gameStartEvent();
-                    sender.sendMessage(this.language.adminStartRoom);
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).adminStartRoom);
                 }else {
-                    sender.sendMessage(this.language.adminStartRoomIsPlaying);
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).adminStartRoomIsPlaying);
                 }
             }else {
-                sender.sendMessage(this.language.adminStartRoomNoPlayer
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminStartRoomNoPlayer
                         .replace("%minPlayers%", room.getMinPlayers() + ""));
             }
         }else {
-            sender.sendMessage(this.language.adminLevelNoRoom);
+            sender.sendMessage(this.murderMystery.getLanguage(sender).adminLevelNoRoom);
         }
         return true;
     }
