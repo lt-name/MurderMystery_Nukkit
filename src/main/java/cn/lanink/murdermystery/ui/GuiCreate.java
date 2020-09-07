@@ -50,9 +50,10 @@ public class GuiCreate {
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(LANGUAGE.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton6,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton7, new ElementButtonImageData("path", "textures/ui/redX1")));
+        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
+        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
+        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton7,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
+        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton8, new ElementButtonImageData("path", "textures/ui/redX1")));
         showFormWindow(player, simple, GuiType.ADMIN_MENU);
     }
 
@@ -66,6 +67,17 @@ public class GuiCreate {
         custom.addElement(new ElementInput(LANGUAGE.adminTimeMenuInputText2, "", "60"));
         custom.addElement(new ElementInput(LANGUAGE.adminTimeMenuInputText3, "", "300"));
         showFormWindow(player, custom, GuiType.ADMIN_TIME_MENU);
+    }
+
+    /**
+     * 设置房间游戏人数菜单
+     * @param player 玩家
+     */
+    public static void sendAdminPlayersMenu(Player player) {
+        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        custom.addElement(new ElementInput(LANGUAGE.adminPlayersMenuInputText1, "", "5"));
+        custom.addElement(new ElementInput(LANGUAGE.adminPlayersMenuInputText2, "", "16"));
+        showFormWindow(player, custom, GuiType.ADMIN_PLAYERS_MENU);
     }
 
     /**

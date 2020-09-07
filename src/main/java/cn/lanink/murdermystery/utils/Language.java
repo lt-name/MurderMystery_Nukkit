@@ -170,7 +170,7 @@ public class Language {
     public String gameSwordCDScoreBoard = "§l§a飞剑冷却:§e %time% §a秒 ";
     public String gameScanCDScoreBoard = "§l§a扫描冷却:§e %time% §a秒 ";
     public String playerRespawnTime = "§c复活倒计时: %time%";
-    //UI相关
+    //GUI相关
     public String userMenuButton1 = "§e随机加入房间";
     public String userMenuButton2 = "§e退出当前房间";
     public String userMenuButton3 = "§e查看房间列表";
@@ -179,12 +179,15 @@ public class Language {
     public String adminMenuButton2 = "§e添加随机出生点";
     public String adminMenuButton3 = "§e添加金锭生成点";
     public String adminMenuButton4 = "§e设置时间参数";
-    public String adminMenuButton5 = "§e设置房间模式";
-    public String adminMenuButton6 = "§e重载所有房间";
-    public String adminMenuButton7 = "§c卸载所有房间";
+    public String adminMenuButton5 = "§e设置游戏人数";
+    public String adminMenuButton6 = "§e设置房间模式";
+    public String adminMenuButton7 = "§e重载所有房间";
+    public String adminMenuButton8 = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "金锭产出间隔（秒）";
     public String adminTimeMenuInputText2 = "等待时间（秒）";
     public String adminTimeMenuInputText3 = "游戏时间（秒）";
+    public String adminPlayersMenuInputText1 = "房间最少游戏人数";
+    public String adminPlayersMenuInputText2 = "房间最多游戏人数";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonSpectator = "§a观战";
     public String buttonOK = "§a确定";
@@ -335,6 +338,7 @@ public class Language {
         this.adminMenuButton5 = config.getString("adminMenuButton5", this.adminMenuButton5);
         this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
         this.adminMenuButton7 = config.getString("adminMenuButton7", this.adminMenuButton7);
+        this.adminMenuButton8 = config.getString("adminMenuButton8", this.adminMenuButton8);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);
