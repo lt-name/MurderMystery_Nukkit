@@ -191,11 +191,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             return;
         }
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-        if (room == null || !room.isPlaying(player) || !room.isSpectator(player)) {
-            return;
-        }
-        if (player.getGamemode() != 0) {
-            event.setCancelled(true);
+        if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
             return;
         }
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK ||
@@ -203,7 +199,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             event.setCancelled(true);
             player.setAllowModifyWorld(false);
         }
-        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player)) {
+        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player) && player.getGamemode() == 0) {
             Language language = this.murderMystery.getLanguage(player);
             int id1 = block.getId();
             int id2 = block.getLevel().getBlock(block.getFloorX(), block.getFloorY() - 1, block.getFloorZ()).getId();

@@ -39,13 +39,8 @@ public class ScoreboardGt implements IScoreboard {
             SimpleScoreboard simpleScoreboard = this.scoreboards.get(player);
             simpleScoreboard.removePlayer(player);
             simpleScoreboard.update();
+            this.scoreboards.remove(player);
         }
-    }
-
-    @Override
-    public void delCache(Player player) {
-        this.closeScoreboard(player);
-        this.scoreboards.remove(player);
     }
 
 }
