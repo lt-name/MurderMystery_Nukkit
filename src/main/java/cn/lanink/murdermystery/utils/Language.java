@@ -37,7 +37,10 @@ public class Language {
     public String cmdHelp = "§a查看帮助：/%cmdName% help";
     public String userHelp = "§eMurderMystery--命令帮助 \n" +
             "§a/%cmdName% §e打开ui \n" +
-            "§a/%cmdName% join 房间名称 §e加入游戏 \n" +
+            "§a/%cmdName% join §e加入随机游戏\n" +
+            "§a/%cmdName% join mode:<游戏模式> §e加入指定模式游戏\n" +
+            "§a/%cmdName% join <房间名称> §e加入游戏 \n" +
+            "§a/%cmdName% joinspectator <房间名称> §e观战" +
             "§a/%cmdName% quit §e退出游戏 \n" +
             "§a/%cmdName% list §e查看房间列表";
     public String noPermission = "§c你没有权限！";
@@ -45,8 +48,9 @@ public class Language {
     public String joinRoomOnRoom = "§c你已经在一个房间中了!";
     public String joinRoomOnRiding = "§a请勿在骑乘状态下进入房间！";
     public String joinRandomRoom = "§a已为你随机分配房间！";
-    public String joinRoomIsPlaying = "§a该房间正在游戏中，请稍后";
-    public String joinRoomIsFull = "§a该房间已满人，请稍后";
+    public String joinRoomIsNeedInitialized = "§a房间初始化中，请稍后...";
+    public String joinRoomIsPlaying = "§a该房间正在游戏中，请稍后...";
+    public String joinRoomIsFull = "§a该房间已满人，请稍后...";
     public String joinRoomIsNotFound = "§a暂无符合条件的房间！";
     public String joinRoomNotAvailable = "§a暂无房间可用！";
     public String quitRoom = "§a你已退出房间";
@@ -89,6 +93,7 @@ public class Language {
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
     public String playerChat = "§a[房间]§f %player%§b >>>§f %message%";
     public String playerDeathChat = "§c[死亡]§f %player%§b >>>§f %message%";
+    public String playerSpectatorChat = "§a[旁观]§f %player%§b >>>§f %message%";
     public String tpJoinRoomLevel = "§e >> §c要进入游戏地图，请先加入游戏！";
     public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
     //道具
@@ -121,6 +126,7 @@ public class Language {
     public String killer = "杀手";
     public String detective = "侦探";
     public String death = "死亡";
+    public String spectator = "旁观";
     //游戏提示信息
     public String killPlayer = "§a你成功击杀了一位玩家！";
     public String killKiller = "§a你成功击杀了杀手！";
@@ -180,6 +186,7 @@ public class Language {
     public String adminTimeMenuInputText2 = "等待时间（秒）";
     public String adminTimeMenuInputText3 = "游戏时间（秒）";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
+    public String buttonSpectator = "§a观战";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
 
@@ -220,6 +227,7 @@ public class Language {
         this.joinRoomOnRoom = config.getString("joinRoomOnRoom", this.joinRoomOnRoom);
         this.joinRoomOnRiding = config.getString("joinRoomOnRiding", this.joinRoomOnRiding);
         this.joinRandomRoom = config.getString("joinRandomRoom", this.joinRandomRoom);
+        this.joinRoomIsNeedInitialized = config.getString("joinRoomIsNeedInitialized", this.joinRoomIsNeedInitialized);
         this.joinRoomIsPlaying = config.getString("joinRoomIsPlaying", this.joinRoomIsPlaying);
         this.joinRoomIsFull = config.getString("joinRoomIsFull", this.joinRoomIsFull);
         this.joinRoomIsNotFound = config.getString("joinRoomIsNotFound", this.joinRoomIsNotFound);
@@ -250,6 +258,7 @@ public class Language {
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
         this.playerChat = config.getString("playerChat", this.playerChat);
         this.playerDeathChat = config.getString("playerDeathChat", this.playerDeathChat);
+        this.playerSpectatorChat = config.getString("playerSpectatorChat", this.playerSpectatorChat);
         this.tpJoinRoomLevel = config.getString("tpJoinRoomLevel", this.tpJoinRoomLevel);
         this.tpQuitRoomLevel = config.getString("tpQuitRoomLevel", this.tpQuitRoomLevel);
         this.itemDetectiveBow = config.getString("itemDetectiveBow", this.itemDetectiveBow);
@@ -279,6 +288,7 @@ public class Language {
         this.killer = config.getString("killer", this.killer);
         this.detective = config.getString("detective", this.detective);
         this.death = config.getString("death", this.death);
+        this.spectator = config.getString("spectator", this.spectator);
         this.killPlayer = config.getString("killPlayer", this.killPlayer);
         this.killKiller = config.getString("killKiller", this.killKiller);
         this.deathTitle = config.getString("deathTitle", this.deathTitle);
@@ -329,6 +339,7 @@ public class Language {
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
+        this.buttonSpectator = config.getString("buttonSpectator", this.buttonSpectator);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
     }

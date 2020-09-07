@@ -84,8 +84,10 @@ public class JoinRoom extends BaseSubCommand {
                     return true;
                 }else if (this.murderMystery.getRooms().containsKey(args[1])) {
                     BaseRoom room = this.murderMystery.getRooms().get(args[1]);
-                    if (room.getStatus() != IRoomStatus.ROOM_STATUS_TASK_NEED_INITIALIZED &&
-                            room.getStatus() != IRoomStatus.ROOM_STATUS_WAIT) {
+                    if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
+                        sender.sendMessage(this.language.joinRoomIsNeedInitialized);
+                    }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
+                            room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
                         sender.sendMessage(this.language.joinRoomIsPlaying);
                     }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                         sender.sendMessage(this.language.joinRoomIsFull);

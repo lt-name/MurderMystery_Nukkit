@@ -57,6 +57,9 @@ public class Tools {
         for (Player p : room.getPlayers().keySet()) {
             p.showPlayer(player);
         }
+        for (Player p : room.getSpectatorPlayers()) {
+            p.showPlayer(player);
+        }
     }
 
     /**
@@ -67,6 +70,9 @@ public class Tools {
      */
     public static void hidePlayer(BaseRoom room, Player player) {
         for (Player p : room.getPlayers().keySet()) {
+            p.hidePlayer(player);
+        }
+        for (Player p : room.getSpectatorPlayers()) {
             p.hidePlayer(player);
         }
     }

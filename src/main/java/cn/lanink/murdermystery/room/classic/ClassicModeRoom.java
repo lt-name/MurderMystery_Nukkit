@@ -62,7 +62,7 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
      */
     @Override
     protected synchronized void gameStart() {
-        if (this.status == 2) {
+        if (this.status == ROOM_STATUS_GAME) {
             return;
         }
         Tools.cleanEntity(this.getLevel(), true);
@@ -75,6 +75,10 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
             }
             player.teleport(this.getRandomSpawn().get(x));
             x++;
+        }
+        LinkedList<Player> gamePlayers = new LinkedList<>(this.players.keySet());
+        for (Player player : this.getSpectatorPlayers()) {
+            player.teleport(gamePlayers.get(MurderMystery.RANDOM.nextInt(gamePlayers.size())));
         }
     }
 
@@ -97,7 +101,13 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
         while(it.hasNext()) {
             Map.Entry<Player, Integer> entry = it.next();
             it.remove();
-            quitRoom(entry.getKey());
+            this.quitRoom(entry.getKey());
+        }
+        Iterator<Player> it2 = this.spectatorPlayers.iterator();
+        while(it2.hasNext()) {
+            Player player = it2.next();
+            it2.remove();
+            this.quitRoom(player);
         }
         this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
         this.placeBlocks.clear();
@@ -340,6 +350,22 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
                 }
             }
             this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+        }
+        //旁观玩家只显示部分信息
+        identity = this.language.spectator;
+        for (Player player : this.spectatorPlayers) {
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.gameTimeScoreBoard
+                    .replace("%roomMode%", Tools.getStringRoomMode(this))
+                    .replace("%identity%", identity)
+                    .replace("%playerNumber%", playerNumber + "")
+                    .replace("%time%", this.gameTime + "").split("\n")));
+            ms.add(" ");
+            if (detectiveSurvival) {
+                ms.addAll(Arrays.asList(this.language.detectiveSurvival.split("\n")));
+            }else {
+                ms.addAll(Arrays.asList(this.language.detectiveDeath.split("\n")));
+            }
+            this.murderMystery.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
         }
     }
 

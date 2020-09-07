@@ -30,7 +30,10 @@ cmdHelp: "§eĐể biết thêm thông tin, vui lòng nhập: §b/%cmdName% help
 userHelp: |-
   §eMurderMystery-HELP
   §a/%cmdName% §eMở UI
+  §a/%cmdName% join §eJoin a random game
+  §a/%cmdName% join mode:<gameMode> §eJoin the specified mode game
   §a/%cmdName% join <tênPhòng> §etham gia trò chơi
+  §a/%cmdName% joinspectator <roomName> §eWatch the battle
   §a/%cmdName% quit §eThoát khỏi game
   §a/%cmdName% list §eXem danh sách tất cả các phòng
 noPermission: "§cBạn không có quyền để làm điều này!"
@@ -38,6 +41,7 @@ joinRoom: "§aBạn đã vào phòng: %name%"
 joinRoomOnRoom: "§c Bạn không thể vào phòng này vì bạn đã ở trong phòng rồi!"
 joinRoomOnRiding: "§cBạn không thể vào phòng vì bạn đang cưỡi thứ gì đó..."
 joinRandomRoom: "§a Đã chỉ định ngẫu nhiên một phòng cho bạn!"
+joinRoomIsNeedInitialized: "§aThe room is initializing, please wait..."
 joinRoomIsPlaying: "§aPhòng này đã bắt đầu, vui lòng đợi!"
 joinRoomIsFull: "§aPhòng này đã đầy, vui lòng đợi!"
 joinRoomIsNotFound: "§aKhông thể tìm thấy phòng này!"
@@ -83,6 +87,7 @@ adminReload: "§aĐã tải lại config! Vui lòng kiểm tra thông tin trong 
 adminUnload: "§aAll rooms unloaded! Vui lòng kiểm tra thông tin trong nền!"
 playerChat: "§a[Room]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[Death]§f %player%§b >>>§f %message%"
+playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §cĐể vào bản đồ trò chơi, trước tiên hãy tham gia trò chơi"
 tpQuitRoomLevel: "§e >> §cVui lòng sử dụng lệnh để thoát khỏi phòng"
 itemDetectiveBow: "§eCung của thám tử"
@@ -130,6 +135,7 @@ commonPeople: "Dân thường"
 killer: "Kẻ giết người"
 detective: "Thám tử"
 death: "Đã chết"
+spectator: "Spectator"
 killPlayer: "§aBạn đã giết 1 người chơi"
 killKiller: "§aBạn đã giết kẻ giết người"
 deathTitle: "§cĐã chết"
@@ -196,5 +202,6 @@ adminTimeMenuInputText1: "Khoảng thời gian tạo mỗi thỏi vàng(s)"
 adminTimeMenuInputText2: "Thời gian chờ(s)"
 adminTimeMenuInputText3: "Thời gian chơi(s)"
 joinRoomOK: "§l§aXác nhận tham gia phòng: %name% §l§a?"
+buttonSpectator: "§aSpectator"
 buttonOK: "§aXác nhận"
 buttonReturn: "§cQuay lại" 

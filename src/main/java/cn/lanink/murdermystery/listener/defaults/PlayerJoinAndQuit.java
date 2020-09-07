@@ -51,7 +51,7 @@ public class PlayerJoinAndQuit implements Listener {
             return;
         }
         for (BaseRoom room : this.murderMystery.getRooms().values()) {
-            if (room.isPlaying(player)) {
+            if (room.isPlaying(player) || room.isSpectator(player)) {
                 room.quitRoom(player);
             }
         }
@@ -67,11 +67,12 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
             LinkedHashMap<String, BaseRoom> room = this.murderMystery.getRooms();
-            if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
+            if (room.containsKey(fromLevel) &&
+                    (room.get(fromLevel).isPlaying(player) || room.get(fromLevel).isSpectator(player))) {
                 event.setCancelled(true);
                 player.sendMessage(this.murderMystery.getLanguage().tpQuitRoomLevel);
             }else if (!player.isOp() && room.containsKey(toLevel) &&
-                    !room.get(toLevel).isPlaying(player)) {
+                    !room.get(toLevel).isPlaying(player) && !room.get(toLevel).isSpectator(player)) {
                 event.setCancelled(true);
                 player.sendMessage(this.murderMystery.getLanguage().tpJoinRoomLevel);
             }

@@ -30,7 +30,10 @@ cmdHelp: "§eFor more help,please type: §b/%cmdName% help"
 userHelp: |-
   §eMurderMystery-HELP
   §a/%cmdName% §eOpen Game UI
+  §a/%cmdName% join §eJoin a random game
+  §a/%cmdName% join mode:<gameMode> §eJoin the specified mode game
   §a/%cmdName% join <roomName> §eJoin a Game
+  §a/%cmdName% joinspectator <roomName> §eWatch the battle
   §a/%cmdName% quit §eQuit a Game
   §a/%cmdName% list §eSee Lists of All Game Rooms
 noPermission: "§cSORRY!But you don't have enough permission!"
@@ -38,6 +41,7 @@ joinRoom: "§aYou joined the game room: %name%"
 joinRoomOnRoom: "§c You can't join a game because you've in a game room already!"
 joinRoomOnRiding: "§cYou can't join a game because you are riding something..."
 joinRandomRoom: "§a Randomly assigned rooms for you!"
+joinRoomIsNeedInitialized: "§aThe room is initializing, please wait..."
 joinRoomIsPlaying: "§aThis room is playing, please wait!"
 joinRoomIsFull: "§aThe room is not vacant,please wait!"
 joinRoomIsNotFound: "§aCan't find this room!"
@@ -83,6 +87,7 @@ adminReload: "§aConfig reload complete! Please check the information in the bac
 adminUnload: "§aAll rooms unloaded! Please check the information in the background!"
 playerChat: "§a[Room]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[Death]§f %player%§b >>>§f %message%"
+playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"
 tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room"
 itemDetectiveBow: "§eBow of detectives"
@@ -130,6 +135,7 @@ commonPeople: "Civilian"
 killer: "Killer"
 detective: "Detective"
 death: "Death"
+spectator: "Spectator"
 killPlayer: "§aYou have successfully killed one player"
 killKiller: "§aYou have successfully killed the killer"
 deathTitle: "§cDeath"
@@ -196,5 +202,6 @@ adminTimeMenuInputText1: "The interval of each gold ingot(s)"
 adminTimeMenuInputText2: "Waiting Time(s)"
 adminTimeMenuInputText3: "Playing Time(s)"
 joinRoomOK: "§l§aCofirm to join the room: %name% §l§a?"
+buttonSpectator: "§aSpectator"
 buttonOK: "§aConfirm"
 buttonReturn: "§cBack"

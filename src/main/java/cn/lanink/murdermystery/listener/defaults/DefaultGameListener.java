@@ -192,7 +192,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             return;
         }
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-        if (room == null || !room.isPlaying(player)) {
+        if (room == null || !room.isPlaying(player) || !room.isSpectator(player)) {
             return;
         }
         if (player.getGamemode() != 0) {
@@ -204,7 +204,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             event.setCancelled(true);
             player.setAllowModifyWorld(false);
         }
-        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
+        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player)) {
             int id1 = block.getId();
             int id2 = block.getLevel().getBlock(block.getFloorX(), block.getFloorY() - 1, block.getFloorZ()).getId();
             if (id1 == 118 && id2 == 138) {
@@ -513,27 +513,49 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
-        String string = event.getMessage();
-        if (player == null || string == null) {
+        String message = event.getMessage();
+        if (player == null || message == null) {
             return;
         }
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-        if (room == null || !room.isPlaying(player) || room.getStatus() != BaseRoom.ROOM_STATUS_GAME) {
+        if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
             return;
         }
-        if (room.getPlayers(player) == 0) {
+        if (room.isSpectator(player)) {
+            String newMassage = this.language.playerSpectatorChat
+                    .replace("%player%", player.getName())
+                    .replace("%message%", message);
+            for (Player p : room.getSpectatorPlayers()) {
+                p.sendMessage(newMassage);
+            }
+        }else if (room.getPlayers(player) == 0) {
+            String newMassage;
+            if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
+                newMassage = this.language.playerDeathChat
+                        .replace("%player%", player.getName())
+                        .replace("%message%", message);
+            }else {
+                newMassage = this.language.playerChat
+                        .replace("%player%", player.getName())
+                        .replace("%message%", message);
+            }
             for (Player p : room.getPlayers().keySet()) {
                 if (room.getPlayers(p) == 0) {
-                    p.sendMessage(this.language.playerDeathChat
-                            .replace("%player%", player.getName())
-                            .replace("%message%", string));
+                    p.sendMessage(newMassage);
                 }
             }
+            for (Player p : room.getSpectatorPlayers()) {
+                p.sendMessage(newMassage);
+            }
         }else {
+            String newMassage = this.language.playerChat
+                    .replace("%player%", player.getName())
+                    .replace("%message%", message);
             for (Player p : room.getPlayers().keySet()) {
-                p.sendMessage(this.language.playerChat
-                        .replace("%player%", player.getName())
-                        .replace("%message%", string));
+                p.sendMessage(newMassage);
+            }
+            for (Player p : room.getSpectatorPlayers()) {
+                p.sendMessage(newMassage);
             }
         }
         event.setMessage("");
@@ -551,7 +573,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             return;
         }
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-        if (room == null || !room.isPlaying(player)) {
+        if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
             return;
         }
         switch (event.getInventory().getType()) {
@@ -575,7 +597,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             return;
         }
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-        if (room == null || !room.isPlaying(player)) {
+        if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
             return;
         }
         switch (event.getInventory().getType()) {
@@ -596,16 +618,18 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
      */
     @EventHandler
     public void onDataPacketReceive(DataPacketReceiveEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (event.getPacket() instanceof LevelSoundEventPacket ||
                 event.getPacket() instanceof LevelSoundEventPacketV1 ||
                 event.getPacket() instanceof LevelSoundEventPacketV2) {
             Player player = event.getPlayer();
             BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-            if (room == null || !room.isPlaying(player)) {
+            if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
                 return;
             }
-            if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME &&
-                    room.getPlayers(player) == 0) {
+            if (room.getPlayers(player) == 0) {
                 player.dataPacket(event.getPacket());
                 event.setCancelled(true);
             }

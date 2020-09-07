@@ -30,14 +30,25 @@ public class VictoryTask extends PluginTask<MurderMystery> {
                 entry.getKey().sendTitle(owner.getLanguage().titleVictoryKillerTitle,
                         "", 10, 30, 10);
                 LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryKillerScoreBoard.split("\n")));
-                owner.getScoreboard().showScoreboard(entry.getKey(),
-                        this.language.scoreBoardTitle, ms);
+                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
             }else {
                 entry.getKey().sendTitle(this.language.titleVictoryCommonPeopleSubtitle,
                         "", 10, 30, 10);
                 LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryCommonPeopleScoreBoard.split("\n")));
-                owner.getScoreboard().showScoreboard(entry.getKey(),
-                        this.language.scoreBoardTitle, ms);
+                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+            }
+        }
+        for (Player player : room.getSpectatorPlayers()) {
+            if (victory == 3) {
+                player.sendTitle(owner.getLanguage().titleVictoryKillerTitle,
+                        "", 10, 30, 10);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryKillerScoreBoard.split("\n")));
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+            }else {
+                player.sendTitle(this.language.titleVictoryCommonPeopleSubtitle,
+                        "", 10, 30, 10);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.victoryCommonPeopleScoreBoard.split("\n")));
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
             }
         }
     }
