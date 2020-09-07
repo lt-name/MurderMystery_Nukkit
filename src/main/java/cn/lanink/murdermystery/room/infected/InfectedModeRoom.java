@@ -203,7 +203,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
     public void playerRespawn(Player player) {
         Tools.showPlayer(this, player);
         Tools.rePlayerState(player, true);
-        player.getInventory().setItem(1, Tools.getMurderItem(2));
+        player.getInventory().setItem(1, Tools.getMurderItem(player, 2));
         Effect effect = Effect.getEffect(2).setAmplifier(2).setDuration(60); //缓慢
         effect.setColor(0, 255, 0);
         player.addEffect(effect);

@@ -105,7 +105,7 @@ public class GuiCreate {
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         for (Map.Entry<String, BaseRoom> entry : MurderMystery.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e§l" + entry.getKey() +
-                    "\n§r§eMode: " + Tools.getStringRoomMode(entry.getValue()) +
+                    "\n§r§eMode: " + Tools.getStringRoomMode(player, entry.getValue()) +
                     " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
                     new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }

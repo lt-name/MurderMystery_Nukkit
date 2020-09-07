@@ -336,7 +336,7 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
                     break;
             }
             LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.gameTimeScoreBoard
-                    .replace("%roomMode%", Tools.getStringRoomMode(this))
+                    .replace("%roomMode%", Tools.getStringRoomMode(entry.getKey(), this))
                     .replace("%identity%", identity)
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
@@ -367,7 +367,7 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
         for (Player player : this.spectatorPlayers) {
             Language language = this.murderMystery.getLanguage(player);
             LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.gameTimeScoreBoard
-                    .replace("%roomMode%", Tools.getStringRoomMode(this))
+                    .replace("%roomMode%", Tools.getStringRoomMode(player, this))
                     .replace("%identity%", language.spectator)
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
@@ -479,7 +479,7 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
         player.getAdventureSettings().update();
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 2) {
-            this.getLevel().dropItem(player, Tools.getMurderItem(1));
+            this.getLevel().dropItem(player, Tools.getMurderItem(player, 1));
         }
         this.players.put(player, 0);
         Tools.playSound(this, Sound.GAME_PLAYER_HURT);

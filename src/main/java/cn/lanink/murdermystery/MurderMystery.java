@@ -291,11 +291,6 @@ public class MurderMystery extends PluginBase {
         return this.murderMysteryListeners;
     }
 
-    @Deprecated
-    public Language getLanguage() {
-        return this.getLanguage(null);
-    }
-
     public Language getLanguage(Object obj) {
         if (obj instanceof Player) {
             Player player = (Player) obj;

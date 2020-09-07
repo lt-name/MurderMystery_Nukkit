@@ -52,11 +52,11 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 for (Player player : players) {
                     Language language = this.owner.getLanguage(player);
                     String waitTimeBottom = language.waitTimeBottom
-                            .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                            .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
                             .replace("%playerNumber%", this.room.getPlayers().size() + "")
                             .replace("%time%", this.room.waitTime + "");
                     LinkedList<String> ms =  new LinkedList<>(Arrays.asList(language.waitTimeScoreBoard
-                            .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                            .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
                             .replace("%playerNumber%", this.room.getPlayers().size() + "")
                             .replace("%maxPlayers%", this.room.getMaxPlayers() + "")
                             .replace("%time%", this.room.waitTime + "").split("\n")));
@@ -78,10 +78,10 @@ public class WaitTask extends PluginTask<MurderMystery> {
             for (Player player : players) {
                 Language language = this.owner.getLanguage(player);
                 String waitBottom = language.waitBottom
-                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                        .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
                         .replace("%playerNumber%", this.room.getPlayers().size() + "");
                 LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.waitScoreBoard
-                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
+                        .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
                         .replace("%playerNumber%", room.getPlayers().size() + "")
                         .replace("%minPlayers%", this.room.getMinPlayers() + "")
                         .replace("%maxPlayers%", this.room.getMaxPlayers() + "").split("\n")));

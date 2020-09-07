@@ -80,15 +80,16 @@ public class Tools {
     /**
      * 获取字符串房间模式
      *
+     * @param player 玩家
      * @param room 房间
      * @return 房间模式
      */
-    public static String getStringRoomMode(BaseRoom room) {
+    public static String getStringRoomMode(Player player, BaseRoom room) {
         switch (room.getGameMode()) {
             case "classic":
-                return MurderMystery.getInstance().getLanguage().Classic;
+                return MurderMystery.getInstance().getLanguage(player).Classic;
             case "infected":
-                return MurderMystery.getInstance().getLanguage().Infected;
+                return MurderMystery.getInstance().getLanguage(player).Infected;
             default:
                 return room.getGameMode();
         }
@@ -123,20 +124,20 @@ public class Tools {
     public static void giveItem(Player player, int tagNumber) {
         switch (tagNumber) {
             case 1:
-                player.getInventory().setItem(1, getMurderItem(tagNumber));
+                player.getInventory().setItem(1, getMurderItem(player, tagNumber));
                 player.getInventory().setItem(2, Item.get(262, 0, 1));
                 break;
             case 2:
-                player.getInventory().setItem(1, getMurderItem(tagNumber));
-                player.getInventory().setItem(2, getMurderItem(3));
+                player.getInventory().setItem(1, getMurderItem(player, tagNumber));
+                player.getInventory().setItem(2, getMurderItem(player, 3));
                 break;
             case 10:
-                player.getInventory().setItem(8, getMurderItem(tagNumber));
+                player.getInventory().setItem(8, getMurderItem(player, tagNumber));
                 break;
             case 21:
             case 22:
             case 23:
-                player.getInventory().addItem(getMurderItem(tagNumber));
+                player.getInventory().addItem(getMurderItem(player, tagNumber));
                 break;
             default:
                 break;
@@ -149,9 +150,9 @@ public class Tools {
      * @param tagNumber 道具编号
      * @return 物品
      */
-    public static Item getMurderItem(int tagNumber) {
+    public static Item getMurderItem(Player player, int tagNumber) {
         Item item;
-        Language language = MurderMystery.getInstance().getLanguage();
+        Language language = MurderMystery.getInstance().getLanguage(player);
         switch (tagNumber) {
             case 1:
                 item = Item.get(261, 0, 1);
