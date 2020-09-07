@@ -55,7 +55,6 @@ public class PlayerJoinAndQuit implements Listener {
                 room.quitRoom(player);
             }
         }
-        this.murderMystery.getScoreboard().delCache(player);
         GuiCreate.UI_CACHE.remove(player);
     }
 
