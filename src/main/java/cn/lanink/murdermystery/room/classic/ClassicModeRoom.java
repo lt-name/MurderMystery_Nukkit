@@ -62,7 +62,7 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
      */
     @Override
     protected synchronized void gameStart() {
-        if (this.status == 2) {
+        if (this.status == ROOM_STATUS_GAME) {
             return;
         }
         Tools.cleanEntity(this.getLevel(), true);
@@ -76,7 +76,7 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask, IAsyncTipsTa
             player.teleport(this.getRandomSpawn().get(x));
             x++;
         }
-        LinkedList<Player> gamePlayers = new LinkedList<>(this.spectatorPlayers);
+        LinkedList<Player> gamePlayers = new LinkedList<>(this.players.keySet());
         for (Player player : this.getSpectatorPlayers()) {
             player.teleport(gamePlayers.get(MurderMystery.RANDOM.nextInt(gamePlayers.size())));
         }

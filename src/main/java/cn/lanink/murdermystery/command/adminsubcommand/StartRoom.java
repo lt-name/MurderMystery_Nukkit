@@ -25,7 +25,7 @@ public class StartRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getName());
+        BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room != null) {
             if (room.getPlayers().size() >= room.getMinPlayers()) {
                 if (room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) {
