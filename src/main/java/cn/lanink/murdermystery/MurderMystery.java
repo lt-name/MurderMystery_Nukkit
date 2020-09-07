@@ -8,10 +8,7 @@ import cn.lanink.murdermystery.lib.scoreboard.ScoreboardDe;
 import cn.lanink.murdermystery.lib.scoreboard.ScoreboardGt;
 import cn.lanink.murdermystery.listener.base.IMurderMysteryListener;
 import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
-import cn.lanink.murdermystery.listener.defaults.DefaultDamageListener;
-import cn.lanink.murdermystery.listener.defaults.DefaultGameListener;
-import cn.lanink.murdermystery.listener.defaults.PlayerJoinAndQuit;
-import cn.lanink.murdermystery.listener.defaults.RoomLevelProtection;
+import cn.lanink.murdermystery.listener.defaults.*;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
@@ -143,6 +140,7 @@ public class MurderMystery extends PluginBase {
         //注册监听器
         registerListener("RoomLevelProtection", RoomLevelProtection.class);
         registerListener("DefaultGameListener", DefaultGameListener.class);
+        registerListener("DefaultChatListener", DefaultChatListener.class);
         registerListener("DefaultDamageListener", DefaultDamageListener.class);
         registerListener("ClassicGameListener", ClassicGameListener.class);
         //注册房间类
