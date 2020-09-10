@@ -143,7 +143,7 @@ public class MurderMystery extends PluginBase {
         }
         if (this.languageMap.isEmpty()) {
             this.languageMap.put(this.defaultLanguage, new Language(new Config()));
-            getLogger().warning("§cLanguage: " + this.defaultLanguage + " Not found, Load the default language !");
+            getLogger().error("§cThe language file is read abnormally, only the default(zh_CN) language is loaded!");
         }
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
