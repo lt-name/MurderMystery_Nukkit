@@ -28,11 +28,11 @@ public class ScanTask extends PluginTask<MurderMystery> {
         for (Map.Entry<Player, Integer> entry : this.room.getPlayers().entrySet()) {
             if (entry.getValue() == 1 || entry.getValue() == 2) {
                 EntityText text = new EntityText(entry.getKey().getChunk(), EntityText.getDefaultNBT(entry.getKey()), entry.getKey());
-                text.spawnTo(player);
+                text.spawnTo(this.player);
                 texts.add(text);
             }
         }
-        this.player.sendMessage(MurderMystery.getInstance().getLanguage().useItemScan);
+        this.player.sendMessage(this.owner.getLanguage(player).useItemScan);
         Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
             @Override
             public void onRun(int i) {

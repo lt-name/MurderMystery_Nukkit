@@ -24,7 +24,6 @@ import java.util.Map;
 public class GuiCreate {
 
     private static final MurderMystery MURDER_MYSTERY = MurderMystery.getInstance();
-    private static final Language LANGUAGE = MURDER_MYSTERY.getLanguage();
     public static final String PLUGIN_NAME = "§l§7[§1M§2u§3r§4d§5e§6r§aM§cy§bs§dt§9e§6r§2y§7]";
     public static final HashMap<Player, HashMap<Integer, GuiType>> UI_CACHE = new HashMap<>();
 
@@ -33,10 +32,11 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendUserMenu(Player player) {
+        Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton(LANGUAGE.userMenuButton1, new ElementButtonImageData("path", "textures/ui/switch_start_button")));
-        simple.addButton(new ElementButton(LANGUAGE.userMenuButton2, new ElementButtonImageData("path", "textures/ui/switch_select_button")));
-        simple.addButton(new ElementButton(LANGUAGE.userMenuButton3, new ElementButtonImageData("path", "textures/ui/servers")));
+        simple.addButton(new ElementButton(language.userMenuButton1, new ElementButtonImageData("path", "textures/ui/switch_start_button")));
+        simple.addButton(new ElementButton(language.userMenuButton2, new ElementButtonImageData("path", "textures/ui/switch_select_button")));
+        simple.addButton(new ElementButton(language.userMenuButton3, new ElementButtonImageData("path", "textures/ui/servers")));
         showFormWindow(player, simple, GuiType.USER_MENU);
     }
 
@@ -45,15 +45,16 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminMenu(Player player) {
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getFolderName()));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton1, new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton7,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(LANGUAGE.adminMenuButton8, new ElementButtonImageData("path", "textures/ui/redX1")));
+        Language language = MURDER_MYSTERY.getLanguage(player);
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, language.adminMenuSetLevel.replace("%name%", player.getLevel().getFolderName()));
+        simple.addButton(new ElementButton(language.adminMenuButton1, new ElementButtonImageData("path", "textures/ui/World")));
+        simple.addButton(new ElementButton(language.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
+        simple.addButton(new ElementButton(language.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
+        simple.addButton(new ElementButton(language.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
+        simple.addButton(new ElementButton(language.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
+        simple.addButton(new ElementButton(language.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
+        simple.addButton(new ElementButton(language.adminMenuButton7,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
+        simple.addButton(new ElementButton(language.adminMenuButton8, new ElementButtonImageData("path", "textures/ui/redX1")));
         showFormWindow(player, simple, GuiType.ADMIN_MENU);
     }
 
@@ -62,10 +63,11 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminTimeMenu(Player player) {
+        Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput(LANGUAGE.adminTimeMenuInputText1, "", "20"));
-        custom.addElement(new ElementInput(LANGUAGE.adminTimeMenuInputText2, "", "60"));
-        custom.addElement(new ElementInput(LANGUAGE.adminTimeMenuInputText3, "", "300"));
+        custom.addElement(new ElementInput(language.adminTimeMenuInputText1, "", "20"));
+        custom.addElement(new ElementInput(language.adminTimeMenuInputText2, "", "60"));
+        custom.addElement(new ElementInput(language.adminTimeMenuInputText3, "", "300"));
         showFormWindow(player, custom, GuiType.ADMIN_TIME_MENU);
     }
 
@@ -74,9 +76,10 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminPlayersMenu(Player player) {
+        Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput(LANGUAGE.adminPlayersMenuInputText1, "", "5"));
-        custom.addElement(new ElementInput(LANGUAGE.adminPlayersMenuInputText2, "", "16"));
+        custom.addElement(new ElementInput(language.adminPlayersMenuInputText1, "", "5"));
+        custom.addElement(new ElementInput(language.adminPlayersMenuInputText2, "", "16"));
         showFormWindow(player, custom, GuiType.ADMIN_PLAYERS_MENU);
     }
 
@@ -85,9 +88,10 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminModeMenu(Player player) {
+        Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementDropdown("\n\n\n" +
-                LANGUAGE.adminMenuSetLevel.replace("%name%", player.getLevel().getName()),
+                language.adminMenuSetLevel.replace("%name%", player.getLevel().getName()),
                 Arrays.asList(MurderMystery.getRoomClass().keySet().toArray(new String[0]))));
         showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
     }
@@ -97,14 +101,15 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendRoomListMenu(Player player) {
+        Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         for (Map.Entry<String, BaseRoom> entry : MurderMystery.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e§l" + entry.getKey() +
-                    "\n§r§eMode: " + Tools.getStringRoomMode(entry.getValue()) +
+                    "\n§r§eMode: " + Tools.getStringRoomMode(player, entry.getValue()) +
                     " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
                     new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
-        simple.addButton(new ElementButton(LANGUAGE.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));
+        simple.addButton(new ElementButton(language.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));
         showFormWindow(player, simple, GuiType.ROOM_LIST_MENU);
     }
 
@@ -114,33 +119,34 @@ public class GuiCreate {
      * @param roomName 房间名字
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
+        Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowModal modal;
         roomName = roomName.replace("§e§l", "").trim();
         BaseRoom room = MurderMystery.getInstance().getRooms().get(roomName);
         if (room != null) {
             if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
-                modal = new FormWindowModal(PLUGIN_NAME, LANGUAGE.joinRoomIsNeedInitialized, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+                modal = new FormWindowModal(PLUGIN_NAME, language.joinRoomIsNeedInitialized, language.buttonReturn, language.buttonReturn);
             }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
                     room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
-                String button1 = LANGUAGE.buttonSpectator;
+                String button1 = language.buttonSpectator;
                 if (room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
-                    button1 = LANGUAGE.buttonReturn;
+                    button1 = language.buttonReturn;
                 }
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomIsPlaying + "§7§k@" + roomName,
-                        button1, LANGUAGE.buttonReturn);
+                        PLUGIN_NAME, language.joinRoomIsPlaying + "§7§k@" + roomName,
+                        button1, language.buttonReturn);
             }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                 modal = new FormWindowModal(
-                        PLUGIN_NAME, LANGUAGE.joinRoomIsFull + "§7§k@" + roomName,
-                        LANGUAGE.buttonSpectator, LANGUAGE.buttonReturn);
+                        PLUGIN_NAME, language.joinRoomIsFull + "§7§k@" + roomName,
+                        language.buttonSpectator, language.buttonReturn);
             }else {
                 modal = new FormWindowModal(
                         PLUGIN_NAME,
-                        LANGUAGE.joinRoomOK.replace("%name%", "\"" + roomName + "\"") + "§7§k@" + roomName,
-                        LANGUAGE.buttonOK, LANGUAGE.buttonReturn);
+                        language.joinRoomOK.replace("%name%", "\"" + roomName + "\"") + "§7§k@" + roomName,
+                        language.buttonOK, language.buttonReturn);
             }
         }else {
-            modal = new FormWindowModal(PLUGIN_NAME, LANGUAGE.joinRoomIsNotFound, LANGUAGE.buttonReturn, LANGUAGE.buttonReturn);
+            modal = new FormWindowModal(PLUGIN_NAME, language.joinRoomIsNotFound, language.buttonReturn, language.buttonReturn);
         }
         showFormWindow(player, modal, GuiType.ROOM_JOIN_OK);
     }

@@ -5,7 +5,6 @@ import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
@@ -22,11 +21,8 @@ import cn.nukkit.potion.Effect;
  */
 public class DefaultDamageListener extends BaseMurderMysteryListener {
 
-    private final Language language;
-
     public DefaultDamageListener(MurderMystery murderMystery) {
         super(murderMystery);
-        this.language = murderMystery.getLanguage();
     }
 
     /**
@@ -59,7 +55,7 @@ public class DefaultDamageListener extends BaseMurderMysteryListener {
                         room.playerDamageEvent(damager, player);
                     }else if (child.namedTag.getInt("MurderType") == 23) {
                         Tools.playSound(player, Sound.RANDOM_ANVIL_LAND);
-                        player.sendMessage(this.language.damageSnowball);
+                        player.sendMessage(this.murderMystery.getLanguage(player).damageSnowball);
                         Effect effect = Effect.getEffect(2);
                         effect.setAmplifier(2);
                         effect.setDuration(40);

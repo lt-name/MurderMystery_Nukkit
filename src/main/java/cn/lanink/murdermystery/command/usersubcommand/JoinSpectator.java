@@ -31,12 +31,12 @@ public class JoinSpectator extends BaseSubCommand {
         if (this.murderMystery.getRooms().size() > 0) {
             Player player = (Player) sender;
             if (player.riding != null) {
-                sender.sendMessage(this.language.joinRoomOnRiding);
+                sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomOnRiding);
                 return true;
             }
             for (BaseRoom room : this.murderMystery.getRooms().values()) {
                 if (room.isPlaying(player) || room.isSpectator(player)) {
-                    sender.sendMessage(this.language.joinRoomOnRoom);
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomOnRoom);
                     return true;
                 }
             }
@@ -46,14 +46,14 @@ public class JoinSpectator extends BaseSubCommand {
                         room.getStatus() != IRoomStatus.ROOM_STATUS_VICTORY) {
                     room.joinRoom(player, true);
                 }else {
-                    sender.sendMessage(this.language.joinRoomIsNeedInitialized);
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNeedInitialized);
                 }
             }else {
-                sender.sendMessage(this.language.joinRoomIsNotFound);
+                sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNotFound);
             }
             return true;
         }
-        sender.sendMessage(this.language.joinRoomNotAvailable);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomNotAvailable);
         return true;
     }
 

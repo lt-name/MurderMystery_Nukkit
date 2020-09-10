@@ -1,7 +1,6 @@
 package cn.lanink.murdermystery.command.base;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.utils.Language;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -19,7 +18,6 @@ public abstract class BaseCommand extends Command {
     private final ArrayList<BaseSubCommand> subCommand = new ArrayList<>();
     private final ConcurrentHashMap<String, Integer> subCommands = new ConcurrentHashMap<>();
     protected MurderMystery murderMystery = MurderMystery.getInstance();
-    protected Language language = murderMystery.getLanguage();
 
     public BaseCommand(String name, String description) {
         super(name,description);
@@ -44,9 +42,9 @@ public abstract class BaseCommand extends Command {
                     if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage(this.language.noPermission);
+                        sender.sendMessage(this.murderMystery.getLanguage(sender).noPermission);
                     }else {
-                        sender.sendMessage(this.language.useCmdInCon);
+                        sender.sendMessage(this.murderMystery.getLanguage(sender).useCmdInCon);
                     }
                 }else {
                     this.sendHelp(sender);
@@ -60,7 +58,7 @@ public abstract class BaseCommand extends Command {
             }
             return true;
         }
-        sender.sendMessage(this.language.noPermission);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).noPermission);
         return true;
     }
 

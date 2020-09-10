@@ -33,14 +33,14 @@ public class SetGameMode extends BaseSubCommand {
                 Config config = this.murderMystery.getRoomConfig(player.getLevel());
                 config.set("gameMode", gameMode);
                 config.save();
-                sender.sendMessage(this.language.adminSetGameMode
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetGameMode
                         .replace("%roomMode%", gameMode));
             }else {
-                sender.sendMessage(this.language.adminSetGameModeNotFound
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetGameModeNotFound
                         .replace("%roomMode%", gameMode));
             }
         }else {
-            sender.sendMessage(this.language.cmdHelp.replace("%cmdName%", this.getName()));
+            sender.sendMessage(this.murderMystery.getLanguage(sender).cmdHelp.replace("%cmdName%", this.getName()));
         }
         return true;
     }

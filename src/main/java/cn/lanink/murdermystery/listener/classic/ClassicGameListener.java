@@ -6,7 +6,6 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.lanink.murdermystery.tasks.game.ScanTask;
 import cn.lanink.murdermystery.tasks.game.SwordMoveTask;
-import cn.lanink.murdermystery.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -25,11 +24,8 @@ import cn.nukkit.potion.Effect;
  */
 public class ClassicGameListener extends BaseMurderMysteryListener {
 
-    private final Language language;
-
     public ClassicGameListener(MurderMystery murderMystery) {
         super(murderMystery);
-        this.language = murderMystery.getLanguage();
     }
 
     /**
@@ -97,7 +93,7 @@ public class ClassicGameListener extends BaseMurderMysteryListener {
                                     new SwordMoveTask(room, player));
                             room.swordCD = 5;
                         }else {
-                            player.sendMessage(this.language.useItemSwordCD);
+                            player.sendMessage(this.murderMystery.getLanguage(player).useItemSwordCD);
                         }
                         break;
                     case 3:
@@ -106,7 +102,7 @@ public class ClassicGameListener extends BaseMurderMysteryListener {
                                     new ScanTask(this.murderMystery, room, player));
                             room.scanCD = 60;
                         }else {
-                            player.sendMessage(this.language.useItemScanCD);
+                            player.sendMessage(this.murderMystery.getLanguage(player).useItemScanCD);
                         }
                         break;
                 }
