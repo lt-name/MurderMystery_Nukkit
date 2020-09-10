@@ -295,7 +295,7 @@ public class MurderMystery extends PluginBase {
         if (obj instanceof Player) {
             Player player = (Player) obj;
             String lang = this.playerLanguage.getOrDefault(player, this.defaultLanguage);
-            if (this.languageMappingTable.containsKey(lang)) {
+            if (!this.languageMap.containsKey(lang) && this.languageMappingTable.containsKey(lang)) {
                 lang = this.languageMappingTable.get(lang);
             }
             if (!this.languageMap.containsKey(lang)) {
