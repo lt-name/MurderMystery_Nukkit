@@ -55,6 +55,7 @@ useCmdInCon: "인게임에서 명령어를 사용해주세요!!"
 adminHelp: |-
   §e머더 미스터리--도움말
   §a/%cmdName% §eUI 열기
+  §a/%cmdName% setroomname <Name> §eSet room name
   §a/%cmdName% setwaitspawn §e현재 위치를 게임 대기 지점으로 설정하기
   §a/%cmdName% addrandomspawn  §e현재 위치를 게임 랜덤 위치로 추가하기
   §a/%cmdName% addgoldspawn §e  현재 위치를 금괴 생성 지점으로 추가하기
@@ -68,6 +69,8 @@ adminHelp: |-
   §a/%cmdName% stoproom §e게임 종료하기
   §a/%cmdName% reloadroom §e모든 방을 다시 불러오기
   §a/%cmdName% unloadroom §e모든 방을 닫고 설정 제거하기
+adminSetRoomName: "§aThe room name is set to: %roomName%"
+adminSetRoomNameExist: "§aThere is already a room named \"%roomName%\"!"
 adminSetSpawn: "§a기본 플레이어 생성 지점이 성공적으로 설정되었습니다!"
 adminAddRandomSpawn: "§a무작위 플레이어 생성 지점이 성공적으로 설정되었습니다!"
 adminAddGoldSpawn: "§a기본 금괴 생성 지점이 성공적으로 설정되었습니다!"
@@ -191,14 +194,15 @@ userMenuButton1: "§e무작위로 방 들어가기"
 userMenuButton2: "§e이 방 나가기"
 userMenuButton3: "§e모든 방 목록 보기"
 adminMenuSetLevel: "맵: %name%"
-adminMenuButton1: "§e기본 생성 지점 지정하기"
-adminMenuButton2: "§e무작위 생성 지점 추가하기"
-adminMenuButton3: "§e금괴 생성 지점 추가하기"
-adminMenuButton4: "§e시간 관련 설정하기"
-adminMenuButton5: "§eSet the number of players"
-adminMenuButton6: "§e방 모드 설정하기"
-adminMenuButton7: "§e모든 방들 다시 불러오기"
-adminMenuButton8: "§c모든 방들 지우기"
+adminMenuButton1: "§eSet room name"
+adminMenuButton2: "§e기본 생성 지점 지정하기"
+adminMenuButton3: "§e무작위 생성 지점 추가하기"
+adminMenuButton4: "§e금괴 생성 지점 추가하기"
+adminMenuButton5: "§e시간 관련 설정하기"
+adminMenuButton6: "§eSet the number of players"
+adminMenuButton7: "§e방 모드 설정하기"
+adminMenuButton8: "§e모든 방들 다시 불러오기"
+adminMenuButton9: "§c모든 방들 지우기"
 adminTimeMenuInputText1: "각 금괴 생성 간격"
 adminTimeMenuInputText2: "대기 시간"
 adminTimeMenuInputText3: "게임 진행 시간"

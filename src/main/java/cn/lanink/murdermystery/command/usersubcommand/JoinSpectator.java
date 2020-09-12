@@ -7,6 +7,8 @@ import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 
+import java.util.Map;
+
 /**
  * @author lt_name
  */
@@ -40,8 +42,16 @@ public class JoinSpectator extends BaseSubCommand {
                     return true;
                 }
             }
-            if (this.murderMystery.getRooms().containsKey(args[1])) {
-                BaseRoom room = this.murderMystery.getRooms().get(args[1]);
+            String world = args[1];
+            if (!this.murderMystery.getRooms().containsKey(args[1])) {
+                for (Map.Entry<String, String> entry : this.murderMystery.getRoomName().entrySet()) {
+                    if (entry.getValue().equals(args[1])) {
+                        world = entry.getKey();
+                    }
+                }
+            }
+            BaseRoom room = this.murderMystery.getRooms().get(world);
+            if (room != null) {
                 if (room.getStatus() != IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED &&
                         room.getStatus() != IRoomStatus.ROOM_STATUS_VICTORY) {
                     room.joinRoom(player, true);

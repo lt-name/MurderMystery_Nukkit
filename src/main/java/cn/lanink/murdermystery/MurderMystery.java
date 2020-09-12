@@ -60,6 +60,7 @@ public class MurderMystery extends PluginBase {
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
+    private final HashMap<String, String> roomName = new HashMap<>(); //自定义房间名称
     private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
     private static final HashMap<String, Class<? extends IMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
     private final HashMap<String, IMurderMysteryListener> murderMysteryListeners = new HashMap<>();
@@ -200,7 +201,7 @@ public class MurderMystery extends PluginBase {
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.loadAllListener();
         this.loadResources();
-        this.loadRooms();
+        this.loadAllRoom();
         this.loadSkins();
         //启用扩展-使用task保证在所有插件都加载完后加载扩展
         getServer().getScheduler().scheduleTask(this, new Task() {
@@ -371,6 +372,10 @@ public class MurderMystery extends PluginBase {
         return this.rooms;
     }
 
+    public HashMap<String, String> getRoomName() {
+        return this.roomName;
+    }
+
     public List<String> getTemporaryRooms() {
         return this.temporaryRooms;
     }
@@ -495,7 +500,7 @@ public class MurderMystery extends PluginBase {
     /**
      * 加载所有房间
      */
-    public void loadRooms() {
+    public void loadAllRoom() {
         getLogger().info(this.getLanguage(null).startLoadingRoom);
         File[] s = new File(getDataFolder() + "/Rooms").listFiles();
         if (s != null && s.length > 0) {
@@ -509,8 +514,9 @@ public class MurderMystery extends PluginBase {
         getLogger().info(this.getLanguage(null).roomLoadedAllSuccess.replace(" %number%", this.rooms.size() + ""));
     }
 
-    public void loadRoom(String name) {
-        Config config = getRoomConfig(name);
+    public void loadRoom(String world) {
+        Config config = getRoomConfig(world);
+        String name = config.getString("roomName", world);
         if (config.getInt("waitTime", 0) == 0 ||
                 config.getInt("gameTime", 0) == 0 ||
                 config.getString("waitSpawn", "").trim().equals("") ||
@@ -518,26 +524,27 @@ public class MurderMystery extends PluginBase {
                 config.getStringList("goldSpawn").size() == 0 ||
                 config.getInt("goldSpawnTime", 0) == 0 ||
                 config.getString("gameMode", "").trim().equals("")) {
-            getLogger().warning(this.getLanguage(null).roomLoadedFailureByConfig.replace("%name%", name));
+            getLogger().warning(this.getLanguage(null).roomLoadedFailureByConfig.replace("%name%", name + "(" + world + ")"));
             return;
         }
-        if (Server.getInstance().getLevelByName(name) == null && !Server.getInstance().loadLevel(name)) {
-            getLogger().warning(this.getLanguage(null).roomLoadedFailureByLevel.replace("%name%", name));
+        if (Server.getInstance().getLevelByName(world) == null && !Server.getInstance().loadLevel(world)) {
+            getLogger().warning(this.getLanguage(null).roomLoadedFailureByLevel.replace("%name%", name + "(" + world + ")"));
             return;
         }
         String gameMode = config.getString("gameMode", "classic");
         if (!ROOM_CLASS.containsKey(gameMode)) {
             getLogger().warning(this.getLanguage(null).roomLoadedFailureByGameMode
-                    .replace("%name%", name)
+                    .replace("%name%", name + "(" + world + ")")
                     .replace("%gameMode%", gameMode));
             return;
         }
         try {
             Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
-            BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(name), config);
+            BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
             baseRoom.setGameMode(gameMode);
-            this.rooms.put(name, baseRoom);
-            getLogger().info(this.getLanguage(null).roomLoadedSuccess.replace("%name%", name));
+            this.rooms.put(world, baseRoom);
+            this.roomName.put(world, name);
+            getLogger().info(this.getLanguage(null).roomLoadedSuccess.replace("%name%", name + "(" + world + ")"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -555,11 +562,13 @@ public class MurderMystery extends PluginBase {
                 for (IMurderMysteryListener listener : this.murderMysteryListeners.values()) {
                     listener.removeListenerRoom(entry.getValue());
                 }
-                getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", entry.getKey()));
+                getLogger().info(this.getLanguage(null).roomUnloadSuccess
+                        .replace("%name%", this.roomName.get(entry.getKey()) + "(" + entry.getKey() + ")"));
                 it.remove();
             }
             this.rooms.clear();
         }
+        this.roomName.clear();
         this.roomConfigs.clear();
         //只是为了兼容那些不规范的插件！
         try {
@@ -580,14 +589,16 @@ public class MurderMystery extends PluginBase {
         }
     }
 
-    public void unloadRoom(String roomName) {
-        if (this.rooms.containsKey(roomName)) {
-            this.rooms.get(roomName).endGameEvent();
+    public void unloadRoom(String world) {
+        if (this.rooms.containsKey(world)) {
+            this.rooms.get(world).endGameEvent();
             for (IMurderMysteryListener listener : this.murderMysteryListeners.values()) {
-                listener.removeListenerRoom(roomName);
+                listener.removeListenerRoom(world);
             }
-            this.rooms.remove(roomName);
-            getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", roomName));
+            this.rooms.remove(world);
+            getLogger().info(this.getLanguage(null).roomUnloadSuccess
+                    .replace("%name%", this.roomName.get(world) + "(" + world + ")"));
+            this.roomName.remove(world);
         }
     }
 
@@ -596,7 +607,7 @@ public class MurderMystery extends PluginBase {
      */
     public void reLoadRooms() {
         this.unloadRooms();
-        this.loadRooms();
+        this.loadAllRoom();
     }
 
     /**

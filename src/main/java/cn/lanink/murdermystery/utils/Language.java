@@ -59,6 +59,7 @@ public class Language {
     public String useCmdInCon = "请在游戏内输入！";
     public String adminHelp = "§eMurderMystery--命令帮助 \n" +
             "§a/%cmdName% §e打开ui \n" +
+            "§a/%cmdName% setroomname <名称> §e设置房间名称 \n" +
             "§a/%cmdName% setwaitspawn §e设置当前位置为游戏出生点 \n" +
             "§a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点 \n" +
             "§a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点 \n" +
@@ -72,6 +73,8 @@ public class Language {
             "§a/%cmdName% stoproom §e强制关闭所在地图的房间 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n" +
             "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
+    public String adminSetRoomName = "§a房间名字设置为: %roomName%";
+    public String adminSetRoomNameExist = "§a已经有名为 \"%roomName%\" 的房间啦！";
     public String adminSetSpawn = "§a默认出生点设置成功！";
     public String adminAddRandomSpawn = "§a随机出生点添加成功！";
     public String adminAddGoldSpawn = "§a金锭生成点添加成功！";
@@ -175,14 +178,15 @@ public class Language {
     public String userMenuButton2 = "§e退出当前房间";
     public String userMenuButton3 = "§e查看房间列表";
     public String adminMenuSetLevel = "当前设置地图：%name%";
-    public String adminMenuButton1 = "§e设置默认出生点";
-    public String adminMenuButton2 = "§e添加随机出生点";
-    public String adminMenuButton3 = "§e添加金锭生成点";
-    public String adminMenuButton4 = "§e设置时间参数";
-    public String adminMenuButton5 = "§e设置游戏人数";
-    public String adminMenuButton6 = "§e设置房间模式";
-    public String adminMenuButton7 = "§e重载所有房间";
-    public String adminMenuButton8 = "§c卸载所有房间";
+    public String adminMenuButton1 = "§e设置房间名称";
+    public String adminMenuButton2 = "§e设置默认出生点";
+    public String adminMenuButton3 = "§e添加随机出生点";
+    public String adminMenuButton4 = "§e添加金锭生成点";
+    public String adminMenuButton5 = "§e设置时间参数";
+    public String adminMenuButton6 = "§e设置游戏人数";
+    public String adminMenuButton7 = "§e设置房间模式";
+    public String adminMenuButton8 = "§e重载所有房间";
+    public String adminMenuButton9 = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "金锭产出间隔（秒）";
     public String adminTimeMenuInputText2 = "等待时间（秒）";
     public String adminTimeMenuInputText3 = "游戏时间（秒）";
@@ -240,6 +244,8 @@ public class Language {
         this.listRoom = config.getString("listRoom", this.listRoom);
         this.useCmdInCon = config.getString("useCmdInCon", this.useCmdInCon);
         this.adminHelp = config.getString("adminHelp", this.adminHelp);
+        this.adminSetRoomName = config.getString("adminSetRoomName", this.adminSetRoomName);
+        this.adminSetRoomNameExist = config.getString("adminSetRoomNameExist", this.adminSetRoomNameExist);
         this.adminSetSpawn = config.getString("adminSetSpawn", this.adminSetSpawn);
         this.adminAddRandomSpawn = config.getString("adminAddRandomSpawn", this.adminAddRandomSpawn);
         this.adminAddGoldSpawn = config.getString("adminAddGoldSpawn", this.adminAddGoldSpawn);
@@ -339,6 +345,7 @@ public class Language {
         this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
         this.adminMenuButton7 = config.getString("adminMenuButton7", this.adminMenuButton7);
         this.adminMenuButton8 = config.getString("adminMenuButton8", this.adminMenuButton8);
+        this.adminMenuButton9 = config.getString("adminMenuButton9", this.adminMenuButton9);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);

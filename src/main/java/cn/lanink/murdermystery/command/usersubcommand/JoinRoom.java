@@ -10,6 +10,7 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 public class JoinRoom extends BaseSubCommand {
 
@@ -82,21 +83,30 @@ public class JoinRoom extends BaseSubCommand {
                     }
                     sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNotFound);
                     return true;
-                }else if (this.murderMystery.getRooms().containsKey(args[1])) {
-                    BaseRoom room = this.murderMystery.getRooms().get(args[1]);
-                    if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
-                        sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNeedInitialized);
-                    }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
-                            room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
-                        sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsPlaying);
-                    }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
-                        sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsFull);
-                    } else {
-                        room.joinRoom(player);
-                    }
-                    return true;
                 }else {
-                    sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNotFound);
+                    String world = args[1];
+                    if (!this.murderMystery.getRooms().containsKey(args[1])) {
+                        for (Map.Entry<String, String> entry : this.murderMystery.getRoomName().entrySet()) {
+                            if (entry.getValue().equals(args[1])) {
+                                world = entry.getKey();
+                            }
+                        }
+                    }
+                    BaseRoom room = this.murderMystery.getRooms().get(world);
+                    if (room != null) {
+                        if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
+                            sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNeedInitialized);
+                        }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
+                                room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
+                            sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsPlaying);
+                        }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
+                            sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsFull);
+                        }else {
+                            room.joinRoom(player);
+                        }
+                    }else {
+                        sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNotFound);
+                    }
                     return true;
                 }
             }

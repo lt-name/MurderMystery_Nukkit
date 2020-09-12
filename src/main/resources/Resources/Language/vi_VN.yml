@@ -53,6 +53,7 @@ useCmdInCon: "Vùi lòng sử dụng lệnh trong game!"
 adminHelp: |-
   §eMurderMystery--Help
   §a/%cmdName% §eMở UI
+  §a/%cmdName% setroomname <Name> §eSet room name
   §a/%cmdName% setwaitspawn §eĐặt vị trí hiện tại là spawnpoint cho game
   §a/%cmdName% addrandomspawn  §eThêm vị trí hiện tài là điểm chờ của game
   §a/%cmdName% addgoldspawn §e  Thêm vị trí hiện tại làm điểm tạo thỏi vàng
@@ -66,6 +67,8 @@ adminHelp: |-
   §a/%cmdName% stoproom §eKết thúc trò chơi
   §a/%cmdName% reloadroom §eTải lại toàn bộ phòng
   §a/%cmdName% unloadroom §eĐóng tất cả các phòng và gỡ cài đặt config
+adminSetRoomName: "§aThe room name is set to: %roomName%"
+adminSetRoomNameExist: "§aThere is already a room named \"%roomName%\"!"
 adminSetSpawn: "§aĐã đặt spawnpoint mặc định!"
 adminAddRandomSpawn: "§aĐã đặt spawnpoint ngẫu nhiên!"
 adminAddGoldSpawn: "§aĐã đặt điểm tạo thỏi vàng mặc định!"
@@ -191,14 +194,15 @@ userMenuButton1: "§eVào phòng ngẫu nhiên"
 userMenuButton2: "§eThoát khỏi phòng"
 userMenuButton3: "§eDanh sách các phòng"
 adminMenuSetLevel: "Map:%name%"
-adminMenuButton1: "§eĐặt spawnpoint mặc định"
-adminMenuButton2: "§eThêm spawnpoint ngẫu nhiên"
-adminMenuButton3: "§eThêm vị trí tạo ra vàng"
-adminMenuButton4: "§eĐặt thông số thời gian"
-adminMenuButton5: "§eSet the number of players"
-adminMenuButton6: "§eĐặt chế độ của phòng"
-adminMenuButton7: "§eTải lại toàn bộ phòng"
-adminMenuButton8: "§cGỡ cài đặt toàn bộ phòng"
+adminMenuButton1: "§eSet room name"
+adminMenuButton2: "§eĐặt spawnpoint mặc định"
+adminMenuButton3: "§eThêm spawnpoint ngẫu nhiên"
+adminMenuButton4: "§eThêm vị trí tạo ra vàng"
+adminMenuButton5: "§eĐặt thông số thời gian"
+adminMenuButton6: "§eSet the number of players"
+adminMenuButton7: "§eĐặt chế độ của phòng"
+adminMenuButton8: "§eTải lại toàn bộ phòng"
+adminMenuButton9: "§cGỡ cài đặt toàn bộ phòng"
 adminTimeMenuInputText1: "Khoảng thời gian tạo mỗi thỏi vàng(s)"
 adminTimeMenuInputText2: "Thời gian chờ(s)"
 adminTimeMenuInputText3: "Thời gian chơi(s)"

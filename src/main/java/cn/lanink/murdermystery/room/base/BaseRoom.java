@@ -237,7 +237,7 @@ public abstract class BaseRoom implements IRoomStatus {
         if (this.murderMystery.isHasTips()) {
             Tips.closeTipsShow(this.level.getName(), player);
         }
-        player.sendMessage(this.murderMystery.getLanguage(player).joinRoom.replace("%name%", this.level.getName()));
+        player.sendMessage(this.murderMystery.getLanguage(player).joinRoom.replace("%name%", this.getRoomName()));
         if (spectator || this.status == ROOM_STATUS_GAME || this.players.size() >= this.getMaxPlayers()) {
             this.spectatorPlayers.add(player);
             player.teleport(this.randomSpawn.get(MurderMystery.RANDOM.nextInt(this.randomSpawn.size())));
@@ -362,6 +362,13 @@ public abstract class BaseRoom implements IRoomStatus {
      */
     public final String getLevelName() {
         return this.levelName;
+    }
+
+    /**
+     * @return 房间显示名称
+     */
+    public final String getRoomName() {
+        return this.murderMystery.getRoomName().getOrDefault(this.levelName, this.levelName);
     }
 
     /**
