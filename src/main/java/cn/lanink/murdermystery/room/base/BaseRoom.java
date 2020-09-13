@@ -60,11 +60,12 @@ public abstract class BaseRoom implements IRoomStatus {
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
         this.level = level;
         this.levelName = level.getFolderName();
+        String showRoomName = this.murderMystery.getRoomName().get(this.levelName) + "(" + this.levelName + ")";
         if (!this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
             File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
             if (!backup.exists()) {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
-                        .roomLevelBackup.replace("%name%", this.levelName));
+                        .roomLevelBackup.replace("%name%", showRoomName));
                 Server.getInstance().unloadLevel(this.level);
                 if (Tools.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                     Server.getInstance().loadLevel(this.levelName);
@@ -74,7 +75,7 @@ public abstract class BaseRoom implements IRoomStatus {
                 }
             }else {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
-                        .roomLevelBackupExist.replace("%name%", this.levelName));
+                        .roomLevelBackupExist.replace("%name%", showRoomName));
             }
         }
         this.minPlayers = config.getInt("minPlayers", 3);
@@ -418,10 +419,7 @@ public abstract class BaseRoom implements IRoomStatus {
         }
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomEndEvent(this, victory));
         this.endGame(victory);
-        if (this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
-            this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
-            this.murderMystery.removeTemporaryRoom(this.levelName);
-        }
+        this.autoClearTemporaryRoom();
     }
 
     /**
@@ -544,6 +542,26 @@ public abstract class BaseRoom implements IRoomStatus {
                     this.murderMystery.addTemporaryRoom(cache.get(MurderMystery.RANDOM.nextInt(cache.size())));
                 }
             }, MurderMystery.checkRoomThreadPool);
+        }
+    }
+
+    /**
+     * 清理临时房间
+     */
+    protected void autoClearTemporaryRoom() {
+        if (!this.murderMystery.getTemporaryRooms().isEmpty()) {
+            for (String world : this.murderMystery.getTemporaryRooms()) {
+                if (world.equals(this.levelName)) {
+                    continue;
+                }
+                BaseRoom room = this.murderMystery.getRooms().get(world);
+                if (this.gameMode.equals(room.getGameMode()) &&
+                        room.getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED) {
+                    room.endGameEvent();
+                    room.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
+                    this.murderMystery.removeTemporaryRoom(world);
+                }
+            }
         }
     }
 

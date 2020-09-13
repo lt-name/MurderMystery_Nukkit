@@ -389,19 +389,23 @@ public class MurderMystery extends PluginBase {
     }
 
     public synchronized void addTemporaryRoom(String template) {
-        String newRoom = template + "Temporary" + (this.temporaryRooms.size() + 1);
-        this.temporaryRooms.add(newRoom);
+        String newRoom;
+        do {
+            newRoom = "MurderMysteryTemporaryRoom" + RANDOM.nextInt(100000);
+        }while (this.temporaryRooms.contains(newRoom) ||
+                this.getRooms().containsKey(newRoom) ||
+                this.getRoomName().containsValue(newRoom));
+        String finalNewRoom = newRoom;
+        this.temporaryRooms.add(finalNewRoom);
         this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
         this.temporaryRoomsConfig.save();
-        Tools.copyDir(this.getRoomConfigPath() + template + ".yml",
-                this.getRoomConfigPath() + newRoom + ".yml");
-        Tools.copyDir(this.getWorldBackupPath() + template,
-                this.getServerWorldPath() + newRoom);
+        Tools.copyDir(this.getRoomConfigPath() + template + ".yml", this.getRoomConfigPath() + finalNewRoom + ".yml");
+        Tools.copyDir(this.getWorldBackupPath() + template, this.getServerWorldPath() + finalNewRoom);
         if (MurderMystery.debug) {
-            this.getLogger().info("自动扩充房间: " + template + " -> " + newRoom);
+            this.getLogger().info("自动扩充房间: " + template + " -> " + finalNewRoom);
         }
         //主线程操作
-        Server.getInstance().getScheduler().scheduleTask(this, () -> murderMystery.loadRoom(newRoom));
+        Server.getInstance().getScheduler().scheduleTask(this, () -> murderMystery.loadRoom(finalNewRoom));
     }
 
     public void removeAllTemporaryRoom() {
@@ -516,7 +520,7 @@ public class MurderMystery extends PluginBase {
 
     public void loadRoom(String world) {
         Config config = getRoomConfig(world);
-        String name = config.getString("roomName", world);
+        String name = this.temporaryRooms.contains(world) ? world : config.getString("roomName", world);
         if (config.getInt("waitTime", 0) == 0 ||
                 config.getInt("gameTime", 0) == 0 ||
                 config.getString("waitSpawn", "").trim().equals("") ||
@@ -539,13 +543,14 @@ public class MurderMystery extends PluginBase {
             return;
         }
         try {
+            this.roomName.put(world, name);
             Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
             BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
             baseRoom.setGameMode(gameMode);
             this.rooms.put(world, baseRoom);
-            this.roomName.put(world, name);
             getLogger().info(this.getLanguage(null).roomLoadedSuccess.replace("%name%", name + "(" + world + ")"));
         } catch (Exception e) {
+            this.roomName.remove(world);
             e.printStackTrace();
         }
     }

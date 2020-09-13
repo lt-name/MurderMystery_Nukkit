@@ -29,14 +29,15 @@ public class SetRoomName extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (args.length == 2) {
-            if (this.murderMystery.getRooms().containsKey(args[1]) ||
-                    this.murderMystery.getRoomName().containsValue(args[1])) {
-                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetRoomNameExist.replace("%roomName%", args[1]));
+            String roomName = args[1].trim();
+            if (this.murderMystery.getRooms().containsKey(roomName) ||
+                    this.murderMystery.getRoomName().containsValue(roomName)) {
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetRoomNameExist.replace("%roomName%", roomName));
             }else {
                 Config config = this.murderMystery.getRoomConfig(((Player) sender).getLevel());
-                config.set("roomName", args[1]);
+                config.set("roomName", roomName);
                 config.save();
-                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetRoomName.replace("%roomName%", args[1]));
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetRoomName.replace("%roomName%", roomName));
             }
         }else {
             sender.sendMessage(this.murderMystery.getLanguage(sender).cmdHelp.replace("%cmdName%", this.getName()));
