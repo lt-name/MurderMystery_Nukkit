@@ -106,14 +106,14 @@
         <repository>
             <id>NukkitPetteriM1Edition-repo</id>
             <name>NukkitPetteriM1Edition-snapshot</name>
-            <url>https://github.com/lt-name/NukkitPetteriM1Edition/tree/lt-name/master/repo/cn/nukkit/Nukkit</url>
+            <url>https://github.com/lt-name/NukkitPetteriM1Edition/tree/lt-name/master/repo/</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>cn.nukkit</groupId>
-            <artifactId>nukkit</artifactId>
+            <artifactId>Nukkit</artifactId>
             <version>PM1E</version>
         </dependency>
         <dependency>
