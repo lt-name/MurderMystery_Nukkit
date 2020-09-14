@@ -106,7 +106,7 @@
         <repository>
             <id>NukkitPetteriM1Edition-repo</id>
             <name>NukkitPetteriM1Edition-snapshot</name>
-            <url>https://github.com/lt-name/NukkitPetteriM1Edition/tree/lt-name/master/repo/</url>
+            <url>https://github.com/lt-name/NukkitPetteriM1Edition/tree/lt-name/master/repo/cn/nukkit/Nukkit</url>
         </repository>
     </repositories>
 
