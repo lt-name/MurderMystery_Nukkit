@@ -250,7 +250,7 @@ public abstract class BaseRoom implements IRoomStatus {
             this.players.put(player, 0);
             this.setRandomSkin(player);
             player.teleport(this.getWaitSpawn());
-            this.autoExpansionRoom();
+            this.autoCreateTemporaryRoom();
         }
         Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
             if (player.level != this.level) {
@@ -391,7 +391,7 @@ public abstract class BaseRoom implements IRoomStatus {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
         this.gameStart();
         this.scheduleTask();
-        this.autoExpansionRoom();
+        this.autoCreateTemporaryRoom();
     }
 
     /**
@@ -523,17 +523,17 @@ public abstract class BaseRoom implements IRoomStatus {
     /**
      * 检查是否需要生成临时房间
      */
-    protected void autoExpansionRoom() {
-        if (this.murderMystery.isAutomaticExpansionRoom()) {
+    protected void autoCreateTemporaryRoom() {
+        if (this.murderMystery.isAutoCreateTemporaryRoom()) {
             CompletableFuture.runAsync(() -> {
                 LinkedList<String> cache = new LinkedList<>();
                 int x = 0;
                 for (Map.Entry<String, BaseRoom> entry : this.murderMystery.getRooms().entrySet()) {
                     if (this.getGameMode().equals(entry.getValue().getGameMode())) {
-                        cache.add(entry.getKey());
-                        if ((entry.getValue().getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED ||
-                                entry.getValue().getStatus() == ROOM_STATUS_WAIT) &&
-                                entry.getValue().players.size() < entry.getValue().getMaxPlayers()) {
+                        if (!this.murderMystery.getTemporaryRooms().contains(entry.getKey())) {
+                            cache.add(entry.getKey());
+                        }
+                        if (entry.getValue().canJoin()) {
                             x++;
                         }
                     }

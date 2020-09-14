@@ -21,9 +21,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
-import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
-import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 
@@ -32,7 +30,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -77,7 +74,7 @@ public class MurderMystery extends PluginBase {
     private String roomConfigPath;
 
     private boolean restoreWorld = false;
-    private boolean automaticExpansionRoom = false;
+    private boolean autoCreateTemporaryRoom = false;
 
     private String defaultLanguage = "zh_CN";
     private final HashMap<String, String> languageMappingTable = new HashMap<>();
@@ -122,7 +119,7 @@ public class MurderMystery extends PluginBase {
         this.temporaryRooms = new CopyOnWriteArrayList<>(this.temporaryRoomsConfig.getStringList("temporaryRooms"));
         this.removeAllTemporaryRoom();
         this.restoreWorld = this.config.getBoolean("restoreWorld", false);
-        this.automaticExpansionRoom = this.config.getBoolean("automaticExpansionRoom", false);
+        this.autoCreateTemporaryRoom = this.config.getBoolean("autoCreateTemporaryRoom", false);
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
@@ -340,8 +337,8 @@ public class MurderMystery extends PluginBase {
         return this.restoreWorld;
     }
 
-    public boolean isAutomaticExpansionRoom() {
-        return this.automaticExpansionRoom;
+    public boolean isAutoCreateTemporaryRoom() {
+        return this.autoCreateTemporaryRoom;
     }
 
     public String getCmdUser() {
@@ -402,7 +399,7 @@ public class MurderMystery extends PluginBase {
         Tools.copyDir(this.getRoomConfigPath() + template + ".yml", this.getRoomConfigPath() + finalNewRoom + ".yml");
         Tools.copyDir(this.getWorldBackupPath() + template, this.getServerWorldPath() + finalNewRoom);
         if (MurderMystery.debug) {
-            this.getLogger().info("自动扩充房间: " + template + " -> " + finalNewRoom);
+            this.getLogger().info("自动创建临时房间: " + template + " -> " + finalNewRoom);
         }
         //主线程操作
         Server.getInstance().getScheduler().scheduleTask(this, () -> murderMystery.loadRoom(finalNewRoom));
@@ -430,7 +427,7 @@ public class MurderMystery extends PluginBase {
             this.temporaryRooms.remove(levelName);
             this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
             this.temporaryRoomsConfig.save();
-            if (debug) {
+            if (MurderMystery.debug) {
                 this.getLogger().info("临时房间: " + levelName + " 已删除");
             }
         });
@@ -575,23 +572,6 @@ public class MurderMystery extends PluginBase {
         }
         this.roomName.clear();
         this.roomConfigs.clear();
-        //只是为了兼容那些不规范的插件！
-        try {
-            Field field = ServerScheduler.class.getDeclaredField("taskMap");
-            field.setAccessible(true);
-            Map<Integer, TaskHandler> map = (Map<Integer, TaskHandler>) field.get(this.getServer().getScheduler());
-            for (TaskHandler taskHandler : map.values()) {
-                if (taskHandler.getPlugin() == this) {
-                    taskHandler.cancel();
-                    if (debug) {
-                        this.getLogger().info("Cancel Task:  name: " + taskHandler.getTask().getClass().getName() +
-                                "  id: " + taskHandler.getTaskId());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            this.getServer().getScheduler().cancelTask(this);
-        }
     }
 
     public void unloadRoom(String world) {
