@@ -104,11 +104,6 @@
 
     <repositories>
         <repository>
-            <id>nukkitx-repo</id>
-            <name>nukkitx-snapshot</name>
-            <url>https://repo.nukkitx.com/maven-snapshots</url>
-        </repository>
-        <repository>
             <id>NukkitPetteriM1Edition-repo</id>
             <name>NukkitPetteriM1Edition-snapshot</name>
             <url>https://github.com/lt-name/NukkitPetteriM1Edition/tree/lt-name/master/repo/</url>
