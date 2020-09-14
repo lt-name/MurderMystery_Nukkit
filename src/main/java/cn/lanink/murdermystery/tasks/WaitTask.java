@@ -9,17 +9,16 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class WaitTask extends PluginTask<MurderMystery> {
 
     private final BaseRoom room;
-    private final Language language;
 
     public WaitTask(MurderMystery owner, BaseRoom room) {
         super(owner);
         this.room = room;
-        this.language = owner.getLanguage();
     }
 
     @Override
@@ -48,26 +47,23 @@ public class WaitTask extends PluginTask<MurderMystery> {
                         player.sendTitle(title, "", 0, 15, 5);
                     }
                 }
-                String waitTimeBottom = this.language.waitTimeBottom
-                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                        .replace("%playerNumber%", this.room.getPlayers().size() + "")
-                        .replace("%time%", this.room.waitTime + "");
-                LinkedList<String> ms =  new LinkedList<>(Arrays.asList(this.language.waitTimeScoreBoard
-                        .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                        .replace("%playerNumber%", this.room.getPlayers().size() + "")
-                        .replace("%maxPlayers%", this.room.getMaxPlayers() + "")
-                        .replace("%time%", this.room.waitTime + "").split("\n")));
-                for (Player player : this.room.getPlayers().keySet()) {
+                HashSet<Player> players = new HashSet<>(this.room.getPlayers().keySet());
+                players.addAll(this.room.getSpectatorPlayers());
+                for (Player player : players) {
+                    Language language = this.owner.getLanguage(player);
+                    String waitTimeBottom = language.waitTimeBottom
+                            .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
+                            .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                            .replace("%time%", this.room.waitTime + "");
+                    LinkedList<String> ms =  new LinkedList<>(Arrays.asList(language.waitTimeScoreBoard
+                            .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
+                            .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                            .replace("%maxPlayers%", this.room.getMaxPlayers() + "")
+                            .replace("%time%", this.room.waitTime + "").split("\n")));
                     if (!"".equals(waitTimeBottom.trim())) {
                         player.sendTip(waitTimeBottom);
                     }
-                    owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle, ms);
-                }
-                for (Player player : this.room.getSpectatorPlayers()) {
-                    if (!"".equals(waitTimeBottom.trim())) {
-                        player.sendTip(waitTimeBottom);
-                    }
-                    owner.getScoreboard().showScoreboard(player,this.language.scoreBoardTitle, ms);
+                    owner.getScoreboard().showScoreboard(player, language.scoreBoardTitle, ms);
                 }
             }else {
                 this.room.gameStartEvent();
@@ -77,25 +73,22 @@ public class WaitTask extends PluginTask<MurderMystery> {
             if (this.room.waitTime != this.room.setWaitTime) {
                 this.room.waitTime = this.room.setWaitTime;
             }
-            String waitBottom = this.language.waitBottom
-                    .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                    .replace("%playerNumber%", this.room.getPlayers().size() + "");
-            LinkedList<String> ms = new LinkedList<>(Arrays.asList(this.language.waitScoreBoard
-                    .replace("%roomMode%", Tools.getStringRoomMode(this.room))
-                    .replace("%playerNumber%", room.getPlayers().size() + "")
-                    .replace("%minPlayers%", this.room.getMinPlayers() + "")
-                    .replace("%maxPlayers%", this.room.getMaxPlayers() + "").split("\n")));
-            for (Player player : this.room.getPlayers().keySet()) {
+            HashSet<Player> players = new HashSet<>(this.room.getPlayers().keySet());
+            players.addAll(this.room.getSpectatorPlayers());
+            for (Player player : players) {
+                Language language = this.owner.getLanguage(player);
+                String waitBottom = language.waitBottom
+                        .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
+                        .replace("%playerNumber%", this.room.getPlayers().size() + "");
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.waitScoreBoard
+                        .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
+                        .replace("%playerNumber%", room.getPlayers().size() + "")
+                        .replace("%minPlayers%", this.room.getMinPlayers() + "")
+                        .replace("%maxPlayers%", this.room.getMaxPlayers() + "").split("\n")));
                 if (!"".equals(waitBottom.trim())) {
                     player.sendTip(waitBottom);
                 }
-                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
-            }
-            for (Player player : this.room.getSpectatorPlayers()) {
-                if (!"".equals(waitBottom.trim())) {
-                    player.sendTip(waitBottom);
-                }
-                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+                owner.getScoreboard().showScoreboard(player, language.scoreBoardTitle, ms);
             }
         }else {
             this.room.endGameEvent();

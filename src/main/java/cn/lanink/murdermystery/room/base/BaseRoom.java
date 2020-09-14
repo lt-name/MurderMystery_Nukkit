@@ -6,7 +6,6 @@ import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
 import cn.lanink.murdermystery.tasks.game.TipsTask;
-import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
@@ -35,7 +34,6 @@ public abstract class BaseRoom implements IRoomStatus {
 
     private String gameMode = null;
     protected MurderMystery murderMystery = MurderMystery.getInstance();
-    protected Language language = MurderMystery.getInstance().getLanguage();
     protected int status;
     protected int minPlayers, maxPlayers; //房间人数
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
@@ -62,10 +60,12 @@ public abstract class BaseRoom implements IRoomStatus {
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
         this.level = level;
         this.levelName = level.getFolderName();
+        String showRoomName = this.murderMystery.getRoomName().get(this.levelName) + "(" + this.levelName + ")";
         if (!this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
             File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
             if (!backup.exists()) {
-                this.murderMystery.getLogger().info(this.language.roomLevelBackup.replace("%name%", this.levelName));
+                this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
+                        .roomLevelBackup.replace("%name%", showRoomName));
                 Server.getInstance().unloadLevel(this.level);
                 if (Tools.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                     Server.getInstance().loadLevel(this.levelName);
@@ -74,7 +74,8 @@ public abstract class BaseRoom implements IRoomStatus {
                     throw new RoomLoadException("房间地图备份失败！ / The room world backup failed!");
                 }
             }else {
-                this.murderMystery.getLogger().info(this.language.roomLevelBackupExist.replace("%name%", this.levelName));
+                this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
+                        .roomLevelBackupExist.replace("%name%", showRoomName));
             }
         }
         this.minPlayers = config.getInt("minPlayers", 3);
@@ -237,7 +238,7 @@ public abstract class BaseRoom implements IRoomStatus {
         if (this.murderMystery.isHasTips()) {
             Tips.closeTipsShow(this.level.getName(), player);
         }
-        player.sendMessage(language.joinRoom.replace("%name%", this.level.getName()));
+        player.sendMessage(this.murderMystery.getLanguage(player).joinRoom.replace("%name%", this.getRoomName()));
         if (spectator || this.status == ROOM_STATUS_GAME || this.players.size() >= this.getMaxPlayers()) {
             this.spectatorPlayers.add(player);
             player.teleport(this.randomSpawn.get(MurderMystery.RANDOM.nextInt(this.randomSpawn.size())));
@@ -249,7 +250,7 @@ public abstract class BaseRoom implements IRoomStatus {
             this.players.put(player, 0);
             this.setRandomSkin(player);
             player.teleport(this.getWaitSpawn());
-            this.autoExpansionRoom();
+            this.autoCreateTemporaryRoom();
         }
         Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
             if (player.level != this.level) {
@@ -365,6 +366,13 @@ public abstract class BaseRoom implements IRoomStatus {
     }
 
     /**
+     * @return 房间显示名称
+     */
+    public final String getRoomName() {
+        return this.murderMystery.getRoomName().getOrDefault(this.levelName, this.levelName);
+    }
+
+    /**
      * 获取玩家在游戏中使用的皮肤
      * @param player 玩家
      * @return 皮肤
@@ -383,7 +391,7 @@ public abstract class BaseRoom implements IRoomStatus {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
         this.gameStart();
         this.scheduleTask();
-        this.autoExpansionRoom();
+        this.autoCreateTemporaryRoom();
     }
 
     /**
@@ -411,10 +419,7 @@ public abstract class BaseRoom implements IRoomStatus {
         }
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomEndEvent(this, victory));
         this.endGame(victory);
-        if (this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
-            this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
-            this.murderMystery.removeTemporaryRoom(this.levelName);
-        }
+        this.autoClearTemporaryRoom();
     }
 
     /**
@@ -518,17 +523,17 @@ public abstract class BaseRoom implements IRoomStatus {
     /**
      * 检查是否需要生成临时房间
      */
-    protected void autoExpansionRoom() {
-        if (this.murderMystery.isAutomaticExpansionRoom()) {
+    protected void autoCreateTemporaryRoom() {
+        if (this.murderMystery.isAutoCreateTemporaryRoom()) {
             CompletableFuture.runAsync(() -> {
                 LinkedList<String> cache = new LinkedList<>();
                 int x = 0;
                 for (Map.Entry<String, BaseRoom> entry : this.murderMystery.getRooms().entrySet()) {
                     if (this.getGameMode().equals(entry.getValue().getGameMode())) {
-                        cache.add(entry.getKey());
-                        if ((entry.getValue().getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED ||
-                                entry.getValue().getStatus() == ROOM_STATUS_WAIT) &&
-                                entry.getValue().players.size() < entry.getValue().getMaxPlayers()) {
+                        if (!this.murderMystery.getTemporaryRooms().contains(entry.getKey())) {
+                            cache.add(entry.getKey());
+                        }
+                        if (entry.getValue().canJoin()) {
                             x++;
                         }
                     }
@@ -537,6 +542,26 @@ public abstract class BaseRoom implements IRoomStatus {
                     this.murderMystery.addTemporaryRoom(cache.get(MurderMystery.RANDOM.nextInt(cache.size())));
                 }
             }, MurderMystery.checkRoomThreadPool);
+        }
+    }
+
+    /**
+     * 清理临时房间
+     */
+    protected void autoClearTemporaryRoom() {
+        if (!this.murderMystery.getTemporaryRooms().isEmpty()) {
+            for (String world : this.murderMystery.getTemporaryRooms()) {
+                if (world.equals(this.levelName)) {
+                    continue;
+                }
+                BaseRoom room = this.murderMystery.getRooms().get(world);
+                if (this.gameMode.equals(room.getGameMode()) &&
+                        room.getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED) {
+                    room.endGameEvent();
+                    room.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
+                    this.murderMystery.removeTemporaryRoom(world);
+                }
+            }
         }
     }
 
@@ -556,7 +581,8 @@ public abstract class BaseRoom implements IRoomStatus {
         File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
         File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
-            this.murderMystery.getLogger().error(this.language.roomLevelBackupNotExist.replace("%name%", this.levelName));
+            this.murderMystery.getLogger().error(this.murderMystery.getLanguage(null)
+                    .roomLevelBackupNotExist.replace("%name%", this.levelName));
             this.murderMystery.unloadRoom(this.levelName);
         }
         CompletableFuture.runAsync(() -> {
@@ -572,7 +598,8 @@ public abstract class BaseRoom implements IRoomStatus {
                     this.murderMystery.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
                 }
             }else {
-                this.murderMystery.getLogger().error(this.language.roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
+                this.murderMystery.getLogger().error(this.murderMystery.getLanguage(null)
+                        .roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
                 this.murderMystery.unloadRoom(this.levelName);
             }
         });

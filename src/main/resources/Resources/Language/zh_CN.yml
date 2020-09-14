@@ -53,6 +53,7 @@ useCmdInCon: "请在游戏内输入！"
 adminHelp: |-
   §eMurderMystery--命令帮助
   §a/%cmdName% §e打开ui
+  §a/%cmdName% setroomname <名称> §e设置房间名称
   §a/%cmdName% setwaitspawn §e设置当前位置为游戏出生点
   §a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点
   §a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点
@@ -66,6 +67,8 @@ adminHelp: |-
   §a/%cmdName% stoproom §e强制关闭所在地图的房间
   §a/%cmdName% reloadroom §e重载所有房间
   §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置
+adminSetRoomName: "§a房间名字设置为: %roomName%"
+adminSetRoomNameExist: "§a已经有名为 \"%roomName%\" 的房间啦！"
 adminSetSpawn: "§a默认出生点设置成功！"
 adminAddRandomSpawn: "§a随机出生点添加成功！"
 adminAddGoldSpawn: "§a金锭生成点添加成功！"
@@ -189,14 +192,15 @@ userMenuButton1: "§e随机加入房间"
 userMenuButton2: "§e退出当前房间"
 userMenuButton3: "§e查看房间列表"
 adminMenuSetLevel: "当前设置地图：%name%"
-adminMenuButton1: "§e设置默认出生点"
-adminMenuButton2: "§e添加随机出生点"
-adminMenuButton3: "§e添加金锭生成点"
-adminMenuButton4: "§e设置时间参数"
-adminMenuButton5: "§e设置游戏人数"
-adminMenuButton6: "§e设置房间模式"
-adminMenuButton7: "§e重载所有房间"
-adminMenuButton8: "§c卸载所有房间"
+adminMenuButton1: "§e设置房间名称"
+adminMenuButton2: "§e设置默认出生点"
+adminMenuButton3: "§e添加随机出生点"
+adminMenuButton4: "§e添加金锭生成点"
+adminMenuButton5: "§e设置时间参数"
+adminMenuButton6: "§e设置游戏人数"
+adminMenuButton7: "§e设置房间模式"
+adminMenuButton8: "§e重载所有房间"
+adminMenuButton9: "§c卸载所有房间"
 adminTimeMenuInputText1: "金锭产出间隔（秒）"
 adminTimeMenuInputText2: "等待时间（秒）"
 adminTimeMenuInputText3: "游戏时间（秒）"

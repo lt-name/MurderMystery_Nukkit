@@ -34,12 +34,12 @@ public class SetMinPlayers extends BaseSubCommand {
                 Config config = this.murderMystery.getRoomConfig(player.getLevel());
                 config.set("minPlayers", Integer.parseInt(args[1]));
                 config.save();
-                sender.sendMessage(this.language.adminSetMinPlayers.replace("%minPlayers%", args[1]));
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetMinPlayers.replace("%minPlayers%", args[1]));
             }else {
-                sender.sendMessage(this.language.adminNotNumber);
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminNotNumber);
             }
         }else {
-            sender.sendMessage(this.language.cmdHelp.replace("%cmdName%", this.getName()));
+            sender.sendMessage(this.murderMystery.getLanguage(sender).cmdHelp.replace("%cmdName%", this.getName()));
         }
         return true;
     }

@@ -35,13 +35,8 @@ public class ScoreboardDe implements IScoreboard {
         if (this.scoreboards.containsKey(player)) {
             Scoreboard scoreboard = this.scoreboards.get(player);
             scoreboard.hideFor(player);
+            this.scoreboards.remove(player);
         }
-    }
-
-    @Override
-    public void delCache(Player player) {
-        this.closeScoreboard(player);
-        this.scoreboards.remove(player);
     }
 
 }

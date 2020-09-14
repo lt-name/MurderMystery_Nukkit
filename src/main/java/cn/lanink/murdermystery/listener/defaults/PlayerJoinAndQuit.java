@@ -30,7 +30,11 @@ public class PlayerJoinAndQuit implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player != null && this.murderMystery.getRooms().containsKey(player.getLevel().getFolderName())) {
+        if (player == null) {
+            return;
+        }
+        this.murderMystery.getPlayerLanguage().put(player, player.getLoginChainData().getLanguageCode());
+        if (this.murderMystery.getRooms().containsKey(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
                 @Override
                 public void onRun(int i) {
@@ -55,8 +59,8 @@ public class PlayerJoinAndQuit implements Listener {
                 room.quitRoom(player);
             }
         }
-        this.murderMystery.getScoreboard().delCache(player);
         GuiCreate.UI_CACHE.remove(player);
+        this.murderMystery.getPlayerLanguage().remove(player);
     }
 
     @EventHandler
@@ -70,11 +74,11 @@ public class PlayerJoinAndQuit implements Listener {
             if (room.containsKey(fromLevel) &&
                     (room.get(fromLevel).isPlaying(player) || room.get(fromLevel).isSpectator(player))) {
                 event.setCancelled(true);
-                player.sendMessage(this.murderMystery.getLanguage().tpQuitRoomLevel);
+                player.sendMessage(this.murderMystery.getLanguage(player).tpQuitRoomLevel);
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player) && !room.get(toLevel).isSpectator(player)) {
                 event.setCancelled(true);
-                player.sendMessage(this.murderMystery.getLanguage().tpJoinRoomLevel);
+                player.sendMessage(this.murderMystery.getLanguage(player).tpJoinRoomLevel);
             }
         }
     }

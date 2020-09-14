@@ -1,7 +1,6 @@
 package cn.lanink.murdermystery.command.base;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.utils.Language;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 
@@ -12,10 +11,7 @@ import cn.nukkit.command.data.CommandParameter;
 public abstract class BaseSubCommand {
 
     protected MurderMystery murderMystery = MurderMystery.getInstance();
-
-    protected Language language = murderMystery.getLanguage();
-
-    private String name;
+    private final String name;
 
     protected BaseSubCommand(String name) {
         this.name = name;

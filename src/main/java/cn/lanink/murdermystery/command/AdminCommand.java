@@ -15,6 +15,7 @@ public class AdminCommand extends BaseCommand {
         super(name, "MurderMystery 管理命令");
         this.setAliases(aliases);
         this.setPermission("MurderMystery.command.admin");
+        this.addSubCommand(new SetRoomName("setroomname"));
         this.addSubCommand(new SetWaitSpawn("setwaitspawn"));
         this.addSubCommand(new AddRandomSpawn("addrandomspawn"));
         this.addSubCommand(new AddGoldSpawn("addgoldspawn"));
@@ -34,7 +35,7 @@ public class AdminCommand extends BaseCommand {
 
     @Override
     public void sendHelp(CommandSender sender) {
-        sender.sendMessage(this.language.adminHelp.replace("%cmdName%", this.getName()));
+        sender.sendMessage(this.murderMystery.getLanguage(sender).adminHelp.replace("%cmdName%", this.getName()));
     }
 
     @Override

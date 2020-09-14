@@ -47,11 +47,8 @@ import java.util.Random;
  */
 public class DefaultGameListener extends BaseMurderMysteryListener {
 
-    private final Language language;
-
     public DefaultGameListener(MurderMystery murderMystery) {
         super(murderMystery);
-        this.language = murderMystery.getLanguage();
     }
 
     /**
@@ -172,7 +169,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
                 if (room instanceof ClassicModeRoom) {
                     ((ClassicModeRoom) room).detectiveBow = null;
                 }
-                room.getPlayers().keySet().forEach(p -> p.sendMessage(this.language.commonPeopleBecomeDetective));
+                room.getPlayers().keySet().forEach(p -> p.sendMessage(this.murderMystery.getLanguage(p).commonPeopleBecomeDetective));
                 room.getPlayers().put(player, 2);
                 player.getInventory().addItem(Item.get(262, 0, 1));
             }
@@ -194,11 +191,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             return;
         }
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-        if (room == null || !room.isPlaying(player) || !room.isSpectator(player)) {
-            return;
-        }
-        if (player.getGamemode() != 0) {
-            event.setCancelled(true);
+        if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
             return;
         }
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK ||
@@ -206,7 +199,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             event.setCancelled(true);
             player.setAllowModifyWorld(false);
         }
-        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player)) {
+        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player) && player.getGamemode() == 0) {
+            Language language = this.murderMystery.getLanguage(player);
             int id1 = block.getId();
             int id2 = block.getLevel().getBlock(block.getFloorX(), block.getFloorY() - 1, block.getFloorZ()).getId();
             if (id1 == 118 && id2 == 138) {
@@ -285,7 +279,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
             if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 10) {
                 event.setCancelled(true);
                 room.quitRoom(player);
-                player.sendMessage(this.language.quitRoom);
+                player.sendMessage(this.murderMystery.getLanguage(player).quitRoom);
             }
         }
     }
@@ -453,7 +447,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
                     if (room.getStatus() != 2 || entityItem.isClosed()) {
                         return;
                     }
-                    entityItem.setNameTag(language.itemDetectiveBow);
+                    entityItem.setNameTag(murderMystery.getLanguage(null).itemDetectiveBow);
                     entityItem.setNameTagVisible(true);
                     entityItem.setNameTagAlwaysVisible(true);
                 }

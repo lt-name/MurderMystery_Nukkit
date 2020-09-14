@@ -7,9 +7,12 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.Config;
 
-public class SetGoldSpawnTime extends BaseSubCommand {
+/**
+ * @author lt_name
+ */
+public class SetRoomName extends BaseSubCommand {
 
-    public SetGoldSpawnTime(String name) {
+    public SetRoomName(String name) {
         super(name);
     }
 
@@ -26,14 +29,15 @@ public class SetGoldSpawnTime extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (args.length == 2) {
-            Player player = (Player) sender;
-            if (args[1].matches("[0-9]*")) {
-                Config config = this.murderMystery.getRoomConfig(player.getLevel());
-                config.set("goldSpawnTime", Integer.parseInt(args[1]));
-                config.save();
-                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetGoldSpawnTime.replace("%time%", args[1]));
+            String roomName = args[1].trim();
+            if (this.murderMystery.getRooms().containsKey(roomName) ||
+                    this.murderMystery.getRoomName().containsValue(roomName)) {
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetRoomNameExist.replace("%roomName%", roomName));
             }else {
-                sender.sendMessage(this.murderMystery.getLanguage(sender).adminNotNumber);
+                Config config = this.murderMystery.getRoomConfig(((Player) sender).getLevel());
+                config.set("roomName", roomName);
+                config.save();
+                sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetRoomName.replace("%roomName%", roomName));
             }
         }else {
             sender.sendMessage(this.murderMystery.getLanguage(sender).cmdHelp.replace("%cmdName%", this.getName()));
@@ -43,7 +47,7 @@ public class SetGoldSpawnTime extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { new CommandParameter("time", CommandParamType.INT, false) };
+        return new CommandParameter[] { new CommandParameter("name", CommandParamType.TEXT, false) };
     }
 
 }

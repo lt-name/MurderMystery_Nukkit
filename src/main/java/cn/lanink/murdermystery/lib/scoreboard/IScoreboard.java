@@ -23,10 +23,4 @@ public interface IScoreboard {
      */
     void closeScoreboard(Player player);
 
-    /**
-     * 清除计分板缓存
-     * @param player 玩家
-     */
-    void delCache(Player player);
-
 }

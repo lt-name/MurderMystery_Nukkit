@@ -33,7 +33,7 @@ public class AddRandomSpawn extends BaseSubCommand {
         list.add(s);
         config.set("randomSpawn", list);
         config.save();
-        sender.sendMessage(this.language.adminAddRandomSpawn);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).adminAddRandomSpawn);
         return true;
     }
 

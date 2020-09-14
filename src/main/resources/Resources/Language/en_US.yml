@@ -53,6 +53,7 @@ useCmdInCon: "Please use command in the game!"
 adminHelp: |-
   §eMurderMystery--Help
   §a/%cmdName% §eOpen UI
+  §a/%cmdName% setroomname <Name> §eSet room name
   §a/%cmdName% setwaitspawn §eSet the current location as the spawnpoint of the game
   §a/%cmdName% addrandomspawn  §eAdd the current location as the waiting spawnpoint of the game
   §a/%cmdName% addgoldspawn §e  Add the current location as the gold ingot generation point
@@ -66,6 +67,8 @@ adminHelp: |-
   §a/%cmdName% stoproom §eEnd Game
   §a/%cmdName% reloadroom §eReload all the rooms
   §a/%cmdName% unloadroom §eClose all rooms and uninstall config
+adminSetRoomName: "§aThe room name is set to: %roomName%"
+adminSetRoomNameExist: "§aThere is already a room named \"%roomName%\"!"
 adminSetSpawn: "§aThe default spawnpoint is set successfully!"
 adminAddRandomSpawn: "§aThe random spawnpoint is set successfully!"
 adminAddGoldSpawn: "§aThe default gold ingot generation point is set successfully!"
@@ -191,14 +194,15 @@ userMenuButton1: "§eJoin a room randomly"
 userMenuButton2: "§eQuit this room"
 userMenuButton3: "§eList all the rooms"
 adminMenuSetLevel: "Map:%name%"
-adminMenuButton1: "§eSet default spawnpoint"
-adminMenuButton2: "§eAdd random spawnpoint"
-adminMenuButton3: "§eAdd gold ingot generation"
-adminMenuButton4: "§eSet time parameters"
-adminMenuButton5: "§eSet the number of players"
-adminMenuButton6: "§eSet room mode"
-adminMenuButton7: "§eReload all the rooms"
-adminMenuButton8: "§cUninstall all the rooms"
+adminMenuButton1: "§eSet room name"
+adminMenuButton2: "§eSet default spawnpoint"
+adminMenuButton3: "§eAdd random spawnpoint"
+adminMenuButton4: "§eAdd gold ingot generation"
+adminMenuButton5: "§eSet time parameters"
+adminMenuButton6: "§eSet the number of players"
+adminMenuButton7: "§eSet room mode"
+adminMenuButton8: "§eReload all the rooms"
+adminMenuButton9: "§cUninstall all the rooms"
 adminTimeMenuInputText1: "The interval of each gold ingot(s)"
 adminTimeMenuInputText2: "Waiting Time(s)"
 adminTimeMenuInputText3: "Playing Time(s)"

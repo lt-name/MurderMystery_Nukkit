@@ -23,7 +23,7 @@ public class UnloadRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         this.murderMystery.unloadRooms();
-        sender.sendMessage(this.language.adminUnload);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).adminUnload);
         return true;
     }
 

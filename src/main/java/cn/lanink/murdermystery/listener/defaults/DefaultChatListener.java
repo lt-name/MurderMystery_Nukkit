@@ -4,19 +4,18 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.IRoomStatus;
-import cn.lanink.murdermystery.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 
+import java.util.HashSet;
+
 /**
  * @author lt_name
  */
 public class DefaultChatListener extends BaseMurderMysteryListener {
-
-    private final Language language = murderMystery.getLanguage();
 
     public DefaultChatListener(MurderMystery murderMystery) {
         super(murderMystery);
@@ -53,7 +52,7 @@ public class DefaultChatListener extends BaseMurderMysteryListener {
         }
         event.setMessage("");
         event.setCancelled(true);
-        player.sendMessage(this.language.useCmdInRoom);
+        player.sendMessage(this.murderMystery.getLanguage(player).useCmdInRoom);
     }
 
     /**
@@ -72,40 +71,37 @@ public class DefaultChatListener extends BaseMurderMysteryListener {
             return;
         }
         if (room.isSpectator(player)) {
-            String newMassage = this.language.playerSpectatorChat
-                    .replace("%player%", player.getName())
-                    .replace("%message%", message);
             for (Player p : room.getSpectatorPlayers()) {
-                p.sendMessage(newMassage);
+                p.sendMessage(this.murderMystery.getLanguage(p).playerSpectatorChat
+                        .replace("%player%", player.getName())
+                        .replace("%message%", message));
             }
         }else if (room.getPlayers(player) == 0) {
-            String newMassage;
-            if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
-                newMassage = this.language.playerDeathChat
-                        .replace("%player%", player.getName())
-                        .replace("%message%", message);
-            }else {
-                newMassage = this.language.playerChat
-                        .replace("%player%", player.getName())
-                        .replace("%message%", message);
-            }
-            for (Player p : room.getPlayers().keySet()) {
+            HashSet<Player> players = new HashSet<>(room.getPlayers().keySet());
+            players.addAll(room.getSpectatorPlayers());
+            for (Player p : players) {
                 if (room.getPlayers(p) == 0) {
-                    p.sendMessage(newMassage);
+                    if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
+                        p.sendMessage(this.murderMystery.getLanguage(p).playerDeathChat
+                                .replace("%player%", player.getName())
+                                .replace("%message%", message));
+                    }else {
+                        p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                                .replace("%player%", player.getName())
+                                .replace("%message%", message));
+                    }
                 }
             }
-            for (Player p : room.getSpectatorPlayers()) {
-                p.sendMessage(newMassage);
-            }
         }else {
-            String newMassage = this.language.playerChat
-                    .replace("%player%", player.getName())
-                    .replace("%message%", message);
             for (Player p : room.getPlayers().keySet()) {
-                p.sendMessage(newMassage);
+                p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                        .replace("%player%", player.getName())
+                        .replace("%message%", message));
             }
             for (Player p : room.getSpectatorPlayers()) {
-                p.sendMessage(newMassage);
+                p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                        .replace("%player%", player.getName())
+                        .replace("%message%", message));
             }
         }
         event.setMessage("");
