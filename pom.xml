@@ -108,15 +108,18 @@
             <name>nukkitx-snapshot</name>
             <url>https://repo.nukkitx.com/maven-snapshots</url>
         </repository>
+        <repository>
+            <id>NukkitPetteriM1Edition-repo</id>
+            <name>NukkitPetteriM1Edition-snapshot</name>
+            <url>ttps://github.com/lt-name/NukkitPetteriM1Edition/tree/lt-name/master/repo/cn/nukkit/Nukkit</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>nukkit</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Nukkit-PM1E.jar</systemPath>
+            <version>PM1E</version>
         </dependency>
         <dependency>
             <groupId>de.theamychan.scoreboard</groupId>
