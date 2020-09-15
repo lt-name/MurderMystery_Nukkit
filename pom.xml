@@ -102,6 +102,13 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>maven-repo</id>
+            <url>file:/www/wwwroot/repo.lanink.cn</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>NukkitPetteriM1Edition-repo</id>
