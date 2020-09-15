@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>MurderMystery</artifactId>
-    <version>1.0.8-SNAPSHOT</version>
+    <version>1.0.8-PM1E-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -24,7 +24,7 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>MurderMystery-PM1E-v${project.version}</finalName>
+        <finalName>MurderMystery-v${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -106,7 +106,7 @@
         <repository>
             <id>NukkitPetteriM1Edition-repo</id>
             <name>NukkitPetteriM1Edition-snapshot</name>
-            <url>https://github.com/lt-name/NukkitPetteriM1Edition/tree/lt-name/master/repo/</url>
+            <url>https://repo.lanink.cn/</url>
         </repository>
     </repositories>
 
