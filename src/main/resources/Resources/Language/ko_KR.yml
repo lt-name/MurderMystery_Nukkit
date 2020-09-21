@@ -1,5 +1,6 @@
 # 한글화 BY mcsim415
 # 번역 개편 BY good777LUCKY
+# 재번역 BY JuChanMin
 scoreboardAPINotFound: "§cScoreBoardAPI 플러그인을 설치해주세요!"
 startLoadingAddons: "§e애드온을 불러오는 중..."
 addonsLoaded: "§e애드온 불러오기 성공!"
@@ -11,11 +12,11 @@ startLoadingRoom: "§e방 불러오는 중..."
 roomLoadedSuccess: "§a방: %name%이(가) 불러와 졌습니다!"
 roomLoadedFailureByConfig: "§c방: %name% 설정에 문제가 있어서 불러오지 못하였습니다!"
 roomLoadedFailureByLevel: "§c방: %name%의 월드를 읽지 못하였습니다!"
-roomLoadedFailureByGameMode: "§cRoom: %name% game mode setting error! No game mode found: %gameMode%"
-roomLevelBackup: "§aRoom: %name% did not detect the world backup, the map is being backed up..."
-roomLevelBackupExist: "§aRoom: %name% detected world backup!"
-roomLevelBackupNotExist: "§A Room: %name% world backup does not exist! Unable to restore the world!"
-roomLevelRestoreLevelFailure: "§cRoom: %name% world restoration failed!"
+roomLoadedFailureByGameMode: "§c방: %name%에 오류가 있습니다, 존재하지 않는 게임모드 : %gameMode%"
+roomLevelBackup: "§a방: %name%의 백업본을 감지하지 못했습니다, 월드를 백업합니다."
+roomLevelBackupExist: "§a방: %name%의 백업본을 감지했습니다!"
+roomLevelBackupNotExist: "§A 방: %name%의 백업본을 찾지 못했습니다, 백업본 되돌리기 기능을 비활성화 합니다."
+roomLevelRestoreLevelFailure: "§c방: %name%의 백업본 되돌리기에 실패했습니다!"
 roomLoadedAllSuccess: "§e방: %number% 불러오기 완료! 방이 현재 적용 완료되었습니다!"
 roomUnloadSuccess: "§c방: %name%이(가) 비활성화되었습니다!"
 roomUnloadFailure: "§c방: %name%이(가) 비정상적으로 종료되었습니다!"
@@ -25,25 +26,26 @@ skinFailureByName: "§c%name%을(를) 불러오는 데 실패하였습니다, �
 skinLoadedSuccess: "§a번호: %number% 스킨: %name%이(가) 불러와 졌습니다!"
 skinLoadedAllSuccess: "§e스킨 불러오기 완료! 현재 %number%개의 스킨이 불러와졌습니다!"
 skinLoadedAllFailureByNumber: "§c현재 불러와 진 스킨의 개수는 16개 미만이므로, 일부 플레이어는 계속 자신의 스킨을 사용할 수 있습니다!"
-pluginEnable: "§e플러그인이 불러와 졌습니다! 사용하게 된 것을 환영합니다!"
-pluginDisable: "§c플러그인 비활성화 완료!"
+pluginEnable: "§e플러그인이 활성화되었습니다, MurderMystery에 어서오십시오!"
+pluginDisable: "§c플러그인 비활성화 되었습니다."
 useCmdInRoom: "§e >> §c플레이하는 동안에는 다른 명령어 사용할 수 없습니다."
 cmdHelp: "§a도움말 보는 방법:/%cmdName% help"
 userHelp: |-
   §e머더 미스터리--도움말
   §a/%cmdName% §eUI 열기
-  §a/%cmdName% join §eJoin a random game
-  §a/%cmdName% join mode:<gameMode> §eJoin the specified mode game
+  §a/%cmdName% join §e랜덤 게임 참가
+  §a/%cmdName% join mode:<gameMode> §e해당 게임모드 방에 참가
   §a/%cmdName% join <방 이름> §e게임 참가하기
-  §a/%cmdName% joinspectator <roomName> §eWatch the battle
+  §a/%cmdName% joinspectator <roomName> §e관전자 모드로 게임 관전
   §a/%cmdName% quit §e게임 나가기
   §a/%cmdName% list §e방 목록 보기
 noPermission: "§c이 명령어를 실행하기 위한 권한이 부족합니다!"
-joinRoom: "§a%name%님이 방에 입장하였습니다!"
+#joinRoom = %name%은 플레이어 이름이 아닌 방 이름이 출력됩니다.
+joinRoom: "§a%name% 방에 입장하였습니다!"
 joinRoomOnRoom: "§c이미 방 안에 있습니다!"
 joinRoomOnRiding: "§a탑승하고 있는 동안에는 입장할 수 없습니다!"
 joinRandomRoom: "§a임의로 배정된 방입니다!"
-joinRoomIsNeedInitialized: "§aThe room is initializing, please wait..."
+joinRoomIsNeedInitialized: "§a설치 중인 방입니다, 잠시 후 다시 시도해주세요!"
 joinRoomIsPlaying: "§a이 방은 이미 게임 진행 중입니다, 잠시 후 다시 시도해주세요!"
 joinRoomIsFull: "§a이 방은 꽉 찼습니다, 잠시 후 다시 시도해주세요!"
 joinRoomIsNotFound: "§a방을 찾을 수 없습니다!"
@@ -55,7 +57,7 @@ useCmdInCon: "인게임에서 명령어를 사용해주세요!!"
 adminHelp: |-
   §e머더 미스터리--도움말
   §a/%cmdName% §eUI 열기
-  §a/%cmdName% setroomname <Name> §eSet room name
+  §a/%cmdName% setroomname <Name> §e방 이름 설정
   §a/%cmdName% setwaitspawn §e현재 위치를 게임 대기 지점으로 설정하기
   §a/%cmdName% addrandomspawn  §e현재 위치를 게임 랜덤 위치로 추가하기
   §a/%cmdName% addgoldspawn §e  현재 위치를 금괴 생성 지점으로 추가하기
@@ -63,14 +65,14 @@ adminHelp: |-
   §a/%cmdName% setwaittime <초> §e플레이어 수가 채워진 후 대기 시간 설정하기
   §a/%cmdName% setgametime <초> §e각 게임 라운드의 최대 시간 설정하기
   §a/%cmdName% setgamemode <모드> §e방 게임 모드 설정하기
-  §a/%cmdName% setminplayers <minPlayers> §eSet the minimum number of people in the room
-  §a/%cmdName% setmaxplayers <maxPlayers> §eSet the maximum number of people in the room
+  §a/%cmdName% setminplayers <숫자> §e게임시작을 위한 최소 인원
+  §a/%cmdName% setmaxplayers <숫자> §e게임 창가 최대 인원
   §a/%cmdName% startroom §e게임 시작하기
   §a/%cmdName% stoproom §e게임 종료하기
   §a/%cmdName% reloadroom §e모든 방을 다시 불러오기
   §a/%cmdName% unloadroom §e모든 방을 닫고 설정 제거하기
-adminSetRoomName: "§aThe room name is set to: %roomName%"
-adminSetRoomNameExist: "§aThere is already a room named \"%roomName%\"!"
+adminSetRoomName: "§a방 이름이 설정되었습니다: %roomName%"
+adminSetRoomNameExist: "§a이미 존재하는 방 이름입니다: \"%roomName%\""
 adminSetSpawn: "§a기본 플레이어 생성 지점이 성공적으로 설정되었습니다!"
 adminAddRandomSpawn: "§a무작위 플레이어 생성 지점이 성공적으로 설정되었습니다!"
 adminAddGoldSpawn: "§a기본 금괴 생성 지점이 성공적으로 설정되었습니다!"
@@ -81,8 +83,8 @@ adminSetGameTime: "§a각 게임의 시간은 %time%초로 설정되었습니다
 adminSetGameTimeShort: "§a최소 게임 시간은 1분 이상 이여야 합니다!"
 adminSetGameMode: "§a이 방의 게임모드는 %roomMode%로 설정되었습니다!"
 adminSetGameModeNotFound: "§c방 게임 모드: %mode%은(는) 존재하지 않습니다!"
-adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
-adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
+adminSetMinPlayers: "§a게임 시작을 위한 최소인원을 설정했습니다: %minPlayers%명"
+adminSetMaxPlayers: "§a방 최대 인원을 설정했습니다: %maxPlayers%명"
 adminStartRoom: "§a게임이 강제로 시작되었습니다!"
 adminStartRoomNoPlayer: "§a준비된 플레이어가 %minPlayers%명 미만일 때는 시작이 불가능합니다!"
 adminStartRoomIsPlaying: "§c이미 게임은 진행 중입니다!"
@@ -90,7 +92,7 @@ adminLevelNoRoom: "§a게임 방에 들어가 있지 않습니다!"
 adminStopRoom: "§a게임이 강제로 종료되었습니다!"
 adminReload: "§a설정 다시 불러오기 성공! 백그라운드에서 정보를 확인하세요!"
 adminUnload: "§a모든 방 언로드 성공! 백그라운드에서 정보를 확인하세요!"
-playerChat: "§a[방]§f %player%§b >>>§f %message%"
+playerChat: "§a[]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[사망] %player§b >>> %message%"
 playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 월드에 참가하세요."
