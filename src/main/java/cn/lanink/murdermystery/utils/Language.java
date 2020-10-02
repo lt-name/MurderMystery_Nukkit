@@ -349,6 +349,8 @@ public class Language {
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);
+        this.adminPlayersMenuInputText1 = config.getString("adminPlayersMenuInputText1", this.adminPlayersMenuInputText1);
+        this.adminPlayersMenuInputText2 = config.getString("adminPlayersMenuInputText2", this.adminPlayersMenuInputText2);
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonSpectator = config.getString("buttonSpectator", this.buttonSpectator);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
