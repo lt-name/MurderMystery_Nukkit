@@ -125,10 +125,11 @@ public class MurderMystery extends PluginBase {
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
         //语言文件 (按时间排序/Sort by time)
-        saveResource("Resources/Language/zh_CN.yml", false);
-        saveResource("Resources/Language/en_US.yml", false);
-        saveResource("Resources/Language/ko_KR.yml", false);
-        saveResource("Resources/Language/vi_VN.yml", false);
+        this.saveResource("Resources/Language/zh_CN.yml");
+        this.saveResource("Resources/Language/en_US.yml");
+        this.saveResource("Resources/Language/ko_KR.yml");
+        this.saveResource("Resources/Language/vi_VN.yml");
+        this.saveResource("Resources/Language/de_DE.yml");
         this.defaultLanguage = this.config.getString("defaultLanguage", "zh_CN");
         this.languageMappingTable.putAll(this.config.get("languageMappingTable", new HashMap<>()));
         File[] files = new File(getDataFolder() + "/Resources/Language").listFiles();

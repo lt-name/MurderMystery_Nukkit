@@ -1,0 +1,180 @@
+scoreboardAPINotFound: "§cBitte installieren Sie das ScoreboardAPI-Plugin!"
+startLoadingAddons: "§eStart Loading Addons ..."
+addonsLoaded: "§eAddons Laden abgeschlossen!"
+SchwertSuccess: "§aSword Laden abgeschlossen"
+wordFailure: "§cSword-Datei konnte nicht geladen werden! Bitte überprüfen Sie die Integrität des Plug-Ins!"
+defaultSkinSuccess: "§aDas Standard-Laden der Körperhaut ist abgeschlossen."
+defaultSkinFailure: "§cDie Standard-Leichenhaut konnte nicht geladen werden! Bitte überprüfen Sie die Integrität des Plug-Ins!"
+startLoadingRoom: "§eStart Laderaum ..."
+roomLoadedSuccess: "§aRoom:% name% wurde geladen!"
+roomLoadedFailureByConfig: "§cRoom: %name% Konfiguration ist unvollständig, Laden fehlgeschlagen!"
+roomLoadedFailureByLevel: "§cRoom: %name% konnte die Karte nicht lesen!"
+roomLoadedAllSuccess: "§eRoom-Ladevorgang abgeschlossen! %number% Räume sind derzeit geladen!"
+roomUnloadSuccess: "§cRoom: %name% wurde entladen!"
+roomUnloadFailure: "§cRoom: %name% wurde abnormal beendet!"
+startLoadingSkin: "§eStart Skin laden ..."
+skinFailureByFormat: "§c %name% konnte nicht geladen werden, dies ist möglicherweise kein korrektes Bild."
+skinFailureByName: "§c %name% konnte nicht geladen werden, bitte benennen Sie die Skin-Datei skin.png"
+skinLoadedSuccess: "§aNumber: %number% Skin: %name% geladen"
+skinLoadedAllSuccess: "§eSkin-Ladevorgang abgeschlossen! %number% Skins sind derzeit geladen!"
+skinLoadedAllFailureByNumber: "§cDie aktuelle Anzahl von Skins beträgt weniger als 16, und einige Spieler können weiterhin ihre eigenen Skins verwenden!"
+pluginEnable: "§ePlugin ist geladen! Willkommen, um es zu benutzen!"
+pluginDisable: "Die Deinstallation von §cPlugin ist abgeschlossen!"
+useCmdInRoom: "§e >> §cWährend Sie spielen, sind andere Befehle nicht zulässig."
+cmdHelp: "§aSuche nach Hilfe: /%cmdName% help"
+userHelp: |-
+  §EMurderMystery - Hilfe
+  §A /%cmdName% §eOpen UI
+  §A /%cmdName% Join NameOfRoom §eJoinGame
+  §A /%cmdName% beendet §eQuitGame
+  §A /%cmdName% list §eListen Sie alle Räume auf
+noPermission: "§cSie haben nicht die Erlaubnis dazu!"
+joinRoom: "§aSie haben den Raum erfolgreich betreten: %name%"
+joinRoomOnRoom: "§cSie sind bereits im Raum!"
+joinRoomOnRiding: "§aDas Zimmer während der Fahrt nicht betreten!"
+joinRandomRoom: "§a Zufällig zugewiesene Räume für Sie!"
+joinRoomIsPlaying: "§aDieser Raum spielt, bitte warten Sie!"
+joinRoomIsFull: "§aDer Raum ist nicht frei, bitte warten Sie!"
+joinRoomIsNotFound: "§aKann diesen Raum nicht finden!"
+joinRoomNotAvailable: "§aEs ist kein Platz frei!"
+quitRoom: "§aSie haben den Raum verlassen!"
+quitRoomNotInRoom: "§aSie sind nicht in einem Raum!"
+listRoom: "§eRoom-Liste: §a%list%"
+useCmdInCon: "Bitte benutze den Befehl im Spiel!"
+adminHelp: |-
+  §EMurderMystery - Hilfe
+  §A /%cmdName% §eOpen UI
+  §A /%cmdName% setwaitspawn §eStellt den aktuellen Ort als Spawnpunkt des Spiels ein
+  §A /%cmdName% addrandomspawn §eFügen Sie den aktuellen Speicherort als wartenden Spawnpunkt des Spiels hinzu
+  §A /%cmdName% addgoldspawn §e Fügt den aktuellen Standort als Generierungspunkt für Goldbarren hinzu
+  §A /%cmdName% setgoldspawntime number §eSet das Intervall für die Erzeugung von Goldbarren
+  §A /%cmdName% setwaittime number §eStellen Sie die Wartezeit ein, nachdem die Anzahl der Spieler ausreicht
+  §A /%cmdName% setgametime number §eStellt die maximale Zeit jeder Spielrunde ein
+  §A /%cmdName% setgamemode mode §eSet room game mode
+  §A /%cmdName% startroom §eStart Game
+  §A /%cmdName% reloadroom §Laden Sie alle Räume neu
+  §A /%cmdName% Unloadroom §eSchließen Sie alle Räume und deinstallieren Sie die Konfiguration
+adminSetSpawn: "§aDer Standard-Spawnpunkt wurde erfolgreich gesetzt!"
+adminAddRandomSpawn: "§aDer zufällige Spawnpunkt wurde erfolgreich gesetzt!"
+adminAddGoldSpawn: "§aDer Standard-Generierungspunkt für Goldbarren wurde erfolgreich festgelegt!"
+adminNotNumber: "§aBitte geben Sie die Nummer ein"
+adminSetGoldSpawnTime: "§aDas Intervall jedes Goldbarren ist auf %time% eingestellt."
+adminSetWaitTime: "§aWaiting-Zeit ist eingestellt auf: %time%"
+adminSetGameTime: "§aTime jedes Spiels ist eingestellt auf: %time%"
+adminSetGameTimeShort: "§aDie Mindestzeit jedes Spiels sollte mehr als 1 Minute betragen!"
+adminSetGameMode: "§aDer Modus dieses Raums ist eingestellt auf: %roomMode%"
+adminStartNoPlayer: "§aDie Anzahl der Spieler beträgt weniger als 3, Sie können das Spiel nicht starten."
+adminLevelNoRoom: "§aSie sind nicht im Spielzimmer"
+adminReload: "§aConfig reload abgeschlossen! Bitte überprüfen Sie die Informationen im Hintergrund!"
+adminUnload: "§aAlle Räume entladen! Bitte überprüfen Sie die Informationen im Hintergrund!"
+roomSafeKick: |-
+  §CRoom ist abnormal geschlossen!
+  Zur Sicherheit Ihres Rucksacks betreten Sie den Server später erneut!
+playerDeathChat: "§c [Tod]% Spieler% + §b >>>% Nachricht%"
+tpJoinRoomLevel: "§e >> §cBitte trete einer Karte bei, bevor du anfängst zu spielen."
+tpQuitRoomLevel: "§e >> §cBitte verwenden Sie den Befehl, um den Raum zu verlassen."
+itemDetectiveBow: "§eBow der Detektive"
+itemDetectiveBowLore: |-
+  Verbrauchte Pfeile automatisch auffüllen
+  "Tipps:" Sie werden sterben, wenn Sie Ihren Teamkollegen angreifen
+itemKillerSword: "§cSword of Killer"
+itemKillerSwordLore: |-
+  Schwert des Mörders
+  "Tipps" Sie erhalten eine kurze Beschleunigung, wenn Sie zu Schwert des Mörders wechseln Sie können Fliegenschwert verwenden, wenn Sie auf den Bildschirm klicken
+itemScan: "§cScanner"
+itemScanLore: |-
+  Scannen Sie den Standort aller lebenden Personen
+  "Tipps:" Der Standort aller Zivilisten / Detektive wird nach Gebrauch angezeigt Dieser Wille
+  letzte fünf Sekunden
+  (nur du kannst sehen)
+itemQuitRoom: "§cQuit room"
+itemQuitRoomLore: "Sie können den Raum verlassen, wenn Sie darauf klicken."
+itemPotion: "§eMysterious Trank"
+itemPotionLore: |-
+  Unbekannte Medizin
+  Wird es Glück oder Pech bringen?
+  Verwendung: direkt trinken
+itemShieldWall: "§aShield-Generator"
+itemShieldWallLore: |-
+  Kann eine kurzlebige Wand erzeugen
+  Es funktioniert nicht gut, aber es kann Ihr Leben in einer kritischen Zeit retten
+  Verwendung: Legen Sie es auf den Boden
+itemSnowball: "§aSlow Schneeball"
+itemSnowballLore: "Ziel um 2 Sekunden nach dem Treffer verlangsamen"
+useItemScan: "§aAlle Spielerpositionen wurden im Abschnitt angezeigt!"
+DamageSnowball: "§aSie wurden von Slow Snowball getroffen!"
+useItemSwordCD: "§aFlying Schwertkühlung"
+useItemScanCD: "§aPositioning Cooling"
+exchangeItemsOnlyOne: "Sie können nur einen %name% tragen."
+exchangeItem: "§a %name% erfolgreich erhalten"
+exchangeUseGold: "§aSie müssen Goldbarren verwenden, um %name% auszutauschen."
+Klassiker: "Klassiker"
+Infiziert: "Infiziert"
+commonPeople: "Zivilist"
+Killer: "Killer"
+Detektiv: "Detektiv"
+Tod: "Tod"
+killPlayer: "§aSie haben einen Spieler erfolgreich getötet"
+killKiller: "§aSie haben den Mörder erfolgreich getötet"
+DeathTitle: "§cDeath"
+deathByKillerSubtitle: "§cSie werden vom Mörder getötet"
+DeathByDamageTeammateSubtitle: "§cSie schlagen Ihren Teamkollegen"
+deathByTeammateSubtitle: "§cSie werden von Ihrem Teamkollegen getötet"
+KillerDeathSubtitle: "§cSie werden getötet"
+titleCommonPeopleTitle: "§aCivilian"
+titleCommonPeopleSubtitle: "Leben heißt gewinnen"
+titleDetectiveTitle: "§eDetective"
+titleDetectiveSubtitle: "Finde den Mörder heraus und töte ihn mit deinem Bogen"
+titleKillerTitle: "§cKiller"
+titleKillerSubtitle: "Töte alle Spieler"
+KillerGetSwordTime: "§eKiller bekommt sein Schwert in% Zeit% Sekunden!"
+KillerGetSword: "§eKiller haben bereits sein Schwert"
+titleVictoryKillerTitle: "§aKiller gewinnt!"
+titleVictoryCommonPeopleSubtitle: "§aCivilian and Detective Wins!"
+VictoryKillerBottom: "Herzlichen Glückwunsch an den Killer zum Sieg"
+VictoryKillerScoreBoard: "Herzlichen Glückwunsch an den Mörder!"
+VictoryCommonPeopleBottom: "Herzlichen Glückwunsch an Zivilisten und Detektive!"
+VictoryCommonPeopleScoreBoard: "§eCivilian und Detective Wins!"
+scoreBoardTitle: "§eMurderMystery"
+waitTimeScoreBoard: |-
+  Raummodus: §a%roomMode%
+  Spieler: §a%playerNumber% / 16
+  §AStart Countdown: §l§e% Zeit%
+waitScoreBoard: |-
+  Raummodus: §a%roomMode%
+  Spieler: §a%playerNumber% / 16
+  Benötigen Sie mehr als 5 Spieler.
+  Warten auf Spieler
+waitTimeBottom: |-
+  §AAnzahl der Spieler:%playerNumber%
+  §AEs gibt:% Zeit% Sekunden zum Starten!
+waitBottom: "§cWarten auf Spieler, es sind %playerNumber% Spieler im Raum"
+gameTimeScoreBoard: |-
+  RoomMode: §a%roomMode%
+  §L§aAktuelle Identität: §e%mode%
+  §L§aAnzahl der Überlebenden: §e%playerNumber%
+  Verbleibende Zeit: §e% Zeit% §aseconds
+gameTimeBottom: |-
+  §AIdentify: §e%mode%
+  §AEs gibt §e% Zeit% §Sekunde für das Schließen des Spiels
+  Es gibt: §e%playerNumber% §Aplayer haben überlebt
+gameEffectCDScoreBoard: "§l§aKühlung beschleunigen: §e% Zeit% §aseconds"
+gameSwordCDScoreBoard: "§l§aFlyingSword-Kühlung: §e% Zeit% §aseconds"
+gameScanCDScoreBoard: "§l§aScanning-Kühlung: §e% Zeit% §aseconds"
+userMenuButton1: "§eJo zufällig in einen Raum eintreten"
+userMenuButton2: "§eQuit this room"
+userMenuButton3: "§eListe alle Räume auf"
+adminMenuSetLevel: "Map: %name%"
+adminMenuButton1: "Standard-Spawnpunkt von §eSet"
+adminMenuButton2: "§eAdd random spawnpoint"
+adminMenuButton3: "§eAdd Goldbarrengeneration"
+adminMenuButton4: "§eSet Zeitparameter"
+adminMenuButton5: "§eSet Raummodus"
+adminMenuButton6: "§eReload alle Räume"
+adminMenuButton7: "§cUninstall alle Räume"
+adminTimeMenuInputText1: "Das Intervall jedes Goldbarrens (jeder Goldbarren)"
+adminTimeMenuInputText2: "Wartezeit (en)"
+adminTimeMenuInputText3: "Spielzeit (en)"
+joinRoomOK: "§l§aBestätigen, um dem Raum beizutreten: %name% §l§a"
+buttonOK: "§aConfirm"
+buttonReturn: "§cBack"
