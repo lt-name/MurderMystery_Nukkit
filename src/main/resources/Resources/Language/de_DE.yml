@@ -59,8 +59,8 @@ adminAddRandomSpawn: "§aDer zufällige Spawnpunkt wurde erfolgreich gesetzt!"
 adminAddGoldSpawn: "§aDer Standard-Generierungspunkt für Goldbarren wurde erfolgreich festgelegt!"
 adminNotNumber: "§aBitte geben Sie die Nummer ein"
 adminSetGoldSpawnTime: "§aDas Intervall jedes Goldbarren ist auf %time% eingestellt."
-adminSetWaitTime: "§aWaiting-Zeit ist eingestellt auf: %time%"
-adminSetGameTime: "§aTime jedes Spiels ist eingestellt auf: %time%"
+adminSetWaitTime: "§aWartezeit ist eingestellt auf: %time%"
+adminSetGameTime: "§aZeit jedes Spiels ist eingestellt auf: %time%"
 adminSetGameTimeShort: "§aDie Mindestzeit jedes Spiels sollte mehr als 1 Minute betragen!"
 adminSetGameMode: "§aDer Modus dieses Raums ist eingestellt auf: %roomMode%"
 adminStartNoPlayer: "§aDie Anzahl der Spieler beträgt weniger als 3, Sie können das Spiel nicht starten."
@@ -153,14 +153,14 @@ gameTimeScoreBoard: |-
   RoomMode: §a%roomMode%
   §L§aAktuelle Identität: §e%mode%
   §L§aAnzahl der Überlebenden: §e%playerNumber%
-  Verbleibende Zeit: §e% Zeit% §aseconds
+  Verbleibende Zeit: §e%time% §aseconds
 gameTimeBottom: |-
   §AIdentify: §e%mode%
-  §AEs gibt §e% Zeit% §Sekunde für das Schließen des Spiels
+  §AEs gibt §e%time% §Sekunde für das Schließen des Spiels
   Es gibt: §e%playerNumber% §Aplayer haben überlebt
-gameEffectCDScoreBoard: "§l§aKühlung beschleunigen: §e% Zeit% §aseconds"
-gameSwordCDScoreBoard: "§l§aFlyingSword-Kühlung: §e% Zeit% §aseconds"
-gameScanCDScoreBoard: "§l§aScanning-Kühlung: §e% Zeit% §aseconds"
+gameEffectCDScoreBoard: "§l§aKühlung beschleunigen: §e%time% §aseconds"
+gameSwordCDScoreBoard: "§l§aFlyingSword-Kühlung: §e%time% §aseconds"
+gameScanCDScoreBoard: "§l§aScanning-Kühlung: §e%time% §aseconds"
 userMenuButton1: "§eJo zufällig in einen Raum eintreten"
 userMenuButton2: "§eQuit this room"
 userMenuButton3: "§eListe alle Räume auf"
