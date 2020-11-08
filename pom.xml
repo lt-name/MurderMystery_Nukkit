@@ -110,8 +110,7 @@
     <repositories>
         <repository>
             <id>nukkitx-repo</id>
-            <name>nukkitx-snapshot</name>
-            <url>https://repo.nukkitx.com/maven-snapshots</url>
+            <url>https://repo.nukkitx.com/main/</url>
         </repository>
     </repositories>
 
@@ -120,6 +119,7 @@
             <groupId>cn.nukkit</groupId>
             <artifactId>nukkit</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.theamychan.scoreboard</groupId>
