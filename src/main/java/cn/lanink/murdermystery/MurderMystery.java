@@ -253,6 +253,12 @@ public class MurderMystery extends PluginBase {
         ROOM_CLASS.put(name, roomClass);
     }
 
+    /**
+     * 注册监听器类
+     *
+     * @param name 名称
+     * @param listenerClass 监听器类
+     */
     public static void registerListener(String name, Class<? extends IMurderMysteryListener> listenerClass) {
         LISTENER_CLASS.put(name, listenerClass);
     }

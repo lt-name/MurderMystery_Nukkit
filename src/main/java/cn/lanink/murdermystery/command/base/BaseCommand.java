@@ -87,7 +87,7 @@ public abstract class BaseCommand extends Command {
         this.commandParameters.clear();
         for(BaseSubCommand subCommand : this.subCommand) {
             LinkedList<CommandParameter> parameters = new LinkedList<>();
-            parameters.add(new CommandParameter(subCommand.getName(), new String[]{subCommand.getName()}));
+            parameters.add(CommandParameter.newEnum(subCommand.getName(), new String[]{subCommand.getName()}));
             parameters.addAll(Arrays.asList(subCommand.getParameters()));
             this.commandParameters.put(subCommand.getName(), parameters.toArray(new CommandParameter[0]));
         }
