@@ -27,14 +27,11 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Utils;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.List;
 
 
@@ -228,42 +225,17 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
-        setHumanSkin(human, skin, false);
-    }
-
-    public static void setHumanSkin(EntityHuman human, Skin skin, boolean needACK) {
         if (human.getLevel() != null) {
             for (Player player : human.getLevel().getPlayers().values()) {
-                setHumanSkin(player, human, skin, needACK, 0);
+                PlayerSkinPacket packet = new PlayerSkinPacket();
+                packet.skin = skin;
+                packet.newSkinName = skin.getSkinId();
+                packet.oldSkinName = human.getSkin().getSkinId();
+                packet.uuid = human.getUniqueId();
+                player.dataPacket(packet);
             }
         }
         human.setSkin(skin);
-    }
-
-    private static void setHumanSkin(Player player, EntityHuman human, Skin skin, boolean needACK, int retransmission) {
-        PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.skin = skin;
-        packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = human.getSkin().getSkinId();
-        packet.uuid = human.getUniqueId();
-        int id = player.dataPacket(packet, needACK);
-        if (needACK && !human.isClosed() && retransmission < 3) {
-            Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
-                @Override
-                public void onRun(int i) {
-                    try {
-                        Field field = player.getClass().getDeclaredField("needACK");
-                        field.setAccessible(true);
-                        Int2ObjectOpenHashMap<Boolean> o = (Int2ObjectOpenHashMap<Boolean>) field.get(player);
-                        if (o == null || !o.getOrDefault(id, Boolean.FALSE)) {
-                            setHumanSkin(player, human, skin, true, retransmission + 1);
-                        }
-                    } catch (Exception ignored) {
-
-                    }
-                }
-            }, 60, true);
-        }
     }
 
     /**

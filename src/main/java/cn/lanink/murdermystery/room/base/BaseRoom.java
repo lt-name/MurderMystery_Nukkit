@@ -188,7 +188,7 @@ public abstract class BaseRoom implements IRoomStatus {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
                 this.skinNumber.put(player, entry.getKey());
-                Tools.setHumanSkin(player, entry.getValue(), true);
+                Tools.setHumanSkin(player, entry.getValue());
                 return;
             }
         }
@@ -201,7 +201,7 @@ public abstract class BaseRoom implements IRoomStatus {
      */
     public void restorePlayerSkin(Player player) {
         if (this.skinCache.containsKey(player)) {
-            Tools.setHumanSkin(player, this.skinCache.get(player), true);
+            Tools.setHumanSkin(player, this.skinCache.get(player));
             this.skinCache.remove(player);
         }
         this.skinNumber.remove(player);
