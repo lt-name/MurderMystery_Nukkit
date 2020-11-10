@@ -1,9 +1,9 @@
 package cn.lanink.murdermystery.listener.defaults;
 
+import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.ui.GuiCreate;
-import cn.lanink.murdermystery.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -40,7 +40,7 @@ public class PlayerJoinAndQuit implements Listener {
                 public void onRun(int i) {
                     if (player.isOnline()) {
                         Tools.rePlayerState(player ,false);
-                        SavePlayerInventory.restore(player);
+                        SavePlayerInventory.restore(MurderMystery.getInstance(), player);
                         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                     }
                 }

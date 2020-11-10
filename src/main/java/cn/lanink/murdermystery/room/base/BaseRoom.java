@@ -1,13 +1,14 @@
 package cn.lanink.murdermystery.room.base;
 
+import cn.lanink.gamecore.utils.FileUtil;
+import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.event.*;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
 import cn.lanink.murdermystery.tasks.game.TipsTask;
-import cn.lanink.murdermystery.utils.SavePlayerInventory;
-import cn.lanink.murdermystery.utils.Tips;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
@@ -67,7 +68,7 @@ public abstract class BaseRoom implements IRoomStatus {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
                         .roomLevelBackup.replace("%name%", showRoomName));
                 Server.getInstance().unloadLevel(this.level);
-                if (Tools.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
+                if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                     Server.getInstance().loadLevel(this.levelName);
                     this.level = Server.getInstance().getLevelByName(this.levelName);
                 }else {
@@ -232,7 +233,7 @@ public abstract class BaseRoom implements IRoomStatus {
         if (this.status == 0) {
             this.initTask();
         }
-        SavePlayerInventory.save(player);
+        SavePlayerInventory.save(this.murderMystery, player);
         Tools.rePlayerState(player, true);
         Tools.giveItem(player, 10);
         if (this.murderMystery.isHasTips()) {
@@ -279,7 +280,7 @@ public abstract class BaseRoom implements IRoomStatus {
         this.murderMystery.getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(player);
+        SavePlayerInventory.restore(this.murderMystery, player);
         for (Player p : this.players.keySet()) {
             p.showPlayer(player);
             player.showPlayer(p);
@@ -586,7 +587,7 @@ public abstract class BaseRoom implements IRoomStatus {
             this.murderMystery.unloadRoom(this.levelName);
         }
         CompletableFuture.runAsync(() -> {
-            if (Tools.deleteFile(levelFile) && Tools.copyDir(backup, levelFile)) {
+            if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
                 Server.getInstance().loadLevel(this.levelName);
                 this.level = Server.getInstance().getLevelByName(this.levelName);
                 this.waitSpawn.setLevel(this.level);

@@ -1,11 +1,11 @@
 package cn.lanink.murdermystery;
 
+import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
+import cn.lanink.gamecore.scoreboard.base.IScoreboard;
+import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
-import cn.lanink.murdermystery.lib.scoreboard.IScoreboard;
-import cn.lanink.murdermystery.lib.scoreboard.ScoreboardDe;
-import cn.lanink.murdermystery.lib.scoreboard.ScoreboardGt;
 import cn.lanink.murdermystery.listener.base.IMurderMysteryListener;
 import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
 import cn.lanink.murdermystery.listener.defaults.*;
@@ -162,25 +162,7 @@ public class MurderMystery extends PluginBase {
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
         //加载计分板
-        try {
-            Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
-            if (getServer().getPluginManager().getPlugin("ScoreboardPlugin").isDisabled()) {
-                throw new Exception("Not Loaded");
-            }
-            this.scoreboard = new ScoreboardDe();
-        } catch (Exception e) {
-            try {
-                Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
-                if (getServer().getPluginManager().getPlugin("ScoreboardAPI").isDisabled()) {
-                    throw new Exception("Not Loaded");
-                }
-                this.scoreboard = new ScoreboardGt();
-            } catch (Exception ignored) {
-                getLogger().error(this.getLanguage(null).scoreboardAPINotFound);
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-        }
+        this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
             Class.forName("tip.Main");
@@ -403,8 +385,8 @@ public class MurderMystery extends PluginBase {
         this.temporaryRooms.add(finalNewRoom);
         this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
         this.temporaryRoomsConfig.save();
-        Tools.copyDir(this.getRoomConfigPath() + template + ".yml", this.getRoomConfigPath() + finalNewRoom + ".yml");
-        Tools.copyDir(this.getWorldBackupPath() + template, this.getServerWorldPath() + finalNewRoom);
+        FileUtil.copyDir(this.getRoomConfigPath() + template + ".yml", this.getRoomConfigPath() + finalNewRoom + ".yml");
+        FileUtil.copyDir(this.getWorldBackupPath() + template, this.getServerWorldPath() + finalNewRoom);
         if (MurderMystery.debug) {
             this.getLogger().info("自动创建临时房间: " + template + " -> " + finalNewRoom);
         }
@@ -428,9 +410,9 @@ public class MurderMystery extends PluginBase {
             this.getServer().unloadLevel(level);
         }
         CompletableFuture.runAsync(() -> {
-            Tools.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
-            Tools.deleteFile(this.getServerWorldPath() + levelName);
-            Tools.deleteFile(this.getWorldBackupPath() + levelName);
+            FileUtil.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
+            FileUtil.deleteFile(this.getServerWorldPath() + levelName);
+            FileUtil.deleteFile(this.getWorldBackupPath() + levelName);
             this.temporaryRooms.remove(levelName);
             this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
             this.temporaryRoomsConfig.save();
