@@ -265,8 +265,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             this.spectatorPlayers.add(player);
             player.teleport(this.randomSpawn.get(MurderMystery.RANDOM.nextInt(this.randomSpawn.size())));
             player.setGamemode(3);
-            player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false);
-            player.getAdventureSettings().update();
+            player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false).update();
             Tools.hidePlayer(this, player);
         }else {
             this.players.put(player, 0);

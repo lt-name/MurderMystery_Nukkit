@@ -29,7 +29,7 @@ import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -223,19 +223,19 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
-        human.setSkin(skin);
-        if (!human.getViewers().isEmpty()) {
-            PlayerSkinPacket packet = new PlayerSkinPacket();
-            packet.skin = skin;
-            packet.newSkinName = skin.getSkinId();
-            packet.oldSkinName = human.getSkin().getSkinId();
-            packet.uuid = human.getUniqueId();
-            Collection<Player> players = human.getViewers().values();
-            if (human instanceof Player) {
-                players.add((Player) human);
-            }
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.skin = skin;
+        packet.newSkinName = skin.getSkinId();
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        HashSet<Player> players = new HashSet<>(human.getViewers().values());
+        if (human instanceof Player) {
+            players.add((Player) human);
+        }
+        if (!players.isEmpty()) {
             Server.broadcastPacket(players, packet);
         }
+        human.setSkin(skin);
     }
 
     /**
@@ -249,9 +249,9 @@ public class Tools {
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.setGamemode(0);
-        player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false);
-        player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false);
-        player.getAdventureSettings().update();
+        player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false)
+                .set(AdventureSettings.Type.ALLOW_FLIGHT, false)
+                .update();
         if (joinRoom) {
             player.setNameTag("");
             player.setNameTagVisible(false);
