@@ -48,10 +48,10 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     protected int minPlayers, maxPlayers; //房间人数
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime, goldSpawnTime; //秒
-    public int effectCD, swordCD, scanCD; //杀手技能CD
+    public int killerEffectCD, killerSwordCD, killerScanCD; //杀手技能CD
+    protected final Position waitSpawn;
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
     protected final ArrayList<Vector3> goldSpawnVector3List = new ArrayList<>();
-    protected final Position waitSpawn;
     protected Level level;
     private final String levelName;
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
@@ -59,7 +59,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     protected final Set<Player> spectatorPlayers = Collections.synchronizedSet(new HashSet<>()); //旁观玩家
     protected final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
     protected final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
-
     public Player killKillerPlayer = null; //击杀杀手的玩家
     public EntityItem detectiveBow = null; //掉落的侦探弓
 
@@ -70,7 +69,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * @param config 配置文件
      */
     public BaseRoom(Level level, Config config) throws RoomLoadException {
-        this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
+        this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
         this.level = level;
         this.levelName = level.getFolderName();
         String showRoomName = this.murderMystery.getRoomName().get(this.levelName) + "(" + this.levelName + ")";
@@ -165,9 +164,9 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     public void initData() {
         this.waitTime = this.setWaitTime;
         this.gameTime = this.setGameTime;
-        this.effectCD = 0;
-        this.swordCD = 0;
-        this.scanCD = 0;
+        this.killerEffectCD = 0;
+        this.killerSwordCD = 0;
+        this.killerScanCD = 0;
         this.placeBlocks.clear();
         this.skinNumber.clear();
         this.skinCache.clear();
@@ -247,6 +246,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         if (this.status < 0 || this.status > 2) {
             return;
         }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+            if (this.isPlaying(player) && player.getLevel() != this.level) {
+                this.quitRoom(player);
+            }
+        }, 20);
         if (this.status == ROOM_STATUS_TASK_NEED_INITIALIZED) {
             this.initTask();
         }
@@ -270,11 +274,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             player.teleport(this.getWaitSpawn());
             this.autoCreateTemporaryRoom();
         }
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
-            if (player.level != this.level) {
-                this.quitRoom(player);
-            }
-        }, 20);
     }
 
     /**
@@ -502,7 +501,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         //开局20秒后给物品
         int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
-            if (time <= 5 && time >= 1) {
+            if ((time%5 == 0 && time != 0) || (time <= 5 && time != 0)) {
                 for (Player player : this.getPlayers().keySet()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
                             .killerGetSwordTime.replace("%time%", time + ""));
@@ -560,18 +559,18 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             this.victory(1);
         }
         //杀手CD计算
-        if (this.effectCD > 0) {
-            this.effectCD--;
+        if (this.killerEffectCD > 0) {
+            this.killerEffectCD--;
         }
-        if (this.swordCD > 0) {
-            this.swordCD--;
+        if (this.killerSwordCD > 0) {
+            this.killerSwordCD--;
         }
-        if (this.scanCD > 0) {
-            this.scanCD--;
+        if (this.killerScanCD > 0) {
+            this.killerScanCD--;
         }
         //TODO 需要验证
         if (this.detectiveBow != null && this.detectiveBow.isClosed()) {
-            EntityItem entityItem = new EntityItem(detectiveBow.chunk, detectiveBow.namedTag);
+            EntityItem entityItem = new EntityItem(this.detectiveBow.chunk, this.detectiveBow.namedTag);
             entityItem.spawnToAll();
             detectiveBow = entityItem;
         }
@@ -660,17 +659,17 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             }
             ms.add("  ");
             if (entry.getValue() == 3) {
-                if (this.effectCD > 0) {
+                if (this.killerEffectCD > 0) {
                     ms.add(language.gameEffectCDScoreBoard
-                            .replace("%time%", this.effectCD + ""));
+                            .replace("%time%", this.killerEffectCD + ""));
                 }
-                if (this.swordCD > 0) {
+                if (this.killerSwordCD > 0) {
                     ms.add(language.gameSwordCDScoreBoard
-                            .replace("%time%", this.swordCD + ""));
+                            .replace("%time%", this.killerSwordCD + ""));
                 }
-                if (this.scanCD > 0) {
+                if (this.killerScanCD > 0) {
                     ms.add(language.gameScanCDScoreBoard
-                            .replace("%time%", this.scanCD + ""));
+                            .replace("%time%", this.killerScanCD + ""));
                 }
             }
             this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.scoreBoardTitle, ms);
