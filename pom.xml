@@ -168,6 +168,12 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.smallaswater.npc</groupId>
+            <artifactId>RsNPCX</artifactId>
+            <version>1.3.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

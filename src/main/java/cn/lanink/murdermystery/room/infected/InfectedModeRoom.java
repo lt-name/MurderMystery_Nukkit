@@ -42,17 +42,19 @@ public class InfectedModeRoom extends BaseRoom {
     }
 
     @Override
+    public void initData() {
+        super.initData();
+        if (this.playerRespawnTime != null) {
+            this.playerRespawnTime.clear();
+        }
+    }
+
+    @Override
     public void enableListener() {
         this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
-    }
-
-    @Override
-    public synchronized void endGame(int victory) {
-        this.playerRespawnTime.clear();
-        super.endGame(victory);
     }
 
     @Override

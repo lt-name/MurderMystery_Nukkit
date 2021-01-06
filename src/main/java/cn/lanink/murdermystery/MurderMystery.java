@@ -15,6 +15,7 @@ import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.MetricsLite;
+import cn.lanink.murdermystery.utils.RsNpcXVariable;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -170,6 +171,12 @@ public class MurderMystery extends PluginBase {
                 throw new Exception("Not Loaded");
             }
             this.hasTips = true;
+        } catch (Exception ignored) {
+
+        }
+        try {
+            Class.forName("com.smallaswater.npc.variable.VariableManage");
+            com.smallaswater.npc.variable.VariableManage.addVariable("MurderMysteryVariable", RsNpcXVariable.class);
         } catch (Exception ignored) {
 
         }
