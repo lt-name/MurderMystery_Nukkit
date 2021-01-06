@@ -1,5 +1,7 @@
 package cn.lanink.murdermystery.room.base;
 
+import cn.lanink.gamecore.room.IRoomStatus;
+
 /**
  * 房间时间计算任务, 每秒调用一次
  * 具体执行查看{@link cn.lanink.murdermystery.tasks.game.TimeTask }

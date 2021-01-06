@@ -1,9 +1,9 @@
 package cn.lanink.murdermystery.room.infected;
 
+import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.utils.Tools;
-import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author lt_name
  */
-public class InfectedModeRoom extends ClassicModeRoom {
+public class InfectedModeRoom extends BaseRoom {
 
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
 
@@ -49,7 +49,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
     }
 
     @Override
-    protected synchronized void endGame(int victory) {
+    public synchronized void endGame(int victory) {
         this.playerRespawnTime.clear();
         super.endGame(victory);
     }
@@ -133,7 +133,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
                 }
                 if (time >= 0) {
                     if (this.players.size() < 2) {
-                        this.endGameEvent();
+                        this.endGame();
                         return;
                     }
                     killer = true;
@@ -172,7 +172,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
     }
 
     @Override
-    protected void playerDamage(Player damage, Player player) {
+    public void playerDamage(Player damage, Player player) {
         if (this.getPlayers(damage) == 3) {
             if (this.getPlayers(player) == 3) {
                 return;
@@ -185,11 +185,11 @@ public class InfectedModeRoom extends ClassicModeRoom {
                 return;
             }
         }
-        this.playerDeathEvent(player);
+        this.playerDeath(player);
     }
 
     @Override
-    protected void playerDeath(Player player) {
+    public void playerDeath(Player player) {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(3);

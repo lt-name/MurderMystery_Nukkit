@@ -1,8 +1,8 @@
 package cn.lanink.murdermystery.ui;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;

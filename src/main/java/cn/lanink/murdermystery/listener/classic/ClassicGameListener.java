@@ -1,9 +1,9 @@
 package cn.lanink.murdermystery.listener.classic;
 
-import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.room.base.IRoomStatus;
+import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.tasks.game.ScanTask;
 import cn.lanink.murdermystery.tasks.game.SwordMoveTask;
 import cn.nukkit.Player;
@@ -22,11 +22,7 @@ import cn.nukkit.potion.Effect;
  *
  * @author lt_name
  */
-public class ClassicGameListener extends BaseMurderMysteryListener {
-
-    public ClassicGameListener(MurderMystery murderMystery) {
-        super(murderMystery);
-    }
+public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRoom> {
 
     /**
      * 玩家手持物品事件
@@ -47,7 +43,7 @@ public class ClassicGameListener extends BaseMurderMysteryListener {
             return;
         }
         CompoundTag tag = item.hasCompoundTag() ? item.getNamedTag() : null;
-        if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME && room.isPlaying(player) && room.getPlayers(player) == 3) {
+        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player) && room.getPlayers(player) == 3) {
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
                 if (room.effectCD < 1) {
                     Effect effect = Effect.getEffect(1);

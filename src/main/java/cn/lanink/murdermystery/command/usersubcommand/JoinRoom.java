@@ -1,9 +1,9 @@
 package cn.lanink.murdermystery.command.usersubcommand;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;

@@ -1,9 +1,8 @@
 package cn.lanink.murdermystery.listener.defaults;
 
-import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
@@ -45,11 +44,7 @@ import java.util.Random;
 /**
  * @author lt_name
  */
-public class DefaultGameListener extends BaseMurderMysteryListener {
-
-    public DefaultGameListener(MurderMystery murderMystery) {
-        super(murderMystery);
-    }
+public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
 
     /**
      * 生命实体射出箭 事件
@@ -167,7 +162,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
                     return;
                 }
                 if (room instanceof ClassicModeRoom) {
-                    ((ClassicModeRoom) room).detectiveBow = null;
+                    room.detectiveBow = null;
                 }
                 room.getPlayers().keySet().forEach(p -> p.sendMessage(this.murderMystery.getLanguage(p).commonPeopleBecomeDetective));
                 room.getPlayers().put(player, 2);
@@ -439,7 +434,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener {
         if (tag != null && tag.getBoolean("isMurderItem") &&
                 tag.getInt("MurderType") == 1) {
             if (room instanceof ClassicModeRoom) {
-                ((ClassicModeRoom) room).detectiveBow = entityItem;
+                room.detectiveBow = entityItem;
             }
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
                 @Override

@@ -73,7 +73,7 @@ public class SwordMoveTask extends AsyncTask {
                                 MurderMystery.getInstance().getLogger().info(this.getClass().getName() +
                                         " 距离（加高度）：" + p.distance(new Vector3(entity.x, entity.y + entity.getHeight(), entity.z)));
                             }
-                            this.room.playerDamageEvent(this.player, player2);
+                            this.room.playerDamage(this.player, player2);
                             Server.getInstance().getScheduler().scheduleTask(MurderMystery.getInstance(), new Task() {
                                 @Override
                                 public void onRun(int i) {

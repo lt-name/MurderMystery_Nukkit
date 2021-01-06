@@ -12,7 +12,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
-import cn.nukkit.scheduler.Task;
 
 import java.util.LinkedHashMap;
 
@@ -35,16 +34,13 @@ public class PlayerJoinAndQuit implements Listener {
         }
         this.murderMystery.getPlayerLanguage().put(player, player.getLoginChainData().getLanguageCode());
         if (this.murderMystery.getRooms().containsKey(player.getLevel().getFolderName())) {
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
-                @Override
-                public void onRun(int i) {
-                    if (player.isOnline()) {
-                        Tools.rePlayerState(player ,false);
-                        SavePlayerInventory.restore(MurderMystery.getInstance(), player);
-                        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-                    }
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+                if (player.isOnline()) {
+                    Tools.rePlayerState(player ,false);
+                    SavePlayerInventory.restore(MurderMystery.getInstance(), player);
+                    player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                 }
-            }, 20);
+            }, 1);
         }
     }
 

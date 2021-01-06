@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.listener.defaults;
 
-import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
@@ -24,11 +24,7 @@ import cn.nukkit.level.Level;
  * 游戏世界保护
  * @author lt_name
  */
-public class RoomLevelProtection extends BaseMurderMysteryListener {
-
-    public RoomLevelProtection(MurderMystery murderMystery) {
-        super(murderMystery);
-    }
+public class RoomLevelProtection extends BaseMurderMysteryListener<BaseRoom> {
 
     /**
      * 物品合成事件

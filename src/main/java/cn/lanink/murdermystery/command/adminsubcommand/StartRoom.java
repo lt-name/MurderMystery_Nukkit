@@ -29,7 +29,7 @@ public class StartRoom extends BaseSubCommand {
         if (room != null) {
             if (room.getPlayers().size() >= room.getMinPlayers()) {
                 if (room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) {
-                    room.gameStartEvent();
+                    room.startGame();
                     sender.sendMessage(this.murderMystery.getLanguage(sender).adminStartRoom);
                 }else {
                     sender.sendMessage(this.murderMystery.getLanguage(sender).adminStartRoomIsPlaying);

@@ -1,6 +1,5 @@
 package cn.lanink.murdermystery.listener.defaults;
 
-import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
@@ -19,11 +18,7 @@ import cn.nukkit.potion.Effect;
 /**
  * @author lt_name
  */
-public class DefaultDamageListener extends BaseMurderMysteryListener {
-
-    public DefaultDamageListener(MurderMystery murderMystery) {
-        super(murderMystery);
-    }
+public class DefaultDamageListener extends BaseMurderMysteryListener<BaseRoom> {
 
     /**
      * 实体受到另一实体伤害事件
@@ -52,7 +47,7 @@ public class DefaultDamageListener extends BaseMurderMysteryListener {
                 }
                 if (child.namedTag.getBoolean("isMurderItem")) {
                     if (child.namedTag.getInt("MurderType") == 20) {
-                        room.playerDamageEvent(damager, player);
+                        room.playerDamage(damager, player);
                     }else if (child.namedTag.getInt("MurderType") == 23) {
                         Tools.playSound(player, Sound.RANDOM_ANVIL_LAND);
                         player.sendMessage(this.murderMystery.getLanguage(player).damageSnowball);
@@ -68,7 +63,7 @@ public class DefaultDamageListener extends BaseMurderMysteryListener {
                     if (damager.getInventory().getItemInHand() != null) {
                         CompoundTag tag = damager.getInventory().getItemInHand().getNamedTag();
                         if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
-                            room.playerDamageEvent(damager, player);
+                            room.playerDamage(damager, player);
                         }
                     }
                 }
@@ -91,7 +86,7 @@ public class DefaultDamageListener extends BaseMurderMysteryListener {
             //虚空 游戏开始前拉回 游戏中判断玩家死亡
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME) {
-                    room.playerDeathEvent(player);
+                    room.playerDeath(player);
                 }else {
                     player.teleport(room.getWaitSpawn());
                 }

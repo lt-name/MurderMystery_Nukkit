@@ -29,6 +29,7 @@ import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -229,7 +230,11 @@ public class Tools {
             packet.newSkinName = skin.getSkinId();
             packet.oldSkinName = human.getSkin().getSkinId();
             packet.uuid = human.getUniqueId();
-            Server.broadcastPacket(human.getViewers().values(), packet);
+            Collection<Player> players = human.getViewers().values();
+            if (human instanceof Player) {
+                players.add((Player) human);
+            }
+            Server.broadcastPacket(players, packet);
         }
     }
 

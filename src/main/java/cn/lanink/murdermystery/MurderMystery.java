@@ -6,7 +6,7 @@ import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
-import cn.lanink.murdermystery.listener.base.IMurderMysteryListener;
+import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
 import cn.lanink.murdermystery.listener.defaults.*;
 import cn.lanink.murdermystery.room.base.BaseRoom;
@@ -59,8 +59,8 @@ public class MurderMystery extends PluginBase {
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, String> roomName = new HashMap<>(); //自定义房间名称
     private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
-    private static final HashMap<String, Class<? extends IMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
-    private final HashMap<String, IMurderMysteryListener> murderMysteryListeners = new HashMap<>();
+    private static final HashMap<String, Class<? extends BaseMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
+    private final HashMap<String, BaseMurderMysteryListener> murderMysteryListeners = new HashMap<>();
     private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
@@ -208,7 +208,7 @@ public class MurderMystery extends PluginBase {
             while(it.hasNext()){
                 Map.Entry<String, BaseRoom> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
-                    entry.getValue().endGameEvent(0);
+                    entry.getValue().endGame();
                     getLogger().info(this.getLanguage(null).roomUnloadFailure.replace("%name%", entry.getKey()));
                 }else {
                     getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", entry.getKey()));
@@ -241,16 +241,15 @@ public class MurderMystery extends PluginBase {
      * @param name 名称
      * @param listenerClass 监听器类
      */
-    public static void registerListener(String name, Class<? extends IMurderMysteryListener> listenerClass) {
+    public static void registerListener(String name, Class<? extends BaseMurderMysteryListener> listenerClass) {
         LISTENER_CLASS.put(name, listenerClass);
     }
 
     public void loadAllListener() {
-        for (Map.Entry<String, Class<? extends IMurderMysteryListener>> entry : LISTENER_CLASS.entrySet()) {
+        for (Map.Entry<String, Class<? extends BaseMurderMysteryListener>> entry : LISTENER_CLASS.entrySet()) {
             try {
-                Constructor<? extends IMurderMysteryListener> constructor = entry.getValue().getConstructor(MurderMystery.class);
-                IMurderMysteryListener murderMysteryListener = constructor.newInstance(this);
-                murderMysteryListener.setListenerName(entry.getKey());
+                BaseMurderMysteryListener murderMysteryListener = entry.getValue().newInstance();
+                murderMysteryListener.init(entry.getKey());
                 this.loadListener(murderMysteryListener);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -258,11 +257,11 @@ public class MurderMystery extends PluginBase {
         }
     }
 
-    public void loadListener(IMurderMysteryListener iMurderMysteryListener) {
-        this.murderMysteryListeners.put(iMurderMysteryListener.getListenerName(), iMurderMysteryListener);
-        this.getServer().getPluginManager().registerEvents(iMurderMysteryListener, this);
+    public void loadListener(BaseMurderMysteryListener baseMurderMysteryListener) {
+        this.murderMysteryListeners.put(baseMurderMysteryListener.getListenerName(), baseMurderMysteryListener);
+        this.getServer().getPluginManager().registerEvents(baseMurderMysteryListener, this);
         if (debug) {
-            this.getLogger().info("[debug] registerListener: " + iMurderMysteryListener.getListenerName());
+            this.getLogger().info("[debug] registerListener: " + baseMurderMysteryListener.getListenerName());
         }
     }
 
@@ -274,7 +273,7 @@ public class MurderMystery extends PluginBase {
         return ROOM_CLASS;
     }
 
-    public HashMap<String, IMurderMysteryListener> getMurderMysteryListeners() {
+    public HashMap<String, BaseMurderMysteryListener> getMurderMysteryListeners() {
         return this.murderMysteryListeners;
     }
 
@@ -549,9 +548,9 @@ public class MurderMystery extends PluginBase {
             Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, BaseRoom> entry = it.next();
-                entry.getValue().endGameEvent();
-                for (IMurderMysteryListener listener : this.murderMysteryListeners.values()) {
-                    listener.removeListenerRoom(entry.getValue());
+                entry.getValue().endGame();
+                for (BaseMurderMysteryListener listener : this.murderMysteryListeners.values()) {
+                    listener.removeListenerRoom(entry.getValue().getLevelName());
                 }
                 getLogger().info(this.getLanguage(null).roomUnloadSuccess
                         .replace("%name%", this.roomName.get(entry.getKey()) + "(" + entry.getKey() + ")"));
@@ -565,8 +564,8 @@ public class MurderMystery extends PluginBase {
 
     public void unloadRoom(String world) {
         if (this.rooms.containsKey(world)) {
-            this.rooms.get(world).endGameEvent();
-            for (IMurderMysteryListener listener : this.murderMysteryListeners.values()) {
+            this.rooms.get(world).endGame();
+            for (BaseMurderMysteryListener listener : this.murderMysteryListeners.values()) {
                 listener.removeListenerRoom(world);
             }
             this.rooms.remove(world);

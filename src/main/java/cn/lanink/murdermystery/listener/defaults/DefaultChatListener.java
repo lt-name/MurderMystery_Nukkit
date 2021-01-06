@@ -1,9 +1,8 @@
 package cn.lanink.murdermystery.listener.defaults;
 
-import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -15,11 +14,7 @@ import java.util.HashSet;
 /**
  * @author lt_name
  */
-public class DefaultChatListener extends BaseMurderMysteryListener {
-
-    public DefaultChatListener(MurderMystery murderMystery) {
-        super(murderMystery);
-    }
+public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
 
     /**
      * 玩家执行命令事件
