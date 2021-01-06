@@ -13,6 +13,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -64,7 +65,7 @@ public class InfectedModeRoom extends BaseRoom {
         //开局20秒选出杀手
         int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
-            if (time <= 5 && time >= 1) {
+            if ((time%5 == 0 && time != 0) || (time <= 5 && time != 0)) {
                 for (Player player : this.getPlayers().keySet()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
                             .killerGetSwordTime.replace("%time%", time + ""));
@@ -83,17 +84,11 @@ public class InfectedModeRoom extends BaseRoom {
                     player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
                 }
                 int y = new Random().nextInt(this.getPlayers().size());
-                int x = 0;
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                    if (x == y) {
-                        entry.setValue(3);
-                        entry.getKey().sendTitle(this.murderMystery.getLanguage(entry.getKey()).titleKillerTitle,
-                                this.murderMystery.getLanguage(entry.getKey()).titleKillerSubtitle, 10, 40, 10);
-                        this.playerRespawn(entry.getKey());
-                        break;
-                    }
-                    x++;
-                }
+                Player player = new ArrayList<>(this.getPlayers().keySet()).get(y);
+                this.players.put(player, 3);
+                player.sendTitle(this.murderMystery.getLanguage(player).titleKillerTitle,
+                        this.murderMystery.getLanguage(player).titleKillerSubtitle, 10, 40, 10);
+                this.playerRespawn(player);
             }
         }
         //复活计时
