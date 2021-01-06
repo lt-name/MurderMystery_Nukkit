@@ -222,17 +222,15 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
-        if (human.getLevel() != null) {
-            for (Player player : human.getLevel().getPlayers().values()) {
-                PlayerSkinPacket packet = new PlayerSkinPacket();
-                packet.skin = skin;
-                packet.newSkinName = skin.getSkinId();
-                packet.oldSkinName = human.getSkin().getSkinId();
-                packet.uuid = human.getUniqueId();
-                player.dataPacket(packet);
-            }
-        }
         human.setSkin(skin);
+        if (!human.getViewers().isEmpty()) {
+            PlayerSkinPacket packet = new PlayerSkinPacket();
+            packet.skin = skin;
+            packet.newSkinName = skin.getSkinId();
+            packet.oldSkinName = human.getSkin().getSkinId();
+            packet.uuid = human.getUniqueId();
+            Server.broadcastPacket(human.getViewers().values(), packet);
+        }
     }
 
     /**

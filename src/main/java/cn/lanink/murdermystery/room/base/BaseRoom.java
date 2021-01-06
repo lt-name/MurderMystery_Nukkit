@@ -40,8 +40,8 @@ public abstract class BaseRoom implements IRoomStatus {
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime; //秒
     public int effectCD, swordCD, scanCD; //杀手技能CD
-    protected final List<Position> randomSpawn = new ArrayList<>();
-    protected final List<Vector3> goldSpawnVector3List = new ArrayList<>();
+    protected final ArrayList<Position> randomSpawn = new ArrayList<>();
+    protected final ArrayList<Vector3> goldSpawnVector3List = new ArrayList<>();
     protected final Position waitSpawn;
     protected Level level;
     private final String levelName;
@@ -189,7 +189,7 @@ public abstract class BaseRoom implements IRoomStatus {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
                 this.skinNumber.put(player, entry.getKey());
-                Tools.setHumanSkin(player, entry.getValue(), true);
+                Tools.setHumanSkin(player, entry.getValue());
                 return;
             }
         }
@@ -202,7 +202,7 @@ public abstract class BaseRoom implements IRoomStatus {
      */
     public void restorePlayerSkin(Player player) {
         if (this.skinCache.containsKey(player)) {
-            Tools.setHumanSkin(player, this.skinCache.get(player), true);
+            Tools.setHumanSkin(player, this.skinCache.get(player));
             this.skinCache.remove(player);
         }
         this.skinNumber.remove(player);
