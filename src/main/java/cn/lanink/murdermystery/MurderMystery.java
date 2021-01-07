@@ -126,24 +126,40 @@ public class MurderMystery extends PluginBase {
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
         //语言文件 (按时间排序/Sort by time)
-        this.saveResource("Resources/Language/zh_CN.properties");
-        /*this.saveResource("Resources/Language/en_US.yml");
-        this.saveResource("Resources/Language/ko_KR.yml");
-        this.saveResource("Resources/Language/vi_VN.yml");
-        this.saveResource("Resources/Language/de_DE.yml");*/
+        List<String> languages = Arrays.asList("zh_CN", "en_US", "ko_KR", "vi_VN", "de_DE");
+        for (String language : languages) {
+            this.saveResource("Resources/Language/" + language + ".properties");
+        }
+        this.saveResource("Resources/Language/zh_CN.properties",
+                "Resources/Language/cache/new_zh_CN.properties", true);
         this.defaultLanguage = this.config.getString("defaultLanguage", "zh_CN");
         this.languageMappingTable.putAll(this.config.get("languageMappingTable", new HashMap<>()));
         File[] files = new File(getDataFolder() + "/Resources/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
-                String name = file.getName().split("\\.")[0];
-                this.languageMap.put(name, new Language(new Config(file, Config.PROPERTIES)));
-                getLogger().info("§aLanguage: " + name + " loaded !");
+                if (file.isFile()) {
+                    String name = file.getName().split("\\.")[0];
+                    Language language = new Language(new Config(file, Config.PROPERTIES));
+                    //更新插件自带的语言文件
+                    if (languages.contains(name)) {
+                        this.saveResource("Resources/Language/" + name + ".properties",
+                                "Resources/Language/cache/new.properties", true);
+                        language.update(new File(this.getDataFolder() + "/Resources/Language/cache/new.properties"));
+                    }
+                    //以zh_CN为基础 更新所有语言文件
+                    language.update(new File(this.getDataFolder() + "/Resources/Language/cache/new_zh_CN.properties"));
+                    this.languageMap.put(name, language);
+                    getLogger().info("§aLanguage: " + name + " loaded !");
+                }
             }
+        }else {
+            this.getLogger().error("§cFailed to load language file! The plugin does not work");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
         }
-        if (this.languageMap.isEmpty()) {
-            this.languageMap.put(this.defaultLanguage, new Language(new Config()));
-            getLogger().error("§cThe language file is read abnormally, only the default(zh_CN) language is loaded!");
+        if (!this.languageMap.containsKey(this.defaultLanguage)) {
+            this.getLogger().error("§cNo default language found: " + this.defaultLanguage + " Has been set to 'zh_CN'");
+            this.defaultLanguage = "zh_CN";
         }
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
@@ -209,7 +225,9 @@ public class MurderMystery extends PluginBase {
 
     @Override
     public void onDisable() {
-        addonsManager.disableAll();
+        if (addonsManager != null) {
+            addonsManager.disableAll();
+        }
         if (this.rooms.size() > 0) {
             Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
