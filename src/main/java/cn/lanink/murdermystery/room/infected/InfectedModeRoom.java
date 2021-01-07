@@ -49,6 +49,7 @@ public class InfectedModeRoom extends BaseRoom {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void enableListener() {
         this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);

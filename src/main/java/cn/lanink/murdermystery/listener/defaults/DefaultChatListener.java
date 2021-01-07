@@ -14,6 +14,7 @@ import java.util.HashSet;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
 
     /**

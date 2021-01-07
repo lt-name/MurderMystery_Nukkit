@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 /**
  * 玩家进入/退出服务器 或传送到其他世界时，退出房间
  */
+@SuppressWarnings("unused")
 public class PlayerJoinAndQuit implements Listener {
 
     private final MurderMystery murderMystery;

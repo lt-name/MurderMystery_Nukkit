@@ -44,6 +44,7 @@ import java.util.Random;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
 
     /**

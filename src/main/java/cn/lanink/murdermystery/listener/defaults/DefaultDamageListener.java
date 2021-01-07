@@ -18,6 +18,7 @@ import cn.nukkit.potion.Effect;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class DefaultDamageListener extends BaseMurderMysteryListener<BaseRoom> {
 
     /**

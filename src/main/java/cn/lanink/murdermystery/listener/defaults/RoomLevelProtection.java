@@ -24,6 +24,7 @@ import cn.nukkit.level.Level;
  * 游戏世界保护
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class RoomLevelProtection extends BaseMurderMysteryListener<BaseRoom> {
 
     /**

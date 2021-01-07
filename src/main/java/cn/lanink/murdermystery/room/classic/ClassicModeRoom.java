@@ -35,6 +35,7 @@ public class ClassicModeRoom extends BaseRoom {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void enableListener() {
         super.enableListener();
         this.murderMystery.getMurderMysteryListeners().get("ClassicGameListener").addListenerRoom(this);

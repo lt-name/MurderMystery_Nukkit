@@ -177,6 +177,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     /**
      * 启用监听器
      */
+    @SuppressWarnings("unchecked")
     public void enableListener() {
         this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
