@@ -128,10 +128,10 @@ public class MurderMystery extends PluginBase {
         //语言文件 (按时间排序/Sort by time)
         List<String> languages = Arrays.asList("zh_CN", "en_US", "ko_KR", "vi_VN", "de_DE");
         for (String language : languages) {
-            this.saveResource("Resources/Language/" + language + ".properties");
+            this.saveResource("Resources/Language/" + language + ".yml");
         }
-        this.saveResource("Resources/Language/zh_CN.properties",
-                "Resources/Language/cache/new_zh_CN.properties", true);
+        this.saveResource("Resources/Language/zh_CN.yml",
+                "Resources/Language/cache/new_zh_CN.yml", true);
         this.defaultLanguage = this.config.getString("defaultLanguage", "zh_CN");
         this.languageMappingTable.putAll(this.config.get("languageMappingTable", new HashMap<>()));
         File[] files = new File(getDataFolder() + "/Resources/Language").listFiles();
@@ -139,15 +139,15 @@ public class MurderMystery extends PluginBase {
             for (File file : files) {
                 if (file.isFile()) {
                     String name = file.getName().split("\\.")[0];
-                    Language language = new Language(new Config(file, Config.PROPERTIES));
+                    Language language = new Language(new Config(file, Config.YAML));
                     //更新插件自带的语言文件
                     if (languages.contains(name)) {
-                        this.saveResource("Resources/Language/" + name + ".properties",
-                                "Resources/Language/cache/new.properties", true);
-                        language.update(new File(this.getDataFolder() + "/Resources/Language/cache/new.properties"));
+                        this.saveResource("Resources/Language/" + name + ".yml",
+                                "Resources/Language/cache/new.yml", true);
+                        language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new.yml", Config.YAML));
                     }
                     //以zh_CN为基础 更新所有语言文件
-                    language.update(new File(this.getDataFolder() + "/Resources/Language/cache/new_zh_CN.properties"));
+                    language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new_zh_CN.yml", Config.YAML));
                     this.languageMap.put(name, language);
                     getLogger().info("§aLanguage: " + name + " loaded !");
                 }
