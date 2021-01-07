@@ -70,11 +70,11 @@ public class PlayerJoinAndQuit implements Listener {
             if (room.containsKey(fromLevel) &&
                     (room.get(fromLevel).isPlaying(player) || room.get(fromLevel).isSpectator(player))) {
                 event.setCancelled(true);
-                player.sendMessage(this.murderMystery.getLanguage(player).tpQuitRoomLevel);
+                player.sendMessage(this.murderMystery.getLanguage(player).translateString("tpQuitRoomLevel"));
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player) && !room.get(toLevel).isSpectator(player)) {
                 event.setCancelled(true);
-                player.sendMessage(this.murderMystery.getLanguage(player).tpJoinRoomLevel);
+                player.sendMessage(this.murderMystery.getLanguage(player).translateString("tpJoinRoomLevel"));
             }
         }
     }

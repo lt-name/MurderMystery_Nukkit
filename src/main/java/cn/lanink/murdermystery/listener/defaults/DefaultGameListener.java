@@ -1,10 +1,10 @@
 package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.gamecore.room.IRoomStatus;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
-import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -164,7 +164,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 if (room instanceof ClassicModeRoom) {
                     room.detectiveBow = null;
                 }
-                room.getPlayers().keySet().forEach(p -> p.sendMessage(this.murderMystery.getLanguage(p).commonPeopleBecomeDetective));
+                room.getPlayers().keySet().forEach(p -> p.sendMessage(this.murderMystery.getLanguage(p).translateString("commonPeopleBecomeDetective")));
                 room.getPlayers().put(player, 2);
                 player.getInventory().addItem(Item.get(262, 0, 1));
             }
@@ -211,9 +211,11 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                         if (x > 0) {
                             player.getInventory().removeItem(Item.get(266, 0, 1));
                             Tools.giveItem(player, 21);
-                            player.sendMessage(language.exchangeItem.replace("%name%", language.itemPotion));
+                            player.sendMessage(language.translateString("exchangeItem")
+                                    .replace("%name%", language.translateString("itemPotion")));
                         }else {
-                            player.sendMessage(language.exchangeUseGold.replace("%name%", language.itemPotion));
+                            player.sendMessage(language.translateString("exchangeUseGold")
+                                    .replace("%name%", language.translateString("itemPotion")));
                         }
                     }
                 });
@@ -238,12 +240,15 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                             if (notHave) {
                                 player.getInventory().removeItem(Item.get(266, 0, 1));
                                 Tools.giveItem(player, 22);
-                                player.sendMessage(language.exchangeItem.replace("%name%", language.itemShieldWall));
+                                player.sendMessage(language.translateString("exchangeItem")
+                                        .replace("%name%", language.translateString("itemShieldWall")));
                             }else {
-                                player.sendMessage(language.exchangeItemsOnlyOne.replace("%name%", language.itemShieldWall));
+                                player.sendMessage(language.translateString("exchangeItemsOnlyOne")
+                                        .replace("%name%", language.translateString("itemShieldWall")));
                             }
                         }else {
-                            player.sendMessage(language.exchangeUseGold.replace("%name%", language.itemShieldWall));
+                            player.sendMessage(language.translateString("exchangeUseGold")
+                                    .replace("%name%", language.translateString("itemShieldWall")));
                         }
                     }
                 });
@@ -261,9 +266,11 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                         if (x > 0) {
                             player.getInventory().removeItem(Item.get(266, 0, 1));
                             Tools.giveItem(player, 23);
-                            player.sendMessage(language.exchangeItem.replace("%name%", language.itemSnowball));
+                            player.sendMessage(language.translateString("exchangeItem")
+                                    .replace("%name%", language.translateString("itemSnowball")));
                         }else {
-                            player.sendMessage(language.exchangeUseGold.replace("%name%", language.itemSnowball));
+                            player.sendMessage(language.translateString("exchangeUseGold")
+                                    .replace("%name%", language.translateString("itemSnowball")));
                         }
                     }
                 });
@@ -274,7 +281,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 10) {
                 event.setCancelled(true);
                 room.quitRoom(player);
-                player.sendMessage(this.murderMystery.getLanguage(player).quitRoom);
+                player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
             }
         }
     }
@@ -436,16 +443,13 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (room instanceof ClassicModeRoom) {
                 room.detectiveBow = entityItem;
             }
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
-                @Override
-                public void onRun(int i) {
-                    if (room.getStatus() != 2 || entityItem.isClosed()) {
-                        return;
-                    }
-                    entityItem.setNameTag(murderMystery.getLanguage(null).itemDetectiveBow);
-                    entityItem.setNameTagVisible(true);
-                    entityItem.setNameTagAlwaysVisible(true);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+                if (room.getStatus() != IRoomStatus.ROOM_STATUS_GAME || entityItem.isClosed()) {
+                    return;
                 }
+                entityItem.setNameTag(murderMystery.getLanguage(null).translateString("itemDetectiveBow"));
+                entityItem.setNameTagVisible(true);
+                entityItem.setNameTagAlwaysVisible(true);
             }, 100);
         }
     }

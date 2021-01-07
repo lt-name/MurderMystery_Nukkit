@@ -47,7 +47,7 @@ public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
         }
         event.setMessage("");
         event.setCancelled(true);
-        player.sendMessage(this.murderMystery.getLanguage(player).useCmdInRoom);
+        player.sendMessage(this.murderMystery.getLanguage(player).translateString("useCmdInRoom"));
     }
 
     /**
@@ -67,7 +67,7 @@ public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
         }
         if (room.isSpectator(player)) {
             for (Player p : room.getSpectatorPlayers()) {
-                p.sendMessage(this.murderMystery.getLanguage(p).playerSpectatorChat
+                p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerSpectatorChat")
                         .replace("%player%", player.getName())
                         .replace("%message%", message));
             }
@@ -77,11 +77,11 @@ public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
             for (Player p : players) {
                 if (room.getPlayers(p) == 0) {
                     if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
-                        p.sendMessage(this.murderMystery.getLanguage(p).playerDeathChat
+                        p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerDeathChat")
                                 .replace("%player%", player.getName())
                                 .replace("%message%", message));
                     }else {
-                        p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                        p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerChat")
                                 .replace("%player%", player.getName())
                                 .replace("%message%", message));
                     }
@@ -89,12 +89,12 @@ public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
             }
         }else {
             for (Player p : room.getPlayers().keySet()) {
-                p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerChat")
                         .replace("%player%", player.getName())
                         .replace("%message%", message));
             }
             for (Player p : room.getSpectatorPlayers()) {
-                p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerChat")
                         .replace("%player%", player.getName())
                         .replace("%message%", message));
             }

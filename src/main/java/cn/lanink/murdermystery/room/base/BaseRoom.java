@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.room.base;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.FileUtil;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
@@ -13,7 +14,6 @@ import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
 import cn.lanink.murdermystery.tasks.game.TipsTask;
-import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -77,7 +77,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
             if (!backup.exists()) {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
-                        .roomLevelBackup.replace("%name%", showRoomName));
+                        .translateString("roomLevelBackup").replace("%name%", showRoomName));
                 Server.getInstance().unloadLevel(this.level);
                 if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                     Server.getInstance().loadLevel(this.levelName);
@@ -87,7 +87,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 }
             }else {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
-                        .roomLevelBackupExist.replace("%name%", showRoomName));
+                        .translateString("roomLevelBackupExist").replace("%name%", showRoomName));
             }
         }
         this.minPlayers = config.getInt("minPlayers", 3);
@@ -260,7 +260,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         if (this.murderMystery.isHasTips()) {
             Tips.closeTipsShow(this.level.getName(), player);
         }
-        player.sendMessage(this.murderMystery.getLanguage(player).joinRoom.replace("%name%", this.getRoomName()));
+        player.sendMessage(this.murderMystery.getLanguage(player).translateString("joinRoom")
+                .replace("%name%", this.getRoomName()));
         if (spectator || this.status == ROOM_STATUS_GAME || this.players.size() >= this.getMaxPlayers()) {
             this.spectatorPlayers.add(player);
             player.teleport(this.randomSpawn.get(MurderMystery.RANDOM.nextInt(this.randomSpawn.size())));
@@ -503,20 +504,20 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             if ((time%5 == 0 && time != 0) || (time <= 5 && time != 0)) {
                 for (Player player : this.getPlayers().keySet()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
-                            .killerGetSwordTime.replace("%time%", time + ""));
+                            .translateString("killerGetSwordTime").replace("%time%", time + ""));
                 }
                 for (Player player : this.getSpectatorPlayers()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
-                            .killerGetSwordTime.replace("%time%", time + ""));
+                            .translateString("killerGetSwordTime").replace("%time%", time + ""));
                 }
                 Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
                 for (Player player : this.getPlayers().keySet()) {
-                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
                 for (Player player : this.getSpectatorPlayers()) {
-                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
                 for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
                     if (entry.getValue() == 2) {
@@ -633,61 +634,61 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             Language language = this.murderMystery.getLanguage(entry.getKey());
             switch (entry.getValue()) {
                 case 1:
-                    identity = language.commonPeople;
+                    identity = language.translateString("commonPeople");
                     break;
                 case 2:
-                    identity = language.detective;
+                    identity = language.translateString("detective");
                     break;
                 case 3:
-                    identity = language.killer;
+                    identity = language.translateString("killer");
                     break;
                 default:
-                    identity = language.death;
+                    identity = language.translateString("death");
                     break;
             }
-            LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.gameTimeScoreBoard
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
                     .replace("%roomMode%", Tools.getStringRoomMode(entry.getKey(), this))
                     .replace("%identity%", identity)
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
             if (detectiveSurvival) {
-                ms.addAll(Arrays.asList(language.detectiveSurvival.split("\n")));
+                ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
             }else {
-                ms.addAll(Arrays.asList(language.detectiveDeath.split("\n")));
+                ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
             }
             ms.add("  ");
             if (entry.getValue() == 3) {
                 if (this.killerEffectCD > 0) {
-                    ms.add(language.gameEffectCDScoreBoard
+                    ms.add(language.translateString("gameEffectCDScoreBoard")
                             .replace("%time%", this.killerEffectCD + ""));
                 }
                 if (this.killerSwordCD > 0) {
-                    ms.add(language.gameSwordCDScoreBoard
+                    ms.add(language.translateString("gameSwordCDScoreBoard")
                             .replace("%time%", this.killerSwordCD + ""));
                 }
                 if (this.killerScanCD > 0) {
-                    ms.add(language.gameScanCDScoreBoard
+                    ms.add(language.translateString("gameScanCDScoreBoard")
                             .replace("%time%", this.killerScanCD + ""));
                 }
             }
-            this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.scoreBoardTitle, ms);
+            this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
         }
         //旁观玩家只显示部分信息
         for (Player player : this.spectatorPlayers) {
             Language language = this.murderMystery.getLanguage(player);
-            LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.gameTimeScoreBoard
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
                     .replace("%roomMode%", Tools.getStringRoomMode(player, this))
-                    .replace("%identity%", language.spectator)
+                    .replace("%identity%", language.translateString("spectator"))
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
             if (detectiveSurvival) {
-                ms.addAll(Arrays.asList(language.detectiveSurvival.split("\n")));
+                ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
             }else {
-                ms.addAll(Arrays.asList(language.detectiveDeath.split("\n")));
+                ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
             }
-            this.murderMystery.getScoreboard().showScoreboard(player, language.scoreBoardTitle, ms);
+            this.murderMystery.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
         }
     }
 
@@ -713,20 +714,20 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             //侦探
             if (i == random1) {
                 this.players.put(player, 2);
-                player.sendTitle(this.murderMystery.getLanguage(player).titleDetectiveTitle,
-                        this.murderMystery.getLanguage(player).titleDetectiveSubtitle, 10, 40, 10);
+                player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleDetectiveTitle"),
+                        this.murderMystery.getLanguage(player).translateString("titleDetectiveSubtitle"), 10, 40, 10);
                 continue;
             }
             //杀手
             if (i == random2) {
                 this.players.put(player, 3);
-                player.sendTitle(this.murderMystery.getLanguage(player).titleKillerTitle,
-                        this.murderMystery.getLanguage(player).titleKillerSubtitle, 10, 40, 10);
+                player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
+                        this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
                 continue;
             }
             this.players.put(player, 1);
-            player.sendTitle(this.murderMystery.getLanguage(player).titleCommonPeopleTitle,
-                    this.murderMystery.getLanguage(player).titleCommonPeopleSubtitle, 10, 40, 10);
+            player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleCommonPeopleTitle"),
+                    this.murderMystery.getLanguage(player).translateString("titleCommonPeopleSubtitle"), 10, 40, 10);
         }
     }
 
@@ -762,25 +763,25 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         }
         //攻击者是杀手
         if (this.getPlayers(damage) == 3) {
-            damage.sendMessage(this.murderMystery.getLanguage(damage).killPlayer);
-            player.sendTitle(this.murderMystery.getLanguage(player).deathTitle,
-                    this.murderMystery.getLanguage(player).deathByKillerSubtitle, 20, 60, 20);
+            damage.sendMessage(this.murderMystery.getLanguage(damage).translateString("killPlayer"));
+            player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
+                    this.murderMystery.getLanguage(player).translateString("deathByKillerSubtitle"), 20, 60, 20);
             for (Player p : this.getPlayers().keySet()) {
                 Language language = murderMystery.getLanguage(p);
-                p.sendMessage(language.playerKilledByKiller
-                        .replace("%identity%", this.getPlayers(player) == 2 ? language.detective : language.commonPeople));
+                p.sendMessage(language.translateString("playerKilledByKiller")
+                        .replace("%identity%", this.getPlayers(player) == 2 ? language.translateString("detective") : language.translateString("commonPeople")));
             }
         }else { //攻击者是平民或侦探
             if (this.getPlayers(player) == 3) {
-                damage.sendMessage(this.murderMystery.getLanguage(damage).killKiller);
+                damage.sendMessage(this.murderMystery.getLanguage(damage).translateString("killKiller"));
                 this.killKillerPlayer = damage;
-                player.sendTitle(this.murderMystery.getLanguage(player).deathTitle,
-                        this.murderMystery.getLanguage(player).killerDeathSubtitle, 10, 20, 20);
+                player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
+                        this.murderMystery.getLanguage(player).translateString("killerDeathSubtitle"), 10, 20, 20);
             } else {
-                damage.sendTitle(this.murderMystery.getLanguage(damage).deathTitle,
-                        this.murderMystery.getLanguage(damage).deathByDamageTeammateSubtitle, 20, 60, 20);
-                player.sendTitle(this.murderMystery.getLanguage(player).deathTitle,
-                        this.murderMystery.getLanguage(player).deathByTeammateSubtitle, 20, 60, 20);
+                damage.sendTitle(this.murderMystery.getLanguage(damage).translateString("deathTitle"),
+                        this.murderMystery.getLanguage(damage).translateString("deathByDamageTeammateSubtitle"), 20, 60, 20);
+                player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
+                        this.murderMystery.getLanguage(player).translateString("deathByTeammateSubtitle"), 20, 60, 20);
                 this.playerDeath(damage);
             }
         }
@@ -924,7 +925,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
             this.murderMystery.getLogger().error(this.murderMystery.getLanguage(null)
-                    .roomLevelBackupNotExist.replace("%name%", this.levelName));
+                    .translateString("roomLevelBackupNotExist").replace("%name%", this.levelName));
             this.murderMystery.unloadRoom(this.levelName);
         }
         CompletableFuture.runAsync(() -> {
@@ -941,7 +942,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 }
             }else {
                 this.murderMystery.getLogger().error(this.murderMystery.getLanguage(null)
-                        .roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
+                        .translateString("roomLevelRestoreLevelFailure").replace("%name%", this.levelName));
                 this.murderMystery.unloadRoom(this.levelName);
             }
         });
