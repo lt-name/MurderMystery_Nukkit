@@ -1,8 +1,8 @@
 package cn.lanink.murdermystery.tasks;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.utils.Language;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -29,13 +29,13 @@ public class VictoryTask extends PluginTask<MurderMystery> {
         for (Player player : players) {
             Language language = owner.getLanguage(player);
             if (victory == 3) {
-                player.sendTitle(language.titleVictoryKillerTitle, "", 10, 30, 10);
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryKillerScoreBoard.split("\n")));
-                owner.getScoreboard().showScoreboard(player, language.scoreBoardTitle, ms);
+                player.sendTitle(language.translateString("titleVictoryKillerTitle"), "", 10, 30, 10);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("victoryKillerScoreBoard").split("\n")));
+                owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
             }else {
-                player.sendTitle(language.titleVictoryCommonPeopleSubtitle, "", 10, 30, 10);
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.victoryCommonPeopleScoreBoard.split("\n")));
-                owner.getScoreboard().showScoreboard(player, language.scoreBoardTitle, ms);
+                player.sendTitle(language.translateString("titleVictoryCommonPeopleSubtitle"), "", 10, 30, 10);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("victoryCommonPeopleScoreBoard").split("\n")));
+                owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
             }
         }
     }
@@ -54,9 +54,9 @@ public class VictoryTask extends PluginTask<MurderMystery> {
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                 String bottom;
                 if (victory == 3) {
-                    bottom = this.owner.getLanguage(entry.getKey()).victoryKillerBottom;
+                    bottom = this.owner.getLanguage(entry.getKey()).translateString("victoryKillerBottom");
                 }else {
-                    bottom = this.owner.getLanguage(entry.getKey()).victoryCommonPeopleBottom;
+                    bottom = this.owner.getLanguage(entry.getKey()).translateString("victoryCommonPeopleBottom");
                 }
                 if (!bottom.trim().equals("")) {
                     entry.getKey().sendTip(bottom);

@@ -10,7 +10,6 @@ import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
 import java.util.ArrayList;
@@ -70,26 +69,26 @@ public class InfectedModeRoom extends BaseRoom {
             if ((time%5 == 0 && time != 0) || (time <= 5 && time != 0)) {
                 for (Player player : this.getPlayers().keySet()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
-                            .killerGetSwordTime.replace("%time%", time + ""));
+                            .translateString("killerGetSwordTime").replace("%time%", time + ""));
                 }
                 for (Player player : this.getSpectatorPlayers()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
-                            .killerGetSwordTime.replace("%time%", time + ""));
+                            .translateString("killerGetSwordTime").replace("%time%", time + ""));
                 }
                 Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
                 for (Player player : this.getPlayers().keySet()) {
-                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
                 for (Player player : this.getSpectatorPlayers()) {
-                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
                 int y = new Random().nextInt(this.getPlayers().size());
                 Player player = new ArrayList<>(this.getPlayers().keySet()).get(y);
                 this.players.put(player, 3);
-                player.sendTitle(this.murderMystery.getLanguage(player).titleKillerTitle,
-                        this.murderMystery.getLanguage(player).titleKillerSubtitle, 10, 40, 10);
+                player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
+                        this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
                 this.playerRespawn(player);
             }
         }
@@ -100,7 +99,7 @@ public class InfectedModeRoom extends BaseRoom {
                 if (entry.getValue() == 0) {
                     this.playerRespawn(entry.getKey());
                 }else {
-                    entry.getKey().sendTip(this.murderMystery.getLanguage(entry.getKey()).playerRespawnTime
+                    entry.getKey().sendTip(this.murderMystery.getLanguage(entry.getKey()).translateString("playerRespawnTime")
                             .replace("%time%", entry.getValue() + ""));
                 }
             }
@@ -175,8 +174,8 @@ public class InfectedModeRoom extends BaseRoom {
                 return;
             }
             this.players.put(player, 3);
-            player.sendTitle(this.murderMystery.getLanguage(player).titleKillerTitle,
-                    this.murderMystery.getLanguage(player).titleKillerSubtitle, 10, 40, 10);
+            player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
+                    this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
         }else {
             if (this.getPlayers(player) != 3) {
                 return;
@@ -208,14 +207,11 @@ public class InfectedModeRoom extends BaseRoom {
         effect.setColor(0, 255, 0);
         player.addEffect(effect);
         player.teleport(this.getRandomSpawn().get(new Random().nextInt(this.getRandomSpawn().size())));
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
-            @Override
-            public void onRun(int i) {
-                Effect effect = Effect.getEffect(1).setDuration(1000).setAmplifier(1).setVisible(true); // 速度
-                effect.setColor(0, 255, 0);
-                player.addEffect(effect);
-            }
-        }, 60);
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+            Effect e = Effect.getEffect(1).setDuration(1000).setAmplifier(1).setVisible(true); // 速度
+            e.setColor(0, 255, 0);
+            player.addEffect(e);
+        }, 60, true);
     }
 
 }

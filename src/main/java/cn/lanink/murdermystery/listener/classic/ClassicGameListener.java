@@ -89,7 +89,7 @@ public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRo
                                     new SwordMoveTask(room, player));
                             room.killerSwordCD = 5;
                         }else {
-                            player.sendMessage(this.murderMystery.getLanguage(player).useItemSwordCD);
+                            player.sendMessage(this.murderMystery.getLanguage(player).translateString("useItemSwordCD"));
                         }
                         break;
                     case 3:
@@ -98,7 +98,7 @@ public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRo
                                     new ScanTask(this.murderMystery, room, player));
                             room.killerScanCD = 60;
                         }else {
-                            player.sendMessage(this.murderMystery.getLanguage(player).useItemScanCD);
+                            player.sendMessage(this.murderMystery.getLanguage(player).translateString("useItemScanCD"));
                         }
                         break;
                 }

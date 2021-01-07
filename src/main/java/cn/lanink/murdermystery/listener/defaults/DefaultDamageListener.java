@@ -50,7 +50,7 @@ public class DefaultDamageListener extends BaseMurderMysteryListener<BaseRoom> {
                         room.playerDamage(damager, player);
                     }else if (child.namedTag.getInt("MurderType") == 23) {
                         Tools.playSound(player, Sound.RANDOM_ANVIL_LAND);
-                        player.sendMessage(this.murderMystery.getLanguage(player).damageSnowball);
+                        player.sendMessage(this.murderMystery.getLanguage(player).translateString("damageSnowball"));
                         Effect effect = Effect.getEffect(2);
                         effect.setAmplifier(2);
                         effect.setDuration(40);

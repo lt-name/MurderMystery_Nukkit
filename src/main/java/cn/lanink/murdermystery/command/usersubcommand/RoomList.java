@@ -26,7 +26,8 @@ public class RoomList extends BaseSubCommand {
         for (String string : this.murderMystery.getRooms().keySet()) {
             list.append(this.murderMystery.getRoomName().get(string)).append(" ");
         }
-        sender.sendMessage(this.murderMystery.getLanguage(sender).listRoom.replace("%list%", list.toString()));
+        sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("listRoom")
+                .replace("%list%", list.toString()));
         return true;
     }
 

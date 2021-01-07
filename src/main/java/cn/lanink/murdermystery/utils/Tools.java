@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.utils;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
@@ -82,9 +83,9 @@ public class Tools {
     public static String getStringRoomMode(Player player, BaseRoom room) {
         switch (room.getGameMode()) {
             case "classic":
-                return MurderMystery.getInstance().getLanguage(player).Classic;
+                return MurderMystery.getInstance().getLanguage(player).translateString("Classic");
             case "infected":
-                return MurderMystery.getInstance().getLanguage(player).Infected;
+                return MurderMystery.getInstance().getLanguage(player).translateString("Infected");
             default:
                 return room.getGameMode();
         }
@@ -154,32 +155,32 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 1));
-                item.setCustomName(language.itemDetectiveBow);
-                item.setLore(language.itemDetectiveBowLore.split("\n"));
+                item.setCustomName(language.translateString("itemDetectiveBow"));
+                item.setLore(language.translateString("itemDetectiveBowLore").split("\n"));
                 return item;
             case 2:
                 item = Item.get(267, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 2));
-                item.setCustomName(language.itemKillerSword);
-                item.setLore(language.itemKillerSwordLore.split("\n"));
+                item.setCustomName(language.translateString("itemKillerSword"));
+                item.setLore(language.translateString("itemKillerSwordLore").split("\n"));
                 return item;
             case 3:
                 item = Item.get(395, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 3));
-                item.setCustomName(language.itemScan);
-                item.setLore(language.itemScanLore.split("\n"));
+                item.setCustomName(language.translateString("itemScan"));
+                item.setLore(language.translateString("itemScanLore").split("\n"));
                 return item;
             case 10:
                 item = Item.get(324, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 10));
-                item.setCustomName(language.itemQuitRoom);
-                item.setLore(language.itemQuitRoomLore.split("\n"));
+                item.setCustomName(language.translateString("itemQuitRoom"));
+                item.setLore(language.translateString("itemQuitRoomLore").split("\n"));
                 return item;
             case 20:
                 item = Item.get(262, 0, 1);
@@ -192,24 +193,24 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 21));
-                item.setCustomName(language.itemPotion);
-                item.setLore(language.itemPotionLore.split("\n"));
+                item.setCustomName(language.translateString("itemPotion"));
+                item.setLore(language.translateString("itemPotionLore").split("\n"));
                 return item;
             case 22:
                 item = Item.get(241, 3, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 22));
-                item.setCustomName(language.itemShieldWall);
-                item.setLore(language.itemShieldWallLore.split("\n"));
+                item.setCustomName(language.translateString("itemShieldWall"));
+                item.setLore(language.translateString("itemShieldWallLore").split("\n"));
                 return item;
             case 23:
                 item = Item.get(332, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 23));
-                item.setCustomName(language.itemSnowball);
-                item.setLore(language.itemSnowballLore.split("\n"));
+                item.setCustomName(language.translateString("itemSnowball"));
+                item.setLore(language.translateString("itemSnowballLore").split("\n"));
                 return item;
             default:
                 return Item.get(0);
