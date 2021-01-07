@@ -12,6 +12,7 @@ import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.event.*;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
+import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.game.TimeTask;
 import cn.lanink.murdermystery.tasks.game.TipsTask;
 import cn.lanink.murdermystery.utils.Tools;
@@ -117,7 +118,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         }
         this.initData();
         this.enableListener();
-        this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
+        this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+        Watchdog.add(this);
     }
 
     public final void setGameMode(String gameMode) {
@@ -251,7 +253,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             if (this.isPlaying(player) && player.getLevel() != this.level) {
                 this.quitRoom(player);
             }
-        }, 20);
+        }, 1);
         if (this.status == ROOM_STATUS_TASK_NEED_INITIALIZED) {
             this.initTask();
         }
@@ -291,8 +293,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             this.spectatorPlayers.remove(player);
         }else {
             this.restorePlayerSkin(player);
-            this.skinNumber.remove(player);
-            this.skinCache.remove(player);
         }
         this.murderMystery.getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
@@ -302,6 +302,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             p.showPlayer(player);
             player.showPlayer(p);
         }
+        player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
     }
 
     /**
@@ -429,6 +430,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         }
         this.scheduleTask();
         this.autoCreateTemporaryRoom();
+        Watchdog.roomRunTime.put(this, 0);
     }
 
     public void scheduleTask() {
@@ -453,14 +455,16 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         }
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomEndEvent(this, victory));
         int oldStatus = this.status;
-        this.status = 0;
+        this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
         for (Player p1 : this.players.keySet()) {
             for (Player p2 : this.players.keySet()) {
                 p1.showPlayer(p2);
                 p2.showPlayer(p1);
             }
         }
-        this.victoryReward(victory);
+        if (victory != 0) {
+            this.victoryReward(victory);
+        }
         Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry<Player, Integer> entry = it.next();
@@ -482,6 +486,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 break;
         }
         this.autoClearTemporaryRoom();
+        Watchdog.roomRunTime.put(this, 0);
     }
 
     protected abstract void victoryReward(int victory);

@@ -38,6 +38,7 @@ public class VictoryTask extends PluginTask<MurderMystery> {
                 owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
             }
         }
+        Watchdog.roomRunTime.put(room, 0);
     }
 
     @Override

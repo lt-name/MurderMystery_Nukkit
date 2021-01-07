@@ -13,6 +13,8 @@ import cn.lanink.murdermystery.listener.defaults.*;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
+import cn.lanink.murdermystery.tasks.Watchdog;
+import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.utils.MetricsLite;
 import cn.lanink.murdermystery.utils.RsNpcXVariable;
@@ -81,6 +83,8 @@ public class MurderMystery extends PluginBase {
     private final HashMap<String, String> languageMappingTable = new HashMap<>();
     private final HashMap<String, Language> languageMap = new HashMap<>();
     private final ConcurrentHashMap<Player, String> playerLanguage = new ConcurrentHashMap<>();
+
+    public final HashMap<Player, SetRoomTask> setRoomTask = new HashMap<>();
 
     public static MurderMystery getInstance() { return murderMystery; }
 
@@ -204,8 +208,9 @@ public class MurderMystery extends PluginBase {
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.loadAllListener();
         this.loadResources();
-        this.loadAllRoom();
         this.loadSkins();
+        this.loadAllRoom();
+        this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(), 20, true);
         //启用扩展-使用task保证在所有插件都加载完后加载扩展
         getServer().getScheduler().scheduleTask(this, new Task() {
             @Override
@@ -302,6 +307,10 @@ public class MurderMystery extends PluginBase {
 
     public HashMap<String, BaseMurderMysteryListener> getMurderMysteryListeners() {
         return this.murderMysteryListeners;
+    }
+
+    public Language getLanguage() {
+        return this.getLanguage(null);
     }
 
     public Language getLanguage(Object obj) {
