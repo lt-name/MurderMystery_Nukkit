@@ -64,14 +64,11 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (room == null || room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
                 return;
             }
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
-                @Override
-                public void onRun(int i) {
-                    Item item = player.getInventory().getItemInHand();
-                    if (item.getId() == 261) {
-                        item.setDamage(0);
-                        player.getInventory().setItemInHand(item);
-                    }
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+                Item item = player.getInventory().getItemInHand();
+                if (item.getId() == 261) {
+                    item.setDamage(0);
+                    player.getInventory().setItemInHand(item);
                 }
             }, 1);
             if (room.getPlayers(player) != 0 && room.getPlayers(player) != 3) {
@@ -84,26 +81,21 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 }
             }
             //回收弓
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
-                @Override
-                public void onRun(int i) {
-                    int j = 0; //箭的数量
-                    boolean bow = false;
-                    for (Item item : player.getInventory().slots.values()) {
-                        if (item.getId() == 262) {
-                            j += item.getCount();
-                            continue;
-                        }
-                        if (item.getId() == 261) {
-                            item.setDamage(0);
-                            bow = true;
-                        }
-                    }
-                    if (j < 1 && bow) {
-                        player.getInventory().removeItem(Item.get(261, 0, 1));
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+                int arrow = 0;
+                boolean hasBow = false;
+                for (Item item : player.getInventory().slots.values()) {
+                    if (item.getId() == 262) {
+                        arrow += item.getCount();
+                    }else if (item.getId() == 261) {
+                        item.setDamage(0);
+                        hasBow = true;
                     }
                 }
-            }, 20);
+                if (arrow < 1 && hasBow) {
+                    player.getInventory().removeItem(Item.get(261, 0, 1));
+                }
+            }, 1);
         }
     }
 
@@ -141,10 +133,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         if (event.isCancelled()) {
             return;
         }
-        Level level = event.getItem() == null ? null : event.getItem().getLevel();
-        if (level == null) {
-            return;
-        }
+        Item item = event.getItem().getItem();
+        Level level = event.getItem().getLevel();
         BaseRoom room = this.getListenerRooms().get(level.getFolderName());
         if (room == null) {
             return;
@@ -155,7 +145,11 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 event.setCancelled(true);
                 return;
             }
-            CompoundTag tag = event.getItem().getItem() == null ? null : event.getItem().getItem().getNamedTag();
+            if (item.getId() == Item.GOLD_INGOT) {
+                Tools.playSound(player, Sound.RANDOM_ORB);
+                return;
+            }
+            CompoundTag tag = item.getNamedTag();
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 1) {
                 if (room.getPlayers(player) != 1) {
                     event.setCancelled(true);

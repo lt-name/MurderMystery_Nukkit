@@ -619,6 +619,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                     if (bow) {
                         entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
                     }
+                    Tools.playSound(entry.getKey(), Sound.RANDOM_LEVELUP);
                 }
             }
         });
