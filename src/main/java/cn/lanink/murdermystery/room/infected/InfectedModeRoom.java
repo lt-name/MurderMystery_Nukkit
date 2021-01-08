@@ -1,18 +1,18 @@
 package cn.lanink.murdermystery.room.infected;
 
+import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
+import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.utils.Tools;
-import cn.lanink.murdermystery.utils.exception.RoomLoadException;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author lt_name
  */
-public class InfectedModeRoom extends ClassicModeRoom {
+public class InfectedModeRoom extends BaseRoom {
 
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
 
@@ -41,17 +41,20 @@ public class InfectedModeRoom extends ClassicModeRoom {
     }
 
     @Override
+    public void initData() {
+        super.initData();
+        if (this.playerRespawnTime != null) {
+            this.playerRespawnTime.clear();
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public void enableListener() {
         this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
-    }
-
-    @Override
-    protected synchronized void endGame(int victory) {
-        this.playerRespawnTime.clear();
-        super.endGame(victory);
     }
 
     @Override
@@ -64,36 +67,30 @@ public class InfectedModeRoom extends ClassicModeRoom {
         //开局20秒选出杀手
         int time = this.gameTime - (this.setGameTime - 20);
         if (time >= 0) {
-            if (time <= 5 && time >= 1) {
+            if ((time%5 == 0 && time != 0) || (time <= 5 && time != 0)) {
                 for (Player player : this.getPlayers().keySet()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
-                            .killerGetSwordTime.replace("%time%", time + ""));
+                            .translateString("killerGetSwordTime").replace("%time%", time + ""));
                 }
                 for (Player player : this.getSpectatorPlayers()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
-                            .killerGetSwordTime.replace("%time%", time + ""));
+                            .translateString("killerGetSwordTime").replace("%time%", time + ""));
                 }
                 Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
                 for (Player player : this.getPlayers().keySet()) {
-                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
                 for (Player player : this.getSpectatorPlayers()) {
-                    player.sendMessage(this.murderMystery.getLanguage(player).killerGetSword);
+                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
                 int y = new Random().nextInt(this.getPlayers().size());
-                int x = 0;
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                    if (x == y) {
-                        entry.setValue(3);
-                        entry.getKey().sendTitle(this.murderMystery.getLanguage(entry.getKey()).titleKillerTitle,
-                                this.murderMystery.getLanguage(entry.getKey()).titleKillerSubtitle, 10, 40, 10);
-                        this.playerRespawn(entry.getKey());
-                        break;
-                    }
-                    x++;
-                }
+                Player player = new ArrayList<>(this.getPlayers().keySet()).get(y);
+                this.players.put(player, 3);
+                player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
+                        this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
+                this.playerRespawn(player);
             }
         }
         //复活计时
@@ -103,7 +100,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
                 if (entry.getValue() == 0) {
                     this.playerRespawn(entry.getKey());
                 }else {
-                    entry.getKey().sendTip(this.murderMystery.getLanguage(entry.getKey()).playerRespawnTime
+                    entry.getKey().sendTip(this.murderMystery.getLanguage(entry.getKey()).translateString("playerRespawnTime")
                             .replace("%time%", entry.getValue() + ""));
                 }
             }
@@ -133,7 +130,7 @@ public class InfectedModeRoom extends ClassicModeRoom {
                 }
                 if (time >= 0) {
                     if (this.players.size() < 2) {
-                        this.endGameEvent();
+                        this.endGame();
                         return;
                     }
                     killer = true;
@@ -172,24 +169,24 @@ public class InfectedModeRoom extends ClassicModeRoom {
     }
 
     @Override
-    protected void playerDamage(Player damage, Player player) {
+    public void playerDamage(Player damage, Player player) {
         if (this.getPlayers(damage) == 3) {
             if (this.getPlayers(player) == 3) {
                 return;
             }
             this.players.put(player, 3);
-            player.sendTitle(this.murderMystery.getLanguage(player).titleKillerTitle,
-                    this.murderMystery.getLanguage(player).titleKillerSubtitle, 10, 40, 10);
+            player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
+                    this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
         }else {
             if (this.getPlayers(player) != 3) {
                 return;
             }
         }
-        this.playerDeathEvent(player);
+        this.playerDeath(player);
     }
 
     @Override
-    protected void playerDeath(Player player) {
+    public void playerDeath(Player player) {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(3);
@@ -211,14 +208,11 @@ public class InfectedModeRoom extends ClassicModeRoom {
         effect.setColor(0, 255, 0);
         player.addEffect(effect);
         player.teleport(this.getRandomSpawn().get(new Random().nextInt(this.getRandomSpawn().size())));
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, new Task() {
-            @Override
-            public void onRun(int i) {
-                Effect effect = Effect.getEffect(1).setDuration(1000).setAmplifier(1).setVisible(true); // 速度
-                effect.setColor(0, 255, 0);
-                player.addEffect(effect);
-            }
-        }, 60);
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
+            Effect e = Effect.getEffect(1).setDuration(1000).setAmplifier(1).setVisible(true); // 速度
+            e.setColor(0, 255, 0);
+            player.addEffect(e);
+        }, 60, true);
     }
 
 }

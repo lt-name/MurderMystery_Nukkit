@@ -1,8 +1,8 @@
 package cn.lanink.murdermystery.command.usersubcommand;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.room.base.IRoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -33,17 +33,17 @@ public class JoinSpectator extends BaseSubCommand {
         if (this.murderMystery.getRooms().size() > 0) {
             Player player = (Player) sender;
             if (player.riding != null) {
-                sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomOnRiding);
+                sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomOnRiding"));
                 return true;
             }
             for (BaseRoom room : this.murderMystery.getRooms().values()) {
                 if (room.isPlaying(player) || room.isSpectator(player)) {
-                    sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomOnRoom);
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomOnRoom"));
                     return true;
                 }
             }
             String world = args[1];
-            if (!this.murderMystery.getRooms().containsKey(args[1])) {
+            if (!this.murderMystery.getRooms().containsKey(world)) {
                 for (Map.Entry<String, String> entry : this.murderMystery.getRoomName().entrySet()) {
                     if (entry.getValue().equals(args[1])) {
                         world = entry.getKey();
@@ -56,14 +56,14 @@ public class JoinSpectator extends BaseSubCommand {
                         room.getStatus() != IRoomStatus.ROOM_STATUS_VICTORY) {
                     room.joinRoom(player, true);
                 }else {
-                    sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNeedInitialized);
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsNeedInitialized"));
                 }
             }else {
-                sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomIsNotFound);
+                sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsNotFound"));
             }
             return true;
         }
-        sender.sendMessage(this.murderMystery.getLanguage(sender).joinRoomNotAvailable);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomNotAvailable"));
         return true;
     }
 

@@ -6,7 +6,6 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.PluginTask;
-import cn.nukkit.scheduler.Task;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -32,14 +31,11 @@ public class ScanTask extends PluginTask<MurderMystery> {
                 texts.add(text);
             }
         }
-        this.player.sendMessage(this.owner.getLanguage(player).useItemScan);
-        Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), new Task() {
-            @Override
-            public void onRun(int i) {
-                if (texts.size() > 0) {
-                    for (EntityText text : texts) {
-                        text.close();
-                    }
+        this.player.sendMessage(this.owner.getLanguage(this.player).translateString("useItemScan"));
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.owner, () -> {
+            if (texts.size() > 0) {
+                for (EntityText text : texts) {
+                    text.close();
                 }
             }
         }, 100);

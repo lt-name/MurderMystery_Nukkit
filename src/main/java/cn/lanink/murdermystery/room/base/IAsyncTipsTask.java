@@ -1,5 +1,7 @@
 package cn.lanink.murdermystery.room.base;
 
+import cn.lanink.gamecore.room.IRoomStatus;
+
 /**
  * 信息显示Task
  * 具体执行查看{@link cn.lanink.murdermystery.tasks.game.TipsTask }

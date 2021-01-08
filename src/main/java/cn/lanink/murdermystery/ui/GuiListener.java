@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.ui;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
@@ -62,7 +62,7 @@ public class GuiListener implements Listener {
                     }
                     break;
                 case ROOM_LIST_MENU:
-                    if (simple.getResponse().getClickedButton().getText().equals(language.buttonReturn)) {
+                    if (simple.getResponse().getClickedButton().getText().equals(language.translateString("buttonReturn"))) {
                         GuiCreate.sendUserMenu(player);
                     }else {
                         ArrayList<String> rooms = new ArrayList<>(this.murderMystery.getRooms().keySet());
@@ -128,10 +128,10 @@ public class GuiListener implements Listener {
             if (cache == GuiType.ROOM_JOIN_OK) {
                 try {
                     String roomName = modal.getContent().split("§7§k@")[1];
-                    if (language.buttonOK.equals(modal.getResponse().getClickedButtonText())) {
+                    if (language.translateString("buttonOK").equals(modal.getResponse().getClickedButtonText())) {
                         this.server.dispatchCommand(player, uName + " join " + roomName);
                         return;
-                    }else if (language.buttonSpectator.equals(modal.getResponse().getClickedButtonText())) {
+                    }else if (language.translateString("buttonSpectator").equals(modal.getResponse().getClickedButtonText())) {
                         this.server.dispatchCommand(player, uName + " joinspectator " + roomName);
                         return;
                     }
