@@ -5,11 +5,13 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityText;
 import cn.lanink.murdermystery.form.GuiCreate;
 import cn.nukkit.Player;
+import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
@@ -37,7 +39,8 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
     private final Language language;
 
     private EntityText waitSpawnText;
-    private HashMap<String, EntityText> randomSpawnTexts = new HashMap<>();
+    private final HashMap<String, EntityText> randomSpawnTexts = new HashMap<>();
+    private final HashMap<String, EntityItem> goldSpawnTexts = new HashMap<>();
 
     private int particleEffectTick = 0;
 
@@ -112,7 +115,7 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                         .putInt("MurderMysteryItemType", 113));
 
                 this.player.getInventory().setItem(4, item);
-                if (!"".equals(config.getString("redSpawn").trim())) {
+                if (config.getStringList("randomSpawn").size() > 1) {
                     canNext = true;
                 }
                 break;
@@ -125,7 +128,7 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                         .putInt("MurderMysteryItemType", 113));
 
                 this.player.getInventory().setItem(4, item);
-                if (!"".equals(config.getString("blueSpawn").trim())) {
+                if (config.getStringList("goldSpawn").size() > 1) {
                     canNext = true;
                 }
                 break;
@@ -134,8 +137,7 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                 this.nextRoomSchedule = 60;
                 this.player.sendTip(this.language.translateString("admin_setRoom_setMoreParameters"));
                 item = Item.get(347);//钟
-                item.setNamedTag(new CompoundTag()
-                        .putInt("MurderMysteryItemType", 113));
+                item.setNamedTag(new CompoundTag().putInt("MurderMysteryItemType", 113));
                 item.setCustomName(this.language.translateString("admin_setRoom_setMoreParameters"));
                 this.player.getInventory().setItem(4, item);
                 if (config.getInt("waitTime") > 0 &&
@@ -154,12 +156,10 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                 this.nextRoomSchedule = 70;
                 this.player.sendTip(this.language.translateString("admin_setRoom_setRoomPlayers"));
                 item = Item.get(347);//钟
-                item.setNamedTag(new CompoundTag()
-                        .putInt("MurderMysteryItemType", 113));
+                item.setNamedTag(new CompoundTag().putInt("MurderMysteryItemType", 113));
                 item.setCustomName(this.language.translateString("admin_setRoom_setRoomPlayers"));
                 this.player.getInventory().setItem(4, item);
-                if (config.getInt("minPlayers") > 0 &&
-                        config.getInt("maxPlayers") > 0) {
+                if (config.getInt("minPlayers") > 0 && config.getInt("maxPlayers") > 0) {
                     if (autoNext) {
                         this.setRoomSchedule(this.nextRoomSchedule);
                     }else {
@@ -229,10 +229,47 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                         Integer.parseInt(s[1]),
                         Integer.parseInt(s[2]) + 0.5,
                         this.level);
-                if (!this.randomSpawnTexts.containsKey(str)) {
+                EntityText entity = this.randomSpawnTexts.get(str);
+                if (entity == null || entity.isClosed()) {
                     EntityText entityText = new EntityText(pos, "§eRandom Spawn");
                     entityText.spawnToAll();
                     this.randomSpawnTexts.put(str, entityText);
+                }
+                this.particleEffect(pos);
+            }
+        } catch (Exception ignored) {
+        }
+        try{
+            List<String> goldSpawns = config.getStringList("goldSpawn");
+            for (String str : new HashSet<>(this.goldSpawnTexts.keySet())) {
+                if (!goldSpawns.contains(str)) {
+                    EntityItem entityItem = this.goldSpawnTexts.get(str);
+                    if (entityItem != null) {
+                        entityItem.close();
+                    }
+                    this.goldSpawnTexts.remove(str);
+                }
+            }
+            for (String str : goldSpawns) {
+                String[] s = str.split(":");
+                Position pos = new Position(
+                        Integer.parseInt(s[0]) + 0.5,
+                        Integer.parseInt(s[1]),
+                        Integer.parseInt(s[2]) + 0.5,
+                        this.level);
+                EntityItem entity = this.goldSpawnTexts.get(str);
+                if (entity == null || entity.isClosed()) {
+                    EntityItem entityItem = new EntityItem(pos.getChunk(),
+                            EntityItem.getDefaultNBT(pos)
+                                    .putShort("Health", 5)
+                                    .putCompound("Item", NBTIO.putItemHelper(Item.get(266)))
+                                    .putShort("PickupDelay", -1)
+                                    .putBoolean("cannotPickup", true));
+                    entityItem.setNameTagVisible(true);
+                    entityItem.setNameTagAlwaysVisible(true);
+                    entityItem.setNameTag("§eGold Spawn");
+                    entityItem.spawnToAll();
+                    this.goldSpawnTexts.put(str, entityItem);
                 }
                 this.particleEffect(pos);
             }

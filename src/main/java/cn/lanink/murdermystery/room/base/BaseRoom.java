@@ -91,35 +91,40 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                         .translateString("roomLevelBackupExist").replace("%name%", showRoomName));
             }
         }
-        this.minPlayers = config.getInt("minPlayers", 3);
-        this.maxPlayers = config.getInt("maxPlayers", 16);
-        this.setWaitTime = config.getInt("waitTime");
-        this.setGameTime = config.getInt("gameTime");
-        this.setGoldSpawnTime = config.getInt("goldSpawnTime");
-        String[] s1 = config.getString("waitSpawn").split(":");
-        this.waitSpawn = new Position(Integer.parseInt(s1[0]),
-                Integer.parseInt(s1[1]),
-                Integer.parseInt(s1[2]),
-                this.getLevel());
-        for (String string : config.getStringList("randomSpawn")) {
-            String[] s = string.split(":");
-            this.randomSpawn.add(new Position(
-                    Integer.parseInt(s[0]),
-                    Integer.parseInt(s[1]),
-                    Integer.parseInt(s[2]),
-                    this.level));
+        try {
+            this.minPlayers = config.getInt("minPlayers", 3);
+            this.maxPlayers = config.getInt("maxPlayers", 16);
+            this.setWaitTime = config.getInt("waitTime");
+            this.setGameTime = config.getInt("gameTime");
+            this.setGoldSpawnTime = config.getInt("goldSpawnTime");
+            String[] s1 = config.getString("waitSpawn").split(":");
+            this.waitSpawn = new Position(Integer.parseInt(s1[0]),
+                    Integer.parseInt(s1[1]),
+                    Integer.parseInt(s1[2]),
+                    this.getLevel());
+            for (String string : config.getStringList("randomSpawn")) {
+                String[] s = string.split(":");
+                this.randomSpawn.add(new Position(
+                        Integer.parseInt(s[0]),
+                        Integer.parseInt(s[1]),
+                        Integer.parseInt(s[2]),
+                        this.level));
+            }
+            for (String string : config.getStringList("goldSpawn")) {
+                String[] s = string.split(":");
+                this.goldSpawnVector3List.add(new Vector3(
+                        Integer.parseInt(s[0]),
+                        Integer.parseInt(s[1]),
+                        Integer.parseInt(s[2])));
+            }
+            this.initData();
+            this.enableListener();
+            this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+            Watchdog.add(this);
+        } catch (Exception e) {
+            throw new RoomLoadException(MurderMystery.getInstance().getLanguage()
+                    .translateString("roomLoadedFailureByConfig").replace("%name%", showRoomName));
         }
-        for (String string : config.getStringList("goldSpawn")) {
-            String[] s = string.split(":");
-            this.goldSpawnVector3List.add(new Vector3(
-                    Integer.parseInt(s[0]),
-                    Integer.parseInt(s[1]),
-                    Integer.parseInt(s[2])));
-        }
-        this.initData();
-        this.enableListener();
-        this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
-        Watchdog.add(this);
     }
 
     public final void setGameMode(String gameMode) {

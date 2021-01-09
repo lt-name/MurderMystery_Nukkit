@@ -25,6 +25,8 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetGameMode("setgamemode"));
         this.addSubCommand(new SetMinPlayers("setminplayers"));
         this.addSubCommand(new SetMaxPlayers("setmaxplayers"));
+        this.addSubCommand(new CreateRoom("CreateRoom"));
+        this.addSubCommand(new SetRoom("SetRoom"));
         this.addSubCommand(new StartRoom("startroom"));
         this.addSubCommand(new StopRoom("stoproom"));
         this.addSubCommand(new ReloadRoom("reloadroom"));

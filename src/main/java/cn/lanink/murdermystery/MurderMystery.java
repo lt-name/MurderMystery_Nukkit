@@ -183,6 +183,7 @@ public class MurderMystery extends PluginBase {
         this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         this.getLogger().info("§l§e https://github.com/lt-name/MurderMystery_Nukkit");
         this.getLogger().info("§l§eVersion: " + VERSION);
+
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
@@ -201,16 +202,20 @@ public class MurderMystery extends PluginBase {
         } catch (Exception ignored) {
 
         }
-        getServer().getCommandMap().register("",
+        this.getServer().getCommandMap().register("",
                 new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
-        getServer().getCommandMap().register("",
+        this.getServer().getCommandMap().register("",
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
-        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
-        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
+        this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
+
         this.loadAllListener();
         this.loadResources();
         this.loadSkins();
         this.loadAllRoom();
+
         this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(), 20, true);
         //启用扩展-使用task保证在所有插件都加载完后加载扩展
         getServer().getScheduler().scheduleTask(this, new Task() {
@@ -223,9 +228,8 @@ public class MurderMystery extends PluginBase {
         });
         try {
             new MetricsLite(this, 7290);
-        } catch (Throwable ignore) {
+        } catch (Throwable ignore) { }
 
-        }
         getLogger().info(this.getLanguage(null).translateString("pluginEnable"));
     }
 
@@ -458,11 +462,15 @@ public class MurderMystery extends PluginBase {
         });
     }
 
+    public HashMap<String, Config> getRoomConfigs() {
+        return this.roomConfigs;
+    }
+
     public Config getRoomConfig(Level level) {
         return getRoomConfig(level.getFolderName());
     }
 
-    private Config getRoomConfig(String level) {
+    public Config getRoomConfig(String level) {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }

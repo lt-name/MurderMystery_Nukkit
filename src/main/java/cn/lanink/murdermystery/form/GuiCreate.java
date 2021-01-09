@@ -58,6 +58,14 @@ public class GuiCreate {
         showFormWindow(player, simple, GuiType.ADMIN_MENU);
     }
 
+    public static void sendCreateRoomMenu(Player player) {
+        //TODO
+    }
+
+    public static void sendSetRoomMenu(Player player) {
+        //TODO
+    }
+
     /**
      * 显示设置房间名称菜单
      * @param player 玩家
