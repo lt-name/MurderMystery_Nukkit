@@ -1,4 +1,4 @@
-package cn.lanink.murdermystery.ui;
+package cn.lanink.murdermystery.form;
 
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;

@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.command;
 
 import cn.lanink.murdermystery.command.adminsubcommand.*;
 import cn.lanink.murdermystery.command.base.BaseCommand;
-import cn.lanink.murdermystery.ui.GuiCreate;
+import cn.lanink.murdermystery.form.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 

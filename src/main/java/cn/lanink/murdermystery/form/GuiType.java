@@ -1,4 +1,4 @@
-package cn.lanink.murdermystery.ui;
+package cn.lanink.murdermystery.form;
 
 /**
  * @author lt_name

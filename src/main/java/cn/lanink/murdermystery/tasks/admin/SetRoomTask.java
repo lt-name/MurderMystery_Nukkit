@@ -3,7 +3,7 @@ package cn.lanink.murdermystery.tasks.admin;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.ui.GuiCreate;
+import cn.lanink.murdermystery.form.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -267,6 +267,9 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
     private void closeEntity() {
         if (this.waitSpawnText != null) {
             this.waitSpawnText.close();
+        }
+        for (EntityText entityText : this.randomSpawnTexts.values()) {
+            entityText.close();
         }
     }
 

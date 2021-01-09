@@ -7,6 +7,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
+import cn.lanink.murdermystery.form.GuiListener;
 import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
 import cn.lanink.murdermystery.listener.defaults.*;
@@ -15,7 +16,6 @@ import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
 import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
-import cn.lanink.murdermystery.ui.GuiListener;
 import cn.lanink.murdermystery.utils.MetricsLite;
 import cn.lanink.murdermystery.utils.RsNpcXVariable;
 import cn.lanink.murdermystery.utils.Tools;
@@ -180,8 +180,9 @@ public class MurderMystery extends PluginBase {
 
     @Override
     public void onEnable() {
-        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        getLogger().info("§l§eVersion: " + VERSION);
+        this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
+        this.getLogger().info("§l§e https://github.com/lt-name/MurderMystery_Nukkit");
+        this.getLogger().info("§l§eVersion: " + VERSION);
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
