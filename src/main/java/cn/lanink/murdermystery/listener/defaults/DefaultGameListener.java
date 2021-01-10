@@ -146,7 +146,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 event.setCancelled(true);
                 return;
             }
-            if (item.getId() == Item.GOLD_INGOT) {
+            if (item.getId() == Item.GOLD_INGOT && room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
                 Tools.playSound(player, Sound.RANDOM_ORB);
                 return;
             }

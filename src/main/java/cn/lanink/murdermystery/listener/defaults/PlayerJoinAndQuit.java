@@ -2,8 +2,9 @@ package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.form.GuiCreate;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.ui.GuiCreate;
+import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -56,8 +57,13 @@ public class PlayerJoinAndQuit implements Listener {
                 room.quitRoom(player);
             }
         }
+        SetRoomTask task = this.murderMystery.setRoomTask.get(player);
+        if (task != null) {
+            task.cancel();
+        }
         GuiCreate.UI_CACHE.remove(player);
         this.murderMystery.getPlayerLanguage().remove(player);
+
     }
 
     @EventHandler

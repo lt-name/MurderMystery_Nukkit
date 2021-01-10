@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.command;
 
 import cn.lanink.murdermystery.command.adminsubcommand.*;
 import cn.lanink.murdermystery.command.base.BaseCommand;
-import cn.lanink.murdermystery.ui.GuiCreate;
+import cn.lanink.murdermystery.form.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -25,6 +25,8 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetGameMode("setgamemode"));
         this.addSubCommand(new SetMinPlayers("setminplayers"));
         this.addSubCommand(new SetMaxPlayers("setmaxplayers"));
+        this.addSubCommand(new CreateRoom("CreateRoom"));
+        this.addSubCommand(new SetRoom("SetRoom"));
         this.addSubCommand(new StartRoom("startroom"));
         this.addSubCommand(new StopRoom("stoproom"));
         this.addSubCommand(new ReloadRoom("reloadroom"));

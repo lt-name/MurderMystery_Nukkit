@@ -1,4 +1,4 @@
-package cn.lanink.murdermystery.ui;
+package cn.lanink.murdermystery.form;
 
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
@@ -34,7 +34,7 @@ public class GuiListener implements Listener {
     @EventHandler
     public void onPlayerFormResponded(PlayerFormRespondedEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getWindow() == null || event.getResponse() == null) {
+        if (player == null || event.getWindow() == null) {
             return;
         }
         Language language = this.murderMystery.getLanguage(player);
@@ -43,6 +43,9 @@ public class GuiListener implements Listener {
             return;
         }
         GuiCreate.UI_CACHE.get(player).remove(event.getFormID());
+        if (event.getResponse() == null) {
+            return;
+        }
         String uName = this.murderMystery.getCmdUser();
         String aName = this.murderMystery.getCmdAdmin();
         if (event.getWindow() instanceof FormWindowSimple) {
@@ -86,7 +89,7 @@ public class GuiListener implements Listener {
                             this.server.dispatchCommand(player, aName + " addgoldspawn");
                             break;
                         case 4:
-                            GuiCreate.sendAdminTimeMenu(player);
+                            GuiCreate.sendAdminMoreMenu(player);
                             break;
                         case 5:
                             GuiCreate.sendAdminPlayersMenu(player);
@@ -102,6 +105,14 @@ public class GuiListener implements Listener {
                             break;
                     }
                     break;
+                case ADMIN_CREATE_ROOM_MENU:
+                    this.server.dispatchCommand(player, aName + " CreateRoom " +
+                            simple.getResponse().getClickedButton().getText());
+                    break;
+                case ADMIN_SET_ROOM_MENU:
+                    this.server.dispatchCommand(player, aName + " SetRoom " +
+                            simple.getResponse().getClickedButton().getText());
+                    break;
             }
         }else if (event.getWindow() instanceof FormWindowCustom) {
             FormWindowCustom custom = (FormWindowCustom) event.getWindow();
@@ -109,15 +120,17 @@ public class GuiListener implements Listener {
                 case ADMIN_ROOM_NAME_MENU:
                     this.server.dispatchCommand(player, aName + " setroomname " + custom.getResponse().getInputResponse(0));
                     break;
-                case ADMIN_TIME_MENU:
+                case ADMIN_MORE_MENU:
                     this.server.dispatchCommand(player, aName + " setgoldspawntime " + custom.getResponse().getInputResponse(0));
                     this.server.dispatchCommand(player, aName + " setwaittime " + custom.getResponse().getInputResponse(1));
                     this.server.dispatchCommand(player, aName + " setgametime " + custom.getResponse().getInputResponse(2));
+                    this.server.dispatchCommand(player, aName + " setminplayers " + custom.getResponse().getInputResponse(3));
+                    this.server.dispatchCommand(player, aName + " setmaxplayers " + custom.getResponse().getInputResponse(4));
                     break;
-                case ADMIN_PLAYERS_MENU:
+                /*case ADMIN_PLAYERS_MENU:
                     this.server.dispatchCommand(player, aName + " setminplayers " + custom.getResponse().getInputResponse(0));
                     this.server.dispatchCommand(player, aName + " setmaxplayers " + custom.getResponse().getInputResponse(1));
-                    break;
+                    break;*/
                 case ADMIN_MODE_MENU:
                     this.server.dispatchCommand(player, this.murderMystery.getCmdAdmin() + " setgamemode " +
                             custom.getResponse().getDropdownResponse(0).getElementContent());

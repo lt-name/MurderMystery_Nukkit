@@ -1,4 +1,4 @@
-package cn.lanink.murdermystery.ui;
+package cn.lanink.murdermystery.form;
 
 /**
  * @author lt_name
@@ -9,10 +9,14 @@ public enum GuiType {
     USER_MENU,
     //管理界面
     ADMIN_MENU,
+    //创建房间（选择地图）
+    ADMIN_CREATE_ROOM_MENU,
+    //设置房间（选择地图）
+    ADMIN_SET_ROOM_MENU,
     //设置房间名称界面
     ADMIN_ROOM_NAME_MENU,
-    //设置时间界面
-    ADMIN_TIME_MENU,
+    //设置更多参数界面
+    ADMIN_MORE_MENU,
     //设置房间游戏人数界面
     ADMIN_PLAYERS_MENU,
     //设置房间游戏模式界面
