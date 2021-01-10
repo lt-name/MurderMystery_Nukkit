@@ -34,7 +34,7 @@ public class GuiListener implements Listener {
     @EventHandler
     public void onPlayerFormResponded(PlayerFormRespondedEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getWindow() == null || event.getResponse() == null) {
+        if (player == null || event.getWindow() == null) {
             return;
         }
         Language language = this.murderMystery.getLanguage(player);
@@ -43,6 +43,9 @@ public class GuiListener implements Listener {
             return;
         }
         GuiCreate.UI_CACHE.get(player).remove(event.getFormID());
+        if (event.getResponse() == null) {
+            return;
+        }
         String uName = this.murderMystery.getCmdUser();
         String aName = this.murderMystery.getCmdAdmin();
         if (event.getWindow() instanceof FormWindowSimple) {

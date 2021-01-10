@@ -18,14 +18,14 @@ import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Level;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class GuiCreate {
 
     private static final MurderMystery MURDER_MYSTERY = MurderMystery.getInstance();
     public static final String PLUGIN_NAME = "§l§7[§1M§2u§3r§4d§5e§6r§aM§cy§bs§dt§9e§6r§2y§7]";
-    public static final ConcurrentHashMap<Player, ConcurrentHashMap<Integer, GuiType>> UI_CACHE = new ConcurrentHashMap<>();
+    public static final HashMap<Player, HashMap<Integer, GuiType>> UI_CACHE = new HashMap<>();
 
     /**
      * 显示用户菜单
@@ -195,14 +195,7 @@ public class GuiCreate {
     }
 
     public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
-        ConcurrentHashMap<Integer, GuiType> map = UI_CACHE.computeIfAbsent(player, i -> new ConcurrentHashMap<>());
-        int id = player.showFormWindow(window);
-        map.put(id, guiType);
-        Server.getInstance().getScheduler().scheduleDelayedTask(MURDER_MYSTERY, () -> {
-            if (UI_CACHE.containsKey(player)) {
-                UI_CACHE.get(player).remove(id);
-            }
-        }, 2400, true);
+        UI_CACHE.computeIfAbsent(player, i -> new HashMap<>()).put(player.showFormWindow(window), guiType);
     }
 
 }
