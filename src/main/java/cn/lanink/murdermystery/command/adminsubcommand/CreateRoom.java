@@ -62,7 +62,7 @@ public class CreateRoom extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[]{ CommandParameter.newType("worldName", CommandParamType.TEXT) };
+        return new CommandParameter[]{ new CommandParameter("worldName", CommandParamType.TEXT, false) };
     }
 
 }

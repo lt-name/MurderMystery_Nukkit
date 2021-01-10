@@ -1,6 +1,6 @@
 name: MurderMystery
 main: cn.lanink.murdermystery.MurderMystery
-version: "1.1.0"
+version: "1.1.0.0-PM1E"
 api: ["Nukkit-PM1E"]
 load: POSTWORLD
 author: "LT_Name"

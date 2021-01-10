@@ -57,7 +57,7 @@ public class SetRoom extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[]{ CommandParameter.newType("roomName", CommandParamType.TEXT) };
+        return new CommandParameter[]{ new CommandParameter("roomName", CommandParamType.TEXT, false) };
     }
 
 }
