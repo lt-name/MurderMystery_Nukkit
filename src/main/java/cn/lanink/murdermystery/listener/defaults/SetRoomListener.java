@@ -4,6 +4,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.form.GuiCreate;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
@@ -13,6 +14,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -21,6 +23,7 @@ import java.util.List;
 public class SetRoomListener implements Listener {
 
     private final MurderMystery murderMystery;
+    private final HashSet<Player> cache = new HashSet<>();
 
     public SetRoomListener(MurderMystery murderMystery) {
         this.murderMystery = murderMystery;
@@ -48,14 +51,18 @@ public class SetRoomListener implements Listener {
         if (player == null || item == null) {
             return;
         }
-        if (this.murderMystery.setRoomTask.containsKey(player) && item.hasCompoundTag()) {
+        if (this.murderMystery.setRoomTask.containsKey(player) && item.hasCompoundTag() && !this.cache.contains(player)) {
             Block block = event.getBlock();
             if (block.getFloorX() == 0 && block.getFloorY() == 0 && block.getFloorZ() == 0) {
                 return;
             }
+            this.cache.add(player);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
+                    () -> this.cache.remove(player), 10);
             event.setCancelled(true);
             Config config = this.murderMystery.getRoomConfig(player.getLevel());
             SetRoomTask task = this.murderMystery.setRoomTask.get(player);
+            String pos = block.getFloorX() + ":" + (block.getFloorY() + 1) + ":" + block.getFloorZ();
             switch (item.getNamedTag().getInt("MurderMysteryItemType")) {
                 case 110: //上一步
                     switch (task.getSetRoomSchedule()) {
@@ -84,21 +91,19 @@ public class SetRoomListener implements Listener {
                     task.setRoomSchedule(70);
                     break;
                 case 113: //设置
-                    String pos = block.getFloorX() + ":" + (block.getFloorY() + 1) + ":" + block.getFloorZ();
                     switch (task.getSetRoomSchedule()) {
                         case 10:
                             GuiCreate.sendAdminModeMenu(player);
                             break;
                         case 20:
                             config.set("waitSpawn", pos);
-                            task.setRoomSchedule(20);
+                            task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
                         case 30:
                             List<String> randomSpawns = config.getStringList("randomSpawn");
                             randomSpawns.add(pos);
                             config.set("randomSpawn", randomSpawns);
                             player.sendMessage(this.murderMystery.getLanguage().translateString("adminAddRandomSpawn"));
-                            task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
                         case 40:
                             List<String> goldSpawns = config.getStringList("goldSpawn");
@@ -106,15 +111,23 @@ public class SetRoomListener implements Listener {
                             config.set("goldSpawn", goldSpawns);
                             player.sendMessage(this.murderMystery.getLanguage().translateString("adminAddGoldSpawn"));
                             task.setRoomSchedule(task.getNextRoomSchedule());
-                            if (task.isAutoNext()) {
-                                GuiCreate.sendAdminTimeMenu(player);
-                            }
                             break;
                         case 50:
-                            GuiCreate.sendAdminTimeMenu(player);
+                            GuiCreate.sendAdminMoreMenu(player);
                             break;
-                        case 60:
-                            GuiCreate.sendAdminPlayersMenu(player);
+                    }
+                    break;
+                case 114: //删除
+                    switch (task.getSetRoomSchedule()) {
+                        case 30:
+                            List<String> randomSpawns = config.getStringList("randomSpawn");
+                            randomSpawns.remove(pos);
+                            config.set("randomSpawn", randomSpawns);
+                            break;
+                        case 40:
+                            List<String> goldSpawns = config.getStringList("goldSpawn");
+                            goldSpawns.remove(pos);
+                            config.set("goldSpawn", goldSpawns);
                             break;
                     }
                     break;

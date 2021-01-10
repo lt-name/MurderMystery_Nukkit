@@ -3,8 +3,8 @@ package cn.lanink.murdermystery.tasks.admin;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityText;
-import cn.lanink.murdermystery.form.GuiCreate;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -78,7 +78,9 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
         switch (this.setRoomSchedule) {
             case 10: //设置游戏模式
                 this.nextRoomSchedule = 20;
+
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
+
                 item = Item.get(347);
                 item.setNamedTag(new CompoundTag()
                         .putInt("MurderMysteryItemType", 113));
@@ -96,7 +98,9 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
             case 20: //设置等待出生点
                 this.backRoomSchedule = 10;
                 this.nextRoomSchedule = 30;
+
                 this.player.sendTip(this.language.translateString("admin_setRoom_setWaitSpawn"));
+
                 item = Item.get(138);//信标
                 item.setNamedTag(new CompoundTag()
                         .putInt("MurderMysteryItemType", 113));
@@ -108,33 +112,51 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                 break;
             case 30: //添加随机出生点
                 this.backRoomSchedule = 20;
-                this.nextRoomSchedule = 30;
+                this.nextRoomSchedule = 40;
+
+                this.player.sendTip(this.language.translateString("admin_setRoom_setRandomSpawn"));
 
                 item = Item.get(138);//信标
                 item.setNamedTag(new CompoundTag()
                         .putInt("MurderMysteryItemType", 113));
+                item.setCustomName(this.language.translateString("admin_setRoom_setRandomSpawn"));
+                this.player.getInventory().setItem(3, item);
 
-                this.player.getInventory().setItem(4, item);
+                item = Item.get(241, 14);//红色玻璃
+                item.setNamedTag(new CompoundTag()
+                        .putInt("MurderMysteryItemType", 114));
+                item.setCustomName(this.language.translateString("admin_setRoom_removeSetPoint"));
+                this.player.getInventory().setItem(5, item);
+
                 if (config.getStringList("randomSpawn").size() > 1) {
                     canNext = true;
                 }
                 break;
             case 40: //添加金锭生成点
                 this.backRoomSchedule = 30;
-                this.nextRoomSchedule = 40;
+                this.nextRoomSchedule = 50;
+
+                this.player.sendTip(this.language.translateString("admin_setRoom_setGoldSpawn"));
 
                 item = Item.get(41);//金块
                 item.setNamedTag(new CompoundTag()
                         .putInt("MurderMysteryItemType", 113));
+                item.setCustomName(this.language.translateString("admin_setRoom_setGoldSpawn"));
+                this.player.getInventory().setItem(3, item);
 
-                this.player.getInventory().setItem(4, item);
+                item = Item.get(241, 14);//红色玻璃
+                item.setNamedTag(new CompoundTag()
+                        .putInt("MurderMysteryItemType", 114));
+                item.setCustomName(this.language.translateString("admin_setRoom_removeSetPoint"));
+                this.player.getInventory().setItem(5, item);
+
                 if (config.getStringList("goldSpawn").size() > 1) {
                     canNext = true;
                 }
                 break;
             case 50: //设置更多参数
                 this.backRoomSchedule = 40;
-                this.nextRoomSchedule = 60;
+                this.nextRoomSchedule = 70;
                 this.player.sendTip(this.language.translateString("admin_setRoom_setMoreParameters"));
                 item = Item.get(347);//钟
                 item.setNamedTag(new CompoundTag().putInt("MurderMysteryItemType", 113));
@@ -142,24 +164,9 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                 this.player.getInventory().setItem(4, item);
                 if (config.getInt("waitTime") > 0 &&
                         config.getInt("gameTime") > 0 &&
-                        config.getInt("victoryScore") > 0) {
-                    if (autoNext) {
-                        this.setRoomSchedule(this.nextRoomSchedule);
-                        GuiCreate.sendAdminPlayersMenu(player);
-                    }else {
-                        canNext = true;
-                    }
-                }
-                break;
-            case 60: //设置房间人数
-                this.backRoomSchedule = 50;
-                this.nextRoomSchedule = 70;
-                this.player.sendTip(this.language.translateString("admin_setRoom_setRoomPlayers"));
-                item = Item.get(347);//钟
-                item.setNamedTag(new CompoundTag().putInt("MurderMysteryItemType", 113));
-                item.setCustomName(this.language.translateString("admin_setRoom_setRoomPlayers"));
-                this.player.getInventory().setItem(4, item);
-                if (config.getInt("minPlayers") > 0 && config.getInt("maxPlayers") > 0) {
+                        config.getInt("goldSpawnTime") > 0 &&
+                        config.getInt("minPlayers") > 0 &&
+                        config.getInt("maxPlayers") > 0) {
                     if (autoNext) {
                         this.setRoomSchedule(this.nextRoomSchedule);
                     }else {
@@ -193,7 +200,7 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
         }
         //显示已设置的点
         this.particleEffectTick++;
-        if (this.particleEffectTick >= 2) {
+        if (this.particleEffectTick >= 10) {
             this.particleEffectTick = 0;
         }
         try{
@@ -283,6 +290,9 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
 
     public void setRoomSchedule(int setRoomSchedule) {
         this.setRoomSchedule = setRoomSchedule;
+        this.player.getInventory().clear(3);
+        this.player.getInventory().clear(4);
+        this.player.getInventory().clear(5);
     }
 
     public int getBackRoomSchedule() {
@@ -311,7 +321,7 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
     }
 
     private void particleEffect(Vector3 center) {
-        if (this.particleEffectTick != 0) {
+        if (this.particleEffectTick%5 != 0) {
             return;
         }
         CompletableFuture.runAsync(() -> {
@@ -342,11 +352,12 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
         if (this.setRoomSchedule != 70) {
             this.player.sendMessage(this.language.translateString("admin_setRoom_cancel"));
         }
-        if (this.player != null && this.player.getInventory() != null) {
+        if (this.player != null) {
             this.player.getInventory().clearAll();
             this.player.getUIInventory().clearAll();
             this.player.getInventory().setContents(this.playerInventory);
             this.player.getOffhandInventory().setItem(0, this.offHandItem);
+            this.player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         }
         this.owner.setRoomTask.remove(this.player);
     }
