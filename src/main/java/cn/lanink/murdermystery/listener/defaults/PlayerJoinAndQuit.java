@@ -13,7 +13,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
-import cn.nukkit.item.ItemMap;
 
 import java.util.LinkedHashMap;
 
@@ -35,14 +34,6 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null) {
             return;
         }
-        //test
-        ItemMap map = new ItemMap();
-        map.setImage(this.murderMystery.getSkins().get(1).getImage());
-        player.getInventory().addItem(map);
-        map.sendImage(player);
-
-
-        //test
         this.murderMystery.getPlayerLanguage().put(player, player.getLoginChainData().getLanguageCode());
         if (this.murderMystery.getRooms().containsKey(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {

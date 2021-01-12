@@ -423,7 +423,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
         Tools.cleanEntity(this.getLevel(), true);
         this.setStatus(ROOM_STATUS_GAME);
-        this.assignIdentity();
+        //this.assignIdentity();
         Collections.shuffle(this.randomSpawn, MurderMystery.RANDOM);
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
@@ -528,6 +528,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
+                this.assignIdentity();
                 for (Player player : this.getPlayers().keySet()) {
                     player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
@@ -546,30 +547,28 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
-            CompletableFuture.runAsync(() -> {
-                int playerNumber = 0;
-                boolean killer = false;
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                    switch (entry.getValue()) {
-                        case 1:
-                        case 2:
-                            playerNumber++;
-                            break;
-                        case 3:
-                            killer = true;
-                            break;
-                        default:
-                            break;
-                    }
+            int playerNumber = 0;
+            boolean killer = false;
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                switch (entry.getValue()) {
+                    case 1:
+                    case 2:
+                        playerNumber++;
+                        break;
+                    case 3:
+                        killer = true;
+                        break;
+                    default:
+                        break;
                 }
-                if (killer) {
-                    if (playerNumber == 0) {
-                        this.victory(3);
-                    }
-                }else {
-                    this.victory(1);
+            }
+            if (killer) {
+                if (playerNumber == 0) {
+                    this.victory(3);
                 }
-            });
+            }else {
+                this.victory(1);
+            }
         }else {
             this.victory(1);
         }
@@ -642,6 +641,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
 
     @Override
     public void asyncTipsTask() {
+        int time = this.setGameTime - this.gameTime;
         int playerNumber = this.getSurvivorPlayerNumber();
         boolean detectiveSurvival = this.players.containsValue(2);
         String identity;
@@ -659,7 +659,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                     identity = language.translateString("killer");
                     break;
                 default:
-                    identity = language.translateString("death");
+                    if (time <= 20) {
+                        identity = "???";
+                    }else {
+                        identity = language.translateString("death");
+                    }
                     break;
             }
             LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
@@ -668,10 +672,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
-            if (detectiveSurvival) {
-                ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
-            }else {
-                ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
+            if (time > 20) {
+                if (detectiveSurvival) {
+                    ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
+                } else {
+                    ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
+                }
             }
             ms.add("  ");
             if (entry.getValue() == 3) {
@@ -699,10 +705,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
-            if (detectiveSurvival) {
-                ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
-            }else {
-                ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
+            if (time > 20) {
+                if (detectiveSurvival) {
+                    ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
+                } else {
+                    ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
+                }
             }
             this.murderMystery.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
         }
@@ -870,6 +878,9 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * @param victoryMode 胜利队伍
      */
     protected void victory(int victoryMode) {
+        if (this.players.size() >= this.getMinPlayers() && this.setGameTime - this.gameTime <= 20) {
+            return;
+        }
         if (this.status != ROOM_STATUS_VICTORY && this.getPlayers().size() > 0) {
             this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
