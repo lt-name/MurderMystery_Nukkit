@@ -58,6 +58,15 @@ public class InfectedModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("ClassicDamageListener").addListenerRoom(this);
     }
 
+    public synchronized void startGame() {
+        super.startGame();
+        for (Player player : this.players.keySet()) {
+            player.getInventory().clearAll();
+            this.players.put(player, 2);
+            Tools.giveItem(player, 1);
+        }
+    }
+
     @Override
     protected void victoryReward(int victory) {
 
@@ -151,11 +160,7 @@ public class InfectedModeRoom extends BaseRoom {
 
     @Override
     protected void assignIdentity() {
-        for (Player player : this.players.keySet()) {
-            player.getInventory().clearAll();
-            this.players.put(player, 2);
-            Tools.giveItem(player, 1);
-        }
+
     }
 
     @Override
