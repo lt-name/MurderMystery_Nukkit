@@ -9,7 +9,9 @@ import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
+import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
 import cn.lanink.murdermystery.event.*;
+import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.tasks.Watchdog;
@@ -186,10 +188,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      */
     @SuppressWarnings("unchecked")
     public void enableListener() {
-        this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
-        this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
-        this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
-        this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
+        HashMap<String, BaseMurderMysteryListener> map = this.murderMystery.getMurderMysteryListeners();
+        map.get("RoomLevelProtection").addListenerRoom(this);
+        map.get("DefaultGameListener").addListenerRoom(this);
+        map.get("DefaultChatListener").addListenerRoom(this);
+        map.get("DefaultDamageListener").addListenerRoom(this);
+        map.get("ClassicDamageListener").addListenerRoom(this);
     }
 
     /**
@@ -209,7 +213,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * @param player 玩家
      */
     public void setRandomSkin(Player player) {
-        for (Map.Entry<Integer, Skin> entry : this.murderMystery.getSkins().entrySet()) {
+        for (Map.Entry<Integer, MurderMysterySkin> entry : this.murderMystery.getSkins().entrySet()) {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
                 this.skinNumber.put(player, entry.getKey());

@@ -55,6 +55,7 @@ public class InfectedModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("ClassicDamageListener").addListenerRoom(this);
     }
 
     @Override
