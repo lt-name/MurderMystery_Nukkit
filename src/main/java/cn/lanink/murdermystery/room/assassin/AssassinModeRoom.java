@@ -116,6 +116,9 @@ public class AssassinModeRoom extends BaseRoom {
     }
 
     public void assignTarget(Player player) {
+        if (this.getPlayers(player) != 3) {
+            return;
+        }
         ArrayList<Player> survivingPlayers = new ArrayList<>();
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
             if (entry.getKey() != player && entry.getValue() == 3) {
@@ -150,6 +153,11 @@ public class AssassinModeRoom extends BaseRoom {
             player.sendMessage(message);
         }
 
+    }
+
+    public void playerDeath(Player player) {
+        super.playerDeath(player);
+        this.targetMap.remove(player);
     }
 
 }
