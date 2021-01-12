@@ -186,7 +186,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     /**
      * 启用监听器
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     public void enableListener() {
         HashMap<String, BaseMurderMysteryListener> map = this.murderMystery.getMurderMysteryListeners();
         map.get("RoomLevelProtection").addListenerRoom(this);
@@ -205,6 +205,13 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.murderMystery, new WaitTask(this.murderMystery, this), 20);
         }
+    }
+
+    public MurderMysterySkin getGameSkin(Player player) {
+        if (this.skinNumber.containsKey(player)) {
+            return this.murderMystery.getSkins().get(this.skinNumber.get(player));
+        }
+        return new MurderMysterySkin(player.getSkin());
     }
 
     /**

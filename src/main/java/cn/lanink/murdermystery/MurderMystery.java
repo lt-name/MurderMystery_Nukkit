@@ -14,6 +14,7 @@ import cn.lanink.murdermystery.listener.assassin.AssassinDamageListener;
 import cn.lanink.murdermystery.listener.classic.ClassicDamageListener;
 import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
 import cn.lanink.murdermystery.listener.defaults.*;
+import cn.lanink.murdermystery.room.assassin.AssassinModeRoom;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
@@ -181,6 +182,10 @@ public class MurderMystery extends PluginBase {
         //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("infected", InfectedModeRoom.class);
+        //TODO need dev
+        if (MurderMystery.debug) {
+            registerRoom("assassin", AssassinModeRoom.class);
+        }
     }
 
     @Override

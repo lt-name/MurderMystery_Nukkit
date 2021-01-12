@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.listener.assassin;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.assassin.AssassinModeRoom;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
@@ -35,9 +36,12 @@ public class AssassinDamageListener extends BaseMurderMysteryListener<AssassinMo
                 if (item != null && item.hasCompoundTag()) {
                     CompoundTag tag = item.getNamedTag();
                     if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
-                        //TODO 重新分配目标
-
+                        //TODO
+                        damager.sendTitle("", "§a成功刺杀了一个目标");
+                        damager.getOffhandInventory().clearAll();
                         room.playerDeath(player);
+                        Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
+                                () -> room.assignTarget(damager), 60);
                     }
                 }
             }

@@ -86,6 +86,8 @@ public class Tools {
                 return MurderMystery.getInstance().getLanguage(player).translateString("Classic");
             case "infected":
                 return MurderMystery.getInstance().getLanguage(player).translateString("Infected");
+            case "assassin":
+                return MurderMystery.getInstance().getLanguage(player).translateString("assassin");
             default:
                 return room.getGameMode();
         }
