@@ -318,6 +318,9 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
         for (EntityText entityText : this.randomSpawnTexts.values()) {
             entityText.close();
         }
+        for (EntityItem entityItem : this.goldSpawnTexts.values()) {
+            entityItem.close();
+        }
     }
 
     private void particleEffect(Vector3 center) {
