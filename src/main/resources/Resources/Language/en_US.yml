@@ -181,7 +181,6 @@ waitTimeBottom: |-
 waitBottom: "§cWaiting for more players..."
 gameTimeScoreBoard: |-
   RoomMode: §a %roomMode%
-
   §l§aCurrent identity:§e %identity%
   §l§aNumber of survivors:§e %playerNumber%
   §l§aTime remaining:§e %time% §aseconds
