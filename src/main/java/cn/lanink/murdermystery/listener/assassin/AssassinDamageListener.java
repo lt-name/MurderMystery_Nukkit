@@ -47,23 +47,19 @@ public class AssassinDamageListener extends BaseMurderMysteryListener<AssassinMo
                             room.killCount.put(damager, room.killCount.getOrDefault(damager, 0) + 1);
                             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
                                     () -> room.assignTarget(damager), 60);
-                            //TODO
                             player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
-                                    "你被刺客杀死了");
+                                    this.murderMystery.getLanguage(player).translateString("game_assassin_deathByAssassin"));
                             room.playerDeath(player);
                         }else if (room.targetMap.get(player) == damager) { //反杀
-                            //TODO
-                            damager.sendTitle("", "成功反杀");
+                            damager.sendTitle("", this.murderMystery.getLanguage(damager).translateString("game_assassin_targetKillAssassin"));
                             room.killCount.put(damager, room.killCount.getOrDefault(damager, 0) + 1);
-                            //TODO
                             player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
-                                    "你的目标捅了你一刀");
+                                    this.murderMystery.getLanguage(player).translateString("game_assassin_deathByTarget"));
                             room.playerDeath(player);
-                        }else { //杀错
-                            damager.addEffect(Effect.getEffect(2).setAmplifier(10).setDuration(100).setVisible(false));//缓慢
+                        }else { //找错
+                            damager.addEffect(Effect.getEffect(2).setAmplifier(2).setDuration(100).setVisible(false));//缓慢
                             Tools.playSound(damager, Sound.RANDOM_ANVIL_LAND);
-                            //TODO
-                            damager.sendTitle("", "§c你找错目标了！");
+                            damager.sendTitle("", this.murderMystery.getLanguage(damager).translateString("game_assassin_errorTarget"));
                             damager.getInventory().remove(Tools.getMurderMysteryItem(damager, 2));
                             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
                                     () -> damager.getInventory().setItem(2, Tools.getMurderMysteryItem(damager, 2)), 100);

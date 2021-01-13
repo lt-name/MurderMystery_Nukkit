@@ -840,8 +840,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(3);
-        player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false);
-        player.getAdventureSettings().update();
+        player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false).update();
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 2) {
             this.getLevel().dropItem(player, Tools.getMurderMysteryItem(player, 1));

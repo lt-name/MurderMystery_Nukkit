@@ -60,9 +60,10 @@ public class AssassinModeRoom extends BaseRoom {
     @Override
     public synchronized void startGame() {
         super.startGame();
-        for (Player player : this.getPlayers().keySet()) {
-            Language language = this.murderMystery.getLanguage(player);
-            player.sendTitle(language.translateString("game_assassin_title_assassinTitle"),
+        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            entry.setValue(3);
+            Language language = this.murderMystery.getLanguage(entry.getKey());
+            entry.getKey().sendTitle(language.translateString("game_assassin_title_assassinTitle"),
                     language.translateString("game_assassin_title_assassinSubtitle"),
                     10, 40, 10);
         }
@@ -129,7 +130,7 @@ public class AssassinModeRoom extends BaseRoom {
         }else {
             this.victory(0);
         }
-        this.goldSpawn();
+        //this.goldSpawn();
     }
 
     @Override
@@ -143,11 +144,7 @@ public class AssassinModeRoom extends BaseRoom {
             if (entry.getValue() == 3) {
                 identity = language.translateString("killer");
             } else {
-                if (time <= 20) {
-                    identity = "???";
-                } else {
-                    identity = language.translateString("death");
-                }
+                identity = language.translateString("death");
             }
             LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
                     .replace("%roomMode%", Tools.getStringRoomMode(entry.getKey(), this))
@@ -175,9 +172,6 @@ public class AssassinModeRoom extends BaseRoom {
 
     @Override
     protected void assignIdentity() {
-        for (Player player : this.getPlayers().keySet()) {
-            this.getPlayers().put(player, 3);
-        }
         for (Player player : this.getPlayers().keySet()) {
             this.assignTarget(player);
         }
@@ -218,7 +212,7 @@ public class AssassinModeRoom extends BaseRoom {
         this.targetMap.put(player, target);
         this.targetWait.remove(player);
         ItemMap item = this.getGameSkin(target).getItemMap();
-        player.getOffhandInventory().setItem(0, item);
+        player.getInventory().setItem(3, item);
         item.sendImage(player);
         player.sendTitle("", this.murderMystery.getLanguage(player).translateString("game_assassin_assignTarget"));
         if (MurderMystery.debug) {

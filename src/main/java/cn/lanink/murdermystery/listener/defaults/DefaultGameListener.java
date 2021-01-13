@@ -501,6 +501,11 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
             return;
         }
+        if ((event.getSourceItem().hasCompoundTag() && event.getSourceItem().getNamedTag().getBoolean("cannotClickOnInventory")) ||
+                (event.getHeldItem().hasCompoundTag() && event.getHeldItem().getNamedTag().getBoolean("cannotClickOnInventory"))) {
+            event.setCancelled(true);
+            return;
+        }
         switch (event.getInventory().getType()) {
             case UI:
             case PLAYER:
