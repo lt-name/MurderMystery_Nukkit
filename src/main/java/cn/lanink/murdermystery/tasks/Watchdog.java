@@ -21,14 +21,11 @@ public class Watchdog extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (MurderMystery.debug) {
+        /*if (MurderMystery.debug) {
             this.owner.getLogger().info("[debug] ==== Watchdog =====");
-        }
+        }*/
         for (Map.Entry<BaseRoom, Integer> entry : roomRunTime.entrySet()) {
             int runTime = entry.getValue() + 1;
-            if (MurderMystery.debug) {
-                this.owner.getLogger().info("[debug] Room: " + entry.getKey().getLevelName() + " runTime: " + runTime);
-            }
             entry.setValue(runTime);
             switch (entry.getKey().getStatus()) {
                 case IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED:
@@ -56,10 +53,13 @@ public class Watchdog extends PluginTask<MurderMystery> {
                     }
                     break;
             }
+            /*if (MurderMystery.debug) {
+                this.owner.getLogger().info("[debug] Room: " + entry.getKey().getLevelName() + " runTime: " + runTime);
+            }*/
         }
-        if (MurderMystery.debug) {
+        /*if (MurderMystery.debug) {
             this.owner.getLogger().info("[debug] ==== Watchdog =====");
-        }
+        }*/
     }
 
     @Override

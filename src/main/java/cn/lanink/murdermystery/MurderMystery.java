@@ -7,10 +7,14 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
+import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
 import cn.lanink.murdermystery.form.GuiListener;
-import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
+import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
+import cn.lanink.murdermystery.listener.assassin.AssassinDamageListener;
+import cn.lanink.murdermystery.listener.classic.ClassicDamageListener;
 import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
 import cn.lanink.murdermystery.listener.defaults.*;
+import cn.lanink.murdermystery.room.assassin.AssassinModeRoom;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
@@ -64,7 +68,7 @@ public class MurderMystery extends PluginBase {
     private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
     private static final HashMap<String, Class<? extends BaseMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
     private final HashMap<String, BaseMurderMysteryListener> murderMysteryListeners = new HashMap<>();
-    private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
+    private final LinkedHashMap<Integer, MurderMysterySkin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
     private String cmdUser, cmdAdmin;
@@ -173,9 +177,15 @@ public class MurderMystery extends PluginBase {
         registerListener("DefaultChatListener", DefaultChatListener.class);
         registerListener("DefaultDamageListener", DefaultDamageListener.class);
         registerListener("ClassicGameListener", ClassicGameListener.class);
+        registerListener("ClassicDamageListener", ClassicDamageListener.class);
+        registerListener("AssassinDamageListener", AssassinDamageListener.class);
         //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("infected", InfectedModeRoom.class);
+        //TODO need dev
+        if (MurderMystery.debug) {
+            registerRoom("assassin", AssassinModeRoom.class);
+        }
     }
 
     @Override
@@ -479,7 +489,7 @@ public class MurderMystery extends PluginBase {
         return config;
     }
 
-    public LinkedHashMap<Integer, Skin> getSkins() {
+    public LinkedHashMap<Integer, MurderMysterySkin> getSkins() {
         return this.skins;
     }
 
@@ -643,38 +653,53 @@ public class MurderMystery extends PluginBase {
         if (files != null && files.length > 0) {
             int x = 0;
             for (File file : files) {
+                if (!file.isDirectory()) {
+                    continue;
+                }
                 String skinName = file.getName();
                 File skinFile = new File(getDataFolder() + "/Skins/" + skinName + "/skin.png");
                 if (skinFile.exists()) {
-                    Skin skin = new Skin();
+                    MurderMysterySkin skin = new MurderMysterySkin();
                     skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
                     skin.setTrusted(true);
                     BufferedImage skinData = null;
                     try {
                         skinData = ImageIO.read(skinFile);
-                    } catch (IOException ignored) {
-                        getLogger().warning(this.getLanguage(null).translateString("skinFailureByFormat").replace("%name%", skinName));
+                    } catch (Exception ignored) {
+                        this.getLogger().warning(this.getLanguage(null)
+                                .translateString("skinFailureByFormat").replace("%name%", skinName));
                     }
                     if (skinData != null) {
                         skin.setSkinData(skinData);
                         skin.setSkinId(skinName);
-                        getLogger().info(this.getLanguage(null).translateString("skinLoadedSuccess").replace("%number%", x + "")
+                        getLogger().info(this.getLanguage(null).translateString("skinLoadedSuccess")
+                                .replace("%number%", x + "")
                                 .replace("%name%", skinName));
+
+                        try {
+                            File wantedFile = new File(getDataFolder() + "/Skins/" + skinName + "/wanted.png");
+                            if (wantedFile.exists()) {
+                                skin.setWantedImage(ImageIO.read(wantedFile));
+                                //TODO
+                                this.getLogger().info("编号：" + x + " 皮肤：" + skinName + " 通缉令图片已加载");
+                            }
+                        } catch (IOException ignored) { }
+
                         this.skins.put(x, skin);
                         x++;
                     }else {
-                        getLogger().warning(this.getLanguage(null).translateString("skinFailureByFormat").replace("%name%", skinName));
+                        this.getLogger().warning(this.getLanguage(null).translateString("skinFailureByFormat").replace("%name%", skinName));
                     }
                 } else {
-                    getLogger().warning(this.getLanguage(null).translateString("skinFailureByName").replace("%name%", skinName));
+                    this.getLogger().warning(this.getLanguage(null).translateString("skinFailureByName").replace("%name%", skinName));
                 }
             }
         }
         if (this.skins.size() >= 16) {
-            getLogger().info(this.getLanguage(null).translateString("skinLoadedAllSuccess")
+            this.getLogger().info(this.getLanguage(null).translateString("skinLoadedAllSuccess")
                     .replace("%number%", this.skins.size() + ""));
         }else {
-            getLogger().warning(this.getLanguage(null).translateString("skinLoadedAllFailureByNumber"));
+            this.getLogger().warning(this.getLanguage(null).translateString("skinLoadedAllFailureByNumber"));
         }
     }
 

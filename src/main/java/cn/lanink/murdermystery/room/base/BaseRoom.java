@@ -9,7 +9,9 @@ import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
+import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
 import cn.lanink.murdermystery.event.*;
+import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
 import cn.lanink.murdermystery.tasks.Watchdog;
@@ -73,12 +75,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
         this.level = level;
         this.levelName = level.getFolderName();
-        String showRoomName = this.murderMystery.getRoomName().get(this.levelName) + "(" + this.levelName + ")";
         if (!this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
             File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
             if (!backup.exists()) {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
-                        .translateString("roomLevelBackup").replace("%name%", showRoomName));
+                        .translateString("roomLevelBackup").replace("%name%", this.getFullRoomName()));
                 Server.getInstance().unloadLevel(this.level);
                 if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                     Server.getInstance().loadLevel(this.levelName);
@@ -88,7 +89,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 }
             }else {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
-                        .translateString("roomLevelBackupExist").replace("%name%", showRoomName));
+                        .translateString("roomLevelBackupExist").replace("%name%", this.getFullRoomName()));
             }
         }
         try {
@@ -123,7 +124,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             Watchdog.add(this);
         } catch (Exception e) {
             throw new RoomLoadException(MurderMystery.getInstance().getLanguage()
-                    .translateString("roomLoadedFailureByConfig").replace("%name%", showRoomName));
+                    .translateString("roomLoadedFailureByConfig").replace("%name%", this.getFullRoomName()));
         }
     }
 
@@ -184,12 +185,14 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     /**
      * 启用监听器
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     public void enableListener() {
-        this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
-        this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
-        this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
-        this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
+        HashMap<String, BaseMurderMysteryListener> map = this.murderMystery.getMurderMysteryListeners();
+        map.get("RoomLevelProtection").addListenerRoom(this);
+        map.get("DefaultGameListener").addListenerRoom(this);
+        map.get("DefaultChatListener").addListenerRoom(this);
+        map.get("DefaultDamageListener").addListenerRoom(this);
+        map.get("ClassicDamageListener").addListenerRoom(this);
     }
 
     /**
@@ -203,13 +206,20 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         }
     }
 
+    public MurderMysterySkin getGameSkin(Player player) {
+        if (this.skinNumber.containsKey(player)) {
+            return this.murderMystery.getSkins().get(this.skinNumber.get(player));
+        }
+        return new MurderMysterySkin(player.getSkin());
+    }
+
     /**
      * 设置玩家随机皮肤
      *
      * @param player 玩家
      */
     public void setRandomSkin(Player player) {
-        for (Map.Entry<Integer, Skin> entry : this.murderMystery.getSkins().entrySet()) {
+        for (Map.Entry<Integer, MurderMysterySkin> entry : this.murderMystery.getSkins().entrySet()) {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
                 this.skinNumber.put(player, entry.getKey());
@@ -389,6 +399,14 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         return this.levelName;
     }
 
+    public String getShowRoomName() {
+        return this.murderMystery.getRoomName().get(this.getLevelName());
+    }
+
+    public String getFullRoomName() {
+        return this.getShowRoomName() + "(" + this.getLevelName() + ")";
+    }
+
     /**
      * @return 房间显示名称
      */
@@ -419,7 +437,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
         Tools.cleanEntity(this.getLevel(), true);
         this.setStatus(ROOM_STATUS_GAME);
-        this.assignIdentity();
+        //this.assignIdentity();
         Collections.shuffle(this.randomSpawn, MurderMystery.RANDOM);
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
@@ -524,6 +542,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
+                this.assignIdentity();
                 for (Player player : this.getPlayers().keySet()) {
                     player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
@@ -542,30 +561,28 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
-            CompletableFuture.runAsync(() -> {
-                int playerNumber = 0;
-                boolean killer = false;
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                    switch (entry.getValue()) {
-                        case 1:
-                        case 2:
-                            playerNumber++;
-                            break;
-                        case 3:
-                            killer = true;
-                            break;
-                        default:
-                            break;
-                    }
+            int playerNumber = 0;
+            boolean killer = false;
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                switch (entry.getValue()) {
+                    case 1:
+                    case 2:
+                        playerNumber++;
+                        break;
+                    case 3:
+                        killer = true;
+                        break;
+                    default:
+                        break;
                 }
-                if (killer) {
-                    if (playerNumber == 0) {
-                        this.victory(3);
-                    }
-                }else {
-                    this.victory(1);
+            }
+            if (killer) {
+                if (playerNumber == 0) {
+                    this.victory(3);
                 }
-            });
+            }else {
+                this.victory(1);
+            }
         }else {
             this.victory(1);
         }
@@ -638,6 +655,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
 
     @Override
     public void asyncTipsTask() {
+        int time = this.setGameTime - this.gameTime;
         int playerNumber = this.getSurvivorPlayerNumber();
         boolean detectiveSurvival = this.players.containsValue(2);
         String identity;
@@ -655,7 +673,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                     identity = language.translateString("killer");
                     break;
                 default:
-                    identity = language.translateString("death");
+                    if (time <= 20) {
+                        identity = "???";
+                    }else {
+                        identity = language.translateString("death");
+                    }
                     break;
             }
             LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
@@ -664,10 +686,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
-            if (detectiveSurvival) {
-                ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
-            }else {
-                ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
+            if (time > 20) {
+                if (detectiveSurvival) {
+                    ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
+                } else {
+                    ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
+                }
             }
             ms.add("  ");
             if (entry.getValue() == 3) {
@@ -695,10 +719,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
-            if (detectiveSurvival) {
-                ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
-            }else {
-                ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
+            if (time > 20) {
+                if (detectiveSurvival) {
+                    ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
+                } else {
+                    ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
+                }
             }
             this.murderMystery.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
         }
@@ -818,7 +844,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         player.getAdventureSettings().update();
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 2) {
-            this.getLevel().dropItem(player, Tools.getMurderItem(player, 1));
+            this.getLevel().dropItem(player, Tools.getMurderMysteryItem(player, 1));
         }
         this.players.put(player, 0);
         Tools.playSound(this, Sound.GAME_PLAYER_HURT);
@@ -866,6 +892,9 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * @param victoryMode 胜利队伍
      */
     protected void victory(int victoryMode) {
+        if (this.players.size() >= this.getMinPlayers() && this.setGameTime - this.gameTime <= 20) {
+            return;
+        }
         if (this.status != ROOM_STATUS_VICTORY && this.getPlayers().size() > 0) {
             this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
@@ -930,14 +959,14 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         }
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
         if (MurderMystery.debug) {
-            murderMystery.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");
+            murderMystery.getLogger().info("§a房间：" + this.getFullRoomName() + " 正在还原地图...");
         }
         Server.getInstance().unloadLevel(this.level);
         File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
         File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
             this.murderMystery.getLogger().error(this.murderMystery.getLanguage(null)
-                    .translateString("roomLevelBackupNotExist").replace("%name%", this.levelName));
+                    .translateString("roomLevelBackupNotExist").replace("%name%", this.getFullRoomName()));
             this.murderMystery.unloadRoom(this.levelName);
         }
         CompletableFuture.runAsync(() -> {
@@ -950,11 +979,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 }
                 this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
                 if (MurderMystery.debug) {
-                    this.murderMystery.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
+                    this.murderMystery.getLogger().info("§a房间：" + this.getFullRoomName() + " 地图还原完成！");
                 }
             }else {
                 this.murderMystery.getLogger().error(this.murderMystery.getLanguage(null)
-                        .translateString("roomLevelRestoreLevelFailure").replace("%name%", this.levelName));
+                        .translateString("roomLevelRestoreLevelFailure").replace("%name%", this.getFullRoomName()));
                 this.murderMystery.unloadRoom(this.levelName);
             }
         });

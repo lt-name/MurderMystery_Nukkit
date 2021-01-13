@@ -1,4 +1,4 @@
-package cn.lanink.murdermystery.listener.base;
+package cn.lanink.murdermystery.listener;
 
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.murdermystery.MurderMystery;

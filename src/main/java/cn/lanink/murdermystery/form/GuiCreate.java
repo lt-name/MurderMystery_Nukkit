@@ -46,16 +46,11 @@ public class GuiCreate {
      */
     public static void sendAdminMenu(Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, language.translateString("adminMenuSetLevel").replace("%name%", player.getLevel().getFolderName()));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton1"), new ElementButtonImageData("path", "textures/ui/copy")));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton2"), new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton3"), new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton4"), new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton5"), new ElementButtonImageData("path", "textures/ui/timer")));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton6"), new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton7"), new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton8"),  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(language.translateString("adminMenuButton9"), new ElementButtonImageData("path", "textures/ui/redX1")));
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
+        simple.addButton(new ElementButton(language.translateString("gui_admin_main_createRoom"), new ElementButtonImageData("path", "textures/ui/World")));
+        simple.addButton(new ElementButton(language.translateString("gui_admin_main_setRoom"), new ElementButtonImageData("path", "textures/ui/World")));
+        simple.addButton(new ElementButton(language.translateString("gui_admin_main_reloadAllRoom"),  new ElementButtonImageData("path", "textures/ui/refresh_light")));
+        simple.addButton(new ElementButton(language.translateString("gui_admin_main_unloadAllRoom"), new ElementButtonImageData("path", "textures/ui/redX1")));
         showFormWindow(player, simple, GuiType.ADMIN_MENU);
     }
 
@@ -67,7 +62,9 @@ public class GuiCreate {
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME,
                 MURDER_MYSTERY.getLanguage(player).translateString("gui_admin_room_selectWorld"));
         for (Level level : Server.getInstance().getLevels().values()) {
-            simple.addButton(new ElementButton(level.getFolderName()));
+            if (!MURDER_MYSTERY.getRoomConfigs().containsKey(level.getFolderName())) {
+                simple.addButton(new ElementButton(level.getFolderName()));
+            }
         }
         showFormWindow(player, simple, GuiType.ADMIN_CREATE_ROOM_MENU);
     }
@@ -111,27 +108,13 @@ public class GuiCreate {
     }
 
     /**
-     * 设置房间游戏人数菜单
-     * @param player 玩家
-     */
-    @Deprecated
-    public static void sendAdminPlayersMenu(Player player) {
-        /*Language language = MURDER_MYSTERY.getLanguage(player);
-        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput(language.translateString("adminPlayersMenuInputText1"), "", "5"));
-        custom.addElement(new ElementInput(language.translateString("adminPlayersMenuInputText2"), "", "16"));
-        showFormWindow(player, custom, GuiType.ADMIN_PLAYERS_MENU);*/
-    }
-
-    /**
      * 设置房间模式菜单
      * @param player 玩家
      */
     public static void sendAdminModeMenu(Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementDropdown(language.translateString("adminMenuSetLevel")
-                .replace("%name%", player.getLevel().getName()),
+        custom.addElement(new ElementDropdown(language.translateString("gui_admin_room_selectGameMode"),
                 Arrays.asList(MurderMystery.getRoomClass().keySet().toArray(new String[0]))));
         showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
     }

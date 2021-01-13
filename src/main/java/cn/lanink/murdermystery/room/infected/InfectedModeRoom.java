@@ -55,6 +55,16 @@ public class InfectedModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("ClassicDamageListener").addListenerRoom(this);
+    }
+
+    public synchronized void startGame() {
+        super.startGame();
+        for (Player player : this.players.keySet()) {
+            player.getInventory().clearAll();
+            this.players.put(player, 2);
+            Tools.giveItem(player, 1);
+        }
     }
 
     @Override
@@ -150,11 +160,7 @@ public class InfectedModeRoom extends BaseRoom {
 
     @Override
     protected void assignIdentity() {
-        for (Player player : this.players.keySet()) {
-            player.getInventory().clearAll();
-            this.players.put(player, 2);
-            Tools.giveItem(player, 1);
-        }
+
     }
 
     @Override
@@ -200,7 +206,7 @@ public class InfectedModeRoom extends BaseRoom {
     public void playerRespawn(Player player) {
         Tools.showPlayer(this, player);
         Tools.rePlayerState(player, true);
-        player.getInventory().setItem(1, Tools.getMurderItem(player, 2));
+        player.getInventory().setItem(1, Tools.getMurderMysteryItem(player, 2));
         Effect effect = Effect.getEffect(2).setAmplifier(2).setDuration(60); //缓慢
         effect.setColor(0, 255, 0);
         player.addEffect(effect);

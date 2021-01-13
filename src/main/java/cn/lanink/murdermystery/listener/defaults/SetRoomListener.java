@@ -66,7 +66,7 @@ public class SetRoomListener implements Listener {
             switch (item.getNamedTag().getInt("MurderMysteryItemType")) {
                 case 110: //上一步
                     switch (task.getSetRoomSchedule()) {
-                        case 10:
+                        case 9:
                             return;
                         case 50:
                             if (task.isAutoNext()) {
@@ -92,6 +92,9 @@ public class SetRoomListener implements Listener {
                     break;
                 case 113: //设置
                     switch (task.getSetRoomSchedule()) {
+                        case 9:
+                            GuiCreate.sendAdminRoomNameMenu(player);
+                            break;
                         case 10:
                             GuiCreate.sendAdminModeMenu(player);
                             break;

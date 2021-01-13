@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class SetRoomTask extends PluginTask<MurderMystery> {
 
-    private int setRoomSchedule = 10;
+    private int setRoomSchedule = 9;
     private int backRoomSchedule = 10;
     private int nextRoomSchedule = 20;
     private boolean autoNext = false;
@@ -64,7 +64,7 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
             return;
         }
         Item item;
-        if (this.setRoomSchedule > 10) {
+        if (this.setRoomSchedule > 9) {
             item = Item.get(340);
             item.setNamedTag(new CompoundTag()
                     .putInt("MurderMysteryItemType", 110));
@@ -76,16 +76,38 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
         boolean canNext = false;
         Config config = this.owner.getRoomConfig(player.getLevel());
         switch (this.setRoomSchedule) {
+            case 9: //设置房间显示名称
+                this.backRoomSchedule = 9;
+                this.nextRoomSchedule = 10;
+
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setRoomName"));
+
+                item = Item.get(347);//钟表
+                item.setNamedTag(new CompoundTag()
+                        .putInt("MurderMysteryItemType", 113));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setRoomName"));
+                this.player.getInventory().setItem(4, item);
+
+                if (!"".equals(config.getString("roomName", "").trim())) {
+                    if (autoNext) {
+                        this.setRoomSchedule(this.nextRoomSchedule);
+                    }else {
+                        canNext = true;
+                    }
+                }
+                break;
             case 10: //设置游戏模式
+                this.backRoomSchedule = 9;
                 this.nextRoomSchedule = 20;
 
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
 
-                item = Item.get(347);
+                item = Item.get(347);//钟表
                 item.setNamedTag(new CompoundTag()
                         .putInt("MurderMysteryItemType", 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
                 this.player.getInventory().setItem(4, item);
+
                 String setMode = config.getString("gameMode", "").trim();
                 if (!"".equals(setMode)) {
                     if (autoNext) {
@@ -317,6 +339,9 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
         }
         for (EntityText entityText : this.randomSpawnTexts.values()) {
             entityText.close();
+        }
+        for (EntityItem entityItem : this.goldSpawnTexts.values()) {
+            entityItem.close();
         }
     }
 

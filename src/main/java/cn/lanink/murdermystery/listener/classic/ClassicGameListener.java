@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.listener.classic;
 
 import cn.lanink.gamecore.room.IRoomStatus;
-import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
+import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.tasks.game.ScanTask;

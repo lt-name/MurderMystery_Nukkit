@@ -86,6 +86,8 @@ public class Tools {
                 return MurderMystery.getInstance().getLanguage(player).translateString("Classic");
             case "infected":
                 return MurderMystery.getInstance().getLanguage(player).translateString("Infected");
+            case "assassin":
+                return MurderMystery.getInstance().getLanguage(player).translateString("assassin");
             default:
                 return room.getGameMode();
         }
@@ -120,20 +122,20 @@ public class Tools {
     public static void giveItem(Player player, int tagNumber) {
         switch (tagNumber) {
             case 1:
-                player.getInventory().setItem(1, getMurderItem(player, tagNumber));
+                player.getInventory().setItem(1, getMurderMysteryItem(player, tagNumber));
                 player.getInventory().setItem(2, Item.get(262, 0, 1));
                 break;
             case 2:
-                player.getInventory().setItem(1, getMurderItem(player, tagNumber));
-                player.getInventory().setItem(2, getMurderItem(player, 3));
+                player.getInventory().setItem(1, getMurderMysteryItem(player, tagNumber));
+                player.getInventory().setItem(2, getMurderMysteryItem(player, 3));
                 break;
             case 10:
-                player.getInventory().setItem(8, getMurderItem(player, tagNumber));
+                player.getInventory().setItem(8, getMurderMysteryItem(player, tagNumber));
                 break;
             case 21:
             case 22:
             case 23:
-                player.getInventory().addItem(getMurderItem(player, tagNumber));
+                player.getInventory().addItem(getMurderMysteryItem(player, tagNumber));
                 break;
             default:
                 break;
@@ -146,7 +148,7 @@ public class Tools {
      * @param tagNumber 道具编号
      * @return 物品
      */
-    public static Item getMurderItem(Player player, int tagNumber) {
+    public static Item getMurderMysteryItem(Player player, int tagNumber) {
         Item item;
         Language language = MurderMystery.getInstance().getLanguage(player);
         switch (tagNumber) {
