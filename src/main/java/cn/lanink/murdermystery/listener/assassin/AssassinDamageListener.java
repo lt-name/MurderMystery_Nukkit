@@ -36,9 +36,10 @@ public class AssassinDamageListener extends BaseMurderMysteryListener<AssassinMo
                 if (item != null && item.hasCompoundTag()) {
                     CompoundTag tag = item.getNamedTag();
                     if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
-                        //TODO
-                        damager.sendTitle("", "§a成功刺杀了一个目标");
+                        damager.sendTitle("",
+                                this.murderMystery.getLanguage(damager).translateString("game_assassin_killTarget"));
                         damager.getOffhandInventory().clearAll();
+                        room.targetWait.add(damager);
                         room.playerDeath(player);
                         Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
                                 () -> room.assignTarget(damager), 60);

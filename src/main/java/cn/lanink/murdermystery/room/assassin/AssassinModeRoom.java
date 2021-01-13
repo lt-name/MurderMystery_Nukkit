@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.room.assassin;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
@@ -10,10 +11,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.Config;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author lt_name
@@ -21,6 +19,7 @@ import java.util.Map;
 public class AssassinModeRoom extends BaseRoom {
 
     public HashMap<Player, Player> targetMap= new HashMap<>(); //玩家-目标玩家
+    public HashSet<Player> targetWait = new HashSet<>();
 
     /**
      * 初始化
@@ -75,19 +74,15 @@ public class AssassinModeRoom extends BaseRoom {
                 for (Player player : this.getSpectatorPlayers()) {
                     player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                    if (entry.getValue() == 2) {
-                        Tools.giveItem(entry.getKey(), 1);
-                    }else if (entry.getValue() == 3) {
-                        Tools.giveItem(entry.getKey(), 2);
-                    }
+                for (Player player : this.getPlayers().keySet()) {
+                    player.getInventory().setItem(1, Tools.getMurderMysteryItem(player, 2));
                 }
             }
         }
         //检查目标
         if (time < 0 && this.gameTime%2 == 0) {
             for (Player player : this.targetMap.keySet()) {
-                if (this.getPlayers(this.targetMap.get(player)) != 3) {
+                if (!this.targetWait.contains(player) && this.getPlayers(this.targetMap.get(player)) != 3) {
                     this.assignTarget(player);
                 }
             }
@@ -112,10 +107,56 @@ public class AssassinModeRoom extends BaseRoom {
     }
 
     @Override
+    public void asyncTipsTask() {
+        int time = this.setGameTime - this.gameTime;
+        int playerNumber = this.getSurvivorPlayerNumber();
+        String identity;
+        for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+            entry.getKey().setNameTag("");
+            Language language = this.murderMystery.getLanguage(entry.getKey());
+            switch (entry.getValue()) {
+                case 1:
+                    identity = language.translateString("commonPeople");
+                    break;
+                case 2:
+                    identity = language.translateString("detective");
+                    break;
+                case 3:
+                    identity = language.translateString("killer");
+                    break;
+                default:
+                    if (time <= 20) {
+                        identity = "???";
+                    }else {
+                        identity = language.translateString("death");
+                    }
+                    break;
+            }
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
+                    .replace("%roomMode%", Tools.getStringRoomMode(entry.getKey(), this))
+                    .replace("%identity%", identity)
+                    .replace("%playerNumber%", playerNumber + "")
+                    .replace("%time%", this.gameTime + "").split("\n")));
+            ms.add(" ");
+            this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
+        }
+        //旁观玩家只显示部分信息
+        for (Player player : this.spectatorPlayers) {
+            Language language = this.murderMystery.getLanguage(player);
+            LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
+                    .replace("%roomMode%", Tools.getStringRoomMode(player, this))
+                    .replace("%identity%", language.translateString("spectator"))
+                    .replace("%playerNumber%", playerNumber + "")
+                    .replace("%time%", this.gameTime + "").split("\n")));
+            ms.add(" ");
+            this.murderMystery.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
+        }
+    }
+
+    @Override
     protected void assignIdentity() {
         for (Player player : this.getPlayers().keySet()) {
             this.getPlayers().put(player, 3);
-            player.getInventory().setItem(1, Tools.getMurderItem(player, 2));
         }
         for (Player player : this.getPlayers().keySet()) {
             this.assignTarget(player);
@@ -149,11 +190,11 @@ public class AssassinModeRoom extends BaseRoom {
         }
 
         this.targetMap.put(player, target);
+        this.targetWait.remove(player);
         ItemMap item = this.getGameSkin(target).getItemMap();
         player.getOffhandInventory().setItem(0, item);
         item.sendImage(player);
-        //TODO
-        player.sendTitle("", "已分配新的刺杀目标！");
+        player.sendTitle("", this.murderMystery.getLanguage(player).translateString("game_assassin_assignTarget"));
         if (MurderMystery.debug) {
             String message = "[debug] " + player.getName() + " 的目标是：" + target.getName();
             this.murderMystery.getLogger().info(message);

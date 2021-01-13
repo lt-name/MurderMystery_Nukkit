@@ -837,7 +837,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         player.getAdventureSettings().update();
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 2) {
-            this.getLevel().dropItem(player, Tools.getMurderItem(player, 1));
+            this.getLevel().dropItem(player, Tools.getMurderMysteryItem(player, 1));
         }
         this.players.put(player, 0);
         Tools.playSound(this, Sound.GAME_PLAYER_HURT);

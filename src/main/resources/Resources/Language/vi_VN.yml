@@ -157,6 +157,8 @@ killerGetSwordTime: "§eKẻ giết người sẽ có thanh kiếm của hắn t
 killerGetSword: "§eKẻ giết người đã có kiếm của hắn"
 playerKilledByKiller: "§cMột %identity% đã bị giết bởi kẻ giết người!"
 commonPeopleBecomeDetective: "§aMột dân thường đã trở thành một thám tử mới!"
+game_assassin_assignTarget: "§aA new assassination target has been assigned!"
+game_assassin_killTarget: "§aSuccessfully assassinated a target"
 titleVictoryKillerTitle: "§aKẻ giết người chiến thắng!"
 titleVictoryCommonPeopleSubtitle: "§aDân thường và thám tử chiến thắng!"
 victoryKillerBottom: "§eXin chúc mừng kẻ giết người đã chiến thắng"
