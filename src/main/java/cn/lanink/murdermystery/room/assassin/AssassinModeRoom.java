@@ -58,6 +58,17 @@ public class AssassinModeRoom extends BaseRoom {
     }
 
     @Override
+    public synchronized void startGame() {
+        super.startGame();
+        for (Player player : this.getPlayers().keySet()) {
+            Language language = this.murderMystery.getLanguage(player);
+            player.sendTitle(language.translateString("game_assassin_title_assassinTitle"),
+                    language.translateString("game_assassin_title_assassinSubtitle"),
+                    10, 40, 10);
+        }
+    }
+
+    @Override
     protected void victoryReward(int victory) {
 
     }
@@ -129,23 +140,14 @@ public class AssassinModeRoom extends BaseRoom {
         for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
             entry.getKey().setNameTag("");
             Language language = this.murderMystery.getLanguage(entry.getKey());
-            switch (entry.getValue()) {
-                case 1:
-                    identity = language.translateString("commonPeople");
-                    break;
-                case 2:
-                    identity = language.translateString("detective");
-                    break;
-                case 3:
-                    identity = language.translateString("killer");
-                    break;
-                default:
-                    if (time <= 20) {
-                        identity = "???";
-                    }else {
-                        identity = language.translateString("death");
-                    }
-                    break;
+            if (entry.getValue() == 3) {
+                identity = language.translateString("killer");
+            } else {
+                if (time <= 20) {
+                    identity = "???";
+                } else {
+                    identity = language.translateString("death");
+                }
             }
             LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
                     .replace("%roomMode%", Tools.getStringRoomMode(entry.getKey(), this))
@@ -153,6 +155,9 @@ public class AssassinModeRoom extends BaseRoom {
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
+            ms.add(language.translateString("game_assassin_scoreboard_killCount")
+                    .replace("%count%", this.killCount.getOrDefault(entry.getKey(), 0) + ""));
+            ms.add("  ");
             this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
         }
         //旁观玩家只显示部分信息
@@ -164,8 +169,6 @@ public class AssassinModeRoom extends BaseRoom {
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
-            ms.add(language.translateString("game_assassin_scoreboard_killCount")
-                    .replace("%count%", this.killCount.getOrDefault(player, 0) + ""));
             this.murderMystery.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
         }
     }
@@ -174,10 +177,6 @@ public class AssassinModeRoom extends BaseRoom {
     protected void assignIdentity() {
         for (Player player : this.getPlayers().keySet()) {
             this.getPlayers().put(player, 3);
-            Language language = this.murderMystery.getLanguage(player);
-            player.sendTitle(language.translateString("game_assassin_title_assassinTitle"),
-                    language.translateString("game_assassin_title_assassinSubtitle"),
-                    10, 40, 10);
         }
         for (Player player : this.getPlayers().keySet()) {
             this.assignTarget(player);
@@ -200,6 +199,12 @@ public class AssassinModeRoom extends BaseRoom {
         Collections.shuffle(survivingPlayers, MurderMystery.RANDOM);
 
         Player target = null;
+        for (Player p : survivingPlayers) {
+            if (!this.targetMap.containsKey(p) && !this.targetMap.containsValue(p)) {
+                target = p;
+                break;
+            }
+        }
         for (Player p : survivingPlayers) {
             if (!this.targetMap.containsValue(p)) {
                 target = p;
@@ -227,6 +232,14 @@ public class AssassinModeRoom extends BaseRoom {
     public void playerDeath(Player player) {
         super.playerDeath(player);
         this.targetMap.remove(player);
+        if (this.targetMap.containsValue(player)) {
+            for (Map.Entry<Player, Player> entry : this.targetMap.entrySet()) {
+                if (entry.getValue() == player) {
+                    this.assignTarget(entry.getKey());
+                    break;
+                }
+            }
+        }
     }
 
 }
