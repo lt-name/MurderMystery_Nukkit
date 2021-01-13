@@ -53,6 +53,8 @@ useCmdInCon: "Vùi lòng sử dụng lệnh trong game!"
 adminHelp: |-
   §eMurderMystery--Help
   §a/%cmdName% §eMở UI
+  §a/%cmdName% createroom §eCreate room
+  §a/%cmdName% setroom §eSet room
   §a/%cmdName% setroomname <Name> §eSet room name
   §a/%cmdName% setwaitspawn §eĐặt vị trí hiện tại là spawnpoint cho game
   §a/%cmdName% addrandomspawn  §eThêm vị trí hiện tài là điểm chờ của game
@@ -189,6 +191,7 @@ detectiveSurvival: "§aThám tử sống sót"
 detectiveDeath: |-
   §l§cThám tử đã chết
   §l§ccung đã rơi!
+game_assassin_scoreboard_killCount: "§a击杀数：%count%"
 gameEffectCDScoreBoard: "§l§aAccelerate cooling:§e %time% §aseconds "
 gameSwordCDScoreBoard: "§l§aFlyingSword cooling:§e %time% §aseconds "
 gameScanCDScoreBoard: "§l§aScanning cooling:§e %time% §aseconds "

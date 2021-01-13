@@ -18,8 +18,9 @@ import java.util.*;
  */
 public class AssassinModeRoom extends BaseRoom {
 
-    public HashMap<Player, Player> targetMap= new HashMap<>(); //玩家-目标玩家
+    public HashMap<Player, Player> targetMap = new HashMap<>(); //玩家-目标玩家
     public HashSet<Player> targetWait = new HashSet<>();
+    public HashMap<Player, Integer> killCount = new HashMap<>();
 
     /**
      * 初始化
@@ -29,6 +30,20 @@ public class AssassinModeRoom extends BaseRoom {
      */
     public AssassinModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);
+    }
+
+    @Override
+    public void initData() {
+        super.initData();
+        if (this.targetMap != null) {
+            this.targetMap.clear();
+        }
+        if (this.targetWait != null) {
+            this.targetWait.clear();
+        }
+        if (this.killCount != null) {
+            this.killCount.clear();
+        }
     }
 
     /**
@@ -149,6 +164,8 @@ public class AssassinModeRoom extends BaseRoom {
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
+            ms.add(language.translateString("game_assassin_scoreboard_killCount")
+                    .replace("%count%", this.killCount.getOrDefault(player, 0) + ""));
             this.murderMystery.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
         }
     }

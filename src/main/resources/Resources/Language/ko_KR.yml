@@ -57,6 +57,8 @@ useCmdInCon: "인게임에서 명령어를 사용해주세요!!"
 adminHelp: |-
   §e머더 미스터리--도움말
   §a/%cmdName% §eUI 열기
+  §a/%cmdName% createroom §eCreate room
+  §a/%cmdName% setroom §eSet room
   §a/%cmdName% setroomname <Name> §e방 이름 설정
   §a/%cmdName% setwaitspawn §e현재 위치를 게임 대기 지점으로 설정하기
   §a/%cmdName% addrandomspawn  §e현재 위치를 게임 랜덤 위치로 추가하기
@@ -191,6 +193,7 @@ gameTimeScoreBoard: |-
   §l§a남은 시간:§e %time% §a초
 detectiveSurvival: "§l§a형사가 살아남았습니다"
 detectiveDeath: "§l§c형사가 사망하여, 활이 떨어졌습니다!"
+game_assassin_scoreboard_killCount: "§a击杀数：%count%"
 gameEffectCDScoreBoard: "§l§a가속 쿨다운:§e %time% §a초 "
 gameSwordCDScoreBoard: "§l§a플라이 검 쿨다운:§e %time% §a초 "
 gameScanCDScoreBoard: "§l§a스캐너 쿨다운:§e %time% §a초 "

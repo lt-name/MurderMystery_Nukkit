@@ -53,6 +53,8 @@ useCmdInCon: "请在游戏内输入！"
 adminHelp: |-
   §eMurderMystery--命令帮助
   §a/%cmdName% §e打开ui
+  §a/%cmdName% createroom §e创建房间
+  §a/%cmdName% setroom §e设置房间
   §a/%cmdName% setroomname <名称> §e设置房间名称
   §a/%cmdName% setwaitspawn §e设置当前位置为游戏出生点
   §a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点
@@ -134,7 +136,7 @@ exchangeItem: "§a成功兑换到一个 %name%"
 exchangeUseGold: "§a需要使用金锭兑换 %name%"
 Classic: "经典"
 Infected: "感染"
-assassin: "刺杀"
+assassin: "刺客"
 commonPeople: "平民"
 killer: "杀手"
 detective: "侦探"
@@ -187,6 +189,7 @@ gameTimeScoreBoard: |-
   §l§a剩余时间:§e %time% §a秒
 detectiveSurvival: "§a侦探存活"
 detectiveDeath: "§l§c侦探死亡,弓已掉落!"
+game_assassin_scoreboard_killCount: "§a击杀数：%count%"
 gameEffectCDScoreBoard: "§l§a加速冷却:§e %time% §a秒 "
 gameSwordCDScoreBoard: "§l§a飞剑冷却:§e %time% §a秒 "
 gameScanCDScoreBoard: "§l§a扫描冷却:§e %time% §a秒 "

@@ -53,6 +53,8 @@ useCmdInCon: "Bitte benutze den Befehl im Spiel!"
 adminHelp: |-
   §EMurderMystery - Hilfe
   §A /%cmdName% §eOpen UI
+  §A /%cmdName% createroom §eCreate room
+  §A /%cmdName% setroom §eSet room
   §A /%cmdName% setwaitspawn §eStellt den aktuellen Ort als Spawnpunkt des Spiels ein
   §A /%cmdName% addrandomspawn §eFügen Sie den aktuellen Speicherort als wartenden Spawnpunkt des Spiels hinzu
   §A /%cmdName% addgoldspawn §e Fügt den aktuellen Standort als Generierungspunkt für Goldbarren hinzu
@@ -184,6 +186,7 @@ detectiveSurvival: "§aDetective Survival"
 detectiveDeath: |-
   §l§cThe detective is dead
   §l§cthe bow has fallen!
+game_assassin_scoreboard_killCount: "§a击杀数：%count%"
 gameEffectCDScoreBoard: "§l§aKühlung beschleunigen: §e%time% §aseconds"
 gameSwordCDScoreBoard: "§l§aFlyingSword-Kühlung: §e%time% §aseconds"
 gameScanCDScoreBoard: "§l§aScanning-Kühlung: §e%time% §aseconds"

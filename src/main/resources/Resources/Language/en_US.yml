@@ -53,6 +53,8 @@ useCmdInCon: "Please use command in the game!"
 adminHelp: |-
   §eMurderMystery--Help
   §a/%cmdName% §eOpen UI
+  §a/%cmdName% createroom §eCreate room
+  §a/%cmdName% setroom §eSet room
   §a/%cmdName% setroomname <Name> §eSet room name
   §a/%cmdName% setwaitspawn §eSet the current location as the spawnpoint of the game
   §a/%cmdName% addrandomspawn  §eAdd the current location as the waiting spawnpoint of the game
@@ -188,6 +190,7 @@ detectiveSurvival: "§aDetective Survival"
 detectiveDeath: |-
   §l§cThe detective is dead
   §l§cthe bow has fallen!
+game_assassin_scoreboard_killCount: "§a击杀数：%count%"
 gameEffectCDScoreBoard: "§l§aAccelerate cooling:§e %time% §aseconds "
 gameSwordCDScoreBoard: "§l§aFlyingSword cooling:§e %time% §aseconds "
 gameScanCDScoreBoard: "§l§aScanning cooling:§e %time% §aseconds "

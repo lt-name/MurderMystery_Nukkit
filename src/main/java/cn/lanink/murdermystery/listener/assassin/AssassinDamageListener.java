@@ -40,6 +40,7 @@ public class AssassinDamageListener extends BaseMurderMysteryListener<AssassinMo
                                 this.murderMystery.getLanguage(damager).translateString("game_assassin_killTarget"));
                         damager.getOffhandInventory().clearAll();
                         room.targetWait.add(damager);
+                        room.killCount.put(damager, room.killCount.getOrDefault(damager, 0) + 1);
                         room.playerDeath(player);
                         Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
                                 () -> room.assignTarget(damager), 60);
