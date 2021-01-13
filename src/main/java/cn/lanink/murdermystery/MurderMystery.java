@@ -676,7 +676,7 @@ public class MurderMystery extends PluginBase {
                         try {
                             File wantedFile = new File(getDataFolder() + "/Skins/" + skinName + "/wanted.png");
                             if (wantedFile.exists()) {
-                                skin.setImage(ImageIO.read(wantedFile));
+                                skin.setWantedImage(ImageIO.read(wantedFile));
                                 //TODO
                                 this.getLogger().info("编号：" + x + " 皮肤：" + skinName + " 通缉令图片已加载");
                             }

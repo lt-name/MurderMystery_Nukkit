@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
  */
 public class MurderMysterySkin extends Skin {
 
-    BufferedImage image = new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
+    BufferedImage wantedImage = new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
 
     public MurderMysterySkin() {
         super();
@@ -23,17 +23,17 @@ public class MurderMysterySkin extends Skin {
         this.setGeometryData(skin.getGeometryData());
     }
 
-    public void setImage(BufferedImage image) {
-        this.image = image;
+    public void setWantedImage(BufferedImage wantedImage) {
+        this.wantedImage = wantedImage;
     }
 
-    public BufferedImage getImage() {
-        return this.image;
+    public BufferedImage getWantedImage() {
+        return this.wantedImage;
     }
 
     public ItemMap getItemMap() {
         ItemMap item = new ItemMap();
-        item.setImage(this.getImage());
+        item.setImage(this.getWantedImage());
         return item;
     }
 
