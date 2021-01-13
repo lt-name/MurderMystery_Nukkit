@@ -75,12 +75,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
         this.level = level;
         this.levelName = level.getFolderName();
-        String showRoomName = this.murderMystery.getRoomName().get(this.levelName) + "(" + this.levelName + ")";
         if (!this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
             File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
             if (!backup.exists()) {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
-                        .translateString("roomLevelBackup").replace("%name%", showRoomName));
+                        .translateString("roomLevelBackup").replace("%name%", this.getFullRoomName()));
                 Server.getInstance().unloadLevel(this.level);
                 if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                     Server.getInstance().loadLevel(this.levelName);
@@ -90,7 +89,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 }
             }else {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
-                        .translateString("roomLevelBackupExist").replace("%name%", showRoomName));
+                        .translateString("roomLevelBackupExist").replace("%name%", this.getFullRoomName()));
             }
         }
         try {
@@ -125,7 +124,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             Watchdog.add(this);
         } catch (Exception e) {
             throw new RoomLoadException(MurderMystery.getInstance().getLanguage()
-                    .translateString("roomLoadedFailureByConfig").replace("%name%", showRoomName));
+                    .translateString("roomLoadedFailureByConfig").replace("%name%", this.getFullRoomName()));
         }
     }
 
@@ -398,6 +397,14 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      */
     public final String getLevelName() {
         return this.levelName;
+    }
+
+    public String getShowRoomName() {
+        return this.murderMystery.getRoomName().get(this.getLevelName());
+    }
+
+    public String getFullRoomName() {
+        return this.getShowRoomName() + "(" + this.getLevelName() + ")";
     }
 
     /**
@@ -952,14 +959,14 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         }
         this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
         if (MurderMystery.debug) {
-            murderMystery.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");
+            murderMystery.getLogger().info("§a房间：" + this.getFullRoomName() + " 正在还原地图...");
         }
         Server.getInstance().unloadLevel(this.level);
         File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
         File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
             this.murderMystery.getLogger().error(this.murderMystery.getLanguage(null)
-                    .translateString("roomLevelBackupNotExist").replace("%name%", this.levelName));
+                    .translateString("roomLevelBackupNotExist").replace("%name%", this.getFullRoomName()));
             this.murderMystery.unloadRoom(this.levelName);
         }
         CompletableFuture.runAsync(() -> {
@@ -972,11 +979,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 }
                 this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
                 if (MurderMystery.debug) {
-                    this.murderMystery.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
+                    this.murderMystery.getLogger().info("§a房间：" + this.getFullRoomName() + " 地图还原完成！");
                 }
             }else {
                 this.murderMystery.getLogger().error(this.murderMystery.getLanguage(null)
-                        .translateString("roomLevelRestoreLevelFailure").replace("%name%", this.levelName));
+                        .translateString("roomLevelRestoreLevelFailure").replace("%name%", this.getFullRoomName()));
                 this.murderMystery.unloadRoom(this.levelName);
             }
         });

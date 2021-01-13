@@ -62,7 +62,9 @@ public class GuiCreate {
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME,
                 MURDER_MYSTERY.getLanguage(player).translateString("gui_admin_room_selectWorld"));
         for (Level level : Server.getInstance().getLevels().values()) {
-            simple.addButton(new ElementButton(level.getFolderName()));
+            if (!MURDER_MYSTERY.getRoomConfigs().containsKey(level.getFolderName())) {
+                simple.addButton(new ElementButton(level.getFolderName()));
+            }
         }
         showFormWindow(player, simple, GuiType.ADMIN_CREATE_ROOM_MENU);
     }
@@ -112,8 +114,7 @@ public class GuiCreate {
     public static void sendAdminModeMenu(Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementDropdown(language.translateString("adminMenuSetLevel")
-                .replace("%name%", player.getLevel().getName()),
+        custom.addElement(new ElementDropdown(language.translateString("gui_admin_room_selectGameMode"),
                 Arrays.asList(MurderMystery.getRoomClass().keySet().toArray(new String[0]))));
         showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
     }

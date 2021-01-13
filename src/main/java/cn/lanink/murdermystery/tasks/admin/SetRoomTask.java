@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class SetRoomTask extends PluginTask<MurderMystery> {
 
-    private int setRoomSchedule = 10;
+    private int setRoomSchedule = 9;
     private int backRoomSchedule = 10;
     private int nextRoomSchedule = 20;
     private boolean autoNext = false;
@@ -80,16 +80,15 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                 this.backRoomSchedule = 9;
                 this.nextRoomSchedule = 10;
 
-                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setRoomName"));
 
                 item = Item.get(347);//钟表
                 item.setNamedTag(new CompoundTag()
                         .putInt("MurderMysteryItemType", 113));
-                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setRoomName"));
                 this.player.getInventory().setItem(4, item);
 
-                String setMode = config.getString("gameMode", "").trim();
-                if (!"".equals(setMode)) {
+                if (!"".equals(config.getString("roomName", "").trim())) {
                     if (autoNext) {
                         this.setRoomSchedule(this.nextRoomSchedule);
                     }else {
@@ -101,15 +100,16 @@ public class SetRoomTask extends PluginTask<MurderMystery> {
                 this.backRoomSchedule = 9;
                 this.nextRoomSchedule = 20;
 
-                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setRoomName"));
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
 
                 item = Item.get(347);//钟表
                 item.setNamedTag(new CompoundTag()
                         .putInt("MurderMysteryItemType", 113));
-                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setRoomName"));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
                 this.player.getInventory().setItem(4, item);
 
-                if (!"".equals(config.getString("roomName", "").trim())) {
+                String setMode = config.getString("gameMode", "").trim();
+                if (!"".equals(setMode)) {
                     if (autoNext) {
                         this.setRoomSchedule(this.nextRoomSchedule);
                     }else {
