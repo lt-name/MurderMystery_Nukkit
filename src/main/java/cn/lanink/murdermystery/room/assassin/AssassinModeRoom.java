@@ -84,6 +84,14 @@ public class AssassinModeRoom extends BaseRoom {
                 }
             }
         }
+        //检查目标
+        if (time < 0 && this.gameTime%2 == 0) {
+            for (Player player : this.targetMap.keySet()) {
+                if (this.getPlayers(this.targetMap.get(player)) != 3) {
+                    this.assignTarget(player);
+                }
+            }
+        }
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
@@ -94,9 +102,8 @@ public class AssassinModeRoom extends BaseRoom {
                 }
             }
             if (playerNumber <= 1) {
-                //TODO 胜利
-
-
+                //TODO 优化
+                this.victory(3);
             }
         }else {
             this.victory(0);
