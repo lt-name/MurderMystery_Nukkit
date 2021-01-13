@@ -651,6 +651,9 @@ public class MurderMystery extends PluginBase {
         if (files != null && files.length > 0) {
             int x = 0;
             for (File file : files) {
+                if (!file.isDirectory()) {
+                    continue;
+                }
                 String skinName = file.getName();
                 File skinFile = new File(getDataFolder() + "/Skins/" + skinName + "/skin.png");
                 if (skinFile.exists()) {
