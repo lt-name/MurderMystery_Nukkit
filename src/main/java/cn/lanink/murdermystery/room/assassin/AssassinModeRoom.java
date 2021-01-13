@@ -174,6 +174,10 @@ public class AssassinModeRoom extends BaseRoom {
     protected void assignIdentity() {
         for (Player player : this.getPlayers().keySet()) {
             this.getPlayers().put(player, 3);
+            Language language = this.murderMystery.getLanguage(player);
+            player.sendTitle(language.translateString("game_assassin_title_assassinTitle"),
+                    language.translateString("game_assassin_title_assassinSubtitle"),
+                    10, 40, 10);
         }
         for (Player player : this.getPlayers().keySet()) {
             this.assignTarget(player);
