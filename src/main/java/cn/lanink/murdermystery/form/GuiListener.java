@@ -77,31 +77,16 @@ public class GuiListener implements Listener {
                 case ADMIN_MENU:
                     switch (simple.getResponse().getClickedButtonId()) {
                         case 0:
-                            GuiCreate.sendAdminRoomNameMenu(player);
+                            this.server.dispatchCommand(player, aName + " CreateRoom");
                             break;
                         case 1:
-                            this.server.dispatchCommand(player, aName + " setwaitspawn");
-                            break;
-                        case 2:
-                            this.server.dispatchCommand(player, aName + " addrandomspawn");
+                            this.server.dispatchCommand(player, aName + " SetRoom");
                             break;
                         case 3:
-                            this.server.dispatchCommand(player, aName + " addgoldspawn");
+                            this.server.dispatchCommand(player, aName + " ReloadRoom");
                             break;
                         case 4:
-                            GuiCreate.sendAdminMoreMenu(player);
-                            break;
-                        case 5:
-                            GuiCreate.sendAdminPlayersMenu(player);
-                            break;
-                        case 6:
-                            GuiCreate.sendAdminModeMenu(player);
-                            break;
-                        case 7:
-                            this.server.dispatchCommand(player, aName + " reloadroom");
-                            break;
-                        case 8:
-                            this.server.dispatchCommand(player, aName + " unloadroom");
+                            this.server.dispatchCommand(player, aName + " UnloadRoom");
                             break;
                     }
                     break;
@@ -127,10 +112,6 @@ public class GuiListener implements Listener {
                     this.server.dispatchCommand(player, aName + " setminplayers " + custom.getResponse().getInputResponse(3));
                     this.server.dispatchCommand(player, aName + " setmaxplayers " + custom.getResponse().getInputResponse(4));
                     break;
-                /*case ADMIN_PLAYERS_MENU:
-                    this.server.dispatchCommand(player, aName + " setminplayers " + custom.getResponse().getInputResponse(0));
-                    this.server.dispatchCommand(player, aName + " setmaxplayers " + custom.getResponse().getInputResponse(1));
-                    break;*/
                 case ADMIN_MODE_MENU:
                     this.server.dispatchCommand(player, this.murderMystery.getCmdAdmin() + " setgamemode " +
                             custom.getResponse().getDropdownResponse(0).getElementContent());
