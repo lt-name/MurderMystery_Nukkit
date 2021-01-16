@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class SetRoomListener implements Listener {
 
     private final MurderMystery murderMystery;

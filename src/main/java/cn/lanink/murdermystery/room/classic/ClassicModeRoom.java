@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.room.classic;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -48,17 +49,17 @@ public class ClassicModeRoom extends BaseRoom {
         Player killerVictory = null;
         Set<Player> commonPeopleVictory = new HashSet<>();
         Set<Player> defeatPlayers = new HashSet<>();
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
             if (victory == 3) {
-                if (entry.getValue() == 3) {
+                if (entry.getValue() == PlayerIdentity.KILLER) {
                     killerVictory = entry.getKey();
                 }else {
                     defeatPlayers.add(entry.getKey());
                 }
             }else {
                 switch (entry.getValue()) {
-                    case 1:
-                    case 2:
+                    case COMMON_PEOPLE:
+                    case DETECTIVE:
                         commonPeopleVictory.add(entry.getKey());
                         break;
                     default:

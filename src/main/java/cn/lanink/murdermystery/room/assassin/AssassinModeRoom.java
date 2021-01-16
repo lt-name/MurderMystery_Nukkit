@@ -4,6 +4,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.item.ItemMap;
@@ -18,8 +19,9 @@ import java.util.*;
  */
 public class AssassinModeRoom extends BaseRoom {
 
-    public HashMap<Player, Player> targetMap= new HashMap<>(); //玩家-目标玩家
+    public HashMap<Player, Player> targetMap = new HashMap<>(); //玩家-目标玩家
     public HashSet<Player> targetWait = new HashSet<>();
+    public HashMap<Player, Integer> killCount = new HashMap<>();
 
     /**
      * 初始化
@@ -31,6 +33,20 @@ public class AssassinModeRoom extends BaseRoom {
         super(level, config);
     }
 
+    @Override
+    public void initData() {
+        super.initData();
+        if (this.targetMap != null) {
+            this.targetMap.clear();
+        }
+        if (this.targetWait != null) {
+            this.targetWait.clear();
+        }
+        if (this.killCount != null) {
+            this.killCount.clear();
+        }
+    }
+
     /**
      * 启用监听器
      */
@@ -40,6 +56,18 @@ public class AssassinModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("AssassinDamageListener").addListenerRoom(this);
+    }
+
+    @Override
+    public synchronized void startGame() {
+        super.startGame();
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            entry.setValue(PlayerIdentity.ASSASSIN);
+            Language language = this.murderMystery.getLanguage(entry.getKey());
+            entry.getKey().sendTitle(language.translateString("game_assassin_title_assassinTitle"),
+                    language.translateString("game_assassin_title_assassinSubtitle"),
+                    10, 40, 10);
+        }
     }
 
     @Override
@@ -82,7 +110,7 @@ public class AssassinModeRoom extends BaseRoom {
         //检查目标
         if (time < 0 && this.gameTime%2 == 0) {
             for (Player player : this.targetMap.keySet()) {
-                if (!this.targetWait.contains(player) && this.getPlayers(this.targetMap.get(player)) != 3) {
+                if (!this.targetWait.contains(player) && this.getPlayers(this.targetMap.get(player)) == PlayerIdentity.DEATH) {
                     this.assignTarget(player);
                 }
             }
@@ -91,8 +119,8 @@ public class AssassinModeRoom extends BaseRoom {
         if (this.gameTime > 0) {
             this.gameTime--;
             int playerNumber = 0;
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == 3) {
+            for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == PlayerIdentity.ASSASSIN) {
                     playerNumber++;
                 }
             }
@@ -103,7 +131,7 @@ public class AssassinModeRoom extends BaseRoom {
         }else {
             this.victory(0);
         }
-        this.goldSpawn();
+        //this.goldSpawn();
     }
 
     @Override
@@ -111,26 +139,13 @@ public class AssassinModeRoom extends BaseRoom {
         int time = this.setGameTime - this.gameTime;
         int playerNumber = this.getSurvivorPlayerNumber();
         String identity;
-        for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
             entry.getKey().setNameTag("");
             Language language = this.murderMystery.getLanguage(entry.getKey());
-            switch (entry.getValue()) {
-                case 1:
-                    identity = language.translateString("commonPeople");
-                    break;
-                case 2:
-                    identity = language.translateString("detective");
-                    break;
-                case 3:
-                    identity = language.translateString("killer");
-                    break;
-                default:
-                    if (time <= 20) {
-                        identity = "???";
-                    }else {
-                        identity = language.translateString("death");
-                    }
-                    break;
+            if (entry.getValue() == PlayerIdentity.ASSASSIN) {
+                identity = language.translateString("killer");
+            } else {
+                identity = language.translateString("death");
             }
             LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
                     .replace("%roomMode%", Tools.getStringRoomMode(entry.getKey(), this))
@@ -138,6 +153,9 @@ public class AssassinModeRoom extends BaseRoom {
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
             ms.add(" ");
+            ms.add(language.translateString("game_assassin_scoreboard_killCount")
+                    .replace("%count%", this.killCount.getOrDefault(entry.getKey(), 0) + ""));
+            ms.add("  ");
             this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
         }
         //旁观玩家只显示部分信息
@@ -156,20 +174,17 @@ public class AssassinModeRoom extends BaseRoom {
     @Override
     protected void assignIdentity() {
         for (Player player : this.getPlayers().keySet()) {
-            this.getPlayers().put(player, 3);
-        }
-        for (Player player : this.getPlayers().keySet()) {
             this.assignTarget(player);
         }
     }
 
     public void assignTarget(Player player) {
-        if (this.getPlayers(player) != 3) {
+        if (this.getPlayers(player) != PlayerIdentity.ASSASSIN) {
             return;
         }
         ArrayList<Player> survivingPlayers = new ArrayList<>();
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-            if (entry.getKey() != player && entry.getValue() == 3) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            if (entry.getKey() != player && entry.getValue() == PlayerIdentity.ASSASSIN) {
                 survivingPlayers.add(entry.getKey());
             }
         }
@@ -179,6 +194,12 @@ public class AssassinModeRoom extends BaseRoom {
         Collections.shuffle(survivingPlayers, MurderMystery.RANDOM);
 
         Player target = null;
+        for (Player p : survivingPlayers) {
+            if (!this.targetMap.containsKey(p) && !this.targetMap.containsValue(p)) {
+                target = p;
+                break;
+            }
+        }
         for (Player p : survivingPlayers) {
             if (!this.targetMap.containsValue(p)) {
                 target = p;
@@ -192,7 +213,7 @@ public class AssassinModeRoom extends BaseRoom {
         this.targetMap.put(player, target);
         this.targetWait.remove(player);
         ItemMap item = this.getGameSkin(target).getItemMap();
-        player.getOffhandInventory().setItem(0, item);
+        player.getInventory().setItem(3, item);
         item.sendImage(player);
         player.sendTitle("", this.murderMystery.getLanguage(player).translateString("game_assassin_assignTarget"));
         if (MurderMystery.debug) {
@@ -206,6 +227,14 @@ public class AssassinModeRoom extends BaseRoom {
     public void playerDeath(Player player) {
         super.playerDeath(player);
         this.targetMap.remove(player);
+        if (this.targetMap.containsValue(player)) {
+            for (Map.Entry<Player, Player> entry : this.targetMap.entrySet()) {
+                if (entry.getValue() == player) {
+                    this.assignTarget(entry.getKey());
+                    break;
+                }
+            }
+        }
     }
 
 }

@@ -4,6 +4,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.event.MurderMysteryPlayerDamageEvent;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -19,6 +20,7 @@ import cn.nukkit.potion.Effect;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class ClassicDamageListener extends BaseMurderMysteryListener<ClassicModeRoom> {
 
     /**
@@ -59,8 +61,8 @@ public class ClassicDamageListener extends BaseMurderMysteryListener<ClassicMode
                     }
                 }
             }else {
-                if (room.isPlaying(damager) && room.getPlayers(damager) == 3 &&
-                        room.isPlaying(player) && room.getPlayers(player) != 0) {
+                if (room.isPlaying(damager) && room.getPlayers(damager) == PlayerIdentity.KILLER &&
+                        room.isPlaying(player) && room.getPlayers(player) != PlayerIdentity.DEATH) {
                     if (damager.getInventory().getItemInHand() != null) {
                         CompoundTag tag = damager.getInventory().getItemInHand().getNamedTag();
                         if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
@@ -78,21 +80,21 @@ public class ClassicDamageListener extends BaseMurderMysteryListener<ClassicMode
         if (ev.isCancelled()) {
             return;
         }
-        if (room.getPlayers(player) == 0) {
+        if (room.getPlayers(player) == PlayerIdentity.DEATH) {
             return;
         }
         //攻击者是杀手
-        if (room.getPlayers(damager) == 3) {
+        if (room.getPlayers(damager) == PlayerIdentity.KILLER) {
             damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killPlayer"));
             player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                     this.murderMystery.getLanguage(player).translateString("deathByKillerSubtitle"), 20, 60, 20);
             for (Player p : room.getPlayers().keySet()) {
                 Language language = murderMystery.getLanguage(p);
                 p.sendMessage(language.translateString("playerKilledByKiller")
-                        .replace("%identity%", room.getPlayers(player) == 2 ? language.translateString("detective") : language.translateString("commonPeople")));
+                        .replace("%identity%", room.getPlayers(player) == PlayerIdentity.DETECTIVE ? language.translateString("detective") : language.translateString("commonPeople")));
             }
         }else { //攻击者是平民或侦探
-            if (room.getPlayers(player) == 3) {
+            if (room.getPlayers(player) == PlayerIdentity.KILLER) {
                 damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killKiller"));
                 room.killKillerPlayer = damager;
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),

@@ -53,6 +53,8 @@ useCmdInCon: "Please use command in the game!"
 adminHelp: |-
   §eMurderMystery--Help
   §a/%cmdName% §eOpen UI
+  §a/%cmdName% createroom §eCreate room
+  §a/%cmdName% setroom §eSet room
   §a/%cmdName% setroomname <Name> §eSet room name
   §a/%cmdName% setwaitspawn §eSet the current location as the spawnpoint of the game
   §a/%cmdName% addrandomspawn  §eAdd the current location as the waiting spawnpoint of the game
@@ -153,12 +155,18 @@ titleDetectiveTitle: "§eDetective"
 titleDetectiveSubtitle: "Find out the killer and kill him with your bow"
 titleKillerTitle: "§cKiller"
 titleKillerSubtitle: "Kill all the players"
+game_assassin_title_assassinTitle: "§cAssassin"
+game_assassin_title_assassinSubtitle: "Assassinate your target"
 killerGetSwordTime: "§eKiller will get his sword in %time% seconds!"
 killerGetSword: "§eKiller have already got his sword"
 playerKilledByKiller: "§cA %identity% was killed by a killer!"
 commonPeopleBecomeDetective: "§aA civilian has become a new detective!"
 game_assassin_assignTarget: "§aA new assassination target has been assigned!"
 game_assassin_killTarget: "§aSuccessfully assassinated a target"
+game_assassin_deathByAssassin: "You were killed by an assassin"
+game_assassin_deathByTarget: "Your target stabbed you"
+game_assassin_targetKillAssassin: "Successful anti-kill"
+game_assassin_errorTarget: "You found the wrong target!"
 titleVictoryKillerTitle: "§aKiller Wins!"
 titleVictoryCommonPeopleSubtitle: "§aCivilian and Detective Wins!"
 victoryKillerBottom: "§eCongratulations to the killer for winning"
@@ -188,6 +196,7 @@ detectiveSurvival: "§aDetective Survival"
 detectiveDeath: |-
   §l§cThe detective is dead
   §l§cthe bow has fallen!
+game_assassin_scoreboard_killCount: "§a击杀数：%count%"
 gameEffectCDScoreBoard: "§l§aAccelerate cooling:§e %time% §aseconds "
 gameSwordCDScoreBoard: "§l§aFlyingSword cooling:§e %time% §aseconds "
 gameScanCDScoreBoard: "§l§aScanning cooling:§e %time% §aseconds "

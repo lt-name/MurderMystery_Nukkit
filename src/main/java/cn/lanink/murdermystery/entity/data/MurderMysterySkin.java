@@ -35,6 +35,7 @@ public class MurderMysterySkin extends Skin {
     public ItemMap getItemMap() {
         ItemMap item = new ItemMap();
         item.setImage(this.getWantedImage());
+        item.getNamedTag().putBoolean("cannotClickOnInventory", true);
         return item;
     }
 

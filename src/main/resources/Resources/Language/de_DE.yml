@@ -6,7 +6,7 @@ swordFailure: "§cSword-Datei konnte nicht geladen werden! Bitte überprüfen Si
 defaultSkinSuccess: "§aDas Standard-Laden der Körperhaut ist abgeschlossen."
 defaultSkinFailure: "§cDie Standard-Leichenhaut konnte nicht geladen werden! Bitte überprüfen Sie die Integrität des Plug-Ins!"
 startLoadingRoom: "§eStart Laderaum ..."
-roomLoadedSuccess: "§aRoom:% name% wurde geladen!"
+roomLoadedSuccess: "§aRoom: %name% wurde geladen!"
 roomLoadedFailureByConfig: "§cRoom: %name% Konfiguration ist unvollständig, Laden fehlgeschlagen!"
 roomLoadedFailureByLevel: "§cRoom: %name% konnte die Karte nicht lesen!"
 roomLoadedFailureByGameMode: "§cRoom: %name% game mode setting error! No game mode found: %gameMode%"
@@ -53,6 +53,8 @@ useCmdInCon: "Bitte benutze den Befehl im Spiel!"
 adminHelp: |-
   §EMurderMystery - Hilfe
   §A /%cmdName% §eOpen UI
+  §A /%cmdName% createroom §eCreate room
+  §A /%cmdName% setroom §eSet room
   §A /%cmdName% setwaitspawn §eStellt den aktuellen Ort als Spawnpunkt des Spiels ein
   §A /%cmdName% addrandomspawn §eFügen Sie den aktuellen Speicherort als wartenden Spawnpunkt des Spiels hinzu
   §A /%cmdName% addgoldspawn §e Fügt den aktuellen Standort als Generierungspunkt für Goldbarren hinzu
@@ -145,12 +147,18 @@ titleDetectiveTitle: "§eDetective"
 titleDetectiveSubtitle: "Finde den Mörder heraus und töte ihn mit deinem Bogen"
 titleKillerTitle: "§cKiller"
 titleKillerSubtitle: "Töte alle Spieler"
+game_assassin_title_assassinTitle: "§cAssassin"
+game_assassin_title_assassinSubtitle: "Assassinate your target"
 KillerGetSwordTime: "§eKiller bekommt sein Schwert in% Zeit% Sekunden!"
 KillerGetSword: "§eKiller haben bereits sein Schwert"
 playerKilledByKiller: "§cA %identity% was killed by a killer!"
 commonPeopleBecomeDetective: "§aA civilian has become a new detective!"
 game_assassin_assignTarget: "§aA new assassination target has been assigned!"
 game_assassin_killTarget: "§aSuccessfully assassinated a target"
+game_assassin_deathByAssassin: "You were killed by an assassin"
+game_assassin_deathByTarget: "Your target stabbed you"
+game_assassin_targetKillAssassin: "Successful anti-kill"
+game_assassin_errorTarget: "You found the wrong target!"
 titleVictoryKillerTitle: "§aKiller gewinnt!"
 titleVictoryCommonPeopleSubtitle: "§aCivilian and Detective Wins!"
 victoryKillerBottom: "Herzlichen Glückwunsch an den Killer zum Sieg"
@@ -184,6 +192,7 @@ detectiveSurvival: "§aDetective Survival"
 detectiveDeath: |-
   §l§cThe detective is dead
   §l§cthe bow has fallen!
+game_assassin_scoreboard_killCount: "§a击杀数：%count%"
 gameEffectCDScoreBoard: "§l§aKühlung beschleunigen: §e%time% §aseconds"
 gameSwordCDScoreBoard: "§l§aFlyingSword-Kühlung: §e%time% §aseconds"
 gameScanCDScoreBoard: "§l§aScanning-Kühlung: §e%time% §aseconds"

@@ -1,6 +1,5 @@
 package cn.lanink.murdermystery.tasks;
 
-import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.scheduler.PluginTask;
@@ -28,11 +27,11 @@ public class Watchdog extends PluginTask<MurderMystery> {
             int runTime = entry.getValue() + 1;
             entry.setValue(runTime);
             switch (entry.getKey().getStatus()) {
-                case IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED:
-                case IRoomStatus.ROOM_STATUS_TASK_NEED_INITIALIZED:
+                case LEVEL_NOT_LOADED:
+                case TASK_NEED_INITIALIZED:
                     entry.setValue(0);
                     break;
-                case IRoomStatus.ROOM_STATUS_WAIT:
+                case WAIT:
                     if (entry.getKey().getPlayers().size() < entry.getKey().getMinPlayers()) {
                         entry.setValue(0);
                     }else if (runTime > entry.getKey().setWaitTime * 1.5) {
@@ -40,13 +39,13 @@ public class Watchdog extends PluginTask<MurderMystery> {
                         entry.setValue(0);
                     }
                     break;
-                case IRoomStatus.ROOM_STATUS_GAME:
+                case GAME:
                     if (runTime > entry.getKey().setGameTime * 1.5) {
                         entry.getKey().endGame();
                         entry.setValue(0);
                     }
                     break;
-                case IRoomStatus.ROOM_STATUS_VICTORY:
+                case VICTORY:
                     if (runTime > 15) {
                         entry.getKey().endGame();
                         entry.setValue(0);

@@ -1,10 +1,10 @@
 package cn.lanink.murdermystery.addons.uishop;
 
-import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
 import cn.lanink.murdermystery.form.GuiCreate;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -73,7 +73,7 @@ public class UiShop extends AddonsBase implements Listener {
             return;
         }
         BaseRoom room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room != null && room.getStatus() == IRoomStatus.ROOM_STATUS_GAME &&
+        if (room != null && room.getStatus() == RoomStatus.GAME &&
                 item.getNamedTag().getBoolean("isMurderUiShop") && !this.cache.contains(player)) {
             this.cache.add(player);
             this.showUiShop(player);

@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.command.adminsubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -28,7 +29,7 @@ public class StartRoom extends BaseSubCommand {
         BaseRoom room = this.murderMystery.getRooms().get(player.getLevel().getFolderName());
         if (room != null) {
             if (room.getPlayers().size() >= room.getMinPlayers()) {
-                if (room.getStatus() == BaseRoom.ROOM_STATUS_WAIT) {
+                if (room.getStatus() == RoomStatus.WAIT) {
                     room.startGame();
                     sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("adminStartRoom"));
                 }else {
