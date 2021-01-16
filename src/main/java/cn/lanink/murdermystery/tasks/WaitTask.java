@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.tasks;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
@@ -23,7 +24,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != 1) {
+        if (this.room.getStatus() != RoomStatus.WAIT) {
             this.cancel();
             return;
         }

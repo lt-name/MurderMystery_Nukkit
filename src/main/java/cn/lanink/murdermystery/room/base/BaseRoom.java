@@ -1,7 +1,5 @@
 package cn.lanink.murdermystery.room.base;
 
-import cn.lanink.gamecore.room.IRoom;
-import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
@@ -43,11 +41,11 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author lt_name
  */
-public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
+public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
 
     private String gameMode = null;
     protected MurderMystery murderMystery = MurderMystery.getInstance();
-    protected int status;
+    protected RoomStatus status;
     protected int minPlayers, maxPlayers; //房间人数
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime, goldSpawnTime; //秒
@@ -72,7 +70,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * @param config 配置文件
      */
     public BaseRoom(Level level, Config config) throws RoomLoadException {
-        this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
+        this.setStatus(RoomStatus.LEVEL_NOT_LOADED);
         this.level = level;
         this.levelName = level.getFolderName();
         if (!this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
@@ -120,7 +118,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             }
             this.initData();
             this.enableListener();
-            this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+            this.setStatus(RoomStatus.TASK_NEED_INITIALIZED);
             Watchdog.add(this);
         } catch (Exception e) {
             throw new RoomLoadException(MurderMystery.getInstance().getLanguage()
@@ -141,14 +139,16 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     /**
      * @param status 房间状态
      */
-    public void setStatus(int status) {
+    @Override
+    public void setStatus(RoomStatus status) {
         this.status = status;
     }
 
     /**
      * @return 房间状态
      */
-    public int getStatus() {
+    @Override
+    public RoomStatus getStatus() {
         return this.status;
     }
 
@@ -199,8 +199,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * 初始化Task
      */
     protected void initTask() {
-        if (this.status != ROOM_STATUS_WAIT) {
-            this.setStatus(ROOM_STATUS_WAIT);
+        if (this.status != RoomStatus.WAIT) {
+            this.setStatus(RoomStatus.WAIT);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.murderMystery, new WaitTask(this.murderMystery, this), 20);
         }
@@ -246,7 +246,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * @return 是否可以加入房间
      */
     public boolean canJoin() {
-        return (this.status == ROOM_STATUS_TASK_NEED_INITIALIZED || this.status == ROOM_STATUS_WAIT) &&
+        return (this.status == RoomStatus.TASK_NEED_INITIALIZED || this.status == RoomStatus.WAIT) &&
                 this.players.size() < this.getMaxPlayers();
     }
 
@@ -261,7 +261,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * @param spectator 观战
      */
     public synchronized void joinRoom(Player player, boolean spectator) {
-        if (this.status < 0 || this.status > 2) {
+        if (this.getStatus() == RoomStatus.LEVEL_NOT_LOADED ||
+                this.getStatus() == RoomStatus.VICTORY) {
             return;
         }
         Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
@@ -269,7 +270,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 this.quitRoom(player);
             }
         }, 1);
-        if (this.status == ROOM_STATUS_TASK_NEED_INITIALIZED) {
+        if (this.status == RoomStatus.TASK_NEED_INITIALIZED) {
             this.initTask();
         }
         SavePlayerInventory.save(this.murderMystery, player);
@@ -280,7 +281,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         }
         player.sendMessage(this.murderMystery.getLanguage(player).translateString("joinRoom")
                 .replace("%name%", this.getRoomName()));
-        if (spectator || this.status == ROOM_STATUS_GAME || this.players.size() >= this.getMaxPlayers()) {
+        if (spectator || this.status == RoomStatus.GAME || this.players.size() >= this.getMaxPlayers()) {
             this.spectatorPlayers.add(player);
             player.teleport(this.randomSpawn.get(MurderMystery.RANDOM.nextInt(this.randomSpawn.size())));
             player.setGamemode(3);
@@ -429,14 +430,13 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     /**
      * 房间开始游戏
      */
-    @Override
     public synchronized void startGame() {
-        if (this.status == ROOM_STATUS_GAME || this.status == ROOM_STATUS_VICTORY) {
+        if (this.status == RoomStatus.GAME || this.status == RoomStatus.VICTORY) {
             return;
         }
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
         Tools.cleanEntity(this.getLevel(), true);
-        this.setStatus(ROOM_STATUS_GAME);
+        this.setStatus(RoomStatus.GAME);
         //this.assignIdentity();
         Collections.shuffle(this.randomSpawn, MurderMystery.RANDOM);
         int x=0;
@@ -471,14 +471,13 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * 结束本局游戏
      * @param victory 胜利队伍
      */
-    @Override
     public synchronized void endGame(int victory) {
-        if (this.status == ROOM_STATUS_LEVEL_NOT_LOADED) {
+        if (this.getStatus() == RoomStatus.LEVEL_NOT_LOADED) {
             return;
         }
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomEndEvent(this, victory));
-        int oldStatus = this.status;
-        this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+        RoomStatus oldStatus = this.getStatus();
+        this.setStatus(RoomStatus.TASK_NEED_INITIALIZED);
         for (Player p1 : this.players.keySet()) {
             for (Player p2 : this.players.keySet()) {
                 p1.showPlayer(p2);
@@ -503,8 +502,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
         this.initData();
         switch (oldStatus) {
-            case IRoomStatus.ROOM_STATUS_GAME:
-            case IRoomStatus.ROOM_STATUS_VICTORY:
+            case GAME:
+            case VICTORY:
                 this.restoreWorld();
                 break;
         }
@@ -657,7 +656,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     public void asyncTipsTask() {
         int time = this.setGameTime - this.gameTime;
         int playerNumber = this.getSurvivorPlayerNumber();
-        boolean detectiveSurvival = this.players.containsValue(2);
+        boolean detectiveSurvival = this.players.containsValue(PlayerIdentity.DETECTIVE);
         String identity;
         for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
             entry.getKey().setNameTag("");
@@ -894,8 +893,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         if (this.players.size() >= this.getMinPlayers() && this.setGameTime - this.gameTime <= 20) {
             return;
         }
-        if (this.status != ROOM_STATUS_VICTORY && this.getPlayers().size() > 0) {
-            this.setStatus(ROOM_STATUS_VICTORY);
+        if (this.getStatus() != RoomStatus.VICTORY && this.getPlayers().size() > 0) {
+            this.setStatus(RoomStatus.VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
                     new VictoryTask(this.murderMystery, this, victoryMode), 20);
         }else {
@@ -939,9 +938,9 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 }
                 BaseRoom room = this.murderMystery.getRooms().get(world);
                 if (this.gameMode.equals(room.getGameMode()) &&
-                        room.getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED) {
+                        room.getStatus() == RoomStatus.TASK_NEED_INITIALIZED) {
                     room.endGame();
-                    room.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
+                    room.setStatus(RoomStatus.LEVEL_NOT_LOADED);
                     this.murderMystery.removeTemporaryRoom(world);
                 }
             }
@@ -956,7 +955,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 this.murderMystery.getTemporaryRooms().contains(this.levelName)) {
             return;
         }
-        this.status = ROOM_STATUS_LEVEL_NOT_LOADED;
+        this.setStatus(RoomStatus.LEVEL_NOT_LOADED);
         if (MurderMystery.debug) {
             murderMystery.getLogger().info("§a房间：" + this.getFullRoomName() + " 正在还原地图...");
         }
@@ -976,7 +975,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 for (Position position : this.randomSpawn) {
                     position.setLevel(this.level);
                 }
-                this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
+                this.setStatus(RoomStatus.TASK_NEED_INITIALIZED);
                 if (MurderMystery.debug) {
                     this.murderMystery.getLogger().info("§a房间：" + this.getFullRoomName() + " 地图还原完成！");
                 }

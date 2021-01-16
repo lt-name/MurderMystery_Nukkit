@@ -4,6 +4,7 @@ import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -28,7 +29,7 @@ public class DefaultDamageListener extends BaseMurderMysteryListener<BaseRoom> {
             }
             //虚空 游戏开始前拉回 游戏中判断玩家死亡
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME) {
+                if (room.getStatus() == RoomStatus.GAME) {
                     room.playerDeath(player);
                 }else {
                     player.teleport(room.getWaitSpawn());

@@ -1,10 +1,10 @@
 package cn.lanink.murdermystery.listener.defaults;
 
-import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -63,7 +63,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 return;
             }
             BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-            if (room == null || room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
+            if (room == null || room.getStatus() != RoomStatus.GAME) {
                 return;
             }
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
@@ -115,7 +115,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             return;
         }
         BaseRoom room = this.getListenerRooms().get(entity.getLevel().getFolderName());
-        if (room == null || room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
+        if (room == null || room.getStatus() != RoomStatus.GAME) {
             return;
         }
         if (entity.getNetworkId() == 81) {
@@ -147,7 +147,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 event.setCancelled(true);
                 return;
             }
-            if (item.getId() == Item.GOLD_INGOT && room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
+            if (item.getId() == Item.GOLD_INGOT && room.getStatus() == RoomStatus.GAME) {
                 Tools.playSound(player, Sound.RANDOM_ORB);
                 return;
             }
@@ -190,7 +190,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             event.setCancelled(true);
             player.setAllowModifyWorld(false);
         }
-        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player) && player.getGamemode() == 0) {
+        if (room.getStatus() == RoomStatus.GAME && room.isPlaying(player) && player.getGamemode() == 0) {
             Language language = this.murderMystery.getLanguage(player);
             int id1 = block.getId();
             int id2 = block.getLevel().getBlock(block.getFloorX(), block.getFloorY() - 1, block.getFloorZ()).getId();
@@ -297,7 +297,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             return;
         }
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
-        if (room == null || room.getStatus() != 2) {
+        if (room == null || room.getStatus() != RoomStatus.GAME) {
             return;
         }
         CompoundTag tag = item.getNamedTag();
@@ -355,7 +355,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             return;
         }
         CompoundTag tag = item.getNamedTag();
-        if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME && tag != null &&
+        if (room.getStatus() == RoomStatus.GAME && tag != null &&
                 tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 22) {
             level.addSound(block, Sound.RANDOM_ANVIL_USE);
             //>315 <45  X
@@ -440,7 +440,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 room.detectiveBow = entityItem;
             }
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
-                if (room.getStatus() != IRoomStatus.ROOM_STATUS_GAME || entityItem.isClosed()) {
+                if (room.getStatus() != RoomStatus.GAME || entityItem.isClosed()) {
                     return;
                 }
                 entityItem.setNameTag(murderMystery.getLanguage(null).translateString("itemDetectiveBow"));

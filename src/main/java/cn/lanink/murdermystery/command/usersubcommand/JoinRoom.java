@@ -1,9 +1,9 @@
 package cn.lanink.murdermystery.command.usersubcommand;
 
-import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -94,10 +94,10 @@ public class JoinRoom extends BaseSubCommand {
                     }
                     BaseRoom room = this.murderMystery.getRooms().get(world);
                     if (room != null) {
-                        if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
+                        if (room.getStatus() == RoomStatus.LEVEL_NOT_LOADED) {
                             sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsNeedInitialized"));
-                        }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
-                                room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
+                        }else if (room.getStatus() == RoomStatus.GAME ||
+                                room.getStatus() == RoomStatus.VICTORY) {
                             sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsPlaying"));
                         }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                             sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsFull"));

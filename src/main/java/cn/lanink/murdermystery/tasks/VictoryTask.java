@@ -4,6 +4,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -44,7 +45,7 @@ public class VictoryTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != BaseRoom.ROOM_STATUS_VICTORY) {
+        if (this.room.getStatus() != RoomStatus.VICTORY) {
             this.cancel();
             return;
         }

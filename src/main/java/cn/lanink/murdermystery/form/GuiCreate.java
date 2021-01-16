@@ -1,9 +1,9 @@
 package cn.lanink.murdermystery.form;
 
-import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -147,13 +147,13 @@ public class GuiCreate {
         world = world.replace("§e§l", "").trim();
         BaseRoom room = MurderMystery.getInstance().getRooms().get(world);
         if (room != null) {
-            if (room.getStatus() == IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED) {
+            if (room.getStatus() == RoomStatus.LEVEL_NOT_LOADED) {
                 modal = new FormWindowModal(PLUGIN_NAME, language.translateString("joinRoomIsNeedInitialized"),
                         language.translateString("buttonReturn"), language.translateString("buttonReturn"));
-            }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME ||
-                    room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
+            }else if (room.getStatus() == RoomStatus.GAME ||
+                    room.getStatus() == RoomStatus.VICTORY) {
                 String button1 = language.translateString("buttonSpectator");
-                if (room.getStatus() == IRoomStatus.ROOM_STATUS_VICTORY) {
+                if (room.getStatus() == RoomStatus.VICTORY) {
                     button1 = language.translateString("buttonReturn");
                 }
                 modal = new FormWindowModal(

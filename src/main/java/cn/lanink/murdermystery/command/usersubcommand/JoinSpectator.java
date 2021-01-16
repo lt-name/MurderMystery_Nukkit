@@ -1,8 +1,8 @@
 package cn.lanink.murdermystery.command.usersubcommand;
 
-import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -52,8 +52,8 @@ public class JoinSpectator extends BaseSubCommand {
             }
             BaseRoom room = this.murderMystery.getRooms().get(world);
             if (room != null) {
-                if (room.getStatus() != IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED &&
-                        room.getStatus() != IRoomStatus.ROOM_STATUS_VICTORY) {
+                if (room.getStatus() != RoomStatus.LEVEL_NOT_LOADED &&
+                        room.getStatus() != RoomStatus.VICTORY) {
                     room.joinRoom(player, true);
                 }else {
                     sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsNeedInitialized"));
