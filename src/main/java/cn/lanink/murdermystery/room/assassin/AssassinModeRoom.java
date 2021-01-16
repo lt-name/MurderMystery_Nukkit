@@ -4,6 +4,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.item.ItemMap;
@@ -60,8 +61,8 @@ public class AssassinModeRoom extends BaseRoom {
     @Override
     public synchronized void startGame() {
         super.startGame();
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-            entry.setValue(3);
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            entry.setValue(PlayerIdentity.ASSASSIN);
             Language language = this.murderMystery.getLanguage(entry.getKey());
             entry.getKey().sendTitle(language.translateString("game_assassin_title_assassinTitle"),
                     language.translateString("game_assassin_title_assassinSubtitle"),
@@ -109,7 +110,7 @@ public class AssassinModeRoom extends BaseRoom {
         //检查目标
         if (time < 0 && this.gameTime%2 == 0) {
             for (Player player : this.targetMap.keySet()) {
-                if (!this.targetWait.contains(player) && this.getPlayers(this.targetMap.get(player)) != 3) {
+                if (!this.targetWait.contains(player) && this.getPlayers(this.targetMap.get(player)) == PlayerIdentity.DEATH) {
                     this.assignTarget(player);
                 }
             }
@@ -118,8 +119,8 @@ public class AssassinModeRoom extends BaseRoom {
         if (this.gameTime > 0) {
             this.gameTime--;
             int playerNumber = 0;
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == 3) {
+            for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == PlayerIdentity.ASSASSIN) {
                     playerNumber++;
                 }
             }
@@ -138,10 +139,10 @@ public class AssassinModeRoom extends BaseRoom {
         int time = this.setGameTime - this.gameTime;
         int playerNumber = this.getSurvivorPlayerNumber();
         String identity;
-        for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
             entry.getKey().setNameTag("");
             Language language = this.murderMystery.getLanguage(entry.getKey());
-            if (entry.getValue() == 3) {
+            if (entry.getValue() == PlayerIdentity.ASSASSIN) {
                 identity = language.translateString("killer");
             } else {
                 identity = language.translateString("death");
@@ -178,12 +179,12 @@ public class AssassinModeRoom extends BaseRoom {
     }
 
     public void assignTarget(Player player) {
-        if (this.getPlayers(player) != 3) {
+        if (this.getPlayers(player) != PlayerIdentity.ASSASSIN) {
             return;
         }
         ArrayList<Player> survivingPlayers = new ArrayList<>();
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-            if (entry.getKey() != player && entry.getValue() == 3) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            if (entry.getKey() != player && entry.getValue() == PlayerIdentity.ASSASSIN) {
                 survivingPlayers.add(entry.getKey());
             }
         }

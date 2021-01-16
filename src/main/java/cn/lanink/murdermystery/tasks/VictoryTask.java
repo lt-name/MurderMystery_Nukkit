@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.tasks;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -52,7 +53,7 @@ public class VictoryTask extends PluginTask<MurderMystery> {
             this.room.endGame(this.victory);
         }else {
             this.victoryTime--;
-            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
                 String bottom;
                 if (victory == 3) {
                     bottom = this.owner.getLanguage(entry.getKey()).translateString("victoryKillerBottom");
@@ -62,8 +63,8 @@ public class VictoryTask extends PluginTask<MurderMystery> {
                 if (!bottom.trim().equals("")) {
                     entry.getKey().sendTip(bottom);
                 }
-                if (entry.getValue() != 0) {
-                    if (this.victory == 1 && entry.getValue() == 3) {
+                if (entry.getValue() != PlayerIdentity.DEATH) {
+                    if (this.victory == 1 && entry.getValue() == PlayerIdentity.KILLER) {
                         continue;
                     }
                     Tools.spawnFirework(entry.getKey());

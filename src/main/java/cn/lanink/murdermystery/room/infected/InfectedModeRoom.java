@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.room.infected;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -62,7 +63,7 @@ public class InfectedModeRoom extends BaseRoom {
         super.startGame();
         for (Player player : this.players.keySet()) {
             player.getInventory().clearAll();
-            this.players.put(player, 2);
+            this.players.put(player, PlayerIdentity.DETECTIVE);
             Tools.giveItem(player, 1);
         }
     }
@@ -97,7 +98,7 @@ public class InfectedModeRoom extends BaseRoom {
                 }
                 int y = new Random().nextInt(this.getPlayers().size());
                 Player player = new ArrayList<>(this.getPlayers().keySet()).get(y);
-                this.players.put(player, 3);
+                this.players.put(player, PlayerIdentity.DEATH);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
                         this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
                 this.playerRespawn(player);
@@ -121,13 +122,13 @@ public class InfectedModeRoom extends BaseRoom {
             CompletableFuture.runAsync(() -> {
                 int playerNumber = 0;
                 boolean killer = false;
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
                     switch (entry.getValue()) {
-                        case 1:
-                        case 2:
+                        case COMMON_PEOPLE:
+                        case DETECTIVE:
                             playerNumber++;
                             break;
-                        case 3:
+                        case KILLER:
                             killer = true;
                             if (this.gameTime % 20 == 0) {
                                 Effect effect = Effect.getEffect(1).setDuration(1000)
@@ -166,8 +167,8 @@ public class InfectedModeRoom extends BaseRoom {
     @Override
     public int getSurvivorPlayerNumber() {
         int x = 0;
-        for (Integer integer : this.getPlayers().values()) {
-            if (integer == 2) {
+        for (PlayerIdentity identity : this.getPlayers().values()) {
+            if (identity == PlayerIdentity.DETECTIVE) {
                 x++;
             }
         }
@@ -176,15 +177,15 @@ public class InfectedModeRoom extends BaseRoom {
 
     @Override
     public void playerDamage(Player damage, Player player) {
-        if (this.getPlayers(damage) == 3) {
-            if (this.getPlayers(player) == 3) {
+        if (this.getPlayers(damage) == PlayerIdentity.KILLER) {
+            if (this.getPlayers(player) == PlayerIdentity.KILLER) {
                 return;
             }
-            this.players.put(player, 3);
+            this.players.put(player, PlayerIdentity.KILLER);
             player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
                     this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
         }else {
-            if (this.getPlayers(player) != 3) {
+            if (this.getPlayers(player) != PlayerIdentity.KILLER) {
                 return;
             }
         }

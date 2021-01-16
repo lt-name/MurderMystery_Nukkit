@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.listener.classic;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.tasks.game.ScanTask;
 import cn.lanink.murdermystery.tasks.game.SwordMoveTask;
@@ -44,7 +45,7 @@ public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRo
             return;
         }
         CompoundTag tag = item.hasCompoundTag() ? item.getNamedTag() : null;
-        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player) && room.getPlayers(player) == 3) {
+        if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME && room.isPlaying(player) && room.getPlayers(player) == PlayerIdentity.KILLER) {
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
                 if (room.killerEffectCD < 1) {
                     Effect effect = Effect.getEffect(1);
@@ -80,7 +81,7 @@ public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRo
         }
         if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME &&
                 event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR &&
-                room.getPlayers(player) == 3) {
+                room.getPlayers(player) == PlayerIdentity.KILLER) {
             CompoundTag tag = player.getInventory().getItemInHand() == null ? null : player.getInventory().getItemInHand().getNamedTag();
             if (tag != null && tag.getBoolean("isMurderItem")) {
                 switch (tag.getInt("MurderType")) {

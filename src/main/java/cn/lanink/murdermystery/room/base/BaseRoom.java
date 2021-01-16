@@ -58,7 +58,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     protected Level level;
     private final String levelName;
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
-    protected final ConcurrentHashMap<Player, Integer> players = new ConcurrentHashMap<>(); //0未分配 1平民 2侦探 3杀手
+    protected final ConcurrentHashMap<Player, PlayerIdentity> players = new ConcurrentHashMap<>();
     protected final Set<Player> spectatorPlayers = Collections.synchronizedSet(new HashSet<>()); //旁观玩家
     protected final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
     protected final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
@@ -287,7 +287,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false).update();
             Tools.hidePlayer(this, player);
         }else {
-            this.players.put(player, 0);
+            this.players.put(player, PlayerIdentity.NULL);
             this.setRandomSkin(player);
             player.teleport(this.getWaitSpawn());
             this.autoCreateTemporaryRoom();
@@ -339,7 +339,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
     /**
      * @return 玩家列表
      */
-    public ConcurrentHashMap<Player, Integer> getPlayers() {
+    public ConcurrentHashMap<Player, PlayerIdentity> getPlayers() {
         return this.players;
     }
 
@@ -356,11 +356,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      * @param player 玩家
      * @return 身份
      */
-    public int getPlayers(Player player) {
+    public PlayerIdentity getPlayers(Player player) {
         if (this.isPlaying(player)) {
             return this.players.get(player);
         }else {
-            return 0;
+            return PlayerIdentity.NULL;
         }
     }
 
@@ -488,9 +488,9 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         if (victory != 0) {
             this.victoryReward(victory);
         }
-        Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
+        Iterator<Map.Entry<Player, PlayerIdentity>> it = this.players.entrySet().iterator();
         while(it.hasNext()) {
-            Map.Entry<Player, Integer> entry = it.next();
+            Map.Entry<Player, PlayerIdentity> entry = it.next();
             it.remove();
             this.quitRoom(entry.getKey());
         }
@@ -549,10 +549,10 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 for (Player player : this.getSpectatorPlayers()) {
                     player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                    if (entry.getValue() == 2) {
+                for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+                    if (entry.getValue() == PlayerIdentity.DETECTIVE) {
                         Tools.giveItem(entry.getKey(), 1);
-                    }else if (entry.getValue() == 3) {
+                    }else if (entry.getValue() == PlayerIdentity.KILLER) {
                         Tools.giveItem(entry.getKey(), 2);
                     }
                 }
@@ -563,13 +563,13 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             this.gameTime--;
             int playerNumber = 0;
             boolean killer = false;
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
                 switch (entry.getValue()) {
-                    case 1:
-                    case 2:
+                    case COMMON_PEOPLE:
+                    case DETECTIVE:
                         playerNumber++;
                         break;
-                    case 3:
+                    case KILLER:
                         killer = true;
                         break;
                     default:
@@ -626,8 +626,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      */
     public void goldExchange() {
         CompletableFuture.runAsync(() -> {
-            for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
-                if (entry.getValue() == 0) {
+            for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
+                if (entry.getValue() == PlayerIdentity.NULL || entry.getValue() == PlayerIdentity.DEATH) {
                     continue;
                 }
                 int x = 0;
@@ -659,25 +659,24 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         int playerNumber = this.getSurvivorPlayerNumber();
         boolean detectiveSurvival = this.players.containsValue(2);
         String identity;
-        for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
             entry.getKey().setNameTag("");
             Language language = this.murderMystery.getLanguage(entry.getKey());
             switch (entry.getValue()) {
-                case 1:
+                case COMMON_PEOPLE:
                     identity = language.translateString("commonPeople");
                     break;
-                case 2:
+                case DETECTIVE:
                     identity = language.translateString("detective");
                     break;
-                case 3:
+                case KILLER:
                     identity = language.translateString("killer");
                     break;
+                case DEATH:
+                    identity = language.translateString("death");
+                    break;
                 default:
-                    if (time <= 20) {
-                        identity = "???";
-                    }else {
-                        identity = language.translateString("death");
-                    }
+                    identity = "???";
                     break;
             }
             LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("gameTimeScoreBoard")
@@ -694,7 +693,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
                 }
             }
             ms.add("  ");
-            if (entry.getValue() == 3) {
+            if (entry.getValue() == PlayerIdentity.KILLER) {
                 if (this.killerEffectCD > 0) {
                     ms.add(language.translateString("gameEffectCDScoreBoard")
                             .replace("%time%", this.killerEffectCD + ""));
@@ -751,19 +750,19 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
             i++;
             //侦探
             if (i == random1) {
-                this.players.put(player, 2);
+                this.players.put(player, PlayerIdentity.DETECTIVE);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleDetectiveTitle"),
                         this.murderMystery.getLanguage(player).translateString("titleDetectiveSubtitle"), 10, 40, 10);
                 continue;
             }
             //杀手
             if (i == random2) {
-                this.players.put(player, 3);
+                this.players.put(player, PlayerIdentity.KILLER);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
                         this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
                 continue;
             }
-            this.players.put(player, 1);
+            this.players.put(player, PlayerIdentity.COMMON_PEOPLE);
             player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleCommonPeopleTitle"),
                     this.murderMystery.getLanguage(player).translateString("titleCommonPeopleSubtitle"), 10, 40, 10);
         }
@@ -776,8 +775,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
      */
     public int getSurvivorPlayerNumber() {
         int x = 0;
-        for (Integer integer : this.getPlayers().values()) {
-            if (integer != 0) {
+        for (PlayerIdentity identity : this.getPlayers().values()) {
+            if (identity != PlayerIdentity.DEATH) {
                 x++;
             }
         }
@@ -796,21 +795,22 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         if (ev.isCancelled()) {
             return;
         }
-        if (this.getPlayers(player) == 0) {
+        if (this.getPlayers(player) == PlayerIdentity.NULL ||
+                this.getPlayers(player) == PlayerIdentity.DEATH) {
             return;
         }
         //攻击者是杀手
-        if (this.getPlayers(damage) == 3) {
+        if (this.getPlayers(damage) == PlayerIdentity.KILLER) {
             damage.sendMessage(this.murderMystery.getLanguage(damage).translateString("killPlayer"));
             player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                     this.murderMystery.getLanguage(player).translateString("deathByKillerSubtitle"), 20, 60, 20);
             for (Player p : this.getPlayers().keySet()) {
                 Language language = murderMystery.getLanguage(p);
                 p.sendMessage(language.translateString("playerKilledByKiller")
-                        .replace("%identity%", this.getPlayers(player) == 2 ? language.translateString("detective") : language.translateString("commonPeople")));
+                        .replace("%identity%", this.getPlayers(player) == PlayerIdentity.DETECTIVE ? language.translateString("detective") : language.translateString("commonPeople")));
             }
         }else { //攻击者是平民或侦探
-            if (this.getPlayers(player) == 3) {
+            if (this.getPlayers(player) == PlayerIdentity.KILLER) {
                 damage.sendMessage(this.murderMystery.getLanguage(damage).translateString("killKiller"));
                 this.killKillerPlayer = damage;
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
@@ -842,10 +842,10 @@ public abstract class BaseRoom implements IRoom, ITimeTask, IAsyncTipsTask {
         player.setGamemode(3);
         player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false).update();
         Tools.hidePlayer(this, player);
-        if (this.getPlayers(player) == 2) {
+        if (this.getPlayers(player) == PlayerIdentity.DETECTIVE) {
             this.getLevel().dropItem(player, Tools.getMurderMysteryItem(player, 1));
         }
-        this.players.put(player, 0);
+        this.players.put(player, PlayerIdentity.DEATH);
         Tools.playSound(this, Sound.GAME_PLAYER_HURT);
         this.playerCorpseSpawn(player);
     }

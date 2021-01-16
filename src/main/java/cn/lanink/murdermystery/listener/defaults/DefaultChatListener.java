@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.listener.defaults;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -72,11 +73,11 @@ public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
                         .replace("%player%", player.getName())
                         .replace("%message%", message));
             }
-        }else if (room.getPlayers(player) == 0) {
+        }else if (room.getPlayers(player) == PlayerIdentity.DEATH) {
             HashSet<Player> players = new HashSet<>(room.getPlayers().keySet());
             players.addAll(room.getSpectatorPlayers());
             for (Player p : players) {
-                if (room.getPlayers(p) == 0) {
+                if (room.getPlayers(p) == PlayerIdentity.DEATH) {
                     if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
                         p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerDeathChat")
                                 .replace("%player%", player.getName())
