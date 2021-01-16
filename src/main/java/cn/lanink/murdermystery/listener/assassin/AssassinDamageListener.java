@@ -15,6 +15,7 @@ import cn.nukkit.potion.Effect;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class AssassinDamageListener extends BaseMurderMysteryListener<AssassinModeRoom> {
 
     /**
