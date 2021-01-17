@@ -29,6 +29,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -69,7 +70,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param level 世界
      * @param config 配置文件
      */
-    public BaseRoom(Level level, Config config) throws RoomLoadException {
+    public BaseRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         this.setStatus(RoomStatus.LEVEL_NOT_LOADED);
         this.level = level;
         this.levelName = level.getFolderName();
@@ -126,7 +127,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
     }
 
-    public final void setGameMode(String gameMode) {
+    public final void setGameMode(@NotNull String gameMode) {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
         }
@@ -140,7 +141,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param status 房间状态
      */
     @Override
-    public void setStatus(RoomStatus status) {
+    public void setStatus(@NotNull RoomStatus status) {
         this.status = status;
     }
 
@@ -206,7 +207,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
     }
 
-    public MurderMysterySkin getGameSkin(Player player) {
+    public MurderMysterySkin getGameSkin(@NotNull Player player) {
         if (this.skinNumber.containsKey(player)) {
             return this.murderMystery.getSkins().get(this.skinNumber.get(player));
         }
@@ -218,7 +219,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      *
      * @param player 玩家
      */
-    public void setRandomSkin(Player player) {
+    public void setRandomSkin(@NotNull Player player) {
         for (Map.Entry<Integer, MurderMysterySkin> entry : this.murderMystery.getSkins().entrySet()) {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
@@ -234,7 +235,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      *
      * @param player 玩家
      */
-    public void restorePlayerSkin(Player player) {
+    public void restorePlayerSkin(@NotNull Player player) {
         if (this.skinCache.containsKey(player)) {
             Tools.setHumanSkin(player, this.skinCache.get(player));
             this.skinCache.remove(player);
@@ -260,7 +261,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param player 玩家
      * @param spectator 观战
      */
-    public synchronized void joinRoom(Player player, boolean spectator) {
+    public synchronized void joinRoom(@NotNull Player player, boolean spectator) {
         if (this.getStatus() == RoomStatus.LEVEL_NOT_LOADED ||
                 this.getStatus() == RoomStatus.VICTORY) {
             return;
@@ -420,7 +421,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param player 玩家
      * @return 皮肤
      */
-    public Skin getPlayerSkin(Player player) {
+    public Skin getPlayerSkin(@NotNull Player player) {
         if (this.skinNumber.containsKey(player)) {
             return MurderMystery.getInstance().getSkins().get(this.skinNumber.get(player));
         }
@@ -788,7 +789,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param damage 攻击者
      * @param player 被攻击者
      */
-    public void playerDamage(Player damage, Player player) {
+    public void playerDamage(@NotNull Player damage, @NotNull Player player) {
         MurderMysteryPlayerDamageEvent ev = new MurderMysteryPlayerDamageEvent(this, damage, player);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -830,7 +831,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      *
      * @param player 玩家
      */
-    public void playerDeath(Player player) {
+    public void playerDeath(@NotNull Player player) {
         MurderMysteryPlayerDeathEvent ev = new MurderMysteryPlayerDeathEvent(this, player);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -854,7 +855,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      *
      * @param player 玩家
      */
-    public void playerCorpseSpawn(Player player) {
+    public void playerCorpseSpawn(@NotNull Player player) {
         MurderMysteryPlayerCorpseSpawnEvent ev = new MurderMysteryPlayerCorpseSpawnEvent(this, player);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {

@@ -11,6 +11,7 @@ import cn.nukkit.item.ItemMap;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -136,14 +137,13 @@ public class AssassinModeRoom extends BaseRoom {
 
     @Override
     public void asyncTipsTask() {
-        int time = this.setGameTime - this.gameTime;
         int playerNumber = this.getSurvivorPlayerNumber();
         String identity;
         for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
             entry.getKey().setNameTag("");
             Language language = this.murderMystery.getLanguage(entry.getKey());
             if (entry.getValue() == PlayerIdentity.ASSASSIN) {
-                identity = language.translateString("killer");
+                identity = language.translateString("player_identity_assassin");
             } else {
                 identity = language.translateString("death");
             }
@@ -224,7 +224,7 @@ public class AssassinModeRoom extends BaseRoom {
 
     }
 
-    public void playerDeath(Player player) {
+    public void playerDeath(@NotNull Player player) {
         super.playerDeath(player);
         this.targetMap.remove(player);
         if (this.targetMap.containsValue(player)) {

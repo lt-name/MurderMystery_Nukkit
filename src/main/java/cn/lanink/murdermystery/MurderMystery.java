@@ -48,7 +48,7 @@ import java.util.concurrent.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.1.0 git-5557c49";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
     public static final ThreadPoolExecutor checkRoomThreadPool = new ThreadPoolExecutor(
@@ -134,13 +134,14 @@ public class MurderMystery extends PluginBase {
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
+
+        this.saveResource("Resources/Language/zh_CN.yml",
+                "Resources/Language/cache/new_zh_CN.yml", true);
         //语言文件 (按时间排序/Sort by time)
         List<String> languages = Arrays.asList("zh_CN", "en_US", "ko_KR", "vi_VN", "de_DE");
         for (String language : languages) {
             this.saveResource("Resources/Language/" + language + ".yml");
         }
-        this.saveResource("Resources/Language/zh_CN.yml",
-                "Resources/Language/cache/new_zh_CN.yml", true);
         this.defaultLanguage = this.config.getString("defaultLanguage", "zh_CN");
         this.languageMappingTable.putAll(this.config.get("languageMappingTable", new HashMap<>()));
         File[] files = new File(getDataFolder() + "/Resources/Language").listFiles();
@@ -170,8 +171,10 @@ public class MurderMystery extends PluginBase {
             this.getLogger().error("§cNo default language found: " + this.defaultLanguage + " Has been set to 'zh_CN'");
             this.defaultLanguage = "zh_CN";
         }
+
         //扩展
         if (addonsManager == null) addonsManager = new AddonsManager(this);
+
         //注册监听器
         registerListener("RoomLevelProtection", RoomLevelProtection.class);
         registerListener("DefaultGameListener", DefaultGameListener.class);
@@ -180,6 +183,7 @@ public class MurderMystery extends PluginBase {
         registerListener("ClassicGameListener", ClassicGameListener.class);
         registerListener("ClassicDamageListener", ClassicDamageListener.class);
         registerListener("AssassinDamageListener", AssassinDamageListener.class);
+
         //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("infected", InfectedModeRoom.class);
