@@ -50,7 +50,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
     protected int minPlayers, maxPlayers; //房间人数
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime, goldSpawnTime; //秒
-    public int killerEffectCD, killerSwordCD, killerScanCD; //杀手技能CD
+    public HashMap<Player, Integer> killerSwordCD = new HashMap<>();
+    public int killerEffectCD, killerScanCD; //杀手技能CD
     protected final Position waitSpawn;
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
     protected final ArrayList<Vector3> goldSpawnVector3List = new ArrayList<>();
@@ -174,7 +175,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         this.waitTime = this.setWaitTime;
         this.gameTime = this.setGameTime;
         this.killerEffectCD = 0;
-        this.killerSwordCD = 0;
+        this.killerSwordCD.clear();
         this.killerScanCD = 0;
         this.placeBlocks.clear();
         this.skinNumber.clear();
@@ -590,8 +591,10 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         if (this.killerEffectCD > 0) {
             this.killerEffectCD--;
         }
-        if (this.killerSwordCD > 0) {
-            this.killerSwordCD--;
+        for (Map.Entry<Player, Integer> entry : this.killerSwordCD.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
+            }
         }
         if (this.killerScanCD > 0) {
             this.killerScanCD--;
@@ -698,9 +701,10 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                     ms.add(language.translateString("gameEffectCDScoreBoard")
                             .replace("%time%", this.killerEffectCD + ""));
                 }
-                if (this.killerSwordCD > 0) {
+                int swordCD = this.killerSwordCD.getOrDefault(entry.getKey(), 0);
+                if (swordCD > 0) {
                     ms.add(language.translateString("gameSwordCDScoreBoard")
-                            .replace("%time%", this.killerSwordCD + ""));
+                            .replace("%time%", swordCD + ""));
                 }
                 if (this.killerScanCD > 0) {
                     ms.add(language.translateString("gameScanCDScoreBoard")
@@ -786,11 +790,11 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
     /**
      * 符合游戏条件的攻击
      *
-     * @param damage 攻击者
+     * @param damager 攻击者
      * @param player 被攻击者
      */
-    public void playerDamage(@NotNull Player damage, @NotNull Player player) {
-        MurderMysteryPlayerDamageEvent ev = new MurderMysteryPlayerDamageEvent(this, damage, player);
+    public void playerDamage(@NotNull Player damager, @NotNull Player player) {
+        MurderMysteryPlayerDamageEvent ev = new MurderMysteryPlayerDamageEvent(this, damager, player);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
@@ -800,8 +804,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             return;
         }
         //攻击者是杀手
-        if (this.getPlayers(damage) == PlayerIdentity.KILLER) {
-            damage.sendMessage(this.murderMystery.getLanguage(damage).translateString("killPlayer"));
+        if (this.getPlayers(damager) == PlayerIdentity.KILLER) {
+            damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killPlayer"));
             player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                     this.murderMystery.getLanguage(player).translateString("deathByKillerSubtitle"), 20, 60, 20);
             for (Player p : this.getPlayers().keySet()) {
@@ -811,16 +815,16 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             }
         }else { //攻击者是平民或侦探
             if (this.getPlayers(player) == PlayerIdentity.KILLER) {
-                damage.sendMessage(this.murderMystery.getLanguage(damage).translateString("killKiller"));
-                this.killKillerPlayer = damage;
+                damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killKiller"));
+                this.killKillerPlayer = damager;
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                         this.murderMystery.getLanguage(player).translateString("killerDeathSubtitle"), 10, 20, 20);
             } else {
-                damage.sendTitle(this.murderMystery.getLanguage(damage).translateString("deathTitle"),
-                        this.murderMystery.getLanguage(damage).translateString("deathByDamageTeammateSubtitle"), 20, 60, 20);
+                damager.sendTitle(this.murderMystery.getLanguage(damager).translateString("deathTitle"),
+                        this.murderMystery.getLanguage(damager).translateString("deathByDamageTeammateSubtitle"), 20, 60, 20);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                         this.murderMystery.getLanguage(player).translateString("deathByTeammateSubtitle"), 20, 60, 20);
-                this.playerDeath(damage);
+                this.playerDeath(damager);
             }
         }
         this.playerDeath(player);

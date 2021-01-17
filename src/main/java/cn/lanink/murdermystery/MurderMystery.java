@@ -11,6 +11,7 @@ import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
 import cn.lanink.murdermystery.form.GuiListener;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.listener.assassin.AssassinDamageListener;
+import cn.lanink.murdermystery.listener.assassin.AssassinGameListener;
 import cn.lanink.murdermystery.listener.classic.ClassicDamageListener;
 import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
 import cn.lanink.murdermystery.listener.defaults.*;
@@ -183,6 +184,7 @@ public class MurderMystery extends PluginBase {
         registerListener("ClassicGameListener", ClassicGameListener.class);
         registerListener("ClassicDamageListener", ClassicDamageListener.class);
         registerListener("AssassinDamageListener", AssassinDamageListener.class);
+        registerListener("AssassinGameListener", AssassinGameListener.class);
 
         //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
@@ -254,6 +256,8 @@ public class MurderMystery extends PluginBase {
         if (addonsManager != null) {
             addonsManager.disableAll();
         }
+        this.removeAllTemporaryRoom();
+        this.temporaryRooms.clear();
         if (this.rooms.size() > 0) {
             Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
@@ -271,9 +275,10 @@ public class MurderMystery extends PluginBase {
             }
             this.rooms.clear();
         }
-        this.removeAllTemporaryRoom();
-        this.temporaryRooms.clear();
         this.roomConfigs.clear();
+        for (BaseMurderMysteryListener listener : this.getMurderMysteryListeners().values()) {
+            listener.clearListenerRooms();
+        }
         this.skins.clear();
         getLogger().info(this.getLanguage(null).translateString("pluginDisable"));
     }

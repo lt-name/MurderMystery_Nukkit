@@ -177,8 +177,8 @@ public class InfectedModeRoom extends BaseRoom {
     }
 
     @Override
-    public void playerDamage(@NotNull Player damage, @NotNull Player player) {
-        if (this.getPlayers(damage) == PlayerIdentity.KILLER) {
+    public void playerDamage(@NotNull Player damager, @NotNull Player player) {
+        if (this.getPlayers(damager) == PlayerIdentity.KILLER) {
             if (this.getPlayers(player) == PlayerIdentity.KILLER) {
                 return;
             }

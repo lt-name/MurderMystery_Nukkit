@@ -57,4 +57,8 @@ public abstract class BaseMurderMysteryListener<T extends BaseRoom> implements L
         this.listenerRooms.remove(level);
     }
 
+    public void clearListenerRooms() {
+        this.listenerRooms.clear();
+    }
+
 }

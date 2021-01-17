@@ -35,10 +35,14 @@ public class WaitTask extends PluginTask<MurderMystery> {
             this.room.waitTime--;
             if (this.room.waitTime > 0) {
                 if (this.room.waitTime <= 10) {
-                    Tools.playSound(this.room, Sound.RANDOM_CLICK);
                     String title = "§e";
                     if (this.room.waitTime <= 3) {
                         title = "§c";
+                        Tools.playSound(this.room, Sound.NOTE_FLUTE);
+                    }else if (this.room.waitTime <= 5) {
+                        Tools.playSound(this.room, Sound.NOTE_HARP);
+                    }else {
+                        Tools.playSound(this.room, Sound.NOTE_BASSATTACK);
                     }
                     title += this.room.waitTime;
                     for (Player player : this.room.getPlayers().keySet()) {
@@ -67,6 +71,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
                 }
             }else {
+                Tools.playSound(this.room, Sound.RANDOM_ORB);
                 this.room.startGame();
                 this.cancel();
             }
