@@ -2,8 +2,9 @@ package cn.lanink.murdermystery.addons.uishop;
 
 import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
+import cn.lanink.murdermystery.form.GuiCreate;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.ui.GuiCreate;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -21,7 +22,7 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashSet;
 
 /**
  * @author lt_name
@@ -31,7 +32,7 @@ public class UiShop extends AddonsBase implements Listener {
     private static final int DLC_UI_SHOP = 1111856485;
     private static final int DLC_UI_SHOP_OK = 1111856486;
     private ArrayList<String> items;
-    private final LinkedList<Player> cache = new LinkedList<>();
+    private final HashSet<Player> cache = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -72,17 +73,13 @@ public class UiShop extends AddonsBase implements Listener {
             return;
         }
         BaseRoom room = getMurderMystery().getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room != null && room.getStatus() == 2 &&
+        if (room != null && room.getStatus() == RoomStatus.GAME &&
                 item.getNamedTag().getBoolean("isMurderUiShop") && !this.cache.contains(player)) {
             this.cache.add(player);
             this.showUiShop(player);
             event.setCancelled(true);
-            Server.getInstance().getScheduler().scheduleDelayedTask(getMurderMystery(), new Task() {
-                @Override
-                public void onRun(int i) {
-                    cache.remove(player);
-                }
-            }, 10);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.getMurderMystery(),
+                    () -> cache.remove(player), 10);
         }
     }
 

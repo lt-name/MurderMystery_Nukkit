@@ -1,9 +1,9 @@
 package cn.lanink.murdermystery.listener.defaults;
 
-import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.listener.base.BaseMurderMysteryListener;
+import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.room.base.IRoomStatus;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -15,11 +15,8 @@ import java.util.HashSet;
 /**
  * @author lt_name
  */
-public class DefaultChatListener extends BaseMurderMysteryListener {
-
-    public DefaultChatListener(MurderMystery murderMystery) {
-        super(murderMystery);
-    }
+@SuppressWarnings("unused")
+public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
 
     /**
      * 玩家执行命令事件
@@ -52,7 +49,7 @@ public class DefaultChatListener extends BaseMurderMysteryListener {
         }
         event.setMessage("");
         event.setCancelled(true);
-        player.sendMessage(this.murderMystery.getLanguage(player).useCmdInRoom);
+        player.sendMessage(this.murderMystery.getLanguage(player).translateString("useCmdInRoom"));
     }
 
     /**
@@ -72,21 +69,21 @@ public class DefaultChatListener extends BaseMurderMysteryListener {
         }
         if (room.isSpectator(player)) {
             for (Player p : room.getSpectatorPlayers()) {
-                p.sendMessage(this.murderMystery.getLanguage(p).playerSpectatorChat
+                p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerSpectatorChat")
                         .replace("%player%", player.getName())
                         .replace("%message%", message));
             }
-        }else if (room.getPlayers(player) == 0) {
+        }else if (room.getPlayers(player) == PlayerIdentity.DEATH) {
             HashSet<Player> players = new HashSet<>(room.getPlayers().keySet());
             players.addAll(room.getSpectatorPlayers());
             for (Player p : players) {
-                if (room.getPlayers(p) == 0) {
-                    if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
-                        p.sendMessage(this.murderMystery.getLanguage(p).playerDeathChat
+                if (room.getPlayers(p) == PlayerIdentity.DEATH) {
+                    if (room.getStatus() == RoomStatus.GAME) {
+                        p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerDeathChat")
                                 .replace("%player%", player.getName())
                                 .replace("%message%", message));
                     }else {
-                        p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                        p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerChat")
                                 .replace("%player%", player.getName())
                                 .replace("%message%", message));
                     }
@@ -94,12 +91,12 @@ public class DefaultChatListener extends BaseMurderMysteryListener {
             }
         }else {
             for (Player p : room.getPlayers().keySet()) {
-                p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerChat")
                         .replace("%player%", player.getName())
                         .replace("%message%", message));
             }
             for (Player p : room.getSpectatorPlayers()) {
-                p.sendMessage(this.murderMystery.getLanguage(p).playerChat
+                p.sendMessage(this.murderMystery.getLanguage(p).translateString("playerChat")
                         .replace("%player%", player.getName())
                         .replace("%message%", message));
             }

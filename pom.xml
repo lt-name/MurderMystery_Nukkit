@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>MurderMystery</artifactId>
-    <version>1.0.8-PM1E-SNAPSHOT</version>
+    <version>1.1.0.0-PM1E</version>
 
     <licenses>
         <license>
@@ -24,8 +24,28 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>MurderMystery-v${project.version}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>*:*</include>
+                        </includes>
+                    </artifactSet>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -111,8 +131,27 @@
 
     <repositories>
         <repository>
-            <id>NukkitPetteriM1Edition-repo</id>
-            <name>NukkitPetteriM1Edition-snapshot</name>
+            <id>opencollab-repo-release</id>
+            <url>https://repo.opencollab.dev/maven-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>opencollab-repo-snapshot</id>
+            <url>https://repo.opencollab.dev/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>repo-lanink-cn</id>
             <url>https://repo.lanink.cn/</url>
         </repository>
     </repositories>
@@ -122,27 +161,25 @@
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
             <version>PM1E</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>de.theamychan.scoreboard</groupId>
-            <artifactId>ScoreboardAPI</artifactId>
-            <version>1.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ScoreboardAPI-1.3.jar</systemPath>
+            <groupId>cn.lanink</groupId>
+            <artifactId>MemoriesOfTime-GameCore</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gt.creeperface.nukkit.scoreboardapi</groupId>
-            <artifactId>ScoreboardAPI</artifactId>
-            <version>1.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ScoreboardAPI-1.2(creeperface).jar</systemPath>
+            <groupId>com.smallaswater.npc</groupId>
+            <artifactId>RsNPCX</artifactId>
+            <version>1.3.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>tip.Main</groupId>
-            <artifactId>Tips</artifactId>
-            <version>1.6.8</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Tips_v1.6.8.jar</systemPath>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>15.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

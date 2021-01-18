@@ -1,7 +1,7 @@
 name: MurderMystery
 main: cn.lanink.murdermystery.MurderMystery
-version: "1.0.8-SNAPSHOT"
-api: ["1.0.9", "1.0.11"]
+version: "1.1.0.0-PM1E"
+api: ["Nukkit-PM1E"]
 load: POSTWORLD
 author: "LT_Name"
 softdepend:
@@ -14,7 +14,7 @@ loadbefore:
   - "Tips"
 
 permissions:
-  MurderMystery.command.user:
+  murdermystery.user:
     default: true
-  MurderMystery.command.admin:
+  murdermystery.admin:
     default: op

@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.tasks.game;
 
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.IAsyncTipsTask;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
@@ -18,7 +19,7 @@ public class TipsTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.task.getStatus() != IAsyncTipsTask.ROOM_STATUS_GAME) {
+        if (this.task.getStatus() != RoomStatus.GAME) {
             this.cancel();
             return;
         }

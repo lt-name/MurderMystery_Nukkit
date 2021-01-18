@@ -5,7 +5,7 @@ import cn.lanink.murdermystery.command.usersubcommand.JoinRoom;
 import cn.lanink.murdermystery.command.usersubcommand.JoinSpectator;
 import cn.lanink.murdermystery.command.usersubcommand.QuitRoom;
 import cn.lanink.murdermystery.command.usersubcommand.RoomList;
-import cn.lanink.murdermystery.ui.GuiCreate;
+import cn.lanink.murdermystery.form.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -17,7 +17,7 @@ public class UserCommand extends BaseCommand {
     public UserCommand(String name, String[] aliases) {
         super(name, "MurderMystery 命令");
         this.setAliases(aliases);
-        this.setPermission("MurderMystery.command.user");
+        this.setPermission("murdermystery.user");
         this.addSubCommand(new JoinRoom("join"));
         this.addSubCommand(new JoinSpectator("joinspectator"));
         this.addSubCommand(new QuitRoom("quit"));
@@ -27,7 +27,8 @@ public class UserCommand extends BaseCommand {
 
     @Override
     public void sendHelp(CommandSender sender) {
-        sender.sendMessage(this.murderMystery.getLanguage(sender).userHelp.replace("%cmdName%", this.getName()));
+        sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("userHelp")
+                .replace("%cmdName%", this.getName()));
     }
 
     @Override
