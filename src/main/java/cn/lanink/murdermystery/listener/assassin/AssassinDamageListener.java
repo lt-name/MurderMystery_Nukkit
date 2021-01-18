@@ -19,7 +19,7 @@ public class AssassinDamageListener extends BaseMurderMysteryListener<AssassinMo
      * 实体受到另一实体伤害事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Player damager = (Player) event.getDamager();
