@@ -49,7 +49,7 @@ import java.util.concurrent.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "1.1.0 git-5557c49";
+    public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
     public static final ThreadPoolExecutor checkRoomThreadPool = new ThreadPoolExecutor(
