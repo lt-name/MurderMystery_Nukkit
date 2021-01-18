@@ -5,12 +5,16 @@ import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
+import cn.lanink.murdermystery.tasks.game.assassin.AssassinDistanceTip;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.item.ItemMap;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -55,7 +59,9 @@ public class AssassinModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("AssassinDamageListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("AssassinGameListener").addListenerRoom(this);
     }
 
     @Override
@@ -68,6 +74,13 @@ public class AssassinModeRoom extends BaseRoom {
                     language.translateString("game_assassin_title_assassinSubtitle"),
                     10, 40, 10);
         }
+    }
+
+    @Override
+    public void scheduleTask() {
+        super.scheduleTask();
+        Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
+                new AssassinDistanceTip(this), 5, true);
     }
 
     @Override
@@ -115,6 +128,11 @@ public class AssassinModeRoom extends BaseRoom {
                 }
             }
         }
+        for (Map.Entry<Player, Integer> entry : this.killerSwordCD.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
+            }
+        }
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
@@ -136,14 +154,13 @@ public class AssassinModeRoom extends BaseRoom {
 
     @Override
     public void asyncTipsTask() {
-        int time = this.setGameTime - this.gameTime;
         int playerNumber = this.getSurvivorPlayerNumber();
         String identity;
         for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
             entry.getKey().setNameTag("");
             Language language = this.murderMystery.getLanguage(entry.getKey());
             if (entry.getValue() == PlayerIdentity.ASSASSIN) {
-                identity = language.translateString("killer");
+                identity = language.translateString("player_identity_assassin");
             } else {
                 identity = language.translateString("death");
             }
@@ -156,6 +173,11 @@ public class AssassinModeRoom extends BaseRoom {
             ms.add(language.translateString("game_assassin_scoreboard_killCount")
                     .replace("%count%", this.killCount.getOrDefault(entry.getKey(), 0) + ""));
             ms.add("  ");
+            Integer cd = this.killerSwordCD.getOrDefault(entry.getKey(), 0);
+            if (cd > 0) {
+                ms.add(language.translateString("gameSwordCDScoreBoard")
+                        .replace("%time%", cd + ""));
+            }
             this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
         }
         //旁观玩家只显示部分信息
@@ -189,17 +211,14 @@ public class AssassinModeRoom extends BaseRoom {
             }
         }
         if (survivingPlayers.isEmpty()) {
+            if (MurderMystery.debug) {
+                this.murderMystery.getLogger().error("[debug] 分配目标时 存活玩家为空");
+            }
             return;
         }
         Collections.shuffle(survivingPlayers, MurderMystery.RANDOM);
 
         Player target = null;
-        for (Player p : survivingPlayers) {
-            if (!this.targetMap.containsKey(p) && !this.targetMap.containsValue(p)) {
-                target = p;
-                break;
-            }
-        }
         for (Player p : survivingPlayers) {
             if (!this.targetMap.containsValue(p)) {
                 target = p;
@@ -224,7 +243,38 @@ public class AssassinModeRoom extends BaseRoom {
 
     }
 
-    public void playerDeath(Player player) {
+    @Override
+    public void playerDamage(@NotNull Player damager, @NotNull Player player) {
+        if (this.targetMap.get(damager) == player) { //杀死目标
+            damager.sendTitle("",
+                    this.murderMystery.getLanguage(damager).translateString("game_assassin_killTarget"));
+            damager.getOffhandInventory().clearAll();
+            this.targetWait.add(damager);
+            this.killCount.put(damager, this.killCount.getOrDefault(damager, 0) + 1);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
+                    () -> this.assignTarget(damager), 60);
+            player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
+                    this.murderMystery.getLanguage(player).translateString("game_assassin_deathByAssassin"));
+            this.playerDeath(player);
+        }else if (this.targetMap.get(player) == damager) { //反杀
+            damager.sendTitle("", this.murderMystery.getLanguage(damager).translateString("game_assassin_targetKillAssassin"));
+            this.killCount.put(damager, this.killCount.getOrDefault(damager, 0) + 1);
+            player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
+                    this.murderMystery.getLanguage(player).translateString("game_assassin_deathByTarget"));
+            this.playerDeath(player);
+        }else { //找错
+            damager.addEffect(Effect.getEffect(2).setAmplifier(2).setDuration(100).setVisible(false));//缓慢
+            damager.addEffect(Effect.getEffect(15).setDuration(100).setVisible(false));//失明
+            Tools.playSound(damager, Sound.RANDOM_ANVIL_LAND);
+            damager.sendTitle("", this.murderMystery.getLanguage(damager).translateString("game_assassin_errorTarget"));
+            damager.getInventory().remove(Tools.getMurderMysteryItem(damager, 2));
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
+                    () -> damager.getInventory().setItem(1, Tools.getMurderMysteryItem(damager, 2)), 100);
+        }
+    }
+
+    @Override
+    public void playerDeath(@NotNull Player player) {
         super.playerDeath(player);
         this.targetMap.remove(player);
         if (this.targetMap.containsValue(player)) {

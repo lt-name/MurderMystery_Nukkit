@@ -30,11 +30,8 @@ public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRo
      * 玩家手持物品事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onItemHeld(PlayerItemHeldEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         Item item = event.getItem();
         if (player == null || item == null) {
@@ -47,13 +44,13 @@ public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRo
         CompoundTag tag = item.hasCompoundTag() ? item.getNamedTag() : null;
         if (room.getStatus() == RoomStatus.GAME && room.isPlaying(player) && room.getPlayers(player) == PlayerIdentity.KILLER) {
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
-                if (room.killerEffectCD < 1) {
+                if (room.killerEffectCD.getOrDefault(player, 0) < 1) {
                     Effect effect = Effect.getEffect(1);
                     effect.setAmplifier(2);
                     effect.setVisible(false);
                     effect.setDuration(40);
                     player.addEffect(effect);
-                    room.killerEffectCD = 10;
+                    room.killerEffectCD.put(player, 10);
                 }
             }else {
                 player.removeEffect(1);
@@ -65,11 +62,8 @@ public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRo
      * 玩家点击事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         Block block = event.getBlock();
         if (player == null || block == null) {
@@ -86,19 +80,19 @@ public class ClassicGameListener extends BaseMurderMysteryListener<ClassicModeRo
             if (tag != null && tag.getBoolean("isMurderItem")) {
                 switch (tag.getInt("MurderType")) {
                     case 2:
-                        if (room.killerSwordCD < 1) {
+                        if (room.killerSwordCD.getOrDefault(player, 0) < 1) {
+                            room.killerSwordCD.put(player, 5);
                             Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery,
                                     new SwordMoveTask(room, player));
-                            room.killerSwordCD = 5;
                         }else {
                             player.sendMessage(this.murderMystery.getLanguage(player).translateString("useItemSwordCD"));
                         }
                         break;
                     case 3:
-                        if (room.killerScanCD < 1) {
+                        if (room.killerScanCD.getOrDefault(player, 0) < 1) {
                             Server.getInstance().getScheduler().scheduleTask(this.murderMystery,
                                     new ScanTask(this.murderMystery, room, player));
-                            room.killerScanCD = 60;
+                            room.killerScanCD.put(player, 60);
                         }else {
                             player.sendMessage(this.murderMystery.getLanguage(player).translateString("useItemScanCD"));
                         }

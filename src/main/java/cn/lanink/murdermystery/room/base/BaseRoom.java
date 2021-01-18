@@ -29,6 +29,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -49,7 +50,9 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
     protected int minPlayers, maxPlayers; //房间人数
     public final int setWaitTime, setGameTime, setGoldSpawnTime;
     public int waitTime, gameTime, goldSpawnTime; //秒
-    public int killerEffectCD, killerSwordCD, killerScanCD; //杀手技能CD
+    public HashMap<Player, Integer> killerSwordCD = new HashMap<>(),
+            killerEffectCD = new HashMap<>(),
+            killerScanCD = new HashMap<>();
     protected final Position waitSpawn;
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
     protected final ArrayList<Vector3> goldSpawnVector3List = new ArrayList<>();
@@ -69,7 +72,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param level 世界
      * @param config 配置文件
      */
-    public BaseRoom(Level level, Config config) throws RoomLoadException {
+    public BaseRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         this.setStatus(RoomStatus.LEVEL_NOT_LOADED);
         this.level = level;
         this.levelName = level.getFolderName();
@@ -126,7 +129,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
     }
 
-    public final void setGameMode(String gameMode) {
+    public final void setGameMode(@NotNull String gameMode) {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
         }
@@ -140,7 +143,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param status 房间状态
      */
     @Override
-    public void setStatus(RoomStatus status) {
+    public void setStatus(@NotNull RoomStatus status) {
         this.status = status;
     }
 
@@ -172,9 +175,9 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
     public void initData() {
         this.waitTime = this.setWaitTime;
         this.gameTime = this.setGameTime;
-        this.killerEffectCD = 0;
-        this.killerSwordCD = 0;
-        this.killerScanCD = 0;
+        this.killerEffectCD.clear();
+        this.killerSwordCD.clear();
+        this.killerScanCD.clear();
         this.placeBlocks.clear();
         this.skinNumber.clear();
         this.skinCache.clear();
@@ -206,7 +209,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
     }
 
-    public MurderMysterySkin getGameSkin(Player player) {
+    public MurderMysterySkin getGameSkin(@NotNull Player player) {
         if (this.skinNumber.containsKey(player)) {
             return this.murderMystery.getSkins().get(this.skinNumber.get(player));
         }
@@ -218,7 +221,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      *
      * @param player 玩家
      */
-    public void setRandomSkin(Player player) {
+    public void setRandomSkin(@NotNull Player player) {
         for (Map.Entry<Integer, MurderMysterySkin> entry : this.murderMystery.getSkins().entrySet()) {
             if (!this.skinNumber.containsValue(entry.getKey())) {
                 this.skinCache.put(player, player.getSkin());
@@ -234,7 +237,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      *
      * @param player 玩家
      */
-    public void restorePlayerSkin(Player player) {
+    public void restorePlayerSkin(@NotNull Player player) {
         if (this.skinCache.containsKey(player)) {
             Tools.setHumanSkin(player, this.skinCache.get(player));
             this.skinCache.remove(player);
@@ -260,7 +263,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param player 玩家
      * @param spectator 观战
      */
-    public synchronized void joinRoom(Player player, boolean spectator) {
+    public synchronized void joinRoom(@NotNull Player player, boolean spectator) {
         if (this.getStatus() == RoomStatus.LEVEL_NOT_LOADED ||
                 this.getStatus() == RoomStatus.VICTORY) {
             return;
@@ -420,7 +423,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param player 玩家
      * @return 皮肤
      */
-    public Skin getPlayerSkin(Player player) {
+    public Skin getPlayerSkin(@NotNull Player player) {
         if (this.skinNumber.containsKey(player)) {
             return MurderMystery.getInstance().getSkins().get(this.skinNumber.get(player));
         }
@@ -586,14 +589,20 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             this.victory(1);
         }
         //杀手CD计算
-        if (this.killerEffectCD > 0) {
-            this.killerEffectCD--;
+        for (Map.Entry<Player, Integer> entry : this.killerEffectCD.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
+            }
         }
-        if (this.killerSwordCD > 0) {
-            this.killerSwordCD--;
+        for (Map.Entry<Player, Integer> entry : this.killerSwordCD.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
+            }
         }
-        if (this.killerScanCD > 0) {
-            this.killerScanCD--;
+        for (Map.Entry<Player, Integer> entry : this.killerScanCD.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
+            }
         }
         //TODO 需要验证
         if (this.detectiveBow != null && this.detectiveBow.isClosed()) {
@@ -693,17 +702,20 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             }
             ms.add("  ");
             if (entry.getValue() == PlayerIdentity.KILLER) {
-                if (this.killerEffectCD > 0) {
+                int effectCD = this.killerSwordCD.getOrDefault(entry.getKey(), 0);
+                if (effectCD > 0) {
                     ms.add(language.translateString("gameEffectCDScoreBoard")
-                            .replace("%time%", this.killerEffectCD + ""));
+                            .replace("%time%", effectCD + ""));
                 }
-                if (this.killerSwordCD > 0) {
+                int swordCD = this.killerSwordCD.getOrDefault(entry.getKey(), 0);
+                if (swordCD > 0) {
                     ms.add(language.translateString("gameSwordCDScoreBoard")
-                            .replace("%time%", this.killerSwordCD + ""));
+                            .replace("%time%", swordCD + ""));
                 }
-                if (this.killerScanCD > 0) {
+                int scanCD = this.killerScanCD.getOrDefault(entry.getKey(), 0);
+                if (swordCD > 0) {
                     ms.add(language.translateString("gameScanCDScoreBoard")
-                            .replace("%time%", this.killerScanCD + ""));
+                            .replace("%time%", scanCD + ""));
                 }
             }
             this.murderMystery.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
@@ -785,11 +797,11 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
     /**
      * 符合游戏条件的攻击
      *
-     * @param damage 攻击者
+     * @param damager 攻击者
      * @param player 被攻击者
      */
-    public void playerDamage(Player damage, Player player) {
-        MurderMysteryPlayerDamageEvent ev = new MurderMysteryPlayerDamageEvent(this, damage, player);
+    public void playerDamage(@NotNull Player damager, @NotNull Player player) {
+        MurderMysteryPlayerDamageEvent ev = new MurderMysteryPlayerDamageEvent(this, damager, player);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
@@ -799,8 +811,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             return;
         }
         //攻击者是杀手
-        if (this.getPlayers(damage) == PlayerIdentity.KILLER) {
-            damage.sendMessage(this.murderMystery.getLanguage(damage).translateString("killPlayer"));
+        if (this.getPlayers(damager) == PlayerIdentity.KILLER) {
+            damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killPlayer"));
             player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                     this.murderMystery.getLanguage(player).translateString("deathByKillerSubtitle"), 20, 60, 20);
             for (Player p : this.getPlayers().keySet()) {
@@ -810,16 +822,16 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             }
         }else { //攻击者是平民或侦探
             if (this.getPlayers(player) == PlayerIdentity.KILLER) {
-                damage.sendMessage(this.murderMystery.getLanguage(damage).translateString("killKiller"));
-                this.killKillerPlayer = damage;
+                damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killKiller"));
+                this.killKillerPlayer = damager;
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                         this.murderMystery.getLanguage(player).translateString("killerDeathSubtitle"), 10, 20, 20);
             } else {
-                damage.sendTitle(this.murderMystery.getLanguage(damage).translateString("deathTitle"),
-                        this.murderMystery.getLanguage(damage).translateString("deathByDamageTeammateSubtitle"), 20, 60, 20);
+                damager.sendTitle(this.murderMystery.getLanguage(damager).translateString("deathTitle"),
+                        this.murderMystery.getLanguage(damager).translateString("deathByDamageTeammateSubtitle"), 20, 60, 20);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                         this.murderMystery.getLanguage(player).translateString("deathByTeammateSubtitle"), 20, 60, 20);
-                this.playerDeath(damage);
+                this.playerDeath(damager);
             }
         }
         this.playerDeath(player);
@@ -830,7 +842,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      *
      * @param player 玩家
      */
-    public void playerDeath(Player player) {
+    public void playerDeath(@NotNull Player player) {
         MurderMysteryPlayerDeathEvent ev = new MurderMysteryPlayerDeathEvent(this, player);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -854,7 +866,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      *
      * @param player 玩家
      */
-    public void playerCorpseSpawn(Player player) {
+    public void playerCorpseSpawn(@NotNull Player player) {
         MurderMysteryPlayerCorpseSpawnEvent ev = new MurderMysteryPlayerCorpseSpawnEvent(this, player);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {

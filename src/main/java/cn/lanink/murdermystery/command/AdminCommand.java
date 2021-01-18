@@ -14,7 +14,15 @@ public class AdminCommand extends BaseCommand {
     public AdminCommand(String name, String[] aliases) {
         super(name, "MurderMystery 管理命令");
         this.setAliases(aliases);
-        this.setPermission("MurderMystery.command.admin");
+        this.setPermission("murdermystery.admin");
+        this.addSubCommand(new CreateRoom("CreateRoom"));
+        this.addSubCommand(new SetRoom("SetRoom"));
+        this.addSubCommand(new StartRoom("StartRoom"));
+        this.addSubCommand(new StopRoom("StopRoom"));
+        this.addSubCommand(new ReloadRoom("ReloadRoom"));
+        this.addSubCommand(new UnloadRoom("UnloadRoom"));
+        this.addSubCommand(new Version("version"));
+
         this.addSubCommand(new SetRoomName("setroomname"));
         this.addSubCommand(new SetWaitSpawn("setwaitspawn"));
         this.addSubCommand(new AddRandomSpawn("addrandomspawn"));
@@ -25,13 +33,7 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetGameMode("setgamemode"));
         this.addSubCommand(new SetMinPlayers("setminplayers"));
         this.addSubCommand(new SetMaxPlayers("setmaxplayers"));
-        this.addSubCommand(new CreateRoom("CreateRoom"));
-        this.addSubCommand(new SetRoom("SetRoom"));
-        this.addSubCommand(new StartRoom("startroom"));
-        this.addSubCommand(new StopRoom("stoproom"));
-        this.addSubCommand(new ReloadRoom("ReloadRoom"));
-        this.addSubCommand(new UnloadRoom("UnloadRoom"));
-        this.addSubCommand(new Version("version"));
+
         this.loadCommandBase();
     }
 

@@ -12,6 +12,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -176,8 +177,8 @@ public class InfectedModeRoom extends BaseRoom {
     }
 
     @Override
-    public void playerDamage(Player damage, Player player) {
-        if (this.getPlayers(damage) == PlayerIdentity.KILLER) {
+    public void playerDamage(@NotNull Player damager, @NotNull Player player) {
+        if (this.getPlayers(damager) == PlayerIdentity.KILLER) {
             if (this.getPlayers(player) == PlayerIdentity.KILLER) {
                 return;
             }
@@ -193,7 +194,7 @@ public class InfectedModeRoom extends BaseRoom {
     }
 
     @Override
-    public void playerDeath(Player player) {
+    public void playerDeath(@NotNull Player player) {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(3);

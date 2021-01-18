@@ -17,7 +17,7 @@ public class UserCommand extends BaseCommand {
     public UserCommand(String name, String[] aliases) {
         super(name, "MurderMystery 命令");
         this.setAliases(aliases);
-        this.setPermission("MurderMystery.command.user");
+        this.setPermission("murdermystery.user");
         this.addSubCommand(new JoinRoom("join"));
         this.addSubCommand(new JoinSpectator("joinspectator"));
         this.addSubCommand(new QuitRoom("quit"));

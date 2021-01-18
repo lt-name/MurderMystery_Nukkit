@@ -6,6 +6,7 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -35,10 +36,12 @@ public class WaitTask extends PluginTask<MurderMystery> {
             this.room.waitTime--;
             if (this.room.waitTime > 0) {
                 if (this.room.waitTime <= 10) {
-                    Tools.playSound(this.room, Sound.RANDOM_CLICK);
                     String title = "§e";
                     if (this.room.waitTime <= 3) {
                         title = "§c";
+                        Tools.playSound(this.room, Sound.NOTE_HARP);
+                    }else {
+                        Tools.playSound(this.room, Sound.NOTE_BASSATTACK);
                     }
                     title += this.room.waitTime;
                     for (Player player : this.room.getPlayers().keySet()) {
@@ -68,6 +71,8 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 }
             }else {
                 this.room.startGame();
+                Server.getInstance().getScheduler().scheduleDelayedTask(this.owner,
+                        () -> Tools.playSound(this.room, Sound.NOTE_FLUTE), 10);
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0 || this.room.getSpectatorPlayers().size() > 0) {

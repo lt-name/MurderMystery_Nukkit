@@ -458,7 +458,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         for (BaseRoom room : this.getListenerRooms().values()) {
-            if (room.isPlaying(player)) {
+            if (room.isPlaying(player) || room.isSpectator(player)) {
                 event.setRespawnPosition(room.getRandomSpawn().get(new Random().nextInt(room.getRandomSpawn().size())));
             }
         }
@@ -536,7 +536,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
                 return;
             }
-            if (room.getPlayers(player) == PlayerIdentity.KILLER) {
+            if (room.getPlayers(player) == PlayerIdentity.DEATH) {
                 player.dataPacket(event.getPacket());
                 event.setCancelled(true);
             }

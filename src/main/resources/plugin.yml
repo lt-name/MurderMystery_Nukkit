@@ -14,7 +14,7 @@ loadbefore:
   - "Tips"
 
 permissions:
-  MurderMystery.command.user:
+  murdermystery.user:
     default: true
-  MurderMystery.command.admin:
+  murdermystery.admin:
     default: op
