@@ -251,6 +251,7 @@ public class Tools {
         player.removeAllEffects();
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
+        player.resetInAirTicks();
         player.setGamemode(0);
         player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false)
                 .set(AdventureSettings.Type.ALLOW_FLIGHT, false)
