@@ -615,16 +615,8 @@ public class MurderMystery extends PluginBase {
      */
     public void unloadRooms() {
         if (this.rooms.size() > 0) {
-            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
-            while(it.hasNext()){
-                Map.Entry<String, BaseRoom> entry = it.next();
-                entry.getValue().endGame();
-                for (BaseMurderMysteryListener listener : this.murderMysteryListeners.values()) {
-                    listener.removeListenerRoom(entry.getValue().getLevelName());
-                }
-                getLogger().info(this.getLanguage(null).translateString("roomUnloadSuccess")
-                        .replace("%name%", this.roomName.get(entry.getKey()) + "(" + entry.getKey() + ")"));
-                it.remove();
+            for (String world : new HashSet<>(this.rooms.keySet())) {
+                this.unloadRoom(world);
             }
             this.rooms.clear();
         }
@@ -680,19 +672,23 @@ public class MurderMystery extends PluginBase {
                     if (skinData != null) {
                         skin.setSkinData(skinData);
                         skin.setSkinId(skinName);
-                        getLogger().info(this.getLanguage(null).translateString("skinLoadedSuccess")
+                        String tip = this.getLanguage(null).translateString("skinLoadedSuccess")
                                 .replace("%number%", x + "")
-                                .replace("%name%", skinName));
+                                .replace("%name%", skinName) + "  ";
 
                         try {
                             File wantedFile = new File(getDataFolder() + "/Skins/" + skinName + "/wanted.png");
                             if (wantedFile.exists()) {
                                 skin.setWantedImage(ImageIO.read(wantedFile));
-                                //TODO
-                                this.getLogger().info("编号：" + x + " 皮肤：" + skinName + " 通缉令图片已加载");
+                                tip += this.getLanguage().translateString("skinWantedLoadedSuccess");
+                            }else {
+                                throw new IOException();
                             }
-                        } catch (IOException ignored) { }
+                        } catch (IOException ignored) {
+                            tip += this.getLanguage().translateString("skinWantedLoadedFailure");
+                        }
 
+                        this.getLogger().info(tip);
                         this.skins.put(x, skin);
                         x++;
                     }else {
