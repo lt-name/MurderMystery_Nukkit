@@ -536,7 +536,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
                 return;
             }
-            if (room.getPlayers(player) == PlayerIdentity.KILLER) {
+            if (room.getPlayers(player) == PlayerIdentity.DEATH) {
                 player.dataPacket(event.getPacket());
                 event.setCancelled(true);
             }

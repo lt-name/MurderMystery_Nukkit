@@ -36,22 +36,23 @@ public class AssassinDistanceTip extends PluginTask<MurderMystery> {
             return;
         }
         for (Map.Entry<Player, Player> entry : this.room.targetMap.entrySet()) {
-            if (this.room.getPlayers(entry.getValue()) != PlayerIdentity.ASSASSIN) {
+            if (this.room.getPlayers(entry.getKey()) != PlayerIdentity.ASSASSIN) {
                 continue;
             }
             int t = this.tipTime.getOrDefault(entry.getValue(), 0) + 1;
             this.tipTime.put(entry.getValue(), t);
             double distance = entry.getKey().distance(entry.getValue());
             int flashingT = -1;
-            if (distance < 3) {
+            if (distance < 5) {
                 flashingT = 1;
-            }else if (distance < 5) {
-                flashingT = 2;
             }else if (distance < 10) {
+                flashingT = 2;
+            }else if (distance < 15) {
                 flashingT = 3;
             }
             if (flashingT == -1) {
                 this.set.remove(entry.getValue());
+                this.tipTime.put(entry.getValue(), 10);
                 continue;
             }
             if (t >= flashingT) {
