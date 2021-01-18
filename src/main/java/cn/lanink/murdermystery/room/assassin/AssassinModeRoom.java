@@ -59,6 +59,7 @@ public class AssassinModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultGameListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("AssassinDamageListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("AssassinGameListener").addListenerRoom(this);
     }
