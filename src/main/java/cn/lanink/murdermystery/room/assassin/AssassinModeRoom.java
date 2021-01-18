@@ -210,17 +210,14 @@ public class AssassinModeRoom extends BaseRoom {
             }
         }
         if (survivingPlayers.isEmpty()) {
+            if (MurderMystery.debug) {
+                this.murderMystery.getLogger().error("[debug] 分配目标时 存活玩家为空");
+            }
             return;
         }
         Collections.shuffle(survivingPlayers, MurderMystery.RANDOM);
 
         Player target = null;
-        for (Player p : survivingPlayers) {
-            if (!this.targetMap.containsKey(p) && !this.targetMap.containsValue(p)) {
-                target = p;
-                break;
-            }
-        }
         for (Player p : survivingPlayers) {
             if (!this.targetMap.containsValue(p)) {
                 target = p;
