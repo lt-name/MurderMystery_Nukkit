@@ -48,7 +48,7 @@ public class SetGameMode extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { CommandParameter.newType("gameMode", CommandParamType.TEXT) };
+        return new CommandParameter[] { new CommandParameter("gameMode", CommandParamType.TEXT, false) };
     }
 
 }

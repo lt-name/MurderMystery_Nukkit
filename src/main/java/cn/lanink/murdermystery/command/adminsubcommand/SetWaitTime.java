@@ -45,7 +45,7 @@ public class SetWaitTime extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { CommandParameter.newType("time", CommandParamType.INT) };
+        return new CommandParameter[] { new CommandParameter("time", CommandParamType.INT, false) };
     }
 
 }

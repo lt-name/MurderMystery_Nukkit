@@ -50,7 +50,7 @@ public class SetRoomName extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { CommandParameter.newType("name", CommandParamType.TEXT) };
+        return new CommandParameter[] { new CommandParameter("name", CommandParamType.TEXT, false) };
     }
 
 }

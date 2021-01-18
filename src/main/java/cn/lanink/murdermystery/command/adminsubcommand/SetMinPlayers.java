@@ -48,7 +48,7 @@ public class SetMinPlayers extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { CommandParameter.newType("minPlayers", CommandParamType.INT) };
+        return new CommandParameter[] { new CommandParameter("minPlayers", CommandParamType.INT, false) };
     }
 
 }
