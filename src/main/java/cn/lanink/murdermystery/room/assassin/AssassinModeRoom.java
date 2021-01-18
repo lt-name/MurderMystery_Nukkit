@@ -99,21 +99,21 @@ public class AssassinModeRoom extends BaseRoom {
             if ((time%5 == 0 && time != 0) || (time <= 5 && time != 0)) {
                 for (Player player : this.getPlayers().keySet()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
-                            .translateString("killerGetSwordTime").replace("%time%", time + ""));
+                            .translateString("game_assassin_wantedCountdown").replace("%time%", time + ""));
                 }
                 for (Player player : this.getSpectatorPlayers()) {
                     player.sendMessage(this.murderMystery.getLanguage(player)
-                            .translateString("killerGetSwordTime").replace("%time%", time + ""));
+                            .translateString("game_assassin_wantedCountdown").replace("%time%", time + ""));
                 }
                 Tools.playSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
                 this.assignIdentity();
                 for (Player player : this.getPlayers().keySet()) {
-                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
+                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("game_assassin_wanted"));
                 }
                 for (Player player : this.getSpectatorPlayers()) {
-                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
+                    player.sendMessage(this.murderMystery.getLanguage(player).translateString("game_assassin_wanted"));
                 }
                 for (Player player : this.getPlayers().keySet()) {
                     player.getInventory().setItem(1, Tools.getMurderMysteryItem(player, 2));
