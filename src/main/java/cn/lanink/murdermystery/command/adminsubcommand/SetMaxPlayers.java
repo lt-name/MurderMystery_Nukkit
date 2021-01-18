@@ -48,7 +48,7 @@ public class SetMaxPlayers extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { new CommandParameter("maxPlayers", CommandParamType.INT, false) };
+        return new CommandParameter[] { CommandParameter.newType("maxPlayers", CommandParamType.INT) };
     }
 
 }
