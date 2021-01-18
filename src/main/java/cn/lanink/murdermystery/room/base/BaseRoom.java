@@ -104,6 +104,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                     Integer.parseInt(s1[1]),
                     Integer.parseInt(s1[2]),
                     this.getLevel());
+            this.waitSpawn.y += 0.2; //防止卡地里
             for (String string : config.getStringList("randomSpawn")) {
                 String[] s = string.split(":");
                 this.randomSpawn.add(new Position(
