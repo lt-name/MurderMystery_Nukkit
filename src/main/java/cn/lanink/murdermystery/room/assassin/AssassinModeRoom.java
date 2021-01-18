@@ -153,11 +153,6 @@ public class AssassinModeRoom extends BaseRoom {
 
     @Override
     public void asyncTipsTask() {
-        for (Map.Entry<Player, Player> entry : this.targetMap.entrySet()) {
-            if (entry.getValue().distance(entry.getKey()) < 5) {
-                entry.getKey().sendTip("♡");
-            }
-        }
         int playerNumber = this.getSurvivorPlayerNumber();
         String identity;
         for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
