@@ -23,7 +23,7 @@ public class ReloadRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         this.murderMystery.reLoadRooms();
-        sender.sendMessage(this.murderMystery.getLanguage(sender).adminReload);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("adminReload"));
         return true;
     }
 

@@ -1,7 +1,7 @@
-package cn.lanink.murdermystery.ui;
+package cn.lanink.murdermystery.form;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
@@ -34,7 +34,7 @@ public class GuiListener implements Listener {
     @EventHandler
     public void onPlayerFormResponded(PlayerFormRespondedEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getWindow() == null || event.getResponse() == null) {
+        if (player == null || event.getWindow() == null) {
             return;
         }
         Language language = this.murderMystery.getLanguage(player);
@@ -43,6 +43,9 @@ public class GuiListener implements Listener {
             return;
         }
         GuiCreate.UI_CACHE.get(player).remove(event.getFormID());
+        if (event.getResponse() == null) {
+            return;
+        }
         String uName = this.murderMystery.getCmdUser();
         String aName = this.murderMystery.getCmdAdmin();
         if (event.getWindow() instanceof FormWindowSimple) {
@@ -62,7 +65,7 @@ public class GuiListener implements Listener {
                     }
                     break;
                 case ROOM_LIST_MENU:
-                    if (simple.getResponse().getClickedButton().getText().equals(language.buttonReturn)) {
+                    if (simple.getResponse().getClickedButton().getText().equals(language.translateString("buttonReturn"))) {
                         GuiCreate.sendUserMenu(player);
                     }else {
                         ArrayList<String> rooms = new ArrayList<>(this.murderMystery.getRooms().keySet());
@@ -74,33 +77,26 @@ public class GuiListener implements Listener {
                 case ADMIN_MENU:
                     switch (simple.getResponse().getClickedButtonId()) {
                         case 0:
-                            GuiCreate.sendAdminRoomNameMenu(player);
+                            this.server.dispatchCommand(player, aName + " CreateRoom");
                             break;
                         case 1:
-                            this.server.dispatchCommand(player, aName + " setwaitspawn");
-                            break;
-                        case 2:
-                            this.server.dispatchCommand(player, aName + " addrandomspawn");
+                            this.server.dispatchCommand(player, aName + " SetRoom");
                             break;
                         case 3:
-                            this.server.dispatchCommand(player, aName + " addgoldspawn");
+                            this.server.dispatchCommand(player, aName + " ReloadRoom");
                             break;
                         case 4:
-                            GuiCreate.sendAdminTimeMenu(player);
-                            break;
-                        case 5:
-                            GuiCreate.sendAdminPlayersMenu(player);
-                            break;
-                        case 6:
-                            GuiCreate.sendAdminModeMenu(player);
-                            break;
-                        case 7:
-                            this.server.dispatchCommand(player, aName + " reloadroom");
-                            break;
-                        case 8:
-                            this.server.dispatchCommand(player, aName + " unloadroom");
+                            this.server.dispatchCommand(player, aName + " UnloadRoom");
                             break;
                     }
+                    break;
+                case ADMIN_CREATE_ROOM_MENU:
+                    this.server.dispatchCommand(player, aName + " CreateRoom " +
+                            simple.getResponse().getClickedButton().getText());
+                    break;
+                case ADMIN_SET_ROOM_MENU:
+                    this.server.dispatchCommand(player, aName + " SetRoom " +
+                            simple.getResponse().getClickedButton().getText());
                     break;
             }
         }else if (event.getWindow() instanceof FormWindowCustom) {
@@ -109,14 +105,12 @@ public class GuiListener implements Listener {
                 case ADMIN_ROOM_NAME_MENU:
                     this.server.dispatchCommand(player, aName + " setroomname " + custom.getResponse().getInputResponse(0));
                     break;
-                case ADMIN_TIME_MENU:
+                case ADMIN_MORE_MENU:
                     this.server.dispatchCommand(player, aName + " setgoldspawntime " + custom.getResponse().getInputResponse(0));
                     this.server.dispatchCommand(player, aName + " setwaittime " + custom.getResponse().getInputResponse(1));
                     this.server.dispatchCommand(player, aName + " setgametime " + custom.getResponse().getInputResponse(2));
-                    break;
-                case ADMIN_PLAYERS_MENU:
-                    this.server.dispatchCommand(player, aName + " setminplayers " + custom.getResponse().getInputResponse(0));
-                    this.server.dispatchCommand(player, aName + " setmaxplayers " + custom.getResponse().getInputResponse(1));
+                    this.server.dispatchCommand(player, aName + " setminplayers " + custom.getResponse().getInputResponse(3));
+                    this.server.dispatchCommand(player, aName + " setmaxplayers " + custom.getResponse().getInputResponse(4));
                     break;
                 case ADMIN_MODE_MENU:
                     this.server.dispatchCommand(player, this.murderMystery.getCmdAdmin() + " setgamemode " +
@@ -128,10 +122,10 @@ public class GuiListener implements Listener {
             if (cache == GuiType.ROOM_JOIN_OK) {
                 try {
                     String roomName = modal.getContent().split("§7§k@")[1];
-                    if (language.buttonOK.equals(modal.getResponse().getClickedButtonText())) {
+                    if (language.translateString("buttonOK").equals(modal.getResponse().getClickedButtonText())) {
                         this.server.dispatchCommand(player, uName + " join " + roomName);
                         return;
-                    }else if (language.buttonSpectator.equals(modal.getResponse().getClickedButtonText())) {
+                    }else if (language.translateString("buttonSpectator").equals(modal.getResponse().getClickedButtonText())) {
                         this.server.dispatchCommand(player, uName + " joinspectator " + roomName);
                         return;
                     }

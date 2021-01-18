@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.utils;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
@@ -28,10 +29,8 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
-import cn.nukkit.utils.Utils;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -84,9 +83,11 @@ public class Tools {
     public static String getStringRoomMode(Player player, BaseRoom room) {
         switch (room.getGameMode()) {
             case "classic":
-                return MurderMystery.getInstance().getLanguage(player).Classic;
+                return MurderMystery.getInstance().getLanguage(player).translateString("Classic");
             case "infected":
-                return MurderMystery.getInstance().getLanguage(player).Infected;
+                return MurderMystery.getInstance().getLanguage(player).translateString("Infected");
+            case "assassin":
+                return MurderMystery.getInstance().getLanguage(player).translateString("assassin");
             default:
                 return room.getGameMode();
         }
@@ -121,20 +122,20 @@ public class Tools {
     public static void giveItem(Player player, int tagNumber) {
         switch (tagNumber) {
             case 1:
-                player.getInventory().setItem(1, getMurderItem(player, tagNumber));
+                player.getInventory().setItem(1, getMurderMysteryItem(player, tagNumber));
                 player.getInventory().setItem(2, Item.get(262, 0, 1));
                 break;
             case 2:
-                player.getInventory().setItem(1, getMurderItem(player, tagNumber));
-                player.getInventory().setItem(2, getMurderItem(player, 3));
+                player.getInventory().setItem(1, getMurderMysteryItem(player, tagNumber));
+                player.getInventory().setItem(2, getMurderMysteryItem(player, 3));
                 break;
             case 10:
-                player.getInventory().setItem(8, getMurderItem(player, tagNumber));
+                player.getInventory().setItem(8, getMurderMysteryItem(player, tagNumber));
                 break;
             case 21:
             case 22:
             case 23:
-                player.getInventory().addItem(getMurderItem(player, tagNumber));
+                player.getInventory().addItem(getMurderMysteryItem(player, tagNumber));
                 break;
             default:
                 break;
@@ -147,7 +148,7 @@ public class Tools {
      * @param tagNumber 道具编号
      * @return 物品
      */
-    public static Item getMurderItem(Player player, int tagNumber) {
+    public static Item getMurderMysteryItem(Player player, int tagNumber) {
         Item item;
         Language language = MurderMystery.getInstance().getLanguage(player);
         switch (tagNumber) {
@@ -156,32 +157,32 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 1));
-                item.setCustomName(language.itemDetectiveBow);
-                item.setLore(language.itemDetectiveBowLore.split("\n"));
+                item.setCustomName(language.translateString("itemDetectiveBow"));
+                item.setLore(language.translateString("itemDetectiveBowLore").split("\n"));
                 return item;
             case 2:
                 item = Item.get(267, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 2));
-                item.setCustomName(language.itemKillerSword);
-                item.setLore(language.itemKillerSwordLore.split("\n"));
+                item.setCustomName(language.translateString("itemKillerSword"));
+                item.setLore(language.translateString("itemKillerSwordLore").split("\n"));
                 return item;
             case 3:
                 item = Item.get(395, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 3));
-                item.setCustomName(language.itemScan);
-                item.setLore(language.itemScanLore.split("\n"));
+                item.setCustomName(language.translateString("itemScan"));
+                item.setLore(language.translateString("itemScanLore").split("\n"));
                 return item;
             case 10:
                 item = Item.get(324, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 10));
-                item.setCustomName(language.itemQuitRoom);
-                item.setLore(language.itemQuitRoomLore.split("\n"));
+                item.setCustomName(language.translateString("itemQuitRoom"));
+                item.setLore(language.translateString("itemQuitRoomLore").split("\n"));
                 return item;
             case 20:
                 item = Item.get(262, 0, 1);
@@ -194,24 +195,24 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 21));
-                item.setCustomName(language.itemPotion);
-                item.setLore(language.itemPotionLore.split("\n"));
+                item.setCustomName(language.translateString("itemPotion"));
+                item.setLore(language.translateString("itemPotionLore").split("\n"));
                 return item;
             case 22:
                 item = Item.get(241, 3, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 22));
-                item.setCustomName(language.itemShieldWall);
-                item.setLore(language.itemShieldWallLore.split("\n"));
+                item.setCustomName(language.translateString("itemShieldWall"));
+                item.setLore(language.translateString("itemShieldWallLore").split("\n"));
                 return item;
             case 23:
                 item = Item.get(332, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 23));
-                item.setCustomName(language.itemSnowball);
-                item.setLore(language.itemSnowballLore.split("\n"));
+                item.setCustomName(language.translateString("itemSnowball"));
+                item.setLore(language.translateString("itemSnowballLore").split("\n"));
                 return item;
             default:
                 return Item.get(0);
@@ -225,15 +226,17 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
-        if (human.getLevel() != null) {
-            for (Player player : human.getLevel().getPlayers().values()) {
-                PlayerSkinPacket packet = new PlayerSkinPacket();
-                packet.skin = skin;
-                packet.newSkinName = skin.getSkinId();
-                packet.oldSkinName = human.getSkin().getSkinId();
-                packet.uuid = human.getUniqueId();
-                player.dataPacket(packet);
-            }
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.skin = skin;
+        packet.newSkinName = skin.getSkinId();
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        HashSet<Player> players = new HashSet<>(human.getViewers().values());
+        if (human instanceof Player) {
+            players.add((Player) human);
+        }
+        if (!players.isEmpty()) {
+            Server.broadcastPacket(players, packet);
         }
         human.setSkin(skin);
     }
@@ -248,10 +251,11 @@ public class Tools {
         player.removeAllEffects();
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
+        player.resetInAirTicks();
         player.setGamemode(0);
-        player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false);
-        player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false);
-        player.getAdventureSettings().update();
+        player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false)
+                .set(AdventureSettings.Type.ALLOW_FLIGHT, false)
+                .update();
         if (joinRoom) {
             player.setNameTag("");
             player.setNameTagVisible(false);
@@ -392,71 +396,6 @@ public class Tools {
         nbt.putCompound("FireworkItem", NBTIO.putItemHelper(item));
         EntityFirework entity = new EntityFirework(position.getLevel().getChunk((int)position.x >> 4, (int)position.z >> 4), nbt);
         entity.spawnToAll();
-    }
-
-    public static boolean deleteFile(String file) {
-        return deleteFile(new File(file));
-    }
-
-    public static boolean deleteFile(File deleteFile) {
-        try {
-            if (!deleteFile.exists()) {
-                return true;
-            }
-            File[] files = deleteFile.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        deleteFile(file);
-                    }else if (!file.delete()) {
-                        throw new IOException("文件: " + file.getName() + " 删除失败！");
-                    }
-                }
-            }
-            if (!deleteFile.delete()) {
-                throw new IOException("文件: " + deleteFile.getName() + " 删除失败！");
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static boolean copyDir(String from, String to) {
-        return copyDir(new File(from), new File(to));
-    }
-
-    public static boolean copyDir(String from, File to) {
-        return copyDir(new File(from), to);
-    }
-
-    public static boolean copyDir(File from, String to) {
-        return copyDir(from, new File(to));
-    }
-
-    public static boolean copyDir(File from, File to) {
-        try {
-            File [] files = from.listFiles();
-            if (files != null) {
-                if (!to.exists() && !to.mkdirs()) {
-                    throw new IOException("文件夹: " + to.getName() + " 创建失败！");
-                }
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        copyDir(file, new File(to, file.getName()));
-                    }else {
-                        Utils.copyFile(file, new File(to, file.getName()));
-                    }
-                }
-                return true;
-            }else {
-                Utils.copyFile(from, to);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
 }

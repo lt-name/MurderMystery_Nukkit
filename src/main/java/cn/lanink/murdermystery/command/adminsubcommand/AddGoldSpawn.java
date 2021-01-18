@@ -33,7 +33,7 @@ public class AddGoldSpawn extends BaseSubCommand {
         list.add(s);
         config.set("goldSpawn", list);
         config.save();
-        sender.sendMessage(this.murderMystery.getLanguage(sender).adminAddGoldSpawn);
+        sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("adminAddGoldSpawn"));
         return true;
     }
 

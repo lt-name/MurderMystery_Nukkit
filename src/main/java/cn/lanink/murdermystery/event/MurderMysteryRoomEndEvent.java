@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.event;
 
 import cn.lanink.murdermystery.room.base.BaseRoom;
+import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.nukkit.Player;
 import cn.nukkit.event.HandlerList;
 
@@ -23,15 +24,15 @@ public class MurderMysteryRoomEndEvent extends MurderMysteryRoomEvent {
         this.room = room;
         this.victoryMode = victoryMode;
         if (victoryMode == 0) return;
-        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
             if (this.victoryMode == 3) {
-                if (entry.getValue() == 3) {
+                if (entry.getValue() == PlayerIdentity.KILLER) {
                     this.victoryPlayers.add(entry.getKey());
                 }else {
                     this.defeatPlayers.add(entry.getKey());
                 }
             }else {
-                if (entry.getValue() == 1 || entry.getValue() == 2) {
+                if (entry.getValue() == PlayerIdentity.COMMON_PEOPLE || entry.getValue() == PlayerIdentity.DETECTIVE) {
                     this.victoryPlayers.add(entry.getKey());
                 }else {
                     this.defeatPlayers.add(entry.getKey());

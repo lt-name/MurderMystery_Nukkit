@@ -1,10 +1,12 @@
 package cn.lanink.murdermystery.tasks;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
-import cn.lanink.murdermystery.utils.Language;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -23,7 +25,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != 1) {
+        if (this.room.getStatus() != RoomStatus.WAIT) {
             this.cancel();
             return;
         }
@@ -34,10 +36,12 @@ public class WaitTask extends PluginTask<MurderMystery> {
             this.room.waitTime--;
             if (this.room.waitTime > 0) {
                 if (this.room.waitTime <= 10) {
-                    Tools.playSound(this.room, Sound.RANDOM_CLICK);
                     String title = "§e";
                     if (this.room.waitTime <= 3) {
                         title = "§c";
+                        Tools.playSound(this.room, Sound.NOTE_HARP);
+                    }else {
+                        Tools.playSound(this.room, Sound.NOTE_BASSATTACK);
                     }
                     title += this.room.waitTime;
                     for (Player player : this.room.getPlayers().keySet()) {
@@ -51,11 +55,11 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 players.addAll(this.room.getSpectatorPlayers());
                 for (Player player : players) {
                     Language language = this.owner.getLanguage(player);
-                    String waitTimeBottom = language.waitTimeBottom
+                    String waitTimeBottom = language.translateString("waitTimeBottom")
                             .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
                             .replace("%playerNumber%", this.room.getPlayers().size() + "")
                             .replace("%time%", this.room.waitTime + "");
-                    LinkedList<String> ms =  new LinkedList<>(Arrays.asList(language.waitTimeScoreBoard
+                    LinkedList<String> ms =  new LinkedList<>(Arrays.asList(language.translateString("waitTimeScoreBoard")
                             .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
                             .replace("%playerNumber%", this.room.getPlayers().size() + "")
                             .replace("%maxPlayers%", this.room.getMaxPlayers() + "")
@@ -63,10 +67,12 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     if (!"".equals(waitTimeBottom.trim())) {
                         player.sendTip(waitTimeBottom);
                     }
-                    owner.getScoreboard().showScoreboard(player, language.scoreBoardTitle, ms);
+                    owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
                 }
             }else {
-                this.room.gameStartEvent();
+                this.room.startGame();
+                Server.getInstance().getScheduler().scheduleDelayedTask(this.owner,
+                        () -> Tools.playSound(this.room, Sound.NOTE_FLUTE), 10);
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0 || this.room.getSpectatorPlayers().size() > 0) {
@@ -77,10 +83,10 @@ public class WaitTask extends PluginTask<MurderMystery> {
             players.addAll(this.room.getSpectatorPlayers());
             for (Player player : players) {
                 Language language = this.owner.getLanguage(player);
-                String waitBottom = language.waitBottom
+                String waitBottom = language.translateString("waitBottom")
                         .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
                         .replace("%playerNumber%", this.room.getPlayers().size() + "");
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.waitScoreBoard
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(language.translateString("waitScoreBoard")
                         .replace("%roomMode%", Tools.getStringRoomMode(player, this.room))
                         .replace("%playerNumber%", room.getPlayers().size() + "")
                         .replace("%minPlayers%", this.room.getMinPlayers() + "")
@@ -88,10 +94,10 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 if (!"".equals(waitBottom.trim())) {
                     player.sendTip(waitBottom);
                 }
-                owner.getScoreboard().showScoreboard(player, language.scoreBoardTitle, ms);
+                owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
             }
         }else {
-            this.room.endGameEvent();
+            this.room.endGame();
             this.cancel();
         }
     }

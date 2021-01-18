@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.api;
 
+import cn.lanink.gamecore.api.Info;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.Player;

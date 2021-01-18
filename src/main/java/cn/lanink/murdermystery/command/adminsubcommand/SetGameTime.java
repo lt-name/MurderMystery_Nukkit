@@ -36,15 +36,17 @@ public class SetGameTime extends BaseSubCommand {
                     Config config = this.murderMystery.getRoomConfig(player.getLevel());
                     config.set("gameTime", time);
                     config.save();
-                    sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetGameTime.replace("%time%", args[1]));
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("adminSetGameTime")
+                            .replace("%time%", args[1]));
                 } else {
-                    sender.sendMessage(this.murderMystery.getLanguage(sender).adminSetGameTimeShort);
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("adminSetGameTimeShort"));
                 }
             }else {
-                sender.sendMessage(this.murderMystery.getLanguage(sender).adminNotNumber);
+                sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("adminNotNumber"));
             }
         }else {
-            sender.sendMessage(this.murderMystery.getLanguage(sender).cmdHelp.replace("%cmdName%", this.getName()));
+            sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("cmdHelp")
+                    .replace("%cmdName%", this.getName()));
         }
         return true;
     }
