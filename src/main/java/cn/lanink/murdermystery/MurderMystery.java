@@ -151,14 +151,16 @@ public class MurderMystery extends PluginBase {
                 if (file.isFile()) {
                     String name = file.getName().split("\\.")[0];
                     Language language = new Language(new Config(file, Config.YAML));
-                    //更新插件自带的语言文件
-                    if (languages.contains(name)) {
-                        this.saveResource("Resources/Language/" + name + ".yml",
-                                "Resources/Language/cache/new.yml", true);
-                        language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new.yml", Config.YAML));
+                    if (this.config.getBoolean("autoUpdateLanguage")) {
+                        //更新插件自带的语言文件
+                        if (languages.contains(name)) {
+                            this.saveResource("Resources/Language/" + name + ".yml",
+                                    "Resources/Language/cache/new.yml", true);
+                            language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new.yml", Config.YAML));
+                        }
+                        //以zh_CN为基础 更新所有语言文件
+                        language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new_zh_CN.yml", Config.YAML));
                     }
-                    //以zh_CN为基础 更新所有语言文件
-                    language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new_zh_CN.yml", Config.YAML));
                     this.languageMap.put(name, language);
                     getLogger().info("§aLanguage: " + name + " loaded !");
                 }
