@@ -73,7 +73,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                     player.getInventory().setItemInHand(item);
                 }
             }, 1);
-            if (room.getPlayers(player) == PlayerIdentity.COMMON_PEOPLE && room.getPlayers(player) == PlayerIdentity.DETECTIVE) {
+            if (room.getPlayers(player) == PlayerIdentity.COMMON_PEOPLE || room.getPlayers(player) == PlayerIdentity.DETECTIVE) {
                 event.getProjectile().namedTag = new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 20);
