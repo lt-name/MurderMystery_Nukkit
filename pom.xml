@@ -156,30 +156,42 @@
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>nukkit</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.smallaswater.npc</groupId>
             <artifactId>RsNPCX</artifactId>
             <version>1.3.0</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>20.1.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.10</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
