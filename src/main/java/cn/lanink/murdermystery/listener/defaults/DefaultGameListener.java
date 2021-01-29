@@ -148,6 +148,20 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 return;
             }
             if (item.getId() == Item.GOLD_INGOT && room.getStatus() == RoomStatus.GAME) {
+                event.setCancelled(true);
+                event.getItem().close();
+
+                Item playerHasItem = player.getInventory().getItem(8);
+                int count = playerHasItem.getCount() + 1;
+                if (playerHasItem.getId() != Item.GOLD_INGOT) {
+                    count = 1;
+                }
+                item.setCount(count);
+                player.getInventory().setItem(8, item);
+                if (playerHasItem.getId() != 0 && playerHasItem.getId() != Item.GOLD_INGOT) {
+                    player.getInventory().addItem(playerHasItem);
+                }
+
                 Tools.playSound(player, Sound.RANDOM_ORB);
                 return;
             }
