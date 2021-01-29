@@ -441,10 +441,11 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomStartEvent(this));
         Tools.cleanEntity(this.getLevel(), true);
         this.setStatus(RoomStatus.GAME);
-        //this.assignIdentity();
         Collections.shuffle(this.randomSpawn, MurderMystery.RANDOM);
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
+            player.getInventory().clearAll();
+            player.getUIInventory().clearAll();
             if (x >= this.getRandomSpawn().size()) {
                 x = 0;
             }
@@ -625,7 +626,9 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             this.goldSpawnTime = this.setGoldSpawnTime;
             Tools.cleanEntity(this.getLevel());
             for (Vector3 spawn : this.goldSpawnVector3List) {
-                this.getLevel().dropItem(spawn, Item.get(266, 0));
+                Item item = Item.get(266); //金锭
+                item.setNamedTag(new CompoundTag().putBoolean("cannotClickOnInventory", true));
+                this.getLevel().dropItem(spawn, item);
             }
         }
     }
@@ -640,20 +643,22 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                     continue;
                 }
                 int x = 0;
-                boolean bow = true;
+                boolean needBow = true;
                 for (Item item : entry.getKey().getInventory().getContents().values()) {
                     if (item.getId() == 266) {
                         x += item.getCount();
                         continue;
                     }
                     if (item.getId() == 261) {
-                        bow = false;
+                        needBow = false;
                     }
                 }
                 if (x > 9) {
-                    entry.getKey().getInventory().removeItem(Item.get(266, 0, 10));
+                    Item item = Item.get(266, 0, 10);
+                    item.setNamedTag(new CompoundTag().putBoolean("cannotClickOnInventory", true));
+                    entry.getKey().getInventory().removeItem(item);
                     entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
-                    if (bow) {
+                    if (needBow) {
                         entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
                     }
                     Tools.playSound(entry.getKey(), Sound.RANDOM_LEVELUP);
@@ -703,7 +708,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             }
             ms.add("  ");
             if (entry.getValue() == PlayerIdentity.KILLER) {
-                int effectCD = this.killerSwordCD.getOrDefault(entry.getKey(), 0);
+                int effectCD = this.killerEffectCD.getOrDefault(entry.getKey(), 0);
                 if (effectCD > 0) {
                     ms.add(language.translateString("gameEffectCDScoreBoard")
                             .replace("%time%", effectCD + ""));
@@ -714,7 +719,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                             .replace("%time%", swordCD + ""));
                 }
                 int scanCD = this.killerScanCD.getOrDefault(entry.getKey(), 0);
-                if (swordCD > 0) {
+                if (scanCD > 0) {
                     ms.add(language.translateString("gameScanCDScoreBoard")
                             .replace("%time%", scanCD + ""));
                 }
@@ -757,8 +762,6 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }while (random1 == random2);
         int i = 0;
         for (Player player : this.getPlayers().keySet()) {
-            player.getInventory().clearAll();
-            player.getUIInventory().clearAll();
             i++;
             //侦探
             if (i == random1) {
