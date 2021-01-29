@@ -708,7 +708,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             }
             ms.add("  ");
             if (entry.getValue() == PlayerIdentity.KILLER) {
-                int effectCD = this.killerSwordCD.getOrDefault(entry.getKey(), 0);
+                int effectCD = this.killerEffectCD.getOrDefault(entry.getKey(), 0);
                 if (effectCD > 0) {
                     ms.add(language.translateString("gameEffectCDScoreBoard")
                             .replace("%time%", effectCD + ""));
@@ -719,7 +719,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                             .replace("%time%", swordCD + ""));
                 }
                 int scanCD = this.killerScanCD.getOrDefault(entry.getKey(), 0);
-                if (swordCD > 0) {
+                if (scanCD > 0) {
                     ms.add(language.translateString("gameScanCDScoreBoard")
                             .replace("%time%", scanCD + ""));
                 }
