@@ -9,6 +9,9 @@ languageMappingTable:
   en_GB: "en_US"
   de: "de_DE"
 autoUpdateLanguage: false
+gameRecord:
+  provider: "file" #file, mysql
+
 #结束游戏后还原地图
 #注意：仅在首次加载房间时备份地图！
 #Restore the map(world) after the game is over

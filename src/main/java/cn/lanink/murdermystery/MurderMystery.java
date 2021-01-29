@@ -9,6 +9,8 @@ import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
 import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
 import cn.lanink.murdermystery.form.GuiListener;
+import cn.lanink.murdermystery.gamerecord.FileGameRecordManager;
+import cn.lanink.murdermystery.gamerecord.GameRecordManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.listener.assassin.AssassinDamageListener;
 import cn.lanink.murdermystery.listener.assassin.AssassinGameListener;
@@ -60,22 +62,30 @@ public class MurderMystery extends PluginBase {
             new LinkedBlockingQueue<>(),
             new ThreadPoolExecutor.DiscardPolicy());
     private static MurderMystery murderMystery;
-    private static AddonsManager addonsManager;
+
     private Config config;
     private Config temporaryRoomsConfig; //文件保存，防止崩服丢失数据
+
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
+
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, String> roomName = new HashMap<>(); //自定义房间名称
     private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
     private static final HashMap<String, Class<? extends BaseMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
     private final HashMap<String, BaseMurderMysteryListener> murderMysteryListeners = new HashMap<>();
+
     private final LinkedHashMap<Integer, MurderMysterySkin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
+
     private String cmdUser, cmdAdmin;
     private List<String> cmdUserAliases, cmdAdminAliases;
+
+    private static AddonsManager addonsManager;
+    private GameRecordManager gameRecordManager;
     private IScoreboard scoreboard;
+
     private boolean hasTips = false;
 
     private String serverWorldPath;
@@ -204,6 +214,12 @@ public class MurderMystery extends PluginBase {
         this.getLogger().info("§l§e https://github.com/lt-name/MurderMystery_Nukkit");
         this.getLogger().info("§l§eVersion: " + VERSION);
 
+        //加载记录管理器
+        if ("mysql".equalsIgnoreCase(config.getString("gameRecord.provider"))) {
+            //TODO
+        }else {
+            this.gameRecordManager = new FileGameRecordManager();
+        }
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
@@ -358,6 +374,10 @@ public class MurderMystery extends PluginBase {
 
     public static AddonsManager getAddonsManager() {
         return addonsManager;
+    }
+
+    public GameRecordManager getGameRecordManager() {
+        return this.gameRecordManager;
     }
 
     public IScoreboard getScoreboard() {

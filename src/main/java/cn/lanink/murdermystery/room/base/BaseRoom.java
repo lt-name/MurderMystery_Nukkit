@@ -9,6 +9,9 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
 import cn.lanink.murdermystery.event.*;
+import cn.lanink.murdermystery.gamerecord.GameRecordManager;
+import cn.lanink.murdermystery.gamerecord.roundrecord.PlayerRoundRecord;
+import cn.lanink.murdermystery.gamerecord.roundrecord.RoundRecord;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
@@ -908,11 +911,39 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
         if (this.getStatus() != RoomStatus.VICTORY && this.getPlayers().size() > 0) {
             this.setStatus(RoomStatus.VICTORY);
+            this.murderMystery.getGameRecordManager().addRoundRecord(this.getRoundRecord(victoryMode));
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
                     new VictoryTask(this.murderMystery, this, victoryMode), 20);
         }else {
             this.endGame();
         }
+    }
+
+    protected RoundRecord getRoundRecord(int victory) {
+        PlayerIdentity win;
+        if (victory == 3) {
+            win = PlayerIdentity.KILLER;
+        }else {
+            win = PlayerIdentity.COMMON_PEOPLE;
+        }
+
+        String killKillerPlayerName = "null";
+        if (this.killKillerPlayer != null) {
+            killKillerPlayerName = this.killKillerPlayer.getName();
+        }
+
+        //TODO
+        List<PlayerRoundRecord> playerRoundRecordList = new ArrayList<>();
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            playerRoundRecordList.add(
+                    new PlayerRoundRecord(entry.getKey().getName(), entry.getValue(), 0, 0));
+        }
+
+        return new RoundRecord(++GameRecordManager.roundRecordCount,
+                this.getGameMode(),
+                win,
+                killKillerPlayerName,
+                playerRoundRecordList);
     }
 
     /**
