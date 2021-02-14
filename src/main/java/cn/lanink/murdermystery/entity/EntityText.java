@@ -9,6 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 public class EntityText extends Entity {
 
+    @Override
     public int getNetworkId() {
         return 64;
     }
@@ -24,6 +25,7 @@ public class EntityText extends Entity {
         this.setPosition(new Vector3(player.x, player.y + 1, player.z));
     }
 
+    @Override
     protected void initEntity() {
         super.initEntity();
         this.setMaxHealth(20);
