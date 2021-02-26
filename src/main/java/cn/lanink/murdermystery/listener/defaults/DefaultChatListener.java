@@ -29,27 +29,34 @@ public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
         if (player == null || message == null) {
             return;
         }
+        message = message.replace("/", "").split(" ")[0];
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (message.startsWith(this.murderMystery.getCmdUser(), 1) ||
-                message.startsWith(this.murderMystery.getCmdAdmin(), 1)) {
+        if (this.murderMystery.getCmdUser().equalsIgnoreCase(message) ||
+                this.murderMystery.getCmdAdmin().equalsIgnoreCase(message)) {
             return;
         }
         for (String string : this.murderMystery.getCmdUserAliases()) {
-            if (message.startsWith(string, 1)) {
+            if (string.equalsIgnoreCase(message)) {
                 return;
             }
         }
         for (String string : this.murderMystery.getCmdAdminAliases()) {
-            if (message.startsWith(string, 1)) {
+            if (string.equalsIgnoreCase(message)) {
+                return;
+            }
+        }
+        for (String string : this.murderMystery.getCmdWhitelist()) {
+            if (string.equalsIgnoreCase(message)) {
                 return;
             }
         }
         event.setMessage("");
         event.setCancelled(true);
-        player.sendMessage(this.murderMystery.getLanguage(player).translateString("useCmdInRoom"));
+        player.sendMessage(this.murderMystery.getLanguage(player)
+                .translateString("useCmdInRoom"));
     }
 
     /**
