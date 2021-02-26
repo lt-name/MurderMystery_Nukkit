@@ -33,6 +33,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
+import lombok.Getter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -73,8 +74,14 @@ public class MurderMystery extends PluginBase {
     private final LinkedHashMap<Integer, MurderMysterySkin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
-    private String cmdUser, cmdAdmin;
-    private List<String> cmdUserAliases, cmdAdminAliases;
+
+    private String cmdUser;
+    private String cmdAdmin;
+    private List<String> cmdUserAliases;
+    private List<String> cmdAdminAliases;
+    @Getter
+    private List<String> cmdWhitelist;
+
     private IScoreboard scoreboard;
     private boolean hasTips = false;
 
@@ -135,6 +142,7 @@ public class MurderMystery extends PluginBase {
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
+        this.cmdWhitelist = this.config.getStringList("cmdWhitelist");
 
         this.saveResource("Resources/Language/zh_CN.yml",
                 "Resources/Language/cache/new_zh_CN.yml", true);

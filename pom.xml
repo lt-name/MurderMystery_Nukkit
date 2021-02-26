@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>MurderMystery</artifactId>
-    <version>1.1.2.0-PM1E</version>
+    <version>1.2.0.0-PM1E</version>
 
     <licenses>
         <license>
@@ -23,7 +23,6 @@
     </properties>
 
     <build>
-        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -160,8 +159,8 @@
 
         <dependency>
             <groupId>cn.nukkit</groupId>
-            <artifactId>Nukkit</artifactId>
-            <version>PM1E</version>
+            <artifactId>nukkit</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
