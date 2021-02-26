@@ -129,7 +129,7 @@
     </distributionManagement>
 
     <repositories>
-        <repository>
+        <!--repository>
             <id>opencollab-repo-release</id>
             <url>https://repo.opencollab.dev/maven-releases/</url>
             <releases>
@@ -148,7 +148,7 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-        </repository>
+        </repository-->
         <repository>
             <id>repo-lanink-cn</id>
             <url>https://repo.lanink.cn/</url>
@@ -159,8 +159,8 @@
 
         <dependency>
             <groupId>cn.nukkit</groupId>
-            <artifactId>nukkit</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>Nukkit</artifactId>
+            <version>PM1E</version>
             <scope>provided</scope>
         </dependency>
 
@@ -174,7 +174,7 @@
         <dependency>
             <groupId>com.smallaswater.npc</groupId>
             <artifactId>RsNPCX</artifactId>
-            <version>1.3.1</version>
+            <version>1.5.0</version>
             <scope>provided</scope>
         </dependency>
 
