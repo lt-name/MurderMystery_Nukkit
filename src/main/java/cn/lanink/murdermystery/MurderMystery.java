@@ -35,6 +35,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
+import lombok.Getter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -62,10 +63,9 @@ public class MurderMystery extends PluginBase {
             new LinkedBlockingQueue<>(),
             new ThreadPoolExecutor.DiscardPolicy());
     private static MurderMystery murderMystery;
-
+    private static AddonsManager addonsManager;
     private Config config;
     private Config temporaryRoomsConfig; //文件保存，防止崩服丢失数据
-
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
 
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
@@ -81,6 +81,8 @@ public class MurderMystery extends PluginBase {
 
     private String cmdUser, cmdAdmin;
     private List<String> cmdUserAliases, cmdAdminAliases;
+    @Getter
+    private List<String> cmdWhitelist;
 
     private static AddonsManager addonsManager;
     private GameRecordManager gameRecordManager;
@@ -145,6 +147,7 @@ public class MurderMystery extends PluginBase {
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
+        this.cmdWhitelist = this.config.getStringList("cmdWhitelist");
 
         this.saveResource("Resources/Language/zh_CN.yml",
                 "Resources/Language/cache/new_zh_CN.yml", true);
@@ -214,12 +217,6 @@ public class MurderMystery extends PluginBase {
         this.getLogger().info("§l§e https://github.com/lt-name/MurderMystery_Nukkit");
         this.getLogger().info("§l§eVersion: " + VERSION);
 
-        //加载记录管理器
-        if ("mysql".equalsIgnoreCase(config.getString("gameRecord.provider"))) {
-            //TODO
-        }else {
-            this.gameRecordManager = new FileGameRecordManager();
-        }
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
@@ -374,10 +371,6 @@ public class MurderMystery extends PluginBase {
 
     public static AddonsManager getAddonsManager() {
         return addonsManager;
-    }
-
-    public GameRecordManager getGameRecordManager() {
-        return this.gameRecordManager;
     }
 
     public IScoreboard getScoreboard() {

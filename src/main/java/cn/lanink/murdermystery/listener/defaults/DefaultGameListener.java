@@ -52,11 +52,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
      * 生命实体射出箭 事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onShootBow(EntityShootBowEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         if (event.getEntity() instanceof Player) {
             Player player = ((Player) event.getEntity()).getPlayer();
             if (player == null || event.getProjectile() == null) {
@@ -105,11 +102,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
      * 抛掷物被发射事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Entity entity = event.getEntity();
         if (entity == null) {
             return;
@@ -130,11 +124,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
      * 收起掉落的物品时
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPickupItem(InventoryPickupItemEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Item item = event.getItem().getItem();
         Level level = event.getItem().getLevel();
         BaseRoom room = this.getListenerRooms().get(level.getFolderName());
@@ -183,11 +174,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
      * 玩家点击事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         Block block = event.getBlock();
         if (player == null || block == null) {
@@ -298,11 +286,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
      * 玩家使用消耗品事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onItemConsume(PlayerItemConsumeEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         Item item = event.getItem();
         if (player == null || item == null || item.getNamedTag() == null) {
@@ -347,11 +332,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
      * 方块放置事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         Item item = event.getItem();
         Block block = event.getBlockReplace();
@@ -535,11 +517,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
      *
      * @param event 事件
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDataPacketReceive(DataPacketReceiveEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         if (event.getPacket() instanceof LevelSoundEventPacket ||
                 event.getPacket() instanceof LevelSoundEventPacketV1 ||
                 event.getPacket() instanceof LevelSoundEventPacketV2) {

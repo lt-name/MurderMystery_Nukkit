@@ -27,6 +27,11 @@ cmdUserAliases:
 cmdAdmin: murdermysteryadmin
 cmdAdminAliases:
   - kadmin
+#可以在游戏房间中使用的命令
+cmdWhitelist:
+  - ban
+  - kick
+  - report
 # 杀手胜利执行命令(仅杀手执行)
 killerVictoryCmd:
   - me 我胜利了
