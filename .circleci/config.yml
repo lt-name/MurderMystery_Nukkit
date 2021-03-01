@@ -10,8 +10,6 @@ jobs:
     steps:
 
       - checkout
-      
-      - run: git checkout master
 
       - run: 
           name: 'build'
