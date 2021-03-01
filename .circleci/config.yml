@@ -1,0 +1,23 @@
+version: 2.1
+jobs:
+  build:
+    
+    working_directory: ~/MurderMystery_Nukkit
+
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+
+    steps:
+
+      - checkout
+      
+      - run: git checkout master
+
+      - run: 
+          name: 'build'
+          command:
+            mvn clean package
+
+      - store_artifacts:
+          path: "target/*.jar"
+        
