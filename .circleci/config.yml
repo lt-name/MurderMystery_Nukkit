@@ -19,5 +19,4 @@ jobs:
             mvn clean package
 
       - store_artifacts:
-          path: "target/*.jar"
-        
+          path: target
