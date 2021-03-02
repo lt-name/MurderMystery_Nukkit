@@ -32,10 +32,6 @@ public abstract class AddonsBase implements CommandExecutor {
     private File configFile;
     private Config config;
 
-    public AddonsBase() {
-
-    }
-
     public final void init(String addonsName) throws AddonsException {
         if (this.isEnabled) {
             throw new AddonsException("[Error] 请勿在加载后执行此方法！");

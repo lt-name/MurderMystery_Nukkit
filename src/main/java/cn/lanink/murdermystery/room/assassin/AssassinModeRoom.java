@@ -54,6 +54,7 @@ public class AssassinModeRoom extends BaseRoom {
     /**
      * 启用监听器
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void enableListener() {
         this.murderMystery.getMurderMysteryListeners().get("RoomLevelProtection").addListenerRoom(this);
