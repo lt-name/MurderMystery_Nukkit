@@ -25,6 +25,12 @@ public class EntityText extends Entity {
         this.setPosition(new Vector3(player.x, player.y + 1, player.z));
     }
 
+    @Deprecated //只是为了兼容PN
+    public EntityText(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+        this.close();
+    }
+
     @Override
     protected void initEntity() {
         super.initEntity();
