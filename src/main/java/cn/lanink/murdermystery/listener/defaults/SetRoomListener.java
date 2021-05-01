@@ -82,6 +82,8 @@ public class SetRoomListener implements Listener {
                                 config.remove("maxPlayers");
                             }
                             break;
+                        default:
+                            break;
                     }
                     task.setRoomSchedule(task.getBackRoomSchedule());
                     break;
@@ -134,6 +136,8 @@ public class SetRoomListener implements Listener {
                             config.set("goldSpawn", goldSpawns);
                             break;
                     }
+                    break;
+                default:
                     break;
             }
         }

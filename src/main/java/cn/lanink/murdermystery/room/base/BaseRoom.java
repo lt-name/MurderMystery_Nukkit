@@ -47,25 +47,39 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
 
-    private String gameMode = null;
     protected MurderMystery murderMystery = MurderMystery.getInstance();
+
+    private String gameMode = null;
+
     protected RoomStatus status;
-    protected int minPlayers, maxPlayers; //房间人数
-    public final int setWaitTime, setGameTime, setGoldSpawnTime;
+
+    protected int minPlayers; //房间人数
+    protected int maxPlayers;
+
+    public final int setWaitTime;
+    public final int setGameTime;
+    public final int setGoldSpawnTime;
     public int waitTime, gameTime, goldSpawnTime; //秒
-    public HashMap<Player, Integer> killerSwordCD = new HashMap<>(),
-            killerEffectCD = new HashMap<>(),
-            killerScanCD = new HashMap<>();
+
+    public Map<Player, Integer> killerSwordCD = new HashMap<>();
+    public Map<Player, Integer> killerEffectCD = new HashMap<>();
+    public Map<Player, Integer> killerScanCD = new HashMap<>();
+
     protected final Position waitSpawn;
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
     protected final ArrayList<Vector3> goldSpawnVector3List = new ArrayList<>();
+
     protected Level level;
     private final String levelName;
+
     public List<List<Vector3>> placeBlocks = new LinkedList<>();
+
     protected final ConcurrentHashMap<Player, PlayerIdentity> players = new ConcurrentHashMap<>();
     protected final Set<Player> spectatorPlayers = Collections.synchronizedSet(new HashSet<>()); //旁观玩家
+
     protected final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
     protected final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
+
     public Player killKillerPlayer = null; //击杀杀手的玩家
     public EntityItem detectiveBow = null; //掉落的侦探弓
 
@@ -192,7 +206,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
     /**
      * 启用监听器
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void enableListener() {
         HashMap<String, BaseMurderMysteryListener> map = this.murderMystery.getMurderMysteryListeners();
         map.get("RoomLevelProtection").addListenerRoom(this);

@@ -2,6 +2,8 @@ package cn.lanink.murdermystery.entity.data;
 
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.ItemMap;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.awt.image.BufferedImage;
 
@@ -10,7 +12,10 @@ import java.awt.image.BufferedImage;
  */
 public class MurderMysterySkin extends Skin {
 
-    BufferedImage wantedImage = new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
+    @Setter
+    @Getter
+    private BufferedImage wantedImage =
+            new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
 
     public MurderMysterySkin() {
         super();
@@ -21,14 +26,6 @@ public class MurderMysterySkin extends Skin {
         this.setSkinData(skin.getSkinData());
         this.setGeometryName(skin.getSkinResourcePatch());
         this.setGeometryData(skin.getGeometryData());
-    }
-
-    public void setWantedImage(BufferedImage wantedImage) {
-        this.wantedImage = wantedImage;
-    }
-
-    public BufferedImage getWantedImage() {
-        return this.wantedImage;
     }
 
     public ItemMap getItemMap() {
