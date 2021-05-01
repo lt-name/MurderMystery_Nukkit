@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>MurderMystery</artifactId>
-    <version>1.2.0.0-PM1E</version>
+    <version>1.2.1.0-PM1E</version>
 
     <licenses>
         <license>
@@ -129,7 +129,7 @@
     </distributionManagement>
 
     <repositories>
-        <!--repository>
+        <repository>
             <id>opencollab-repo-release</id>
             <url>https://repo.opencollab.dev/maven-releases/</url>
             <releases>
@@ -148,7 +148,7 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-        </repository-->
+        </repository>
         <repository>
             <id>repo-lanink-cn</id>
             <url>https://repo.lanink.cn/</url>
@@ -159,8 +159,8 @@
 
         <dependency>
             <groupId>cn.nukkit</groupId>
-            <artifactId>Nukkit</artifactId>
-            <version>PM1E</version>
+            <artifactId>nukkit</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

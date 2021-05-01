@@ -69,7 +69,9 @@ public class MurderMystery extends PluginBase {
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, String> roomName = new HashMap<>(); //自定义房间名称
     private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
+    @SuppressWarnings("rawtypes")
     private static final HashMap<String, Class<? extends BaseMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
+    @SuppressWarnings("rawtypes")
     private final HashMap<String, BaseMurderMysteryListener> murderMysteryListeners = new HashMap<>();
     private final LinkedHashMap<Integer, MurderMysterySkin> skins = new LinkedHashMap<>();
     private Skin sword;
@@ -144,6 +146,19 @@ public class MurderMystery extends PluginBase {
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
         this.cmdWhitelist = this.config.getStringList("cmdWhitelist");
 
+        this.loadLanguage();
+
+        //扩展
+        if (addonsManager == null) addonsManager = new AddonsManager(this);
+
+        //注册监听器
+        this.registerListeners();
+
+        //注册房间类
+        this.registerRooms();
+    }
+
+    private void loadLanguage() {
         this.saveResource("Resources/Language/zh_CN.yml",
                 "Resources/Language/cache/new_zh_CN.yml", true);
         //语言文件 (按时间排序/Sort by time)
@@ -176,27 +191,25 @@ public class MurderMystery extends PluginBase {
         }else {
             this.getLogger().error("§cFailed to load language file! The plugin does not work");
             this.getServer().getPluginManager().disablePlugin(this);
-            return;
         }
         if (!this.languageMap.containsKey(this.defaultLanguage)) {
             this.getLogger().error("§cNo default language found: " + this.defaultLanguage + " Has been set to 'zh_CN'");
             this.defaultLanguage = "zh_CN";
         }
+    }
 
-        //扩展
-        if (addonsManager == null) addonsManager = new AddonsManager(this);
+    private void registerListeners() {
+        registerListeners("RoomLevelProtection", RoomLevelProtection.class);
+        registerListeners("DefaultGameListener", DefaultGameListener.class);
+        registerListeners("DefaultChatListener", DefaultChatListener.class);
+        registerListeners("DefaultDamageListener", DefaultDamageListener.class);
+        registerListeners("ClassicGameListener", ClassicGameListener.class);
+        registerListeners("ClassicDamageListener", ClassicDamageListener.class);
+        registerListeners("AssassinDamageListener", AssassinDamageListener.class);
+        registerListeners("AssassinGameListener", AssassinGameListener.class);
+    }
 
-        //注册监听器
-        registerListener("RoomLevelProtection", RoomLevelProtection.class);
-        registerListener("DefaultGameListener", DefaultGameListener.class);
-        registerListener("DefaultChatListener", DefaultChatListener.class);
-        registerListener("DefaultDamageListener", DefaultDamageListener.class);
-        registerListener("ClassicGameListener", ClassicGameListener.class);
-        registerListener("ClassicDamageListener", ClassicDamageListener.class);
-        registerListener("AssassinDamageListener", AssassinDamageListener.class);
-        registerListener("AssassinGameListener", AssassinGameListener.class);
-
-        //注册房间类
+    private void registerRooms() {
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("infected", InfectedModeRoom.class);
         registerRoom("assassin", AssassinModeRoom.class);
@@ -218,7 +231,7 @@ public class MurderMystery extends PluginBase {
         try {
             Class.forName("tip.Main");
             if (getServer().getPluginManager().getPlugin("Tips").isDisabled()) {
-                throw new Exception("Not Loaded");
+                throw new RuntimeException("Not Loaded");
             }
             this.hasTips = true;
         } catch (Exception ignored) {
@@ -309,10 +322,12 @@ public class MurderMystery extends PluginBase {
      * @param name 名称
      * @param listenerClass 监听器类
      */
-    public static void registerListener(String name, Class<? extends BaseMurderMysteryListener> listenerClass) {
+    @SuppressWarnings("rawtypes")
+    public static void registerListeners(String name, Class<? extends BaseMurderMysteryListener> listenerClass) {
         LISTENER_CLASS.put(name, listenerClass);
     }
 
+    @SuppressWarnings("rawtypes")
     public void loadAllListener() {
         for (Map.Entry<String, Class<? extends BaseMurderMysteryListener>> entry : LISTENER_CLASS.entrySet()) {
             try {
@@ -325,6 +340,7 @@ public class MurderMystery extends PluginBase {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public void loadListener(BaseMurderMysteryListener baseMurderMysteryListener) {
         this.murderMysteryListeners.put(baseMurderMysteryListener.getListenerName(), baseMurderMysteryListener);
         this.getServer().getPluginManager().registerEvents(baseMurderMysteryListener, this);
@@ -341,6 +357,7 @@ public class MurderMystery extends PluginBase {
         return ROOM_CLASS;
     }
 
+    @SuppressWarnings("rawtypes")
     public HashMap<String, BaseMurderMysteryListener> getMurderMysteryListeners() {
         return this.murderMysteryListeners;
     }
@@ -636,15 +653,16 @@ public class MurderMystery extends PluginBase {
         this.roomConfigs.clear();
     }
 
+    @SuppressWarnings("rawtypes")
     public void unloadRoom(String world) {
         if (this.rooms.containsKey(world)) {
-            this.rooms.get(world).endGame();
+            BaseRoom room = this.rooms.remove(world);
+            room.endGame();
             for (BaseMurderMysteryListener listener : this.murderMysteryListeners.values()) {
                 listener.removeListenerRoom(world);
             }
-            this.rooms.remove(world);
-            getLogger().info(this.getLanguage(null).translateString("roomUnloadSuccess")
-                    .replace("%name%", this.roomName.get(world) + "(" + world + ")"));
+            this.getLogger().info(this.getLanguage().translateString("roomUnloadSuccess")
+                    .replace("%name%", room.getFullRoomName()));
             this.roomName.remove(world);
         }
     }

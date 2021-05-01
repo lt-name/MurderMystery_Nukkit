@@ -265,6 +265,7 @@ public class Tools {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
+            player.setAllowModifyWorld(true);
         }
     }
 

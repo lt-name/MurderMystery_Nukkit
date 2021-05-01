@@ -16,6 +16,7 @@ import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class GuiCreate {
      * 显示用户菜单
      * @param player 玩家
      */
-    public static void sendUserMenu(Player player) {
+    public static void sendUserMenu(@NotNull Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         simple.addButton(new ElementButton(language.translateString("userMenuButton1"), new ElementButtonImageData("path", "textures/ui/switch_start_button")));
@@ -44,7 +45,7 @@ public class GuiCreate {
      * 显示管理菜单
      * @param player 玩家
      */
-    public static void sendAdminMenu(Player player) {
+    public static void sendAdminMenu(@NotNull Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         simple.addButton(new ElementButton(language.translateString("gui_admin_main_createRoom"), new ElementButtonImageData("path", "textures/ui/World")));
@@ -58,7 +59,7 @@ public class GuiCreate {
      * 显示创建房间菜单（选择地图）
      * @param player 玩家
      */
-    public static void sendCreateRoomMenu(Player player) {
+    public static void sendCreateRoomMenu(@NotNull Player player) {
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME,
                 MURDER_MYSTERY.getLanguage(player).translateString("gui_admin_room_selectWorld"));
         for (Level level : Server.getInstance().getLevels().values()) {
@@ -73,7 +74,7 @@ public class GuiCreate {
      * 显示设置房间菜单（选择房间）
      * @param player 玩家
      */
-    public static void sendSetRoomMenu(Player player) {
+    public static void sendSetRoomMenu(@NotNull Player player) {
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME,
                 MURDER_MYSTERY.getLanguage(player).translateString("gui_admin_room_selectRoom"));
         for (String roomName : MURDER_MYSTERY.getRoomConfigs().keySet()) {
@@ -86,7 +87,7 @@ public class GuiCreate {
      * 显示设置房间名称菜单
      * @param player 玩家
      */
-    public static void sendAdminRoomNameMenu(Player player) {
+    public static void sendAdminRoomNameMenu(@NotNull Player player) {
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementInput("RoomName", "", player.getLevel().getFolderName()));
         showFormWindow(player, custom, GuiType.ADMIN_ROOM_NAME_MENU);
@@ -96,7 +97,7 @@ public class GuiCreate {
      * 显示设置时间菜单
      * @param player 玩家
      */
-    public static void sendAdminMoreMenu(Player player) {
+    public static void sendAdminMoreMenu(@NotNull Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText1"), "", "20"));
@@ -111,7 +112,7 @@ public class GuiCreate {
      * 设置房间模式菜单
      * @param player 玩家
      */
-    public static void sendAdminModeMenu(Player player) {
+    public static void sendAdminModeMenu(@NotNull Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementDropdown(language.translateString("gui_admin_room_selectGameMode"),
@@ -123,7 +124,7 @@ public class GuiCreate {
      * 显示房间列表菜单
      * @param player 玩家
      */
-    public static void sendRoomListMenu(Player player) {
+    public static void sendRoomListMenu(@NotNull Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         for (Map.Entry<String, BaseRoom> entry : MurderMystery.getInstance().getRooms().entrySet()) {
@@ -141,7 +142,7 @@ public class GuiCreate {
      * @param player 玩家
      * @param world 房间名字
      */
-    public static void sendRoomJoinOkMenu(Player player, String world) {
+    public static void sendRoomJoinOkMenu(@NotNull Player player, @NotNull String world) {
         Language language = MURDER_MYSTERY.getLanguage(player);
         FormWindowModal modal;
         world = world.replace("§e§l", "").trim();
@@ -177,7 +178,7 @@ public class GuiCreate {
         showFormWindow(player, modal, GuiType.ROOM_JOIN_OK);
     }
 
-    public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
+    public static void showFormWindow(@NotNull Player player, @NotNull FormWindow window, @NotNull GuiType guiType) {
         UI_CACHE.computeIfAbsent(player, i -> new HashMap<>()).put(player.showFormWindow(window), guiType);
     }
 
