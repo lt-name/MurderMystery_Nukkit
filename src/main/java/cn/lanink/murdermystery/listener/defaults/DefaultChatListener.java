@@ -72,6 +72,14 @@ public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
         }
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
         if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
+            for (BaseRoom r : this.murderMystery.getRooms().values()) {
+                for (Player p : r.getPlayers().keySet()) {
+                    event.getRecipients().remove(p);
+                }
+                for (Player p : r.getSpectatorPlayers()) {
+                    event.getRecipients().remove(p);
+                }
+            }
             return;
         }
         if (room.isSpectator(player)) {
