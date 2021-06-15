@@ -214,6 +214,10 @@ public class Tools {
                 item.setCustomName(language.translateString("itemSnowball"));
                 item.setLore(language.translateString("itemSnowballLore").split("\n"));
                 return item;
+            case 266:
+                item = Item.get(266, 0, 1); //金锭
+                item.setNamedTag(new CompoundTag().putBoolean("cannotClickOnInventory", true));
+                return item;
             default:
                 return Item.get(0);
         }

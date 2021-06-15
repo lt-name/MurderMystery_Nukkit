@@ -640,9 +640,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             this.goldSpawnTime = this.setGoldSpawnTime;
             Tools.cleanEntity(this.getLevel());
             for (Vector3 spawn : this.goldSpawnVector3List) {
-                Item item = Item.get(266); //金锭
-                item.setNamedTag(new CompoundTag().putBoolean("cannotClickOnInventory", true));
-                this.getLevel().dropItem(spawn, item);
+                this.getLevel().dropItem(spawn, Tools.getMurderMysteryItem(null, 266));
             }
         }
     }
@@ -668,9 +666,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                     }
                 }
                 if (x > 9) {
-                    Item item = Item.get(266, 0, 10);
-                    item.setNamedTag(new CompoundTag().putBoolean("cannotClickOnInventory", true));
-                    entry.getKey().getInventory().removeItem(item);
+                    entry.getKey().getInventory().removeItem(Tools.getMurderMysteryItem(null, 266));
                     entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
                     if (needBow) {
                         entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
