@@ -34,7 +34,7 @@ public class AssassinModeRoom extends BaseRoom {
      * @param level  世界
      * @param config 配置文件
      */
-    public AssassinModeRoom(Level level, Config config) throws RoomLoadException {
+    public AssassinModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
     }
 
@@ -206,7 +206,7 @@ public class AssassinModeRoom extends BaseRoom {
         }
     }
 
-    public void assignTarget(Player player) {
+    public void assignTarget(@NotNull Player player) {
         if (this.getPlayers(player) != PlayerIdentity.ASSASSIN) {
             return;
         }

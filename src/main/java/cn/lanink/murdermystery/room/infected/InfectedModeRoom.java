@@ -36,7 +36,7 @@ public class InfectedModeRoom extends BaseRoom {
      * @param level 世界
      * @param config 配置文件
      */
-    public InfectedModeRoom(Level level, Config config) throws RoomLoadException {
+    public InfectedModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
         if (MurderMystery.debug) {
             this.minPlayers = 2;
@@ -209,7 +209,7 @@ public class InfectedModeRoom extends BaseRoom {
         this.playerRespawnTime.put(player, 10);
     }
 
-    public void playerRespawn(Player player) {
+    public void playerRespawn(@NotNull Player player) {
         Tools.showPlayer(this, player);
         Tools.rePlayerState(player, true);
         player.getInventory().setItem(1, ItemManager.get(player, 2));

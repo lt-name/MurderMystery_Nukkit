@@ -9,6 +9,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
@@ -23,7 +24,7 @@ public class DoubleRoomMode extends ClassicModeRoom {
      * @param level  世界
      * @param config 配置文件
      */
-    public DoubleRoomMode(Level level, Config config) throws RoomLoadException {
+    public DoubleRoomMode(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
         if (this.minPlayers < 5) {
             this.minPlayers = 5;
@@ -36,6 +37,7 @@ public class DoubleRoomMode extends ClassicModeRoom {
     /**
      * 分配玩家身份
      */
+    @Override
     protected void assignIdentity() {
         MurderMysteryRoomAssignIdentityEvent ev = new MurderMysteryRoomAssignIdentityEvent(this);
         Server.getInstance().getPluginManager().callEvent(ev);
