@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.addons.uishop;
 
 import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
-import cn.lanink.murdermystery.form.GuiCreate;
+import cn.lanink.murdermystery.form.FormCreate;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
@@ -93,7 +93,7 @@ public class UiShop extends AddonsBase implements Listener {
                 x += item.getCount();
             }
         }
-        FormWindowSimple simple = new FormWindowSimple(GuiCreate.PLUGIN_NAME,
+        FormWindowSimple simple = new FormWindowSimple(FormCreate.PLUGIN_NAME,
                 getConfig().getString("ShopMain", "§a你当前有 §e %gold% §a块金锭")
                         .replace("%gold%", x + ""));
         for (String s : items) {
@@ -115,7 +115,7 @@ public class UiShop extends AddonsBase implements Listener {
                 int id = simple.getResponse().getClickedButtonId();
                 if (items.get(id) != null) {
                     String[] item = items.get(id).split(":");
-                    FormWindowModal modal = new FormWindowModal(GuiCreate.PLUGIN_NAME,
+                    FormWindowModal modal = new FormWindowModal(FormCreate.PLUGIN_NAME,
                             "§7§k\"" + simple.getResponse().getClickedButtonId() + "\" §r" +
                             getConfig().getString("BuyOK", "§a确定要花费 §e %gold% §a块金锭购买 §e %item% §a？")
                                             .replace("%gold%", item[2]).replace("%item%", item[1]),
