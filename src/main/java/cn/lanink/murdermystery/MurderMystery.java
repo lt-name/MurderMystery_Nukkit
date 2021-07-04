@@ -248,8 +248,8 @@ public class MurderMystery extends PluginBase {
         this.getServer().getCommandMap().register("",
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
 
-        this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
 
         this.loadAllListener();
@@ -268,7 +268,7 @@ public class MurderMystery extends PluginBase {
             }
         });
         try {
-            new MetricsLite(this, 7290);
+            new MetricsLite(this, 11922);
         } catch (Throwable ignore) { }
 
         getLogger().info(this.getLanguage(null).translateString("pluginEnable"));

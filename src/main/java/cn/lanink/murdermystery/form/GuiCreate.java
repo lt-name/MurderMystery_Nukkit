@@ -1,5 +1,8 @@
 package cn.lanink.murdermystery.form;
 
+import cn.lanink.gamecore.form.element.ResponseElementButton;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
@@ -13,7 +16,6 @@ import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
-import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -34,11 +36,17 @@ public class GuiCreate {
      */
     public static void sendUserMenu(@NotNull Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton(language.translateString("userMenuButton1"), new ElementButtonImageData("path", "textures/ui/switch_start_button")));
-        simple.addButton(new ElementButton(language.translateString("userMenuButton2"), new ElementButtonImageData("path", "textures/ui/switch_select_button")));
-        simple.addButton(new ElementButton(language.translateString("userMenuButton3"), new ElementButtonImageData("path", "textures/ui/servers")));
-        showFormWindow(player, simple, GuiType.USER_MENU);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME);
+        simple.addButton(new ResponseElementButton(language.translateString("userMenuButton1"),
+                new ElementButtonImageData("path", "textures/ui/switch_start_button"))
+                .onClicked(p -> Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdUser() + " join")));
+        simple.addButton(new ResponseElementButton(language.translateString("userMenuButton2"),
+                new ElementButtonImageData("path", "textures/ui/switch_select_button"))
+                .onClicked(p -> Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdUser() + " quit")));
+        simple.addButton(new ResponseElementButton(language.translateString("userMenuButton3"),
+                new ElementButtonImageData("path", "textures/ui/servers"))
+                .onClicked(GuiCreate::sendRoomListMenu));
+        player.showFormWindow(simple);
     }
 
     /**
@@ -47,12 +55,20 @@ public class GuiCreate {
      */
     public static void sendAdminMenu(@NotNull Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton(language.translateString("gui_admin_main_createRoom"), new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(language.translateString("gui_admin_main_setRoom"), new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(language.translateString("gui_admin_main_reloadAllRoom"),  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(language.translateString("gui_admin_main_unloadAllRoom"), new ElementButtonImageData("path", "textures/ui/redX1")));
-        showFormWindow(player, simple, GuiType.ADMIN_MENU);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME);
+        simple.addButton(new ResponseElementButton(language.translateString("gui_admin_main_createRoom"),
+                new ElementButtonImageData("path", "textures/ui/World"))
+                .onClicked(p -> Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdAdmin() + " CreateRoom")));
+        simple.addButton(new ResponseElementButton(language.translateString("gui_admin_main_setRoom"),
+                new ElementButtonImageData("path", "textures/ui/World"))
+                .onClicked(p -> Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdAdmin() + " SetRoom")));
+        simple.addButton(new ResponseElementButton(language.translateString("gui_admin_main_reloadAllRoom"),
+                new ElementButtonImageData("path", "textures/ui/refresh_light"))
+                .onClicked(p -> Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdAdmin() + " ReloadRoom")));
+        simple.addButton(new ResponseElementButton(language.translateString("gui_admin_main_unloadAllRoom"),
+                new ElementButtonImageData("path", "textures/ui/redX1"))
+                .onClicked(p -> Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdAdmin() + " UnloadRoom")));
+        player.showFormWindow(simple);
     }
 
     /**
@@ -126,56 +142,78 @@ public class GuiCreate {
      */
     public static void sendRoomListMenu(@NotNull Player player) {
         Language language = MURDER_MYSTERY.getLanguage(player);
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME);
         for (Map.Entry<String, BaseRoom> entry : MurderMystery.getInstance().getRooms().entrySet()) {
-            simple.addButton(new ElementButton("§e§l" + MURDER_MYSTERY.getRoomName().get(entry.getKey()) +
+            simple.addButton(new ResponseElementButton("§e§l" + MURDER_MYSTERY.getRoomName().get(entry.getKey()) +
                     "\n§r§eMode: " + Tools.getStringRoomMode(player, entry.getValue()) +
                     " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
-                    new ElementButtonImageData("path", "textures/ui/switch_start_button")));
+                    new ElementButtonImageData("path", "textures/ui/switch_start_button"))
+                    .onClicked(p -> sendRoomJoinOkMenu(p, entry.getKey())));
         }
-        simple.addButton(new ElementButton(language.translateString("buttonReturn"), new ElementButtonImageData("path", "textures/ui/cancel")));
-        showFormWindow(player, simple, GuiType.ROOM_LIST_MENU);
+        simple.addButton(new ResponseElementButton(language.translateString("buttonReturn"),
+                new ElementButtonImageData("path", "textures/ui/cancel"))
+                .onClicked(GuiCreate::sendUserMenu));
+        player.showFormWindow(simple);
     }
 
     /**
      * 加入房间确认(自选)
+     *
      * @param player 玩家
      * @param world 房间名字
      */
     public static void sendRoomJoinOkMenu(@NotNull Player player, @NotNull String world) {
         Language language = MURDER_MYSTERY.getLanguage(player);
-        FormWindowModal modal;
+        AdvancedFormWindowModal modal;
         world = world.replace("§e§l", "").trim();
         BaseRoom room = MurderMystery.getInstance().getRooms().get(world);
         if (room != null) {
             if (room.getStatus() == RoomStatus.LEVEL_NOT_LOADED) {
-                modal = new FormWindowModal(PLUGIN_NAME, language.translateString("joinRoomIsNeedInitialized"),
-                        language.translateString("buttonReturn"), language.translateString("buttonReturn"));
+                modal = new AdvancedFormWindowModal(PLUGIN_NAME,
+                        language.translateString("joinRoomIsNeedInitialized"),
+                        language.translateString("buttonReturn"),
+                        language.translateString("buttonReturn"));
+                modal.onClickedTrue(GuiCreate::sendRoomListMenu);
+                modal.onClickedFalse(GuiCreate::sendRoomListMenu);
             }else if (room.getStatus() == RoomStatus.GAME ||
                     room.getStatus() == RoomStatus.VICTORY) {
-                String button1 = language.translateString("buttonSpectator");
+                modal = new AdvancedFormWindowModal(PLUGIN_NAME,
+                        language.translateString("joinRoomIsPlaying"),
+                        "",
+                        language.translateString("buttonReturn"));
                 if (room.getStatus() == RoomStatus.VICTORY) {
-                    button1 = language.translateString("buttonReturn");
+                    modal.setButton1(language.translateString("buttonReturn"));
+                    modal.onClickedTrue(GuiCreate::sendRoomListMenu);
+                }else {
+                    modal.setButton1(language.translateString("buttonSpectator"));
+                    modal.onClickedTrue((p) ->
+                            Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdUser() + " joinspectator " + room.getLevelName()));
                 }
-                modal = new FormWindowModal(
-                        PLUGIN_NAME, language.translateString("joinRoomIsPlaying") + "§7§k@" + world,
-                        button1, language.translateString("buttonReturn"));
+                modal.onClickedFalse(GuiCreate::sendRoomListMenu);
             }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
-                modal = new FormWindowModal(
-                        PLUGIN_NAME, language.translateString("joinRoomIsFull") + "§7§k@" + world,
-                        language.translateString("buttonSpectator"), language.translateString("buttonReturn"));
+                modal = new AdvancedFormWindowModal(PLUGIN_NAME,
+                        language.translateString("joinRoomIsFull"),
+                        language.translateString("buttonSpectator"),
+                        language.translateString("buttonReturn"));
             }else {
-                modal = new FormWindowModal(
-                        PLUGIN_NAME,
-                        language.translateString("joinRoomOK").replace("%name%", "\"" +
-                                MURDER_MYSTERY.getRoomName().get(world) + "\"") + "§7§k@" + world,
-                        language.translateString("buttonOK"), language.translateString("buttonReturn"));
+                modal = new AdvancedFormWindowModal(PLUGIN_NAME,
+                        language.translateString("joinRoomOK")
+                                .replace("%name%", "\"" + MURDER_MYSTERY.getRoomName().get(world) + "\""),
+                        language.translateString("buttonOK"),
+                        language.translateString("buttonReturn"));
+                modal.onClickedTrue((p) ->
+                        Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdUser() + " join " + room.getLevelName()));
+                modal.onClickedFalse(GuiCreate::sendRoomListMenu);
             }
         }else {
-            modal = new FormWindowModal(PLUGIN_NAME, language.translateString("joinRoomIsNotFound"),
-                    language.translateString("buttonReturn"), language.translateString("buttonReturn"));
+            modal = new AdvancedFormWindowModal(PLUGIN_NAME,
+                    language.translateString("joinRoomIsNotFound"),
+                    language.translateString("buttonReturn"),
+                    language.translateString("buttonReturn"));
+            modal.onClickedTrue(GuiCreate::sendRoomListMenu);
+            modal.onClickedFalse(GuiCreate::sendRoomListMenu);
         }
-        showFormWindow(player, modal, GuiType.ROOM_JOIN_OK);
+        player.showFormWindow(modal);
     }
 
     public static void showFormWindow(@NotNull Player player, @NotNull FormWindow window, @NotNull GuiType guiType) {

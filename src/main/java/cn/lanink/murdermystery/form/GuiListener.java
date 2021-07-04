@@ -8,10 +8,7 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.window.FormWindowCustom;
-import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
-
-import java.util.ArrayList;
 
 /**
  * @author lt_name
@@ -51,45 +48,6 @@ public class GuiListener implements Listener {
         if (event.getWindow() instanceof FormWindowSimple) {
             FormWindowSimple simple = (FormWindowSimple) event.getWindow();
             switch (cache) {
-                case USER_MENU:
-                    switch (simple.getResponse().getClickedButtonId()) {
-                        case 0:
-                            this.server.dispatchCommand(player, uName + " join");
-                            break;
-                        case 1:
-                            this.server.dispatchCommand(player, uName + " quit");
-                            break;
-                        case 2:
-                            GuiCreate.sendRoomListMenu(player);
-                            break;
-                    }
-                    break;
-                case ROOM_LIST_MENU:
-                    if (simple.getResponse().getClickedButton().getText().equals(language.translateString("buttonReturn"))) {
-                        GuiCreate.sendUserMenu(player);
-                    }else {
-                        ArrayList<String> rooms = new ArrayList<>(this.murderMystery.getRooms().keySet());
-                        if (rooms.size() >= simple.getResponse().getClickedButtonId()) {
-                            GuiCreate.sendRoomJoinOkMenu(player, rooms.get(simple.getResponse().getClickedButtonId()));
-                        }
-                    }
-                    break;
-                case ADMIN_MENU:
-                    switch (simple.getResponse().getClickedButtonId()) {
-                        case 0:
-                            this.server.dispatchCommand(player, aName + " CreateRoom");
-                            break;
-                        case 1:
-                            this.server.dispatchCommand(player, aName + " SetRoom");
-                            break;
-                        case 3:
-                            this.server.dispatchCommand(player, aName + " ReloadRoom");
-                            break;
-                        case 4:
-                            this.server.dispatchCommand(player, aName + " UnloadRoom");
-                            break;
-                    }
-                    break;
                 case ADMIN_CREATE_ROOM_MENU:
                     this.server.dispatchCommand(player, aName + " CreateRoom " +
                             simple.getResponse().getClickedButton().getText());
@@ -116,23 +74,6 @@ public class GuiListener implements Listener {
                     this.server.dispatchCommand(player, this.murderMystery.getCmdAdmin() + " setgamemode " +
                             custom.getResponse().getDropdownResponse(0).getElementContent());
                     break;
-            }
-        }else if (event.getWindow() instanceof FormWindowModal) {
-            FormWindowModal modal = (FormWindowModal) event.getWindow();
-            if (cache == GuiType.ROOM_JOIN_OK) {
-                try {
-                    String roomName = modal.getContent().split("§7§k@")[1];
-                    if (language.translateString("buttonOK").equals(modal.getResponse().getClickedButtonText())) {
-                        this.server.dispatchCommand(player, uName + " join " + roomName);
-                        return;
-                    }else if (language.translateString("buttonSpectator").equals(modal.getResponse().getClickedButtonText())) {
-                        this.server.dispatchCommand(player, uName + " joinspectator " + roomName);
-                        return;
-                    }
-                } catch (Exception ignored) {
-
-                }
-                GuiCreate.sendRoomListMenu(player);
             }
         }
     }
