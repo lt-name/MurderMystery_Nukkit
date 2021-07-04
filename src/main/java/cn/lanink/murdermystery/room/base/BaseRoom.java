@@ -666,8 +666,10 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                         needBow = false;
                     }
                 }
-                if (x > 9) {
-                    entry.getKey().getInventory().removeItem(ItemManager.get(null, 266));
+                if (x >= 10) {
+                    Item gold = ItemManager.get(null, 266);
+                    gold.setCount(10);
+                    entry.getKey().getInventory().removeItem(gold);
                     entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
                     if (needBow) {
                         entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
