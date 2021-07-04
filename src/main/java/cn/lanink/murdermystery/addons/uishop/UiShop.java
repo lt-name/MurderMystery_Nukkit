@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.addons.uishop;
 import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
 import cn.lanink.murdermystery.form.FormCreate;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.utils.Tools;
@@ -139,7 +140,7 @@ public class UiShop extends AddonsBase implements Listener {
                         }
                         String[] item = items.get(id).split(":");
                         if (x >= Integer.parseInt(item[2])) {
-                            player.getInventory().removeItem(Tools.getMurderMysteryItem(null, 266));
+                            player.getInventory().removeItem(ItemManager.get(null, 266));
                             Tools.giveItem(player, Integer.parseInt(item[0]));
                             player.sendMessage(getConfig().getString("BuySuccess", "§a成功兑换到: §e %item% §a已发放到背包！")
                                     .replace("%item%", item[1]));

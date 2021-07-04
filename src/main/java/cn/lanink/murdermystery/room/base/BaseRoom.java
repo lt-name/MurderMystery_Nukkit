@@ -9,6 +9,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
 import cn.lanink.murdermystery.event.*;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
@@ -640,7 +641,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             this.goldSpawnTime = this.setGoldSpawnTime;
             Tools.cleanEntity(this.getLevel());
             for (Vector3 spawn : this.goldSpawnVector3List) {
-                this.getLevel().dropItem(spawn, Tools.getMurderMysteryItem(null, 266));
+                this.getLevel().dropItem(spawn, ItemManager.get(null, 266));
             }
         }
     }
@@ -666,7 +667,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                     }
                 }
                 if (x > 9) {
-                    entry.getKey().getInventory().removeItem(Tools.getMurderMysteryItem(null, 266));
+                    entry.getKey().getInventory().removeItem(ItemManager.get(null, 266));
                     entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
                     if (needBow) {
                         entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
@@ -868,7 +869,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false).update();
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == PlayerIdentity.DETECTIVE) {
-            this.getLevel().dropItem(player, Tools.getMurderMysteryItem(player, 1));
+            this.getLevel().dropItem(player, ItemManager.get(player, 1));
         }
         this.players.put(player, PlayerIdentity.DEATH);
         Tools.playSound(this, Sound.GAME_PLAYER_HURT);

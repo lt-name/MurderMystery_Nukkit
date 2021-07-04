@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.room.infected;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.utils.Tools;
@@ -208,7 +209,7 @@ public class InfectedModeRoom extends BaseRoom {
     public void playerRespawn(Player player) {
         Tools.showPlayer(this, player);
         Tools.rePlayerState(player, true);
-        player.getInventory().setItem(1, Tools.getMurderMysteryItem(player, 2));
+        player.getInventory().setItem(1, ItemManager.get(player, 2));
         Effect effect = Effect.getEffect(2).setAmplifier(2).setDuration(60); //缓慢
         effect.setColor(0, 255, 0);
         player.addEffect(effect);

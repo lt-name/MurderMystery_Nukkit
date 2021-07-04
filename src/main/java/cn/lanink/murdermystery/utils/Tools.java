@@ -122,35 +122,24 @@ public class Tools {
     public static void giveItem(Player player, int tagNumber) {
         switch (tagNumber) {
             case 1:
-                player.getInventory().setItem(1, getMurderMysteryItem(player, tagNumber));
+                player.getInventory().setItem(1, ItemManager.get(player, tagNumber));
                 player.getInventory().setItem(2, Item.get(262, 0, 1));
                 break;
             case 2:
-                player.getInventory().setItem(1, getMurderMysteryItem(player, tagNumber));
-                player.getInventory().setItem(2, getMurderMysteryItem(player, 3));
+                player.getInventory().setItem(1, ItemManager.get(player, tagNumber));
+                player.getInventory().setItem(2, ItemManager.get(player, 3));
                 break;
             case 10:
-                player.getInventory().setItem(8, getMurderMysteryItem(player, tagNumber));
+                player.getInventory().setItem(8, ItemManager.get(player, tagNumber));
                 break;
             case 21:
             case 22:
             case 23:
-                player.getInventory().addItem(getMurderMysteryItem(player, tagNumber));
+                player.getInventory().addItem(ItemManager.get(player, tagNumber));
                 break;
             default:
                 break;
         }
-    }
-
-    /**
-     * 根据编号获取物品
-     *
-     * @param tagNumber 道具编号
-     * @return 物品
-     */
-    @Deprecated
-    public static Item getMurderMysteryItem(Player player, int tagNumber) {
-        return ItemManager.get(player, tagNumber);
     }
 
     /**

@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.room.assassin;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.tasks.game.assassin.AssassinDistanceTip;
@@ -117,7 +118,7 @@ public class AssassinModeRoom extends BaseRoom {
                     player.sendMessage(this.murderMystery.getLanguage(player).translateString("game_assassin_wanted"));
                 }
                 for (Player player : this.getPlayers().keySet()) {
-                    player.getInventory().setItem(1, Tools.getMurderMysteryItem(player, 2));
+                    player.getInventory().setItem(1, ItemManager.get(player, 2));
                 }
             }
         }
@@ -268,9 +269,9 @@ public class AssassinModeRoom extends BaseRoom {
             damager.addEffect(Effect.getEffect(15).setDuration(100).setVisible(false));//失明
             Tools.playSound(damager, Sound.RANDOM_ANVIL_LAND);
             damager.sendTitle("", this.murderMystery.getLanguage(damager).translateString("game_assassin_errorTarget"));
-            damager.getInventory().remove(Tools.getMurderMysteryItem(damager, 2));
+            damager.getInventory().remove(ItemManager.get(damager, 2));
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
-                    () -> damager.getInventory().setItem(1, Tools.getMurderMysteryItem(damager, 2)), 100);
+                    () -> damager.getInventory().setItem(1, ItemManager.get(damager, 2)), 100);
         }
     }
 
