@@ -577,6 +577,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                 }
             }
         }
+
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
@@ -605,7 +606,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }else {
             this.victory(1);
         }
-        //杀手CD计算
+
+        //杀手技能CD计算
         for (Map.Entry<Player, Integer> entry : this.killerEffectCD.entrySet()) {
             if (entry.getValue() > 0) {
                 entry.setValue(entry.getValue() - 1);
@@ -621,7 +623,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                 entry.setValue(entry.getValue() - 1);
             }
         }
-        //TODO 需要验证
+
         if (this.detectiveBow != null && this.detectiveBow.isClosed()) {
             EntityItem entityItem = new EntityItem(this.detectiveBow.chunk, this.detectiveBow.namedTag);
             entityItem.spawnToAll();
@@ -650,34 +652,32 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * 金锭自动兑换弓箭检测
      */
     public void goldExchange() {
-        CompletableFuture.runAsync(() -> {
-            for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
-                if (entry.getValue() == PlayerIdentity.NULL || entry.getValue() == PlayerIdentity.DEATH) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
+            if (entry.getValue() == PlayerIdentity.NULL || entry.getValue() == PlayerIdentity.DEATH) {
+                continue;
+            }
+            int x = 0;
+            boolean needBow = true;
+            for (Item item : entry.getKey().getInventory().getContents().values()) {
+                if (item.getId() == 266) {
+                    x += item.getCount();
                     continue;
                 }
-                int x = 0;
-                boolean needBow = true;
-                for (Item item : entry.getKey().getInventory().getContents().values()) {
-                    if (item.getId() == 266) {
-                        x += item.getCount();
-                        continue;
-                    }
-                    if (item.getId() == 261) {
-                        needBow = false;
-                    }
-                }
-                if (x >= 10) {
-                    Item gold = ItemManager.get(null, 266);
-                    gold.setCount(10);
-                    entry.getKey().getInventory().removeItem(gold);
-                    entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
-                    if (needBow) {
-                        entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
-                    }
-                    Tools.playSound(entry.getKey(), Sound.RANDOM_LEVELUP);
+                if (item.getId() == 261) {
+                    needBow = false;
                 }
             }
-        });
+            if (x >= 10) {
+                Item gold = ItemManager.get(null, 266);
+                gold.setCount(10);
+                entry.getKey().getInventory().removeItem(gold);
+                entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
+                if (needBow) {
+                    entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
+                }
+                Tools.playSound(entry.getKey(), Sound.RANDOM_LEVELUP);
+            }
+        }
     }
 
     @Override

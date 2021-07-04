@@ -61,6 +61,7 @@ public class InfectedModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("ClassicDamageListener").addListenerRoom(this);
     }
 
+    @Override
     public synchronized void startGame() {
         super.startGame();
         for (Player player : this.players.keySet()) {
@@ -106,6 +107,7 @@ public class InfectedModeRoom extends BaseRoom {
                 this.playerRespawn(player);
             }
         }
+
         //复活计时
         for (Map.Entry<Player, Integer> entry : this.playerRespawnTime.entrySet()) {
             if (entry.getValue() > 0) {
@@ -118,6 +120,7 @@ public class InfectedModeRoom extends BaseRoom {
                 }
             }
         }
+
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;

@@ -42,6 +42,7 @@ public class ClassicModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("ClassicGameListener").addListenerRoom(this);
     }
 
+    @Override
     protected void victoryReward(int victory) {
         if (victory == 0) {
             return;

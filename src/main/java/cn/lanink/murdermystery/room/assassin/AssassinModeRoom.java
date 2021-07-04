@@ -122,6 +122,7 @@ public class AssassinModeRoom extends BaseRoom {
                 }
             }
         }
+
         //检查目标
         if (time < 0 && this.gameTime%2 == 0) {
             for (Player player : this.targetMap.keySet()) {
@@ -130,11 +131,14 @@ public class AssassinModeRoom extends BaseRoom {
                 }
             }
         }
+
+        //技能CD计算
         for (Map.Entry<Player, Integer> entry : this.killerSwordCD.entrySet()) {
             if (entry.getValue() > 0) {
                 entry.setValue(entry.getValue() - 1);
             }
         }
+
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
@@ -242,7 +246,6 @@ public class AssassinModeRoom extends BaseRoom {
             this.murderMystery.getLogger().info(message);
             player.sendMessage(message);
         }
-
     }
 
     @Override
