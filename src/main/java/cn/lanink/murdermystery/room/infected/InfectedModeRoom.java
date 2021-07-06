@@ -2,6 +2,8 @@ package cn.lanink.murdermystery.room.infected;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.event.MurderMysteryPlayerDamageEvent;
+import cn.lanink.murdermystery.event.MurderMysteryPlayerDeathEvent;
 import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
@@ -18,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 感染模式房间类
@@ -66,6 +66,7 @@ public class InfectedModeRoom extends BaseRoom {
         super.startGame();
         for (Player player : this.players.keySet()) {
             player.getInventory().clearAll();
+            player.getUIInventory().clearAll();
             this.players.put(player, PlayerIdentity.DETECTIVE);
             Tools.giveItem(player, 1);
         }
@@ -99,9 +100,9 @@ public class InfectedModeRoom extends BaseRoom {
                 for (Player player : this.getSpectatorPlayers()) {
                     player.sendMessage(this.murderMystery.getLanguage(player).translateString("killerGetSword"));
                 }
-                int y = new Random().nextInt(this.getPlayers().size());
+                int y = MurderMystery.RANDOM.nextInt(this.getPlayers().size());
                 Player player = new ArrayList<>(this.getPlayers().keySet()).get(y);
-                this.players.put(player, PlayerIdentity.DEATH);
+                this.players.put(player, PlayerIdentity.KILLER);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
                         this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
                 this.playerRespawn(player);
@@ -124,41 +125,39 @@ public class InfectedModeRoom extends BaseRoom {
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
-            CompletableFuture.runAsync(() -> {
-                int playerNumber = 0;
-                boolean killer = false;
-                for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
-                    switch (entry.getValue()) {
-                        case COMMON_PEOPLE:
-                        case DETECTIVE:
-                            playerNumber++;
-                            break;
-                        case KILLER:
-                            killer = true;
-                            if (this.gameTime % 20 == 0) {
-                                Effect effect = Effect.getEffect(1).setDuration(1000)
-                                        .setAmplifier(1).setVisible(true);
-                                effect.setColor(0, 255, 0);
-                                entry.getKey().addEffect(effect);
-                            }
-                            break;
-                    }
+            int playerNumber = 0;
+            boolean killer = false;
+            for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+                switch (entry.getValue()) {
+                    case COMMON_PEOPLE:
+                    case DETECTIVE:
+                        playerNumber++;
+                        break;
+                    case KILLER:
+                        killer = true;
+                        if (this.gameTime % 20 == 0) {
+                            Effect effect = Effect.getEffect(1).setDuration(1000)
+                                    .setAmplifier(1).setVisible(true);
+                            effect.setColor(0, 255, 0);
+                            entry.getKey().addEffect(effect);
+                        }
+                        break;
                 }
-                if (time >= 0) {
-                    if (this.players.size() < 2) {
-                        this.endGame();
-                        return;
-                    }
-                    killer = true;
+            }
+            if (time >= 0) {
+                if (this.players.size() < 2) {
+                    this.endGame();
+                    return;
                 }
-                if (killer) {
-                    if (playerNumber == 0) {
-                        this.victory(3);
-                    }
-                }else {
-                    this.victory(1);
+                //killer = true;
+            }
+            if (killer) {
+                if (playerNumber == 0) {
+                    this.victory(3);
                 }
-            });
+            }else {
+                this.victory(1);
+            }
         }else {
             this.victory(1);
         }
@@ -182,6 +181,11 @@ public class InfectedModeRoom extends BaseRoom {
 
     @Override
     public void playerDamage(@NotNull Player damager, @NotNull Player player) {
+        MurderMysteryPlayerDamageEvent ev = new MurderMysteryPlayerDamageEvent(this, damager, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
         if (this.getPlayers(damager) == PlayerIdentity.KILLER) {
             if (this.getPlayers(player) == PlayerIdentity.KILLER) {
                 return;
@@ -199,6 +203,11 @@ public class InfectedModeRoom extends BaseRoom {
 
     @Override
     public void playerDeath(@NotNull Player player) {
+        MurderMysteryPlayerDeathEvent ev = new MurderMysteryPlayerDeathEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(3);
@@ -219,7 +228,7 @@ public class InfectedModeRoom extends BaseRoom {
         effect = Effect.getEffect(15).setAmplifier(2).setDuration(60); //失明
         effect.setColor(0, 255, 0);
         player.addEffect(effect);
-        player.teleport(this.getRandomSpawn().get(new Random().nextInt(this.getRandomSpawn().size())));
+        player.teleport(this.getRandomSpawn().get(MurderMystery.RANDOM.nextInt(this.getRandomSpawn().size())));
         Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
             Effect e = Effect.getEffect(1).setDuration(1000).setAmplifier(1).setVisible(true); // 速度
             e.setColor(0, 255, 0);
