@@ -127,12 +127,14 @@ public class MurderMystery extends PluginBase {
         if (!file3.exists() && !file3.mkdirs()) {
             getLogger().warning("Skins 文件夹初始化失败");
         }
-        saveDefaultConfig();
+        this.saveDefaultConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
         if (config.getBoolean("debug", false)) {
             debug = true;
-            getLogger().warning("警告：您开启了debug模式！");
-            getLogger().warning("Warning: You have turned on debug mode!");
+            this.getLogger().warning("§c=========================================");
+            this.getLogger().warning("§c 警告：您开启了debug模式！");
+            this.getLogger().warning("§c Warning: You have turned on debug mode!");
+            this.getLogger().warning("§c=========================================");
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
