@@ -2,7 +2,6 @@ package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.form.GuiCreate;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.utils.Tools;
@@ -62,7 +61,6 @@ public class PlayerJoinAndQuit implements Listener {
         if (task != null) {
             task.cancel();
         }
-        GuiCreate.UI_CACHE.remove(player);
         this.murderMystery.getPlayerLanguage().remove(player);
 
     }

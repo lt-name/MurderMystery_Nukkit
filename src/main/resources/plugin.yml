@@ -1,17 +1,11 @@
 name: MurderMystery
 main: cn.lanink.murdermystery.MurderMystery
-version: "1.2.1"
-api: ["1.0.9", "1.0.11"]
+version: "1.3.0"
+api: ["1.0.9"]
 load: POSTWORLD
 author: "LT_Name"
-softdepend:
-  - "ScoreboardPlugin"
-  - "ScoreboardAPI"
-  - "Tips"
-loadbefore:
-  - "ScoreboardPlugin"
-  - "ScoreboardAPI"
-  - "Tips"
+depend:
+  - "MemoriesOfTime-GameCore"
 
 permissions:
   murdermystery.user:

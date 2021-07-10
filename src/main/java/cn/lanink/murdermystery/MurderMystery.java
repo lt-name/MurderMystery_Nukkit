@@ -8,7 +8,6 @@ import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
 import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
-import cn.lanink.murdermystery.form.GuiListener;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.listener.assassin.AssassinDamageListener;
 import cn.lanink.murdermystery.listener.assassin.AssassinGameListener;
@@ -101,11 +100,16 @@ public class MurderMystery extends PluginBase {
 
     public final HashMap<Player, SetRoomTask> setRoomTask = new HashMap<>();
 
-    public static MurderMystery getInstance() { return murderMystery; }
+    public static MurderMystery getInstance() {
+        return murderMystery;
+    }
 
     @Override
     public void onLoad() {
-        if (murderMystery == null) murderMystery = this;
+        if (murderMystery != null) {
+            throw new RuntimeException("Repeat the onLoad() method!");
+        }
+        murderMystery = this;
 
         this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
         this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
@@ -123,12 +127,14 @@ public class MurderMystery extends PluginBase {
         if (!file3.exists() && !file3.mkdirs()) {
             getLogger().warning("Skins 文件夹初始化失败");
         }
-        saveDefaultConfig();
+        this.saveDefaultConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
         if (config.getBoolean("debug", false)) {
             debug = true;
-            getLogger().warning("警告：您开启了debug模式！");
-            getLogger().warning("Warning: You have turned on debug mode!");
+            this.getLogger().warning("§c=========================================");
+            this.getLogger().warning("§c 警告：您开启了debug模式！");
+            this.getLogger().warning("§c Warning: You have turned on debug mode!");
+            this.getLogger().warning("§c=========================================");
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
@@ -249,7 +255,6 @@ public class MurderMystery extends PluginBase {
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
 
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
-        this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
 
         this.loadAllListener();
@@ -259,7 +264,7 @@ public class MurderMystery extends PluginBase {
 
         this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(), 20, true);
         //启用扩展-使用task保证在所有插件都加载完后加载扩展
-        getServer().getScheduler().scheduleTask(this, new Task() {
+        this.getServer().getScheduler().scheduleTask(this, new Task() {
             @Override
             public void onRun(int i) {
                 getLogger().info(getLanguage(null).translateString("startLoadingAddons"));
@@ -268,10 +273,10 @@ public class MurderMystery extends PluginBase {
             }
         });
         try {
-            new MetricsLite(this, 7290);
+            new MetricsLite(this, 11922);
         } catch (Throwable ignore) { }
 
-        getLogger().info(this.getLanguage(null).translateString("pluginEnable"));
+        this.getLogger().info(this.getLanguage(null).translateString("pluginEnable"));
     }
 
     @Override
@@ -299,11 +304,9 @@ public class MurderMystery extends PluginBase {
             this.rooms.clear();
         }
         this.roomConfigs.clear();
-        for (BaseMurderMysteryListener listener : this.getMurderMysteryListeners().values()) {
-            listener.clearListenerRooms();
-        }
+        this.getMurderMysteryListeners().values().forEach(BaseMurderMysteryListener::clearListenerRooms);
         this.skins.clear();
-        getLogger().info(this.getLanguage(null).translateString("pluginDisable"));
+        this.getLogger().info(this.getLanguage(null).translateString("pluginDisable"));
     }
 
     /**

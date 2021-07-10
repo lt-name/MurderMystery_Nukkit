@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.room.assassin;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.tasks.game.assassin.AssassinDistanceTip;
@@ -33,7 +34,7 @@ public class AssassinModeRoom extends BaseRoom {
      * @param level  世界
      * @param config 配置文件
      */
-    public AssassinModeRoom(Level level, Config config) throws RoomLoadException {
+    public AssassinModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
     }
 
@@ -117,10 +118,11 @@ public class AssassinModeRoom extends BaseRoom {
                     player.sendMessage(this.murderMystery.getLanguage(player).translateString("game_assassin_wanted"));
                 }
                 for (Player player : this.getPlayers().keySet()) {
-                    player.getInventory().setItem(1, Tools.getMurderMysteryItem(player, 2));
+                    player.getInventory().setItem(1, ItemManager.get(player, 2));
                 }
             }
         }
+
         //检查目标
         if (time < 0 && this.gameTime%2 == 0) {
             for (Player player : this.targetMap.keySet()) {
@@ -129,11 +131,14 @@ public class AssassinModeRoom extends BaseRoom {
                 }
             }
         }
+
+        //技能CD计算
         for (Map.Entry<Player, Integer> entry : this.killerSwordCD.entrySet()) {
             if (entry.getValue() > 0) {
                 entry.setValue(entry.getValue() - 1);
             }
         }
+
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
@@ -201,7 +206,7 @@ public class AssassinModeRoom extends BaseRoom {
         }
     }
 
-    public void assignTarget(Player player) {
+    public void assignTarget(@NotNull Player player) {
         if (this.getPlayers(player) != PlayerIdentity.ASSASSIN) {
             return;
         }
@@ -241,7 +246,6 @@ public class AssassinModeRoom extends BaseRoom {
             this.murderMystery.getLogger().info(message);
             player.sendMessage(message);
         }
-
     }
 
     @Override
@@ -268,9 +272,9 @@ public class AssassinModeRoom extends BaseRoom {
             damager.addEffect(Effect.getEffect(15).setDuration(100).setVisible(false));//失明
             Tools.playSound(damager, Sound.RANDOM_ANVIL_LAND);
             damager.sendTitle("", this.murderMystery.getLanguage(damager).translateString("game_assassin_errorTarget"));
-            damager.getInventory().remove(Tools.getMurderMysteryItem(damager, 2));
+            damager.getInventory().remove(ItemManager.get(damager, 2));
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery,
-                    () -> damager.getInventory().setItem(1, Tools.getMurderMysteryItem(damager, 2)), 100);
+                    () -> damager.getInventory().setItem(1, ItemManager.get(damager, 2)), 100);
         }
     }
 

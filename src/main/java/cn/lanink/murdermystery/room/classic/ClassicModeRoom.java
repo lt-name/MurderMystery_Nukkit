@@ -9,6 +9,7 @@ import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class ClassicModeRoom extends BaseRoom {
      * @param level 世界
      * @param config 配置文件
      */
-    public ClassicModeRoom(Level level, Config config) throws RoomLoadException {
+    public ClassicModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
         //经典模式人数低于三将进入死循环！
         if (minPlayers < 3) {
@@ -42,6 +43,7 @@ public class ClassicModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("ClassicGameListener").addListenerRoom(this);
     }
 
+    @Override
     protected void victoryReward(int victory) {
         if (victory == 0) {
             return;
