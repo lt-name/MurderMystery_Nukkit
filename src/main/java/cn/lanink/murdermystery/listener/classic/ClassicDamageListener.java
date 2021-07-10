@@ -1,14 +1,11 @@
 package cn.lanink.murdermystery.listener.classic;
 
-import cn.lanink.gamecore.utils.Language;
-import cn.lanink.murdermystery.event.MurderMysteryPlayerDamageEvent;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
@@ -50,7 +47,7 @@ public class ClassicDamageListener extends BaseMurderMysteryListener<ClassicMode
                 }
                 if (child.namedTag.getBoolean("isMurderItem")) {
                     if (child.namedTag.getInt("MurderType") == 20) {
-                        this.MurderMysteryPlayerDamage(room, damager, player);
+                        room.playerDamage(damager, player);
                     }else if (child.namedTag.getInt("MurderType") == 23) {
                         Tools.playSound(player, Sound.RANDOM_ANVIL_LAND);
                         player.sendMessage(this.murderMystery.getLanguage(player).translateString("damageSnowball"));
@@ -66,48 +63,12 @@ public class ClassicDamageListener extends BaseMurderMysteryListener<ClassicMode
                     if (damager.getInventory().getItemInHand() != null) {
                         CompoundTag tag = damager.getInventory().getItemInHand().getNamedTag();
                         if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
-                            this.MurderMysteryPlayerDamage(room, damager, player);
+                            room.playerDamage(damager, player);
                         }
                     }
                 }
             }
         }
-    }
-
-    private void MurderMysteryPlayerDamage(BaseRoom room, Player damager, Player player) {
-        MurderMysteryPlayerDamageEvent ev = new MurderMysteryPlayerDamageEvent(room, damager, player);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) {
-            return;
-        }
-        if (room.getPlayers(player) == PlayerIdentity.DEATH) {
-            return;
-        }
-        //攻击者是杀手
-        if (room.getPlayers(damager) == PlayerIdentity.KILLER) {
-            damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killPlayer"));
-            player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
-                    this.murderMystery.getLanguage(player).translateString("deathByKillerSubtitle"), 20, 60, 20);
-            for (Player p : room.getPlayers().keySet()) {
-                Language language = murderMystery.getLanguage(p);
-                p.sendMessage(language.translateString("playerKilledByKiller")
-                        .replace("%identity%", room.getPlayers(player) == PlayerIdentity.DETECTIVE ? language.translateString("detective") : language.translateString("commonPeople")));
-            }
-        }else { //攻击者是平民或侦探
-            if (room.getPlayers(player) == PlayerIdentity.KILLER) {
-                damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killKiller"));
-                room.killKillerPlayer = damager;
-                player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
-                        this.murderMystery.getLanguage(player).translateString("killerDeathSubtitle"), 10, 20, 20);
-            } else {
-                damager.sendTitle(this.murderMystery.getLanguage(damager).translateString("deathTitle"),
-                        this.murderMystery.getLanguage(damager).translateString("deathByDamageTeammateSubtitle"), 20, 60, 20);
-                player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
-                        this.murderMystery.getLanguage(player).translateString("deathByTeammateSubtitle"), 20, 60, 20);
-                room.playerDeath(damager);
-            }
-        }
-        room.playerDeath(player);
     }
 
 }
