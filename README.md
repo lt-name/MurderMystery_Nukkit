@@ -6,11 +6,8 @@
 [![Discord](https://img.shields.io/discord/710480168598372354?style=plastic)](https://discord.gg/pJjQDQC)    
 MurderMystery game for Nukkit    
 ### depend:
-Please install a scoreboard plugin (choose one)  
-* ScoreboardPlugin:  
-https://github.com/LucGamesYT/ScoreboardAPI/releases/tag/1.0.0
-* ScoreboardAPI:  
-https://nukkitx.com/resources/scoreboardapl.170/
+* MemoriesOfTime-GameCore:  
+  https://github.com/MemoriesOfTime/MemoriesOfTime-GameCore
 
 #### 详细介绍/Detailed introduction:
 [![MCBBS](https://img.shields.io/badge/Link-MCBBS-brightgreen)](https://www.mcbbs.net/thread-1014768-1-1.html)  
