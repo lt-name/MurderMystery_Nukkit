@@ -60,6 +60,7 @@ public class InfectedModeRoom extends BaseRoom {
         this.murderMystery.getMurderMysteryListeners().get("DefaultChatListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("DefaultDamageListener").addListenerRoom(this);
         this.murderMystery.getMurderMysteryListeners().get("ClassicDamageListener").addListenerRoom(this);
+        this.murderMystery.getMurderMysteryListeners().get("InfectedGameListener").addListenerRoom(this);
     }
 
     @Override
@@ -121,6 +122,13 @@ public class InfectedModeRoom extends BaseRoom {
                     entry.getKey().sendTip(this.murderMystery.getLanguage(entry.getKey()).translateString("playerRespawnTime")
                             .replace("%time%", entry.getValue() + ""));
                 }
+            }
+        }
+
+        //杀手技能CD计算
+        for (Map.Entry<Player, Integer> entry : this.killerScanCD.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
             }
         }
 
@@ -257,6 +265,7 @@ public class InfectedModeRoom extends BaseRoom {
         Tools.showPlayer(this, player);
         Tools.rePlayerState(player, true);
         player.getInventory().setItem(1, ItemManager.get(player, 2));
+        player.getInventory().setItem(2, ItemManager.get(player, 3));
         Effect effect = Effect.getEffect(2).setAmplifier(2).setDuration(60); //缓慢
         effect.setColor(0, 255, 0);
         player.addEffect(effect);
