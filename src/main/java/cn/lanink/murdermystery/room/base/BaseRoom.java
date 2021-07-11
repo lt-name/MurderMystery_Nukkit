@@ -57,7 +57,10 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
     public final int setWaitTime;
     public final int setGameTime;
     public final int setGoldSpawnTime;
-    public int waitTime, gameTime, goldSpawnTime; //秒
+
+    public int waitTime; //秒
+    public int gameTime;
+    public int goldSpawnTime;
 
     public Map<Player, Integer> killerSwordCD = new HashMap<>();
     public Map<Player, Integer> killerEffectCD = new HashMap<>();

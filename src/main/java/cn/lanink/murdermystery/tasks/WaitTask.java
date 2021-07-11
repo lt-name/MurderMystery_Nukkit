@@ -67,7 +67,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                     if (!"".equals(waitTimeBottom.trim())) {
                         player.sendTip(waitTimeBottom);
                     }
-                    owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
+                    this.owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
                 }
             }else {
                 this.room.startGame();
@@ -94,7 +94,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
                 if (!"".equals(waitBottom.trim())) {
                     player.sendTip(waitBottom);
                 }
-                owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
+                this.owner.getScoreboard().showScoreboard(player, language.translateString("scoreBoardTitle"), ms);
             }
         }else {
             this.room.endGame();
