@@ -11,6 +11,7 @@ import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
@@ -68,7 +69,8 @@ public class InfectedModeRoom extends BaseRoom {
             player.getInventory().clearAll();
             player.getUIInventory().clearAll();
             this.players.put(player, PlayerIdentity.DETECTIVE);
-            Tools.giveItem(player, 1);
+            player.getInventory().setItem(1, ItemManager.get(player, 1));
+            player.getInventory().setItem(2, Item.get(262, 0, 32));
         }
     }
 
@@ -149,7 +151,6 @@ public class InfectedModeRoom extends BaseRoom {
                     this.endGame();
                     return;
                 }
-                //killer = true;
             }
             if (killer) {
                 if (playerNumber == 0) {
@@ -162,6 +163,38 @@ public class InfectedModeRoom extends BaseRoom {
             this.victory(1);
         }
         this.goldSpawn();
+    }
+
+    @Override
+    public void goldExchange() {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
+            if (entry.getValue() == PlayerIdentity.NULL ||
+                    entry.getValue() == PlayerIdentity.DEATH ||
+                    entry.getValue() == PlayerIdentity.KILLER) {
+                continue;
+            }
+            int x = 0;
+            boolean needBow = true;
+            for (Item item : entry.getKey().getInventory().getContents().values()) {
+                if (item.getId() == 266) {
+                    x += item.getCount();
+                    continue;
+                }
+                if (item.getId() == 261) {
+                    needBow = false;
+                }
+            }
+            if (x >= 10) {
+                Item gold = ItemManager.get(null, 266);
+                gold.setCount(10);
+                entry.getKey().getInventory().removeItem(gold);
+                entry.getKey().getInventory().addItem(Item.get(262, 0, 32));
+                if (needBow) {
+                    entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
+                }
+                Tools.playSound(entry.getKey(), Sound.RANDOM_LEVELUP);
+            }
+        }
     }
 
     @Override

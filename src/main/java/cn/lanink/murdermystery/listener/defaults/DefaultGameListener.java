@@ -6,6 +6,7 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
+import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -75,7 +76,9 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 20);
                 if (room.getPlayers(player) == PlayerIdentity.DETECTIVE) {
-                    player.getInventory().addItem(Item.get(262, 0, 1));
+                    if (!(room instanceof InfectedModeRoom)) {
+                        player.getInventory().addItem(Item.get(262, 0, 1));
+                    }
                     return;
                 }
             }
