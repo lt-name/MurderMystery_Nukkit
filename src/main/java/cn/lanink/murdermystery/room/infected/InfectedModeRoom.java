@@ -16,6 +16,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Map;
  */
 public class InfectedModeRoom extends BaseRoom {
 
+    @Getter
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
 
     /**
