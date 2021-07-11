@@ -175,7 +175,6 @@ public class Tools {
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.resetInAirTicks();
-        player.setGamemode(0);
         player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false)
                 .set(AdventureSettings.Type.ALLOW_FLIGHT, false)
                 .update();
@@ -183,13 +182,13 @@ public class Tools {
             player.setNameTag("");
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
-            player.setAllowModifyWorld(false);
         }else {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
-            player.setAllowModifyWorld(true);
+            player.setGamemode(Player.CREATIVE); //刷新
         }
+        player.setGamemode(Player.SURVIVAL);
     }
 
     public static void sendMessage(BaseRoom room, String string) {

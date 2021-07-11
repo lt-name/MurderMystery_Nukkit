@@ -277,7 +277,6 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 10) {
                 event.setCancelled(true);
                 room.quitRoom(player);
-                player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
             }
         }
     }
