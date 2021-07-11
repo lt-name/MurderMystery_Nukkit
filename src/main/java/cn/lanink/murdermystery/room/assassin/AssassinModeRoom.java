@@ -155,7 +155,7 @@ public class AssassinModeRoom extends BaseRoom {
         }else {
             this.victory(0);
         }
-        //this.goldSpawn();
+        this.goldSpawn();
     }
 
     @Override

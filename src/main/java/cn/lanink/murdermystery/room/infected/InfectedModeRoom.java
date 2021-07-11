@@ -161,6 +161,7 @@ public class InfectedModeRoom extends BaseRoom {
         }else {
             this.victory(1);
         }
+        this.goldSpawn();
     }
 
     @Override
