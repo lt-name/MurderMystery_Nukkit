@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.listener.assassin;
 
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.assassin.AssassinModeRoom;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -32,7 +33,7 @@ public class AssassinDamageListener extends BaseMurderMysteryListener<AssassinMo
                 return;
             }
             event.setCancelled(true);
-            if (room.isPlaying(damager) && room.isPlaying(player)) {
+            if (room.isPlaying(damager) && room.isPlaying(player) && room.getStatus() == RoomStatus.GAME) {
                 Item item = damager.getInventory().getItemInHand();
                 if (item != null && item.hasCompoundTag()) {
                     CompoundTag tag = item.getNamedTag();

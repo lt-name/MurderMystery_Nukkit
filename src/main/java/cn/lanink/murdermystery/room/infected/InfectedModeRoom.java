@@ -16,6 +16,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Map;
  */
 public class InfectedModeRoom extends BaseRoom {
 
+    @Getter
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
 
     /**
@@ -71,7 +73,7 @@ public class InfectedModeRoom extends BaseRoom {
             player.getUIInventory().clearAll();
             this.players.put(player, PlayerIdentity.DETECTIVE);
             player.getInventory().setItem(1, ItemManager.get(player, 1));
-            player.getInventory().setItem(2, Item.get(262, 0, 32));
+            player.getInventory().setItem(2, Item.get(262, 0, 16));
         }
     }
 
@@ -197,7 +199,7 @@ public class InfectedModeRoom extends BaseRoom {
                 Item gold = ItemManager.get(null, 266);
                 gold.setCount(10);
                 entry.getKey().getInventory().removeItem(gold);
-                entry.getKey().getInventory().addItem(Item.get(262, 0, 32));
+                entry.getKey().getInventory().addItem(Item.get(262, 0, 16));
                 if (needBow) {
                     entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
                 }

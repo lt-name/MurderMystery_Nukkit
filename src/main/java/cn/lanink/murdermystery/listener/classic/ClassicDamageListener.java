@@ -3,6 +3,7 @@ package cn.lanink.murdermystery.listener.classic;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
+import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -37,6 +38,9 @@ public class ClassicDamageListener extends BaseMurderMysteryListener<ClassicMode
                 return;
             }
             event.setCancelled(true);
+            if (room.getStatus() != RoomStatus.GAME) {
+                return;
+            }
             if (event instanceof EntityDamageByChildEntityEvent) {
                 EntityDamageByChildEntityEvent event1 = (EntityDamageByChildEntityEvent) event;
                 damager = (Player) event1.getDamager();

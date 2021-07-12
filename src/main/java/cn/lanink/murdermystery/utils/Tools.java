@@ -195,6 +195,9 @@ public class Tools {
         for (Player player : room.getPlayers().keySet()) {
             player.sendMessage(string);
         }
+        for (Player player : room.getSpectatorPlayers()) {
+            player.sendMessage(string);
+        }
     }
 
     /**
@@ -205,6 +208,9 @@ public class Tools {
      */
     public static void playSound(BaseRoom room, Sound sound) {
         for (Player player : room.getPlayers().keySet()) {
+            playSound(player, sound);
+        }
+        for (Player player : room.getSpectatorPlayers()) {
             playSound(player, sound);
         }
     }

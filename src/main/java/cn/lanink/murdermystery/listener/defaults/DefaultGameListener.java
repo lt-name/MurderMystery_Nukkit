@@ -135,6 +135,10 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         if (room == null) {
             return;
         }
+        if (room.getStatus() == RoomStatus.GAME) {
+            event.setCancelled(true);
+            return;
+        }
         if (event.getInventory() != null && event.getInventory() instanceof PlayerInventory) {
             Player player = (Player) event.getInventory().getHolder();
             if (player.getGamemode() != 0) {
@@ -532,6 +536,13 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (room.getPlayers(player) == PlayerIdentity.DEATH) {
                 player.dataPacket(event.getPacket());
                 event.setCancelled(true);
+            }else if (room instanceof InfectedModeRoom) {
+                //拦截未复活玩家的声音
+                InfectedModeRoom infectedModeRoom = (InfectedModeRoom) room;
+                if (infectedModeRoom.getPlayerRespawnTime().getOrDefault(player, 0) > 0) {
+                    player.dataPacket(event.getPacket());
+                    event.setCancelled(true);
+                }
             }
         }
     }

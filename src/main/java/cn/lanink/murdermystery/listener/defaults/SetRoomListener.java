@@ -116,7 +116,6 @@ public class SetRoomListener implements Listener {
                             goldSpawns.add(pos);
                             config.set("goldSpawn", goldSpawns);
                             player.sendMessage(this.murderMystery.getLanguage().translateString("adminAddGoldSpawn"));
-                            task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
                         case 50:
                             FormCreate.sendAdminMoreMenu(player);
