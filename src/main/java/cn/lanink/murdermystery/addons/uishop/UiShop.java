@@ -28,8 +28,6 @@ import java.util.HashSet;
  */
 public class UiShop extends AddonsBase implements Listener {
 
-    private static final int DLC_UI_SHOP = 1111856485;
-    private static final int DLC_UI_SHOP_OK = 1111856486;
     private ArrayList<String> items = new ArrayList<>();
     private final HashSet<Player> cache = new HashSet<>();
 
@@ -99,32 +97,33 @@ public class UiShop extends AddonsBase implements Listener {
                         .replace("%gold%", x + ""));
         for (String s : items) {
             String[] item = s.split(":");
-            simple.addButton(new ResponseElementButton(item[1])
-                    .onClicked(p -> {
-                            AdvancedFormWindowModal modal = new AdvancedFormWindowModal(FormCreate.PLUGIN_NAME,
-                                            this.getConfig().getString("BuyOK", "§a确定要花费 §e %gold% §a块金锭购买 §e %item% §a？")
-                                                    .replace("%gold%", item[2]).replace("%item%", item[1]),
-                                    this.getConfig().getString("ButtonOK", "§a购买"),
-                                    this.getConfig().getString("ButtonReturn", "§c返回"));
-                            modal.onClickedTrue(cp2 -> {
-                                int count = 0;
-                                for (Item item1 : cp2.getInventory().getContents().values()) {
-                                    if (item1.getId() == 266) {
-                                        count += item1.getCount();
-                                    }
+            simple.addButton(new ResponseElementButton(item[1] + "\n" +
+                    this.getConfig().getString("ShopPrice", "价格: %gold% 块金锭").replace("%gold%", item[2])
+            ).onClicked(p -> {
+                AdvancedFormWindowModal modal = new AdvancedFormWindowModal(FormCreate.PLUGIN_NAME,
+                        this.getConfig().getString("BuyOK", "§a确定要花费 §e %gold% §a块金锭购买 §e %item% §a？")
+                                .replace("%gold%", item[2]).replace("%item%", item[1]),
+                        this.getConfig().getString("ButtonOK", "§a购买"),
+                        this.getConfig().getString("ButtonReturn", "§c返回"));
+                        modal.onClickedTrue(cp2 -> {
+                            int count = 0;
+                            for (Item item1 : cp2.getInventory().getContents().values()) {
+                                if (item1.getId() == 266) {
+                                    count += item1.getCount();
                                 }
-                                if (count >= Integer.parseInt(item[2])) {
-                                    player.getInventory().removeItem(ItemManager.get(null, 266));
-                                    Tools.giveItem(player, Integer.parseInt(item[0]));
-                                    player.sendMessage(getConfig().getString("BuySuccess", "§a成功兑换到: §e %item% §a已发放到背包！")
-                                            .replace("%item%", item[1]));
-                                }else {
-                                    player.sendMessage(getConfig().getString("BuyFailure", "§a你的金锭数量不足！"));
-                                }
-                            });
-                            modal.onClickedFalse(this::showUiShop);
-                            p.showFormWindow(modal);
-                    }));
+                            }
+                            if (count >= Integer.parseInt(item[2])) {
+                                player.getInventory().removeItem(ItemManager.get(null, 266));
+                                Tools.giveItem(player, Integer.parseInt(item[0]));
+                                player.sendMessage(getConfig().getString("BuySuccess", "§a成功兑换到: §e %item% §a已发放到背包！")
+                                        .replace("%item%", item[1]));
+                            }else {
+                                player.sendMessage(getConfig().getString("BuyFailure", "§a你的金锭数量不足！"));
+                            }
+                        });
+                        modal.onClickedFalse(this::showUiShop);
+                        p.showFormWindow(modal);
+            }));
         }
         player.showFormWindow(simple);
     }

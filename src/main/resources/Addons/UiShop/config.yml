@@ -4,6 +4,7 @@ UiShopItemLore: |-
   便携道具商店
   购买各种道具来帮助你获取胜利！
 ShopMain: "§a你当前有 §e %gold% §a块金锭"
+ShopPrice: "价格: %gold% 块金锭"
 BuyOK: "§a确定要花费 §e %gold% §a块金锭购买 §e %item% §a？"
 ButtonOK: "§a购买"
 ButtonReturn: "§c返回"
