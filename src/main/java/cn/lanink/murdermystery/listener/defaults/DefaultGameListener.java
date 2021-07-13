@@ -90,7 +90,6 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                     if (item.getId() == 262) {
                         arrow += item.getCount();
                     }else if (item.getId() == 261) {
-                        item.setDamage(0);
                         hasBow = true;
                     }
                 }
@@ -135,7 +134,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         if (room == null) {
             return;
         }
-        if (room.getStatus() == RoomStatus.GAME) {
+        if (room.getStatus() != RoomStatus.GAME) {
             event.setCancelled(true);
             return;
         }
