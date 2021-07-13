@@ -23,7 +23,8 @@ public class ItemManager {
                 item = Item.get(261, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 1));
+                        .putInt("MurderType", 1)
+                        .putByte("Unbreakable", 1));
                 item.setCustomName(language.translateString("itemDetectiveBow"));
                 item.setLore(language.translateString("itemDetectiveBowLore").split("\n"));
                 return item;
@@ -31,7 +32,8 @@ public class ItemManager {
                 item = Item.get(267, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 2));
+                        .putInt("MurderType", 2)
+                        .putByte("Unbreakable", 1));
                 item.setCustomName(language.translateString("itemKillerSword"));
                 item.setLore(language.translateString("itemKillerSwordLore").split("\n"));
                 return item;
