@@ -206,6 +206,11 @@ public class AssassinModeRoom extends BaseRoom {
         }
     }
 
+    /**
+     * 分配目标
+     *
+     * @param player 需要分配目标的玩家
+     */
     public void assignTarget(@NotNull Player player) {
         if (this.getPlayers(player) != PlayerIdentity.ASSASSIN) {
             return;
@@ -284,9 +289,8 @@ public class AssassinModeRoom extends BaseRoom {
         this.targetMap.remove(player);
         if (this.targetMap.containsValue(player)) {
             for (Map.Entry<Player, Player> entry : this.targetMap.entrySet()) {
-                if (entry.getValue() == player) {
+                if (entry.getValue() == player && this.getPlayers(entry.getKey()) == PlayerIdentity.ASSASSIN) {
                     this.assignTarget(entry.getKey());
-                    break;
                 }
             }
         }
