@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>MurderMystery</artifactId>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
 
     <licenses>
         <license>
@@ -81,6 +81,7 @@
                             <includes>
                                 <include>${project.basedir}/src/main/java/cn/lanink/murdermystery/MurderMystery.java</include>
                                 <include>${project.basedir}/src/main/resources/plugin.yml</include>
+                                <include>${project.basedir}/.circleci/config.yml</include>
                             </includes>
                             <replacements>
                                 <replacement>
@@ -91,6 +92,10 @@
                                 <replacement>
                                     <token>version: ".*"</token>
                                     <value>version: "${project.version}"</value>
+                                </replacement>
+                                <replacement>
+                                    <token>target/MurderMystery-.*.jar</token>
+                                    <value>target/MurderMystery-${project.version}.jar</value>
                                 </replacement>
                             </replacements>
                         </configuration>

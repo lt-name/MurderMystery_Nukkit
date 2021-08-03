@@ -12,7 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Watchdog extends PluginTask<MurderMystery> {
 
-    public static final ConcurrentHashMap<BaseRoom, Integer> roomRunTime = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<BaseRoom, Integer> roomRunTime = new ConcurrentHashMap<>();
+    private int outTime = 10;
 
     public Watchdog() {
         super(MurderMystery.getInstance());
@@ -20,9 +21,6 @@ public class Watchdog extends PluginTask<MurderMystery> {
 
     @Override
     public void onRun(int i) {
-        /*if (MurderMystery.debug) {
-            this.owner.getLogger().info("[debug] ==== Watchdog =====");
-        }*/
         for (Map.Entry<BaseRoom, Integer> entry : roomRunTime.entrySet()) {
             int runTime = entry.getValue() + 1;
             entry.setValue(runTime);
@@ -32,38 +30,32 @@ public class Watchdog extends PluginTask<MurderMystery> {
                     entry.setValue(0);
                     break;
                 case WAIT:
-                    if (entry.getKey().getPlayers().size() < entry.getKey().getMinPlayers()) {
-                        entry.setValue(0);
-                    }else if (runTime > entry.getKey().setWaitTime * 1.5) {
-                        entry.getKey().endGame();
-                        entry.setValue(0);
-                    }
-                    break;
                 case GAME:
-                    if (runTime > entry.getKey().setGameTime * 1.5) {
-                        entry.getKey().endGame();
-                        entry.setValue(0);
-                    }
-                    break;
                 case VICTORY:
-                    if (runTime > 15) {
-                        entry.getKey().endGame();
-                        entry.setValue(0);
+                    if (runTime > this.outTime) {
+                        try {
+                            this.owner.getLogger().warning("[Watchdog] Room[" + entry.getKey().getFullRoomName() + "] stuck error! Try to close...");
+                            entry.setValue(0);
+                            entry.getKey().endGame();
+                        } catch (Exception e) {
+                            this.owner.unloadRoom(entry.getKey().getLevelName());
+                            this.owner.getLogger().error("[Watchdog] The room[" + entry.getKey().getLevelName() + "] cannot end the game error", e);
+                        }
                     }
                     break;
             }
-            /*if (MurderMystery.debug) {
-                this.owner.getLogger().info("[debug] Room: " + entry.getKey().getLevelName() + " runTime: " + runTime);
-            }*/
         }
-        /*if (MurderMystery.debug) {
-            this.owner.getLogger().info("[debug] ==== Watchdog =====");
-        }*/
     }
 
     @Override
     public void onCancel() {
         roomRunTime.clear();
+    }
+
+    public static void resetTime(BaseRoom baseRoom) {
+        if (roomRunTime.containsKey(baseRoom)) {
+            roomRunTime.put(baseRoom, 0);
+        }
     }
 
     public static void add(BaseRoom baseRoom) {

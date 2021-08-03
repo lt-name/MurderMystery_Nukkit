@@ -100,6 +100,7 @@ public class WaitTask extends PluginTask<MurderMystery> {
             this.room.endGame();
             this.cancel();
         }
+        Watchdog.resetTime(this.room);
     }
 
 }

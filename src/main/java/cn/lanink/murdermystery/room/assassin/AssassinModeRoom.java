@@ -6,6 +6,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
+import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.game.assassin.AssassinDistanceTip;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -156,6 +157,8 @@ public class AssassinModeRoom extends BaseRoom {
             this.victory(0);
         }
         this.goldSpawn();
+
+        Watchdog.resetTime(this);
     }
 
     @Override
