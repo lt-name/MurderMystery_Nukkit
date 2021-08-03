@@ -23,16 +23,16 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new UnloadRoom("UnloadRoom"));
         this.addSubCommand(new Version("version"));
 
-        this.addSubCommand(new SetRoomName("setroomname"));
-        this.addSubCommand(new SetWaitSpawn("setwaitspawn"));
-        this.addSubCommand(new AddRandomSpawn("addrandomspawn"));
-        this.addSubCommand(new AddGoldSpawn("addgoldspawn"));
-        this.addSubCommand(new SetGoldSpawnTime("setgoldspawntime"));
-        this.addSubCommand(new SetWaitTime("setwaittime"));
-        this.addSubCommand(new SetGameTime("setgametime"));
-        this.addSubCommand(new SetGameMode("setgamemode"));
-        this.addSubCommand(new SetMinPlayers("setminplayers"));
-        this.addSubCommand(new SetMaxPlayers("setmaxplayers"));
+        this.addSubCommand(new SetRoomName("SetRoomName"));
+        this.addSubCommand(new SetWaitSpawn("SetWaitSpawn"));
+        this.addSubCommand(new AddRandomSpawn("AddRandomSpawn"));
+        this.addSubCommand(new AddGoldSpawn("AddGoldSpawn"));
+        this.addSubCommand(new SetGoldSpawnTime("SetGoldSpawnTime"));
+        this.addSubCommand(new SetWaitTime("SetWaitTime"));
+        this.addSubCommand(new SetGameTime("SetGameTime"));
+        this.addSubCommand(new SetGameMode("SetGameMode"));
+        this.addSubCommand(new SetMinPlayers("SetMinPlayers"));
+        this.addSubCommand(new SetMaxPlayers("SetMaxPlayers"));
 
         this.loadCommandBase();
     }

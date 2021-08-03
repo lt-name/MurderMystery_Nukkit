@@ -20,7 +20,7 @@ public abstract class BaseCommand extends Command {
     protected MurderMystery murderMystery = MurderMystery.getInstance();
 
     public BaseCommand(String name, String description) {
-        super(name,description);
+        super(name.toLowerCase(), description);
     }
 
     /**
@@ -34,7 +34,7 @@ public abstract class BaseCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String s, String[] args) {
-        if(hasPermission(sender)) {
+        if(this.hasPermission(sender)) {
             if(args.length > 0) {
                 String subCommand = args[0].toLowerCase();
                 if (subCommands.containsKey(subCommand)) {
