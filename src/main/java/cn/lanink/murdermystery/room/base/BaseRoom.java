@@ -453,6 +453,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * 房间开始游戏
      */
     public synchronized void startGame() {
+        Watchdog.resetTime(this);
         if (this.status == RoomStatus.GAME || this.status == RoomStatus.VICTORY) {
             return;
         }
@@ -476,7 +477,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
         this.scheduleTask();
         this.autoCreateTemporaryRoom();
-        Watchdog.roomRunTime.put(this, 0);
+        Watchdog.resetTime(this);
     }
 
     public void scheduleTask() {
@@ -495,6 +496,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param victory 胜利队伍
      */
     public synchronized void endGame(int victory) {
+        Watchdog.resetTime(this);
         if (this.getStatus() == RoomStatus.LEVEL_NOT_LOADED) {
             return;
         }
@@ -531,7 +533,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                 break;
         }
         this.autoClearTemporaryRoom();
-        Watchdog.roomRunTime.put(this, 0);
+        Watchdog.resetTime(this);
     }
 
     protected abstract void victoryReward(int victory);
@@ -634,6 +636,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
         this.goldSpawn();
         this.goldExchange();
+
+        Watchdog.resetTime(this);
     }
 
     /**

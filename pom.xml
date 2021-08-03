@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>MurderMystery</artifactId>
-    <version>1.3.2.0-PM1E</version>
+    <version>1.3.3.0-PM1E</version>
 
     <licenses>
         <license>
@@ -37,7 +37,7 @@
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
-                <version>4.0.5</version>
+                <version>4.9.10</version>
                 <executions>
                     <execution>
                         <id>get-the-git-infos</id>
@@ -81,6 +81,7 @@
                             <includes>
                                 <include>${project.basedir}/src/main/java/cn/lanink/murdermystery/MurderMystery.java</include>
                                 <include>${project.basedir}/src/main/resources/plugin.yml</include>
+                                <include>${project.basedir}/.circleci/config.yml</include>
                             </includes>
                             <replacements>
                                 <replacement>
@@ -91,6 +92,10 @@
                                 <replacement>
                                     <token>version: ".*"</token>
                                     <value>version: "${project.version}"</value>
+                                </replacement>
+                                <replacement>
+                                    <token>target/MurderMystery-.*.jar</token>
+                                    <value>target/MurderMystery-${project.version}.jar</value>
                                 </replacement>
                             </replacements>
                         </configuration>
@@ -146,14 +151,14 @@
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <version>1.3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.smallaswater.npc</groupId>
             <artifactId>RsNPCX</artifactId>
-            <version>1.6.1</version>
+            <version>1.7.0</version>
             <scope>provided</scope>
         </dependency>
 

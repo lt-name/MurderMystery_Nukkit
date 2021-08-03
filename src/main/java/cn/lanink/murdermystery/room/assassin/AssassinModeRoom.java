@@ -6,6 +6,7 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
+import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.game.assassin.AssassinDistanceTip;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
@@ -156,6 +157,8 @@ public class AssassinModeRoom extends BaseRoom {
             this.victory(0);
         }
         this.goldSpawn();
+
+        Watchdog.resetTime(this);
     }
 
     @Override
@@ -206,6 +209,11 @@ public class AssassinModeRoom extends BaseRoom {
         }
     }
 
+    /**
+     * 分配目标
+     *
+     * @param player 需要分配目标的玩家
+     */
     public void assignTarget(@NotNull Player player) {
         if (this.getPlayers(player) != PlayerIdentity.ASSASSIN) {
             return;
@@ -284,9 +292,8 @@ public class AssassinModeRoom extends BaseRoom {
         this.targetMap.remove(player);
         if (this.targetMap.containsValue(player)) {
             for (Map.Entry<Player, Player> entry : this.targetMap.entrySet()) {
-                if (entry.getValue() == player) {
+                if (entry.getValue() == player && this.getPlayers(entry.getKey()) == PlayerIdentity.ASSASSIN) {
                     this.assignTarget(entry.getKey());
-                    break;
                 }
             }
         }

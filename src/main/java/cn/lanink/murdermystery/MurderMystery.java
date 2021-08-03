@@ -60,19 +60,25 @@ public class MurderMystery extends PluginBase {
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(),
             new ThreadPoolExecutor.DiscardPolicy());
+
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
+
     private Config config;
-    private Config temporaryRoomsConfig; //文件保存，防止崩服丢失数据
+
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, String> roomName = new HashMap<>(); //自定义房间名称
+
+    private Config temporaryRoomsConfig; //文件保存，防止崩服丢失数据
     private CopyOnWriteArrayList<String> temporaryRooms; //临时房间
+
     @SuppressWarnings("rawtypes")
     private static final HashMap<String, Class<? extends BaseMurderMysteryListener>> LISTENER_CLASS = new HashMap<>();
     @SuppressWarnings("rawtypes")
     private final HashMap<String, BaseMurderMysteryListener> murderMysteryListeners = new HashMap<>();
+
     private final LinkedHashMap<Integer, MurderMysterySkin> skins = new LinkedHashMap<>();
     private Skin sword;
     private final Skin corpseSkin = new Skin();
@@ -129,6 +135,7 @@ public class MurderMystery extends PluginBase {
             getLogger().warning("Skins 文件夹初始化失败");
         }
         this.saveDefaultConfig();
+
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
         if (config.getBoolean("debug", false)) {
             debug = true;
@@ -142,11 +149,14 @@ public class MurderMystery extends PluginBase {
 
             }
         }
+
         this.temporaryRoomsConfig = new Config(this.getDataFolder() + "/temporaryRoomList.yml", Config.YAML);
         this.temporaryRooms = new CopyOnWriteArrayList<>(this.temporaryRoomsConfig.getStringList("temporaryRooms"));
         this.removeAllTemporaryRoom();
+
         this.restoreWorld = this.config.getBoolean("restoreWorld", false);
         this.autoCreateTemporaryRoom = this.config.getBoolean("autoCreateTemporaryRoom", false);
+
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "murdermysteryadmin");
@@ -662,7 +672,11 @@ public class MurderMystery extends PluginBase {
     public void unloadRoom(String world) {
         if (this.rooms.containsKey(world)) {
             BaseRoom room = this.rooms.remove(world);
-            room.endGame();
+            try {
+                room.endGame();
+            } catch (Exception ignored) {
+
+            }
             for (BaseMurderMysteryListener listener : this.murderMysteryListeners.values()) {
                 listener.removeListenerRoom(world);
             }
