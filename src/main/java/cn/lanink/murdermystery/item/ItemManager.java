@@ -87,6 +87,9 @@ public class ItemManager {
                 item = Item.get(266, 0, 1); //金锭
                 item.setNamedTag(new CompoundTag().putBoolean("cannotClickOnInventory", true));
                 return item;
+            case 345:
+                item = Item.get(345); //指南针
+                return item;
             default:
                 return Item.get(0);
         }

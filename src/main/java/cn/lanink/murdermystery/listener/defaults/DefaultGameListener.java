@@ -1,6 +1,7 @@
 package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.gamecore.utils.Language;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
@@ -145,7 +146,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 event.setCancelled(true);
                 return;
             }
-            if (item.getId() == Item.GOLD_INGOT && room.getStatus() == RoomStatus.GAME) {
+            if (item.getId() == Item.GOLD_INGOT) {
                 event.setCancelled(true);
                 event.getItem().close();
 
@@ -161,6 +162,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 Tools.playSound(player, Sound.RANDOM_ORB);
                 return;
             }
+
             CompoundTag tag = item.getNamedTag();
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 1) {
                 if (room.getPlayers(player) != PlayerIdentity.COMMON_PEOPLE) {
@@ -170,7 +172,10 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 if (room instanceof ClassicModeRoom) {
                     room.detectiveBow = null;
                 }
-                room.getPlayers().keySet().forEach(p -> p.sendMessage(this.murderMystery.getLanguage(p).translateString("commonPeopleBecomeDetective")));
+                for (Player p : room.getPlayers().keySet()) {
+                    p.sendMessage(this.murderMystery.getLanguage(p).translateString("commonPeopleBecomeDetective"));
+                    p.getInventory().remove(ItemManager.get(p, 345));
+                }
                 room.getPlayers().put(player, PlayerIdentity.DETECTIVE);
                 player.getInventory().addItem(Item.get(262, 0, 1));
             }
@@ -455,6 +460,10 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 entityItem.setNameTag(murderMystery.getLanguage(null).translateString("itemDetectiveBow"));
                 entityItem.setNameTagVisible(true);
                 entityItem.setNameTagAlwaysVisible(true);
+
+                for (Player player : room.getPlayers().keySet()) {
+                    player.getInventory().addItem(ItemManager.get(player, 345));
+                }
             }, 100);
         }
     }
