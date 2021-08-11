@@ -35,6 +35,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
+import cn.nukkit.network.protocol.SetSpawnPositionPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
@@ -438,6 +439,15 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (room instanceof ClassicModeRoom) {
                 room.detectiveBow = entityItem;
             }
+
+            SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
+            pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+            pk.x = entityItem.getFloorX();
+            pk.y = entityItem.getFloorY();
+            pk.z = entityItem.getFloorZ();
+            pk.dimension = 0;
+            room.getPlayers().keySet().forEach(p -> p.dataPacket(pk));
+
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
                 if (room.getStatus() != RoomStatus.GAME || entityItem.isClosed()) {
                     return;
