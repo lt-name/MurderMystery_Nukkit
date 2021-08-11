@@ -58,21 +58,18 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player) {
-            Player player = ((Player) event.getEntity()).getPlayer();
-            if (player == null || event.getProjectile() == null) {
+            Player player = (Player) event.getEntity();
+            if (event.getProjectile() == null) {
                 return;
             }
             BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
             if (room == null || room.getStatus() != RoomStatus.GAME) {
                 return;
             }
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
-                Item item = player.getInventory().getItemInHand();
-                if (item.getId() == 261) {
-                    item.setDamage(0);
-                    player.getInventory().setItemInHand(item);
-                }
-            }, 1);
+            if (event.getForce() < 2) {
+                event.setCancelled(true);
+                return;
+            }
             if (room.getPlayers(player) == PlayerIdentity.COMMON_PEOPLE || room.getPlayers(player) == PlayerIdentity.DETECTIVE) {
                 event.getProjectile().namedTag = new CompoundTag()
                         .putBoolean("isMurderItem", true)
