@@ -112,8 +112,9 @@ public class UiShop extends AddonsBase implements Listener {
                                     count += item1.getCount();
                                 }
                             }
-                            if (count >= Integer.parseInt(item[2])) {
-                                player.getInventory().removeItem(ItemManager.get(null, 266));
+                            int needCount = Integer.parseInt(item[2]);
+                            if (count >= needCount) {
+                                player.getInventory().removeItem(ItemManager.get(null, 266, needCount));
                                 Tools.giveItem(player, Integer.parseInt(item[0]));
                                 player.sendMessage(getConfig().getString("BuySuccess", "§a成功兑换到: §e %item% §a已发放到背包！")
                                         .replace("%item%", item[1]));
