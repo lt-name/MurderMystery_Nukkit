@@ -214,7 +214,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                             }
                         }
                         if (x > 0) {
-                            player.getInventory().removeItem(Item.get(266, 0, 1));
+                            player.getInventory().removeItem(ItemManager.get(player, 266));
                             Tools.giveItem(player, 21);
                             player.sendMessage(language.translateString("exchangeItem")
                                     .replace("%name%", language.translateString("itemPotion")));
@@ -243,7 +243,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                         }
                         if (x > 0) {
                             if (notHave) {
-                                player.getInventory().removeItem(Item.get(266, 0, 1));
+                                player.getInventory().removeItem(ItemManager.get(player, 266));
                                 Tools.giveItem(player, 22);
                                 player.sendMessage(language.translateString("exchangeItem")
                                         .replace("%name%", language.translateString("itemShieldWall")));
@@ -269,7 +269,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                             }
                         }
                         if (x > 0) {
-                            player.getInventory().removeItem(Item.get(266, 0, 1));
+                            player.getInventory().removeItem(ItemManager.get(player, 266));
                             Tools.giveItem(player, 23);
                             player.sendMessage(language.translateString("exchangeItem")
                                     .replace("%name%", language.translateString("itemSnowball")));
