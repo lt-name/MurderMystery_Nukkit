@@ -287,6 +287,9 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                 this.getStatus() == RoomStatus.VICTORY) {
             return;
         }
+
+        Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomPlayerJoinEvent(this, player));
+
         Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
             if (this.isPlaying(player) && player.getLevel() != this.level) {
                 this.quitRoom(player);
@@ -323,6 +326,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param player 玩家
      */
     public synchronized void quitRoom(Player player) {
+        Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomPlayerQuitEvent(this, player));
+
         this.players.remove(player);
         if (this.murderMystery.isHasTips()) {
             Tips.removeTipsConfig(this.level.getName(), player);
