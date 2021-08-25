@@ -287,6 +287,9 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                 this.getStatus() == RoomStatus.VICTORY) {
             return;
         }
+
+        Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomPlayerJoinEvent(this, player));
+
         Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
             if (this.isPlaying(player) && player.getLevel() != this.level) {
                 this.quitRoom(player);
@@ -323,6 +326,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * @param player 玩家
      */
     public synchronized void quitRoom(Player player) {
+        Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomPlayerQuitEvent(this, player));
+
         this.players.remove(player);
         if (this.murderMystery.isHasTips()) {
             Tips.removeTipsConfig(this.level.getName(), player);
@@ -775,13 +780,22 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         if (ev.isCancelled()) {
             return;
         }
-        int random1 = MurderMystery.RANDOM.nextInt(this.getPlayers().size()) + 1;
+
+        ArrayList<Player> needAssignPlayers = new ArrayList<>();
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            if (entry.getValue() == PlayerIdentity.NULL) {
+                needAssignPlayers.add(entry.getKey());
+            }
+        }
+
+        int random1 = MurderMystery.RANDOM.nextInt(needAssignPlayers.size()) + 1;
         int random2;
         do {
-            random2 = MurderMystery.RANDOM.nextInt(this.getPlayers().size()) + 1;
+            random2 = MurderMystery.RANDOM.nextInt(needAssignPlayers.size()) + 1;
         }while (random1 == random2);
+
         int i = 0;
-        for (Player player : this.getPlayers().keySet()) {
+        for (Player player : needAssignPlayers) {
             i++;
             //侦探
             if (i == random1) {
