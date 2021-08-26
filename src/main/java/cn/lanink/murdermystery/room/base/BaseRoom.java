@@ -973,7 +973,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                 if (x == 0 && cache.size() > 0) {
                     this.murderMystery.addTemporaryRoom(cache.get(MurderMystery.RANDOM.nextInt(cache.size())));
                 }
-            }, MurderMystery.checkRoomThreadPool);
+            }, MurderMystery.CHECK_ROOM_THREAD_POOL);
         }
     }
 

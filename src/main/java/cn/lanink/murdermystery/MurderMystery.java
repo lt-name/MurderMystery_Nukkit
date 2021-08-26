@@ -53,7 +53,7 @@ public class MurderMystery extends PluginBase {
     public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
-    public static final ThreadPoolExecutor checkRoomThreadPool = new ThreadPoolExecutor(
+    public static final ThreadPoolExecutor CHECK_ROOM_THREAD_POOL = new ThreadPoolExecutor(
             2,
             4,
             30,
@@ -166,7 +166,9 @@ public class MurderMystery extends PluginBase {
         this.loadLanguage();
 
         //扩展
-        if (addonsManager == null) addonsManager = new AddonsManager(this);
+        if (addonsManager == null) {
+            addonsManager = new AddonsManager(this);
+        }
 
         //注册监听器
         this.registerListeners();
@@ -563,7 +565,7 @@ public class MurderMystery extends PluginBase {
                 Map<String, Object> skinJson = new Config(fileJson, 1).getAll();
                 String name = null;
                 for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
-                    if (name == null || name.trim().equals("")) {
+                    if (name == null || "".equals(name.trim())) {
                         name = entry1.getKey();
                     }else {
                         break;
@@ -617,11 +619,11 @@ public class MurderMystery extends PluginBase {
         String name = this.temporaryRooms.contains(world) ? world : config.getString("roomName", world);
         if (config.getInt("waitTime", 0) == 0 ||
                 config.getInt("gameTime", 0) == 0 ||
-                config.getString("waitSpawn", "").trim().equals("") ||
+                "".equals(config.getString("waitSpawn", "").trim()) ||
                 config.getStringList("randomSpawn").size() == 0 ||
                 config.getStringList("goldSpawn").size() == 0 ||
                 config.getInt("goldSpawnTime", 0) == 0 ||
-                config.getString("gameMode", "").trim().equals("")) {
+                "".equals(config.getString("gameMode", "").trim())) {
             getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByConfig")
                     .replace("%name%", name + "(" + world + ")"));
             return;
