@@ -13,6 +13,8 @@ import java.util.List;
  */
 public class FileGameRecordManager extends GameRecordManager {
 
+    private static final Gson GSON = new Gson();
+
     private final Config roundRecordFile;
     private final Config playerRecordFile;
 
@@ -38,7 +40,7 @@ public class FileGameRecordManager extends GameRecordManager {
             return this.roundRecordCache.get(id);
         }
         String o = this.roundRecordFile.getString("id-" + id);
-        RoundRecord roundRecord = new Gson().fromJson(o, RoundRecord.class);
+        RoundRecord roundRecord = GSON.fromJson(o, RoundRecord.class);
         this.roundRecordCache.put(id, roundRecord);
         return roundRecord;
     }

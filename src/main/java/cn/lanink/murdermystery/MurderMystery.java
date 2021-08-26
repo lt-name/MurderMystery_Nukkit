@@ -64,7 +64,10 @@ public class MurderMystery extends PluginBase {
             new ThreadPoolExecutor.DiscardPolicy());
 
     private static MurderMystery murderMystery;
+
     private static AddonsManager addonsManager;
+    @Getter
+    private GameRecordManager gameRecordManager;
 
     private Config config;
 
@@ -91,9 +94,6 @@ public class MurderMystery extends PluginBase {
     private List<String> cmdAdminAliases;
     @Getter
     private List<String> cmdWhitelist;
-
-    private static AddonsManager addonsManager;
-    private GameRecordManager gameRecordManager;
 
     private IScoreboard scoreboard;
 
@@ -172,7 +172,10 @@ public class MurderMystery extends PluginBase {
         this.loadLanguage();
 
         //扩展
-        if (addonsManager == null) addonsManager = new AddonsManager(this);
+        if (addonsManager == null) {
+            addonsManager = new AddonsManager(this);
+        }
+        this.gameRecordManager = new FileGameRecordManager();
 
         //注册监听器
         this.registerListeners();

@@ -14,20 +14,12 @@ public abstract class GameRecordManager {
     protected final MurderMystery murderMystery = MurderMystery.getInstance();
     public static int roundRecordCount = 0;
 
-    public void addRoundRecord(RoundRecord roundRecord) {
+    public abstract void addRoundRecord(RoundRecord roundRecord);
 
-    }
+    public abstract RoundRecord getRoundRecord(int id);
 
-    public RoundRecord getRoundRecord(int id) {
-        return null;
-    }
+    public abstract List<RoundRecord> getRoundRecordList();
 
-    public List<RoundRecord> getRoundRecordList() {
-        return null;
-    }
-
-    public List<RoundRecord> getRoundRecordListByPlayer(@NotNull String name) {
-        return null;
-    }
+    public abstract List<RoundRecord> getRoundRecordListByPlayer(@NotNull String name);
 
 }

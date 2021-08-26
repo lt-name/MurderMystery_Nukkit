@@ -9,10 +9,10 @@ import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.data.MurderMysterySkin;
 import cn.lanink.murdermystery.event.*;
-import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.gamerecord.GameRecordManager;
 import cn.lanink.murdermystery.gamerecord.roundrecord.PlayerRoundRecord;
 import cn.lanink.murdermystery.gamerecord.roundrecord.RoundRecord;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.tasks.VictoryTask;
 import cn.lanink.murdermystery.tasks.WaitTask;
@@ -86,6 +86,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
 
     public Player killKillerPlayer = null; //击杀杀手的玩家
     public EntityItem detectiveBow = null; //掉落的侦探弓
+
+    protected RoundRecord roundRecord;
 
     /**
      * 初始化
@@ -205,6 +207,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         this.skinCache.clear();
         this.killKillerPlayer = null;
         this.detectiveBow = null;
+        this.roundRecord = null;
     }
 
     /**
@@ -483,6 +486,19 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         for (Player player : this.getSpectatorPlayers()) {
             player.teleport(gamePlayers.get(MurderMystery.RANDOM.nextInt(gamePlayers.size())));
         }
+
+        List<PlayerRoundRecord> playerRoundRecordList = new ArrayList<>();
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            playerRoundRecordList.add(new PlayerRoundRecord(entry.getKey().getName(), entry.getValue(), 0, 0));
+        }
+
+        this.roundRecord = new RoundRecord(++GameRecordManager.roundRecordCount,
+                this.getGameMode(),
+                PlayerIdentity.NULL,
+                null,
+                playerRoundRecordList
+        );
+
         this.scheduleTask();
         this.autoCreateTemporaryRoom();
         Watchdog.resetTime(this);
@@ -803,6 +819,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             //侦探
             if (i == random1) {
                 this.players.put(player, PlayerIdentity.DETECTIVE);
+                this.roundRecord.getPlayerRoundRecord(player).setIdentity(PlayerIdentity.DETECTIVE);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleDetectiveTitle"),
                         this.murderMystery.getLanguage(player).translateString("titleDetectiveSubtitle"), 10, 40, 10);
                 continue;
@@ -810,11 +827,13 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             //杀手
             if (i == random2) {
                 this.players.put(player, PlayerIdentity.KILLER);
+                this.roundRecord.getPlayerRoundRecord(player).setIdentity(PlayerIdentity.KILLER);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
                         this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
                 continue;
             }
             this.players.put(player, PlayerIdentity.COMMON_PEOPLE);
+            this.roundRecord.getPlayerRoundRecord(player).setIdentity(PlayerIdentity.COMMON_PEOPLE);
             player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleCommonPeopleTitle"),
                     this.murderMystery.getLanguage(player).translateString("titleCommonPeopleSubtitle"), 10, 40, 10);
         }
@@ -853,6 +872,8 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
         //攻击者是杀手
         if (this.getPlayers(damager) == PlayerIdentity.KILLER) {
+            PlayerRoundRecord playerRoundRecord = this.roundRecord.getPlayerRoundRecord(damager);
+            playerRoundRecord.setKillCount(playerRoundRecord.getKillCount() + 1);
             damager.sendMessage(this.murderMystery.getLanguage(damager).translateString("killPlayer"));
             player.sendTitle(this.murderMystery.getLanguage(player).translateString("deathTitle"),
                     this.murderMystery.getLanguage(player).translateString("deathByKillerSubtitle"), 20, 60, 20);
@@ -948,39 +969,16 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
         if (this.getStatus() != RoomStatus.VICTORY && this.getPlayers().size() > 0) {
             this.setStatus(RoomStatus.VICTORY);
-            this.murderMystery.getGameRecordManager().addRoundRecord(this.getRoundRecord(victoryMode));
+            this.roundRecord.setWin(victoryMode == 3 ? PlayerIdentity.KILLER : PlayerIdentity.COMMON_PEOPLE);
+            if (this.killKillerPlayer != null) {
+                this.roundRecord.setKillKiller(this.killKillerPlayer.getName());
+            }
+            this.murderMystery.getGameRecordManager().addRoundRecord(this.roundRecord);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
                     new VictoryTask(this.murderMystery, this, victoryMode), 20);
         }else {
             this.endGame();
         }
-    }
-
-    protected RoundRecord getRoundRecord(int victory) {
-        PlayerIdentity win;
-        if (victory == 3) {
-            win = PlayerIdentity.KILLER;
-        }else {
-            win = PlayerIdentity.COMMON_PEOPLE;
-        }
-
-        String killKillerPlayerName = "null";
-        if (this.killKillerPlayer != null) {
-            killKillerPlayerName = this.killKillerPlayer.getName();
-        }
-
-        //TODO
-        List<PlayerRoundRecord> playerRoundRecordList = new ArrayList<>();
-        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
-            playerRoundRecordList.add(
-                    new PlayerRoundRecord(entry.getKey().getName(), entry.getValue(), 0, 0));
-        }
-
-        return new RoundRecord(++GameRecordManager.roundRecordCount,
-                this.getGameMode(),
-                win,
-                killKillerPlayerName,
-                playerRoundRecordList);
     }
 
     /**

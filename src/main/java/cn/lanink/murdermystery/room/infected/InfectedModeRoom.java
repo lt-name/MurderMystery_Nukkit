@@ -109,6 +109,7 @@ public class InfectedModeRoom extends BaseRoom {
                 int y = MurderMystery.RANDOM.nextInt(this.getPlayers().size());
                 Player player = new ArrayList<>(this.getPlayers().keySet()).get(y);
                 this.players.put(player, PlayerIdentity.KILLER);
+                this.roundRecord.getPlayerRoundRecord(player).setIdentity(PlayerIdentity.KILLER);
                 player.sendTitle(this.murderMystery.getLanguage(player).translateString("titleKillerTitle"),
                         this.murderMystery.getLanguage(player).translateString("titleKillerSubtitle"), 10, 40, 10);
                 this.playerRespawn(player);
