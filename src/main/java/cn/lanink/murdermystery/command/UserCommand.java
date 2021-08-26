@@ -5,7 +5,7 @@ import cn.lanink.murdermystery.command.usersubcommand.JoinRoom;
 import cn.lanink.murdermystery.command.usersubcommand.JoinSpectator;
 import cn.lanink.murdermystery.command.usersubcommand.QuitRoom;
 import cn.lanink.murdermystery.command.usersubcommand.RoomList;
-import cn.lanink.murdermystery.form.GuiCreate;
+import cn.lanink.murdermystery.form.FormCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -18,10 +18,10 @@ public class UserCommand extends BaseCommand {
         super(name, "MurderMystery 命令");
         this.setAliases(aliases);
         this.setPermission("murdermystery.user");
-        this.addSubCommand(new JoinRoom("join"));
-        this.addSubCommand(new JoinSpectator("joinspectator"));
-        this.addSubCommand(new QuitRoom("quit"));
-        this.addSubCommand(new RoomList("list"));
+        this.addSubCommand(new JoinRoom("Join"));
+        this.addSubCommand(new JoinSpectator("JoinSpectator"));
+        this.addSubCommand(new QuitRoom("Quit"));
+        this.addSubCommand(new RoomList("List"));
         this.loadCommandBase();
     }
 
@@ -33,7 +33,7 @@ public class UserCommand extends BaseCommand {
 
     @Override
     public void sendUi(CommandSender sender) {
-        GuiCreate.sendUserMenu((Player) sender);
+        FormCreate.sendUserMenu((Player) sender);
     }
 
 }

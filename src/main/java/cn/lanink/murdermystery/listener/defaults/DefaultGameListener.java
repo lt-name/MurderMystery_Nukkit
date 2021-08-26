@@ -1,11 +1,13 @@
 package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.gamecore.utils.Language;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.room.base.RoomStatus;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
+import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -34,6 +36,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
+import cn.nukkit.network.protocol.SetSpawnPositionPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
@@ -55,27 +58,26 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player) {
-            Player player = ((Player) event.getEntity()).getPlayer();
-            if (player == null || event.getProjectile() == null) {
+            Player player = (Player) event.getEntity();
+            if (event.getProjectile() == null) {
                 return;
             }
             BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
             if (room == null || room.getStatus() != RoomStatus.GAME) {
                 return;
             }
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
-                Item item = player.getInventory().getItemInHand();
-                if (item.getId() == 261) {
-                    item.setDamage(0);
-                    player.getInventory().setItemInHand(item);
-                }
-            }, 1);
+            if (event.getForce() < 2) {
+                event.setCancelled(true);
+                return;
+            }
             if (room.getPlayers(player) == PlayerIdentity.COMMON_PEOPLE || room.getPlayers(player) == PlayerIdentity.DETECTIVE) {
                 event.getProjectile().namedTag = new CompoundTag()
                         .putBoolean("isMurderItem", true)
                         .putInt("MurderType", 20);
                 if (room.getPlayers(player) == PlayerIdentity.DETECTIVE) {
-                    player.getInventory().addItem(Item.get(262, 0, 1));
+                    if (!(room instanceof InfectedModeRoom)) {
+                        player.getInventory().addItem(Item.get(262, 0, 1));
+                    }
                     return;
                 }
             }
@@ -87,7 +89,6 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                     if (item.getId() == 262) {
                         arrow += item.getCount();
                     }else if (item.getId() == 261) {
-                        item.setDamage(0);
                         hasBow = true;
                     }
                 }
@@ -132,13 +133,17 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         if (room == null) {
             return;
         }
+        if (room.getStatus() != RoomStatus.GAME) {
+            event.setCancelled(true);
+            return;
+        }
         if (event.getInventory() != null && event.getInventory() instanceof PlayerInventory) {
             Player player = (Player) event.getInventory().getHolder();
             if (player.getGamemode() != 0) {
                 event.setCancelled(true);
                 return;
             }
-            if (item.getId() == Item.GOLD_INGOT && room.getStatus() == RoomStatus.GAME) {
+            if (item.getId() == Item.GOLD_INGOT) {
                 event.setCancelled(true);
                 event.getItem().close();
 
@@ -154,6 +159,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 Tools.playSound(player, Sound.RANDOM_ORB);
                 return;
             }
+
             CompoundTag tag = item.getNamedTag();
             if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 1) {
                 if (room.getPlayers(player) != PlayerIdentity.COMMON_PEOPLE) {
@@ -163,7 +169,10 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 if (room instanceof ClassicModeRoom) {
                     room.detectiveBow = null;
                 }
-                room.getPlayers().keySet().forEach(p -> p.sendMessage(this.murderMystery.getLanguage(p).translateString("commonPeopleBecomeDetective")));
+                for (Player p : room.getPlayers().keySet()) {
+                    p.sendMessage(this.murderMystery.getLanguage(p).translateString("commonPeopleBecomeDetective"));
+                    p.getInventory().remove(ItemManager.get(p, 345));
+                }
                 room.getPlayers().put(player, PlayerIdentity.DETECTIVE);
                 player.getInventory().addItem(Item.get(262, 0, 1));
             }
@@ -205,7 +214,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                             }
                         }
                         if (x > 0) {
-                            player.getInventory().removeItem(Item.get(266, 0, 1));
+                            player.getInventory().removeItem(ItemManager.get(player, 266));
                             Tools.giveItem(player, 21);
                             player.sendMessage(language.translateString("exchangeItem")
                                     .replace("%name%", language.translateString("itemPotion")));
@@ -234,7 +243,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                         }
                         if (x > 0) {
                             if (notHave) {
-                                player.getInventory().removeItem(Item.get(266, 0, 1));
+                                player.getInventory().removeItem(ItemManager.get(player, 266));
                                 Tools.giveItem(player, 22);
                                 player.sendMessage(language.translateString("exchangeItem")
                                         .replace("%name%", language.translateString("itemShieldWall")));
@@ -260,7 +269,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                             }
                         }
                         if (x > 0) {
-                            player.getInventory().removeItem(Item.get(266, 0, 1));
+                            player.getInventory().removeItem(ItemManager.get(player, 266));
                             Tools.giveItem(player, 23);
                             player.sendMessage(language.translateString("exchangeItem")
                                     .replace("%name%", language.translateString("itemSnowball")));
@@ -277,7 +286,6 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 10) {
                 event.setCancelled(true);
                 room.quitRoom(player);
-                player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
             }
         }
     }
@@ -433,6 +441,15 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (room instanceof ClassicModeRoom) {
                 room.detectiveBow = entityItem;
             }
+
+            SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
+            pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+            pk.x = entityItem.getFloorX();
+            pk.y = entityItem.getFloorY();
+            pk.z = entityItem.getFloorZ();
+            pk.dimension = 0;
+            room.getPlayers().keySet().forEach(p -> p.dataPacket(pk));
+
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
                 if (room.getStatus() != RoomStatus.GAME || entityItem.isClosed()) {
                     return;
@@ -440,6 +457,10 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 entityItem.setNameTag(murderMystery.getLanguage(null).translateString("itemDetectiveBow"));
                 entityItem.setNameTagVisible(true);
                 entityItem.setNameTagAlwaysVisible(true);
+
+                for (Player player : room.getPlayers().keySet()) {
+                    player.getInventory().addItem(ItemManager.get(player, 345));
+                }
             }, 100);
         }
     }
@@ -530,6 +551,13 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             if (room.getPlayers(player) == PlayerIdentity.DEATH) {
                 player.dataPacket(event.getPacket());
                 event.setCancelled(true);
+            }else if (room instanceof InfectedModeRoom) {
+                //拦截未复活玩家的声音
+                InfectedModeRoom infectedModeRoom = (InfectedModeRoom) room;
+                if (infectedModeRoom.getPlayerRespawnTime().getOrDefault(player, 0) > 0) {
+                    player.dataPacket(event.getPacket());
+                    event.setCancelled(true);
+                }
             }
         }
     }

@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.listener.defaults;
 
 import cn.lanink.murdermystery.MurderMystery;
-import cn.lanink.murdermystery.form.GuiCreate;
+import cn.lanink.murdermystery.form.FormCreate;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -96,10 +96,10 @@ public class SetRoomListener implements Listener {
                 case 113: //设置
                     switch (task.getSetRoomSchedule()) {
                         case 9:
-                            GuiCreate.sendAdminRoomNameMenu(player);
+                            FormCreate.sendAdminRoomNameMenu(player);
                             break;
                         case 10:
-                            GuiCreate.sendAdminModeMenu(player);
+                            FormCreate.sendAdminModeMenu(player);
                             break;
                         case 20:
                             config.set("waitSpawn", pos);
@@ -116,10 +116,9 @@ public class SetRoomListener implements Listener {
                             goldSpawns.add(pos);
                             config.set("goldSpawn", goldSpawns);
                             player.sendMessage(this.murderMystery.getLanguage().translateString("adminAddGoldSpawn"));
-                            task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
                         case 50:
-                            GuiCreate.sendAdminMoreMenu(player);
+                            FormCreate.sendAdminMoreMenu(player);
                             break;
                     }
                     break;

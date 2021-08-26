@@ -1,10 +1,10 @@
 package cn.lanink.murdermystery.utils;
 
-import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.entity.EntityPlayerCorpse;
 import cn.lanink.murdermystery.entity.EntitySword;
 import cn.lanink.murdermystery.entity.EntityText;
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -122,100 +122,23 @@ public class Tools {
     public static void giveItem(Player player, int tagNumber) {
         switch (tagNumber) {
             case 1:
-                player.getInventory().setItem(1, getMurderMysteryItem(player, tagNumber));
+                player.getInventory().setItem(1, ItemManager.get(player, tagNumber));
                 player.getInventory().setItem(2, Item.get(262, 0, 1));
                 break;
             case 2:
-                player.getInventory().setItem(1, getMurderMysteryItem(player, tagNumber));
-                player.getInventory().setItem(2, getMurderMysteryItem(player, 3));
+                player.getInventory().setItem(1, ItemManager.get(player, tagNumber));
+                player.getInventory().setItem(2, ItemManager.get(player, 3));
                 break;
             case 10:
-                player.getInventory().setItem(8, getMurderMysteryItem(player, tagNumber));
+                player.getInventory().setItem(8, ItemManager.get(player, tagNumber));
                 break;
             case 21:
             case 22:
             case 23:
-                player.getInventory().addItem(getMurderMysteryItem(player, tagNumber));
+                player.getInventory().addItem(ItemManager.get(player, tagNumber));
                 break;
             default:
                 break;
-        }
-    }
-
-    /**
-     * 根据编号获取物品
-     *
-     * @param tagNumber 道具编号
-     * @return 物品
-     */
-    public static Item getMurderMysteryItem(Player player, int tagNumber) {
-        Item item;
-        Language language = MurderMystery.getInstance().getLanguage(player);
-        switch (tagNumber) {
-            case 1:
-                item = Item.get(261, 0, 1);
-                item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 1));
-                item.setCustomName(language.translateString("itemDetectiveBow"));
-                item.setLore(language.translateString("itemDetectiveBowLore").split("\n"));
-                return item;
-            case 2:
-                item = Item.get(267, 0, 1);
-                item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 2));
-                item.setCustomName(language.translateString("itemKillerSword"));
-                item.setLore(language.translateString("itemKillerSwordLore").split("\n"));
-                return item;
-            case 3:
-                item = Item.get(395, 0, 1);
-                item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 3));
-                item.setCustomName(language.translateString("itemScan"));
-                item.setLore(language.translateString("itemScanLore").split("\n"));
-                return item;
-            case 10:
-                item = Item.get(324, 0, 1);
-                item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 10));
-                item.setCustomName(language.translateString("itemQuitRoom"));
-                item.setLore(language.translateString("itemQuitRoomLore").split("\n"));
-                return item;
-            case 20:
-                item = Item.get(262, 0, 1);
-                item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 20));
-                return item;
-            case 21:
-                item = Item.get(373, 0, 1);
-                item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 21));
-                item.setCustomName(language.translateString("itemPotion"));
-                item.setLore(language.translateString("itemPotionLore").split("\n"));
-                return item;
-            case 22:
-                item = Item.get(241, 3, 1);
-                item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 22));
-                item.setCustomName(language.translateString("itemShieldWall"));
-                item.setLore(language.translateString("itemShieldWallLore").split("\n"));
-                return item;
-            case 23:
-                item = Item.get(332, 0, 1);
-                item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 23));
-                item.setCustomName(language.translateString("itemSnowball"));
-                item.setLore(language.translateString("itemSnowballLore").split("\n"));
-                return item;
-            default:
-                return Item.get(0);
         }
     }
 
@@ -252,7 +175,6 @@ public class Tools {
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.resetInAirTicks();
-        player.setGamemode(0);
         player.getAdventureSettings().set(AdventureSettings.Type.FLYING, false)
                 .set(AdventureSettings.Type.ALLOW_FLIGHT, false)
                 .update();
@@ -260,16 +182,20 @@ public class Tools {
             player.setNameTag("");
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
-            player.setAllowModifyWorld(false);
         }else {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
+            player.setGamemode(Player.CREATIVE); //刷新
         }
+        player.setGamemode(Player.SURVIVAL);
     }
 
     public static void sendMessage(BaseRoom room, String string) {
         for (Player player : room.getPlayers().keySet()) {
+            player.sendMessage(string);
+        }
+        for (Player player : room.getSpectatorPlayers()) {
             player.sendMessage(string);
         }
     }
@@ -282,6 +208,9 @@ public class Tools {
      */
     public static void playSound(BaseRoom room, Sound sound) {
         for (Player player : room.getPlayers().keySet()) {
+            playSound(player, sound);
+        }
+        for (Player player : room.getSpectatorPlayers()) {
             playSound(player, sound);
         }
     }

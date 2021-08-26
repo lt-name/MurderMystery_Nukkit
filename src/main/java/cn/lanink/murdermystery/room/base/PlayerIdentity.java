@@ -5,11 +5,34 @@ package cn.lanink.murdermystery.room.base;
  */
 public enum PlayerIdentity {
 
-    NULL, //未分配
-    COMMON_PEOPLE, //平民
-    DETECTIVE, //侦探
-    KILLER, //杀手
-    ASSASSIN, //刺客
-    DEATH //死亡
+    /**
+     * 未分配身份
+     */
+    NULL,
+
+    /**
+     * 平民
+     */
+    COMMON_PEOPLE,
+
+    /**
+     * 侦探
+     */
+    DETECTIVE,
+
+    /**
+     * 杀手
+     */
+    KILLER,
+
+    /**
+     * 刺客
+     */
+    ASSASSIN,
+
+    /**
+     * 死亡
+     */
+    DEATH
 
 }
