@@ -19,13 +19,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Cache Maven packages
-        uses: actions/cache@v1
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@v4.1
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          maven-version: 3.6.3
       - name: Build projects
         run: mvn -B package
       - run: mkdir staging && cp target/*.jar staging
