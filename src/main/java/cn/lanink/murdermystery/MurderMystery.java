@@ -53,12 +53,13 @@ public class MurderMystery extends PluginBase {
     public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
-    public static final ThreadPoolExecutor checkRoomThreadPool = new ThreadPoolExecutor(
+    public static final ThreadPoolExecutor CHECK_ROOM_THREAD_POOL = new ThreadPoolExecutor(
             2,
             4,
             30,
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(),
+            task -> new Thread(task, "MurderMystery Thread Pool"),
             new ThreadPoolExecutor.DiscardPolicy());
 
     private static MurderMystery murderMystery;
@@ -166,7 +167,9 @@ public class MurderMystery extends PluginBase {
         this.loadLanguage();
 
         //扩展
-        if (addonsManager == null) addonsManager = new AddonsManager(this);
+        if (addonsManager == null) {
+            addonsManager = new AddonsManager(this);
+        }
 
         //注册监听器
         this.registerListeners();
@@ -304,10 +307,10 @@ public class MurderMystery extends PluginBase {
                 Map.Entry<String, BaseRoom> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
                     entry.getValue().endGame();
-                    getLogger().info(this.getLanguage(null).translateString("roomUnloadFailure")
+                    this.getLogger().info(this.getLanguage(null).translateString("roomUnloadFailure")
                             .replace("%name%", entry.getKey()));
                 }else {
-                    getLogger().info(this.getLanguage(null).translateString("roomUnloadSuccess")
+                    this.getLogger().info(this.getLanguage(null).translateString("roomUnloadSuccess")
                             .replace("%name%", entry.getKey()));
                 }
                 Tools.cleanEntity(entry.getValue().getLevel(), true);
@@ -537,7 +540,7 @@ public class MurderMystery extends PluginBase {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
-        Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
+        Config config = new Config(this.getDataFolder() + "/Rooms/" + level + ".yml", Config.YAML);
         this.roomConfigs.put(level, config);
         return config;
     }
@@ -564,7 +567,7 @@ public class MurderMystery extends PluginBase {
                 Map<String, Object> skinJson = new Config(fileJson, 1).getAll();
                 String name = null;
                 for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
-                    if (name == null || name.trim().equals("")) {
+                    if (name == null || "".equals(name.trim())) {
                         name = entry1.getKey();
                     }else {
                         break;
@@ -600,7 +603,7 @@ public class MurderMystery extends PluginBase {
      * 加载所有房间
      */
     public void loadAllRoom() {
-        getLogger().info(this.getLanguage(null).translateString("startLoadingRoom"));
+        this.getLogger().info(this.getLanguage(null).translateString("startLoadingRoom"));
         File[] s = new File(getDataFolder() + "/Rooms").listFiles();
         if (s != null && s.length > 0) {
             for (File file1 : s) {
@@ -610,7 +613,7 @@ public class MurderMystery extends PluginBase {
                 }
             }
         }
-        getLogger().info(this.getLanguage(null).translateString("roomLoadedAllSuccess")
+        this.getLogger().info(this.getLanguage(null).translateString("roomLoadedAllSuccess")
                 .replace(" %number%", this.rooms.size() + ""));
     }
 
@@ -619,23 +622,23 @@ public class MurderMystery extends PluginBase {
         String name = this.temporaryRooms.contains(world) ? world : config.getString("roomName", world);
         if (config.getInt("waitTime", 0) == 0 ||
                 config.getInt("gameTime", 0) == 0 ||
-                config.getString("waitSpawn", "").trim().equals("") ||
+                "".equals(config.getString("waitSpawn", "").trim()) ||
                 config.getStringList("randomSpawn").size() == 0 ||
                 config.getStringList("goldSpawn").size() == 0 ||
                 config.getInt("goldSpawnTime", 0) == 0 ||
-                config.getString("gameMode", "").trim().equals("")) {
-            getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByConfig")
+                "".equals(config.getString("gameMode", "").trim())) {
+            this.getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByConfig")
                     .replace("%name%", name + "(" + world + ")"));
             return;
         }
         if (Server.getInstance().getLevelByName(world) == null && !Server.getInstance().loadLevel(world)) {
-            getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByLevel")
+            this.getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByLevel")
                     .replace("%name%", name + "(" + world + ")"));
             return;
         }
         String gameMode = config.getString("gameMode", "classic");
         if (!ROOM_CLASS.containsKey(gameMode)) {
-            getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByGameMode")
+            this.getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByGameMode")
                     .replace("%name%", name + "(" + world + ")")
                     .replace("%gameMode%", gameMode));
             return;
@@ -646,7 +649,7 @@ public class MurderMystery extends PluginBase {
             BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
             baseRoom.setGameMode(gameMode);
             this.rooms.put(world, baseRoom);
-            getLogger().info(this.getLanguage(null).translateString("roomLoadedSuccess")
+            this.getLogger().info(this.getLanguage(null).translateString("roomLoadedSuccess")
                     .replace("%name%", name + "(" + world + ")"));
         } catch (Exception e) {
             this.roomName.remove(world);
@@ -680,6 +683,7 @@ public class MurderMystery extends PluginBase {
             for (BaseMurderMysteryListener listener : this.murderMysteryListeners.values()) {
                 listener.removeListenerRoom(world);
             }
+            Watchdog.remove(room);
             this.getLogger().info(this.getLanguage().translateString("roomUnloadSuccess")
                     .replace("%name%", room.getFullRoomName()));
             this.roomName.remove(world);

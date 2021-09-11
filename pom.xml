@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>MurderMystery</artifactId>
-    <version>1.3.4.0-PM1E</version>
+    <version>1.3.5.0-PM1E</version>
 
     <licenses>
         <license>
@@ -158,7 +158,7 @@
         <dependency>
             <groupId>com.smallaswater.npc</groupId>
             <artifactId>RsNPCX</artifactId>
-            <version>1.7.1</version>
+            <version>1.8.2</version>
             <scope>provided</scope>
         </dependency>
 

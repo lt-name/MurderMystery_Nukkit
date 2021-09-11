@@ -193,7 +193,7 @@ public class RoomLevelProtection extends BaseMurderMysteryListener<BaseRoom> {
      * 玩家游戏模式改变事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
         if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
