@@ -59,6 +59,7 @@ public class MurderMystery extends PluginBase {
             30,
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(),
+            task -> new Thread(task, "MurderMystery Thread Pool"),
             new ThreadPoolExecutor.DiscardPolicy());
 
     private static MurderMystery murderMystery;
