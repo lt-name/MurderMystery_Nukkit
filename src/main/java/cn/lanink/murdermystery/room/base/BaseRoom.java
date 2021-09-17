@@ -517,17 +517,19 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         if (victory != 0) {
             this.victoryReward(victory);
         }
-        Iterator<Map.Entry<Player, PlayerIdentity>> it = this.players.entrySet().iterator();
-        while(it.hasNext()) {
-            Map.Entry<Player, PlayerIdentity> entry = it.next();
-            it.remove();
-            this.quitRoom(entry.getKey());
-        }
-        Iterator<Player> it2 = this.spectatorPlayers.iterator();
-        while(it2.hasNext()) {
-            Player player = it2.next();
-            it2.remove();
+        for (Player player : new HashSet<>(this.players.keySet())) {
             this.quitRoom(player);
+        }
+        for (Player player : new HashSet<>(this.spectatorPlayers)) {
+            this.quitRoom(player);
+        }
+        for (Player player : this.getLevel().getPlayers().values()) {
+            //不要触发传送事件，防止某些弱智操作阻止我们！
+            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn(), null);
+        }
+        //因为某些原因无法正常传送走玩家，就全部踹出服务器！
+        for (Player player : this.getLevel().getPlayers().values()) {
+            player.kick("Teleport error!");
         }
         this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
         this.initData();
@@ -723,16 +725,16 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                     .replace("%identity%", identity)
                     .replace("%playerNumber%", playerNumber + "")
                     .replace("%time%", this.gameTime + "").split("\n")));
-            ms.add(" ");
             if (time > 20) {
+                ms.add("§1§2§3§r");
                 if (detectiveSurvival) {
                     ms.addAll(Arrays.asList(language.translateString("detectiveSurvival").split("\n")));
                 } else {
                     ms.addAll(Arrays.asList(language.translateString("detectiveDeath").split("\n")));
                 }
             }
-            ms.add("  ");
             if (entry.getValue() == PlayerIdentity.KILLER) {
+                ms.add("§1§2§3§4§r");
                 int effectCD = this.killerEffectCD.getOrDefault(entry.getKey(), 0);
                 if (effectCD > 0) {
                     ms.add(language.translateString("gameEffectCDScoreBoard")
@@ -1009,7 +1011,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         if (MurderMystery.debug) {
             murderMystery.getLogger().info("§a房间：" + this.getFullRoomName() + " 正在还原地图...");
         }
-        Server.getInstance().unloadLevel(this.level);
+        Server.getInstance().unloadLevel(this.level, true);
         File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
         File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
