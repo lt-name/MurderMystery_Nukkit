@@ -524,6 +524,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             this.quitRoom(player);
         }
         for (Player player : this.getLevel().getPlayers().values()) {
+            //不要触发传送事件，防止某些弱智操作阻止我们！
             player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn(), null);
         }
         //因为某些原因无法正常传送走玩家，就全部踹出服务器！
@@ -1010,7 +1011,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         if (MurderMystery.debug) {
             murderMystery.getLogger().info("§a房间：" + this.getFullRoomName() + " 正在还原地图...");
         }
-        Server.getInstance().unloadLevel(this.level);
+        Server.getInstance().unloadLevel(this.level, true);
         File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
         File backup = new File(this.murderMystery.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
