@@ -524,7 +524,11 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             this.quitRoom(player);
         }
         for (Player player : this.getLevel().getPlayers().values()) {
-            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn(), null);
+        }
+        //因为某些原因无法正常传送走玩家，就全部踹出服务器！
+        for (Player player : this.getLevel().getPlayers().values()) {
+            player.kick("Teleport error!");
         }
         this.placeBlocks.forEach(list -> list.forEach(vector3 -> getLevel().setBlock(vector3, Block.get(0))));
         this.initData();
