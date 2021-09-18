@@ -25,6 +25,7 @@ import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
+import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.inventory.PlayerInventory;
@@ -72,8 +73,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             }
             if (room.getPlayers(player) == PlayerIdentity.COMMON_PEOPLE || room.getPlayers(player) == PlayerIdentity.DETECTIVE) {
                 event.getProjectile().namedTag = new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 20);
+                        .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
+                        .putInt(ItemManager.INTERNAL_ID_TAG, 20);
                 if (room.getPlayers(player) == PlayerIdentity.DETECTIVE) {
                     if (!(room instanceof InfectedModeRoom)) {
                         player.getInventory().addItem(Item.get(262, 0, 1));
@@ -115,8 +116,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         }
         if (entity.getNetworkId() == 81) {
             event.getEntity().namedTag = new CompoundTag()
-                    .putBoolean("isMurderItem", true)
-                    .putInt("MurderType", 23);
+                    .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
+                    .putInt(ItemManager.INTERNAL_ID_TAG, 23);
         }
 
     }
@@ -161,7 +162,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             }
 
             CompoundTag tag = item.getNamedTag();
-            if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 1) {
+            if (tag != null && tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) && tag.getInt(ItemManager.INTERNAL_ID_TAG) == 1) {
                 if (room.getPlayers(player) != PlayerIdentity.COMMON_PEOPLE) {
                     event.setCancelled(true);
                     return;
@@ -175,6 +176,34 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 }
                 room.getPlayers().put(player, PlayerIdentity.DETECTIVE);
                 player.getInventory().addItem(Item.get(262, 0, 1));
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
+        if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
+            return;
+        }
+
+        Item item = event.getItem();
+        if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG)) {
+            switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG)) {
+                case 10:
+                    int nowTick = Server.getInstance().getTick();
+                    int lastTick = item.getNamedTag().getInt("lastTick");
+                    if (lastTick == 0 || nowTick - lastTick > 40) {
+                        player.sendTip(this.murderMystery.getLanguage(player).translateString("item_quitRoom_click_2"));
+                        item.getNamedTag().putInt("lastTick", nowTick);
+                        event.setCancelled(true);
+                        player.getInventory().setHeldItemIndex(7);
+                    }else {
+                        room.quitRoom(player);
+                    }
+                default:
+                    break;
             }
         }
     }
@@ -237,7 +266,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                                 continue;
                             }
                             CompoundTag tag = item.getNamedTag();
-                            if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 22) {
+                            if (tag != null && tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) && tag.getInt(ItemManager.INTERNAL_ID_TAG) == 22) {
                                 notHave = false;
                             }
                         }
@@ -283,7 +312,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             }
         }else if (event.getItem() != null && event.getItem().getNamedTag() != null) {
             CompoundTag tag = event.getItem().getNamedTag();
-            if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 10) {
+            if (tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) && tag.getInt(ItemManager.INTERNAL_ID_TAG) == 10) {
                 event.setCancelled(true);
                 room.quitRoom(player);
             }
@@ -307,8 +336,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         }
         CompoundTag tag = item.getNamedTag();
         if (room.isPlaying(player) &&
-                tag.getBoolean("isMurderItem") &&
-                tag.getInt("MurderType") == 21) {
+                tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) &&
+                tag.getInt(ItemManager.INTERNAL_ID_TAG) == 21) {
             if (room.getPlayers(player) == PlayerIdentity.KILLER) {
                 Effect effect = Effect.getEffect(2);
                 effect.setDuration(100);
@@ -358,7 +387,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         }
         CompoundTag tag = item.getNamedTag();
         if (room.getStatus() == RoomStatus.GAME && tag != null &&
-                tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 22) {
+                tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) && tag.getInt(ItemManager.INTERNAL_ID_TAG) == 22) {
             level.addSound(block, Sound.RANDOM_ANVIL_USE);
             //>315 <45  X
             //>135 <225 X
@@ -436,8 +465,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         }
         Item item = entityItem.getItem();
         CompoundTag tag = item.getNamedTag();
-        if (tag != null && tag.getBoolean("isMurderItem") &&
-                tag.getInt("MurderType") == 1) {
+        if (tag != null && tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) &&
+                tag.getInt(ItemManager.INTERNAL_ID_TAG) == 1) {
             if (room instanceof ClassicModeRoom) {
                 room.detectiveBow = entityItem;
             }

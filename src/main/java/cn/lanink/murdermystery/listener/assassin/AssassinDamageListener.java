@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.listener.assassin;
 
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.assassin.AssassinModeRoom;
 import cn.lanink.murdermystery.room.base.RoomStatus;
@@ -37,7 +38,7 @@ public class AssassinDamageListener extends BaseMurderMysteryListener<AssassinMo
                 Item item = damager.getInventory().getItemInHand();
                 if (item != null && item.hasCompoundTag()) {
                     CompoundTag tag = item.getNamedTag();
-                    if (tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
+                    if (tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) && tag.getInt(ItemManager.INTERNAL_ID_TAG) == 2) {
                         room.playerDamage(damager, player);
                     }
                 }

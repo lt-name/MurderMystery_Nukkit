@@ -20,10 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * @author LT_Name
+ */
 public class FormCreate {
 
     private static final MurderMystery MURDER_MYSTERY = MurderMystery.getInstance();
     public static final String PLUGIN_NAME = "§l§7[§1M§2u§3r§4d§5e§6r§aM§cy§bs§dt§9e§6r§2y§7]";
+
+    private FormCreate() {
+        throw new RuntimeException("???");
+    }
 
     /**
      * 显示用户菜单

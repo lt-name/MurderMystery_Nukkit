@@ -238,3 +238,5 @@ joinRoomOK: "§l§aBestätigen, um dem Raum beizutreten: %name% §l§a"
 buttonSpectator: "§aSpectator"
 buttonOK: "§aConfirm"
 buttonReturn: "§cBack"
+
+item_quitRoom_click_2: "§aClick again to exit the room!"

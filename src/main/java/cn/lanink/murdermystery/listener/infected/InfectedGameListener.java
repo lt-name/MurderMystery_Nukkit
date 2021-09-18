@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.listener.infected;
 
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
@@ -38,8 +39,8 @@ public class InfectedGameListener extends BaseMurderMysteryListener<InfectedMode
                 event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR &&
                 room.getPlayers(player) == PlayerIdentity.KILLER) {
             CompoundTag tag = player.getInventory().getItemInHand() == null ? null : player.getInventory().getItemInHand().getNamedTag();
-            if (tag != null && tag.getBoolean("isMurderItem")) {
-                if (tag.getInt("MurderType") == 3) {
+            if (tag != null && tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG)) {
+                if (tag.getInt(ItemManager.INTERNAL_ID_TAG) == 3) {
                     if (room.killerScanCD.getOrDefault(player, 0) < 1) {
                         Server.getInstance().getScheduler().scheduleTask(this.murderMystery,
                                 new ScanTask(this.murderMystery, room, player));

@@ -21,6 +21,9 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
+/**
+ * @author LT_Name
+ */
 public abstract class AddonsBase implements CommandExecutor {
 
     private final Server server = Server.getInstance();

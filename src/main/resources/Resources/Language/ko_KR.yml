@@ -246,3 +246,5 @@ joinRoomOK: "§l§a방 참가하기: %name% §l§a"
 buttonSpectator: "§aSpectator"
 buttonOK: "§a수락"
 buttonReturn: "§c뒤로 돌아가기"
+
+item_quitRoom_click_2: "§aClick again to exit the room!"
