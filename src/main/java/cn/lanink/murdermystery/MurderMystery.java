@@ -24,6 +24,7 @@ import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.utils.MetricsLite;
 import cn.lanink.murdermystery.utils.RsNpcXVariable;
+import cn.lanink.murdermystery.utils.RsNpcXVariableV2;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -50,7 +51,7 @@ import java.util.concurrent.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "1.3.7-SNAPSHOT git-b0afc7e";
+    public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
     public static final ThreadPoolExecutor CHECK_ROOM_THREAD_POOL = new ThreadPoolExecutor(
@@ -260,7 +261,11 @@ public class MurderMystery extends PluginBase {
         }
         try {
             Class.forName("com.smallaswater.npc.variable.VariableManage");
-            com.smallaswater.npc.variable.VariableManage.addVariable("MurderMysteryVariable", RsNpcXVariable.class);
+            try {
+                com.smallaswater.npc.variable.VariableManage.addVariableV2("MurderMysteryVariable", RsNpcXVariableV2.class);
+            } catch (Exception e) {
+                com.smallaswater.npc.variable.VariableManage.addVariable("MurderMysteryVariable", RsNpcXVariable.class);
+            }
         } catch (Exception ignored) {
 
         }
