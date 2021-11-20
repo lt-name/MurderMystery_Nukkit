@@ -5,10 +5,10 @@ import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.murdermystery.addons.AddonsBase;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
-import cn.lanink.murdermystery.form.FormCreate;
 import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.RoomStatus;
+import cn.lanink.murdermystery.utils.FormHelper;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -92,7 +92,7 @@ public class UiShop extends AddonsBase implements Listener {
                 x += item.getCount();
             }
         }
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(FormCreate.PLUGIN_NAME,
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(FormHelper.PLUGIN_NAME,
                 this.getConfig().getString("ShopMain", "§a你当前有 §e %gold% §a块金锭")
                         .replace("%gold%", x + ""));
         for (String s : items) {
@@ -100,7 +100,7 @@ public class UiShop extends AddonsBase implements Listener {
             simple.addButton(new ResponseElementButton(item[1] + "\n" +
                     this.getConfig().getString("ShopPrice", "价格: %gold% 块金锭").replace("%gold%", item[2])
             ).onClicked(p -> {
-                AdvancedFormWindowModal modal = new AdvancedFormWindowModal(FormCreate.PLUGIN_NAME,
+                AdvancedFormWindowModal modal = new AdvancedFormWindowModal(FormHelper.PLUGIN_NAME,
                         this.getConfig().getString("BuyOK", "§a确定要花费 §e %gold% §a块金锭购买 §e %item% §a？")
                                 .replace("%gold%", item[2]).replace("%item%", item[1]),
                         this.getConfig().getString("ButtonOK", "§a购买"),

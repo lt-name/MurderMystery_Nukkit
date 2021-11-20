@@ -1,4 +1,4 @@
-package cn.lanink.murdermystery.form;
+package cn.lanink.murdermystery.utils;
 
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
@@ -8,7 +8,6 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.RoomStatus;
-import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButtonImageData;
@@ -23,12 +22,12 @@ import java.util.Map;
 /**
  * @author LT_Name
  */
-public class FormCreate {
+public class FormHelper {
 
     private static final MurderMystery MURDER_MYSTERY = MurderMystery.getInstance();
     public static final String PLUGIN_NAME = "§l§7[§1M§2u§3r§4d§5e§6r§aM§cy§bs§dt§9e§6r§2y§7]";
 
-    private FormCreate() {
+    private FormHelper() {
         throw new RuntimeException("???");
     }
 
@@ -47,7 +46,7 @@ public class FormCreate {
                 .onClicked(p -> Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdUser() + " quit")));
         simple.addButton(new ResponseElementButton(language.translateString("userMenuButton3"),
                 new ElementButtonImageData("path", "textures/ui/servers"))
-                .onClicked(FormCreate::sendRoomListMenu));
+                .onClicked(FormHelper::sendRoomListMenu));
         player.showFormWindow(simple);
     }
 
@@ -176,7 +175,7 @@ public class FormCreate {
         }
         simple.addButton(new ResponseElementButton(language.translateString("buttonReturn"),
                 new ElementButtonImageData("path", "textures/ui/cancel"))
-                .onClicked(FormCreate::sendUserMenu));
+                .onClicked(FormHelper::sendUserMenu));
         player.showFormWindow(simple);
     }
 
@@ -197,8 +196,8 @@ public class FormCreate {
                         language.translateString("joinRoomIsNeedInitialized"),
                         language.translateString("buttonReturn"),
                         language.translateString("buttonReturn"));
-                modal.onClickedTrue(FormCreate::sendRoomListMenu);
-                modal.onClickedFalse(FormCreate::sendRoomListMenu);
+                modal.onClickedTrue(FormHelper::sendRoomListMenu);
+                modal.onClickedFalse(FormHelper::sendRoomListMenu);
             }else if (room.getStatus() == RoomStatus.GAME ||
                     room.getStatus() == RoomStatus.VICTORY) {
                 modal = new AdvancedFormWindowModal(PLUGIN_NAME,
@@ -207,13 +206,13 @@ public class FormCreate {
                         language.translateString("buttonReturn"));
                 if (room.getStatus() == RoomStatus.VICTORY) {
                     modal.setButton1(language.translateString("buttonReturn"));
-                    modal.onClickedTrue(FormCreate::sendRoomListMenu);
+                    modal.onClickedTrue(FormHelper::sendRoomListMenu);
                 }else {
                     modal.setButton1(language.translateString("buttonSpectator"));
                     modal.onClickedTrue((p) ->
                             Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdUser() + " joinspectator " + room.getLevelName()));
                 }
-                modal.onClickedFalse(FormCreate::sendRoomListMenu);
+                modal.onClickedFalse(FormHelper::sendRoomListMenu);
             }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                 modal = new AdvancedFormWindowModal(PLUGIN_NAME,
                         language.translateString("joinRoomIsFull"),
@@ -227,15 +226,15 @@ public class FormCreate {
                         language.translateString("buttonReturn"));
                 modal.onClickedTrue((p) ->
                         Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdUser() + " join " + room.getLevelName()));
-                modal.onClickedFalse(FormCreate::sendRoomListMenu);
+                modal.onClickedFalse(FormHelper::sendRoomListMenu);
             }
         }else {
             modal = new AdvancedFormWindowModal(PLUGIN_NAME,
                     language.translateString("joinRoomIsNotFound"),
                     language.translateString("buttonReturn"),
                     language.translateString("buttonReturn"));
-            modal.onClickedTrue(FormCreate::sendRoomListMenu);
-            modal.onClickedFalse(FormCreate::sendRoomListMenu);
+            modal.onClickedTrue(FormHelper::sendRoomListMenu);
+            modal.onClickedFalse(FormHelper::sendRoomListMenu);
         }
         player.showFormWindow(modal);
     }

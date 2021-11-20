@@ -50,7 +50,7 @@ import java.util.concurrent.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.3.7-SNAPSHOT git-b0afc7e";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
     public static final ThreadPoolExecutor CHECK_ROOM_THREAD_POOL = new ThreadPoolExecutor(

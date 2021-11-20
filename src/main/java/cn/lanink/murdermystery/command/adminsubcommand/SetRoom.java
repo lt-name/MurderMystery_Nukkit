@@ -1,8 +1,8 @@
 package cn.lanink.murdermystery.command.adminsubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.form.FormCreate;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
+import cn.lanink.murdermystery.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
@@ -36,7 +36,7 @@ public class SetRoom extends BaseSubCommand {
             this.murderMystery.setRoomTask.get(player).cancel();
         }else {
             if (args.length < 2) {
-                FormCreate.sendSetRoomMenu(player);
+                FormHelper.sendSetRoomMenu(player);
             }else {
                 if (this.murderMystery.getRoomConfigs().containsKey(args[1])) {
                     Level level = Server.getInstance().getLevelByName(args[1]);

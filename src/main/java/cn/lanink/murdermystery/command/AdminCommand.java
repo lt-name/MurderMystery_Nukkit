@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.command;
 
 import cn.lanink.murdermystery.command.adminsubcommand.*;
 import cn.lanink.murdermystery.command.base.BaseCommand;
-import cn.lanink.murdermystery.form.FormCreate;
+import cn.lanink.murdermystery.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -45,7 +45,7 @@ public class AdminCommand extends BaseCommand {
 
     @Override
     public void sendUi(CommandSender sender) {
-        FormCreate.sendAdminMenu((Player) sender);
+        FormHelper.sendAdminMenu((Player) sender);
     }
 
 }
