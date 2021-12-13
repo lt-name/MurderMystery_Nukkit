@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.listener.assassin;
 
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.assassin.AssassinModeRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
@@ -38,7 +39,7 @@ public class AssassinGameListener extends BaseMurderMysteryListener<AssassinMode
                 event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR &&
                 room.getPlayers(player) == PlayerIdentity.ASSASSIN) {
             CompoundTag tag = player.getInventory().getItemInHand().getNamedTag();
-            if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
+            if (tag != null && tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) && tag.getInt(ItemManager.INTERNAL_ID_TAG) == 2) {
                 if (room.killerSwordCD.getOrDefault(player, 0) < 1) {
                     room.killerSwordCD.put(player, 5);
                     Server.getInstance().getScheduler().scheduleAsyncTask(this.murderMystery,

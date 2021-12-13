@@ -241,3 +241,5 @@ joinRoomOK: "§l§a确认要加入房间: %name% §l§a？"
 buttonSpectator: "§a观战"
 buttonOK: "§a确定"
 buttonReturn: "§c返回"
+
+item_quitRoom_click_2: "§a再点击一次退出房间！"

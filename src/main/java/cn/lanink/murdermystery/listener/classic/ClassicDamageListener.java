@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.listener.classic;
 
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.listener.BaseMurderMysteryListener;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
@@ -49,10 +50,10 @@ public class ClassicDamageListener extends BaseMurderMysteryListener<ClassicMode
                 if (child == null || child.namedTag == null) {
                     return;
                 }
-                if (child.namedTag.getBoolean("isMurderItem")) {
-                    if (child.namedTag.getInt("MurderType") == 20) {
+                if (child.namedTag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG)) {
+                    if (child.namedTag.getInt(ItemManager.INTERNAL_ID_TAG) == 20) {
                         room.playerDamage(damager, player);
-                    }else if (child.namedTag.getInt("MurderType") == 23) {
+                    }else if (child.namedTag.getInt(ItemManager.INTERNAL_ID_TAG) == 23) {
                         Tools.playSound(player, Sound.RANDOM_ANVIL_LAND);
                         player.sendMessage(this.murderMystery.getLanguage(player).translateString("damageSnowball"));
                         Effect effect = Effect.getEffect(2);
@@ -66,7 +67,7 @@ public class ClassicDamageListener extends BaseMurderMysteryListener<ClassicMode
                         room.isPlaying(player) && room.getPlayers(player) != PlayerIdentity.DEATH) {
                     if (damager.getInventory().getItemInHand() != null) {
                         CompoundTag tag = damager.getInventory().getItemInHand().getNamedTag();
-                        if (tag != null && tag.getBoolean("isMurderItem") && tag.getInt("MurderType") == 2) {
+                        if (tag != null && tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) && tag.getInt(ItemManager.INTERNAL_ID_TAG) == 2) {
                             room.playerDamage(damager, player);
                         }
                     }

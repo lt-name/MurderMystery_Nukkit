@@ -1,7 +1,7 @@
 package cn.lanink.murdermystery.command.adminsubcommand;
 
 import cn.lanink.murdermystery.command.base.BaseSubCommand;
-import cn.lanink.murdermystery.form.FormCreate;
+import cn.lanink.murdermystery.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
@@ -32,7 +32,7 @@ public class CreateRoom extends BaseSubCommand {
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
         if (args.length < 2) {
-            FormCreate.sendCreateRoomMenu(player);
+            FormHelper.sendCreateRoomMenu(player);
         }else {
             if (!this.murderMystery.getRoomConfigs().containsKey(args[1])) {
                 Level level = Server.getInstance().getLevelByName(args[1]);

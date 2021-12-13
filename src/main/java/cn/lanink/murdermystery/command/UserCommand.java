@@ -5,7 +5,7 @@ import cn.lanink.murdermystery.command.usersubcommand.JoinRoom;
 import cn.lanink.murdermystery.command.usersubcommand.JoinSpectator;
 import cn.lanink.murdermystery.command.usersubcommand.QuitRoom;
 import cn.lanink.murdermystery.command.usersubcommand.RoomList;
-import cn.lanink.murdermystery.form.FormCreate;
+import cn.lanink.murdermystery.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -33,7 +33,7 @@ public class UserCommand extends BaseCommand {
 
     @Override
     public void sendUi(CommandSender sender) {
-        FormCreate.sendUserMenu((Player) sender);
+        FormHelper.sendUserMenu((Player) sender);
     }
 
 }

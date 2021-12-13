@@ -40,7 +40,11 @@ import java.util.List;
 public class Tools {
 
     private Tools() {
+        throw new RuntimeException("???");
+    }
 
+    public static <T> T dynamic(T value) {
+        return value;
     }
 
     /**
@@ -246,8 +250,8 @@ public class Tools {
                 }else if (entity instanceof EntityItem) {
                     Item item = ((EntityItem) entity).getItem();
                     CompoundTag tag = item.getNamedTag();
-                    if (tag != null && tag.getBoolean("isMurderItem") &&
-                            tag.getInt("MurderType") == 1) {
+                    if (tag != null && tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) &&
+                            tag.getInt(ItemManager.INTERNAL_ID_TAG) == 1) {
                         if (cleanAll) {
                             entity.close();
                         }

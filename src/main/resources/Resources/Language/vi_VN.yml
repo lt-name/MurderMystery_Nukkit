@@ -243,4 +243,6 @@ adminPlayersMenuInputText2: "Maximum number of players in the room"
 joinRoomOK: "§l§aXác nhận tham gia phòng: %name% §l§a?"
 buttonSpectator: "§aSpectator"
 buttonOK: "§aXác nhận"
-buttonReturn: "§cQuay lại" 
+buttonReturn: "§cQuay lại"
+
+item_quitRoom_click_2: "§aClick again to exit the room!"

@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 房间抽象类
  * 任何房间类都应继承此类
  *
- * @author lt_name
+ * @author LT_Name
  */
 public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
 
@@ -890,11 +890,12 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
-        player.setGamemode(3);
+        Tools.giveItem(player, 10);
+        player.setGamemode(Player.SPECTATOR);
         player.getAdventureSettings().set(AdventureSettings.Type.NO_CLIP, false).update();
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == PlayerIdentity.DETECTIVE) {
-            this.getLevel().dropItem(player, ItemManager.get(player, 1));
+            this.getLevel().dropItem(player, ItemManager.get(null, 1));
         }
         this.players.put(player, PlayerIdentity.DEATH);
         Tools.playSound(this, Sound.GAME_PLAYER_HURT);
