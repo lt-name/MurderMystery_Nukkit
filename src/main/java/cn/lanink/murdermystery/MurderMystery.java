@@ -180,8 +180,6 @@ public class MurderMystery extends PluginBase {
     }
 
     private void loadLanguage() {
-        this.saveResource("Resources/Language/zh_CN.yml",
-                "Resources/Language/cache/new_zh_CN.yml", true);
         //语言文件 (按时间排序/Sort by time)
         List<String> languages = Arrays.asList("zh_CN", "en_US", "ko_KR", "vi_VN", "de_DE");
         for (String language : languages) {
@@ -189,7 +187,7 @@ public class MurderMystery extends PluginBase {
         }
         this.defaultLanguage = this.config.getString("defaultLanguage", "zh_CN");
         this.languageMappingTable.putAll(this.config.get("languageMappingTable", new HashMap<>()));
-        File[] files = new File(getDataFolder() + "/Resources/Language").listFiles();
+        File[] files = new File(this.getDataFolder() + "/Resources/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
                 if (file.isFile()) {
@@ -198,12 +196,16 @@ public class MurderMystery extends PluginBase {
                     if (this.config.getBoolean("autoUpdateLanguage")) {
                         //更新插件自带的语言文件
                         if (languages.contains(name)) {
-                            this.saveResource("Resources/Language/" + name + ".yml",
-                                    "Resources/Language/cache/new.yml", true);
-                            language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new.yml", Config.YAML));
+                            Config config = new Config(Config.YAML);
+                            if (config.load(this.getResource("Resources/Language/" + language + ".yml"))) {
+                                language.update(config);
+                            }
                         }
                         //以zh_CN为基础 更新所有语言文件
-                        language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new_zh_CN.yml", Config.YAML));
+                        Config config = new Config(Config.YAML);
+                        if (config.load(this.getResource("Resources/Language/zh_CN.yml"))) {
+                            language.update(config);
+                        }
                     }
                     this.languageMap.put(name, language);
                     getLogger().info("§aLanguage: " + name + " loaded !");
