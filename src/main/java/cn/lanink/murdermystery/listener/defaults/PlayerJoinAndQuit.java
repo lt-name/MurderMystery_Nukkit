@@ -34,7 +34,11 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null) {
             return;
         }
-        this.murderMystery.getPlayerLanguage().put(player, player.getLoginChainData().getLanguageCode());
+        String languageCode = player.getLoginChainData().getLanguageCode();
+        this.murderMystery.getPlayerLanguage().put(player, languageCode);
+        if (MurderMystery.debug) {
+            this.murderMystery.getLogger().info("[debug] Player: " + player.getName() + " LanguageCode: " + languageCode);
+        }
         if (this.murderMystery.getRooms().containsKey(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
                 if (player.isOnline()) {
