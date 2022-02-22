@@ -1,6 +1,6 @@
 package cn.lanink.murdermystery.listener.defaults;
 
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
@@ -14,6 +14,7 @@ import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 
 /**
@@ -43,7 +44,13 @@ public class PlayerJoinAndQuit implements Listener {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
                 if (player.isOnline()) {
                     Tools.rePlayerState(player ,false);
-                    SavePlayerInventory.restore(MurderMystery.getInstance(), player);
+                    File file = new File(this.murderMystery.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
+                    if (file.exists()) {
+                        PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
+                        if (file.delete()) {
+                            playerData.restoreAll();
+                        }
+                    }
                     player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                 }
             }, 1);
