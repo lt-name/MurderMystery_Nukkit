@@ -2,7 +2,7 @@ package cn.lanink.murdermystery.room.base;
 
 import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gamecore.utils.Language;
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.MurderMystery;
@@ -298,7 +298,9 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         if (this.status == RoomStatus.TASK_NEED_INITIALIZED) {
             this.initTask();
         }
-        SavePlayerInventory.save(this.murderMystery, player);
+        PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player);
+        playerData.saveAll();
+        playerData.saveToFile(new File(this.murderMystery.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json"));
         Tools.rePlayerState(player, true);
         Tools.giveItem(player, 10);
         if (this.murderMystery.isHasTips()) {
@@ -340,7 +342,13 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         this.murderMystery.getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(this.murderMystery, player);
+        File file = new File(this.murderMystery.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
+        if (file.exists()) {
+            PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
+            if (file.delete()) {
+                playerData.restoreAll();
+            }
+        }
         for (Player p : this.players.keySet()) {
             p.showPlayer(player);
             player.showPlayer(p);

@@ -25,13 +25,11 @@ import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.utils.MetricsLite;
 import cn.lanink.murdermystery.utils.RsNpcXVariable;
 import cn.lanink.murdermystery.utils.RsNpcXVariableV2;
-import cn.lanink.murdermystery.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 import lombok.Getter;
@@ -180,8 +178,6 @@ public class MurderMystery extends PluginBase {
     }
 
     private void loadLanguage() {
-        this.saveResource("Resources/Language/zh_CN.yml",
-                "Resources/Language/cache/new_zh_CN.yml", true);
         //语言文件 (按时间排序/Sort by time)
         List<String> languages = Arrays.asList("zh_CN", "en_US", "ko_KR", "vi_VN", "de_DE");
         for (String language : languages) {
@@ -189,7 +185,7 @@ public class MurderMystery extends PluginBase {
         }
         this.defaultLanguage = this.config.getString("defaultLanguage", "zh_CN");
         this.languageMappingTable.putAll(this.config.get("languageMappingTable", new HashMap<>()));
-        File[] files = new File(getDataFolder() + "/Resources/Language").listFiles();
+        File[] files = new File(this.getDataFolder() + "/Resources/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
                 if (file.isFile()) {
@@ -198,12 +194,16 @@ public class MurderMystery extends PluginBase {
                     if (this.config.getBoolean("autoUpdateLanguage")) {
                         //更新插件自带的语言文件
                         if (languages.contains(name)) {
-                            this.saveResource("Resources/Language/" + name + ".yml",
-                                    "Resources/Language/cache/new.yml", true);
-                            language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new.yml", Config.YAML));
+                            Config config = new Config(Config.YAML);
+                            if (config.load(this.getResource("Resources/Language/" + language + ".yml"))) {
+                                language.update(config);
+                            }
                         }
                         //以zh_CN为基础 更新所有语言文件
-                        language.update(new Config(this.getDataFolder() + "/Resources/Language/cache/new_zh_CN.yml", Config.YAML));
+                        Config config = new Config(Config.YAML);
+                        if (config.load(this.getResource("Resources/Language/zh_CN.yml"))) {
+                            language.update(config);
+                        }
                     }
                     this.languageMap.put(name, language);
                     getLogger().info("§aLanguage: " + name + " loaded !");
@@ -269,34 +269,35 @@ public class MurderMystery extends PluginBase {
         } catch (Exception ignored) {
 
         }
+
+        this.loadResources();
+        this.loadSkins();
+
+        //注册命令
         this.getServer().getCommandMap().register("",
                 new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
         this.getServer().getCommandMap().register("",
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
 
+        //注册监听器
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
-
         this.loadAllListener();
-        this.loadResources();
-        this.loadSkins();
+
         this.loadAllRoom();
 
         this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(), 20, true);
         //启用扩展-使用task保证在所有插件都加载完后加载扩展
-        this.getServer().getScheduler().scheduleTask(this, new Task() {
-            @Override
-            public void onRun(int i) {
-                getLogger().info(getLanguage(null).translateString("startLoadingAddons"));
-                addonsManager.enableAll();
-                getLogger().info(getLanguage(null).translateString("addonsLoaded"));
-            }
+        this.getServer().getScheduler().scheduleTask(this, () -> {
+            this.getLogger().info(this.getLanguage().translateString("startLoadingAddons"));
+            addonsManager.enableAll();
+            this.getLogger().info(this.getLanguage().translateString("addonsLoaded"));
         });
         try {
             new MetricsLite(this, 11922);
         } catch (Throwable ignore) { }
 
-        this.getLogger().info(this.getLanguage(null).translateString("pluginEnable"));
+        this.getLogger().info(this.getLanguage().translateString("pluginEnable"));
     }
 
     @Override
@@ -305,28 +306,10 @@ public class MurderMystery extends PluginBase {
             addonsManager.disableAll();
         }
         this.removeAllTemporaryRoom();
-        this.temporaryRooms.clear();
-        if (this.rooms.size() > 0) {
-            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
-            while(it.hasNext()){
-                Map.Entry<String, BaseRoom> entry = it.next();
-                if (entry.getValue().getPlayers().size() > 0) {
-                    entry.getValue().endGame();
-                    this.getLogger().info(this.getLanguage(null).translateString("roomUnloadFailure")
-                            .replace("%name%", entry.getKey()));
-                }else {
-                    this.getLogger().info(this.getLanguage(null).translateString("roomUnloadSuccess")
-                            .replace("%name%", entry.getKey()));
-                }
-                Tools.cleanEntity(entry.getValue().getLevel(), true);
-                it.remove();
-            }
-            this.rooms.clear();
-        }
-        this.roomConfigs.clear();
+        this.unloadAllRoom();
         this.getMurderMysteryListeners().values().forEach(BaseMurderMysteryListener::clearListenerRooms);
         this.skins.clear();
-        this.getLogger().info(this.getLanguage(null).translateString("pluginDisable"));
+        this.getLogger().info(this.getLanguage().translateString("pluginDisable"));
     }
 
     /**
@@ -509,6 +492,7 @@ public class MurderMystery extends PluginBase {
         for (String name : new ArrayList<>(this.temporaryRooms)) {
             this.removeTemporaryRoom(name);
         }
+        this.temporaryRooms.clear();
     }
 
     public synchronized void removeTemporaryRoom(String levelName) {
@@ -608,17 +592,20 @@ public class MurderMystery extends PluginBase {
      * 加载所有房间
      */
     public void loadAllRoom() {
-        this.getLogger().info(this.getLanguage(null).translateString("startLoadingRoom"));
-        File[] s = new File(getDataFolder() + "/Rooms").listFiles();
-        if (s != null && s.length > 0) {
-            for (File file1 : s) {
-                String[] fileName = file1.getName().split("\\.");
-                if (fileName.length > 0) {
-                    this.loadRoom(fileName[0]);
-                }
-            }
+        this.getLogger().info(this.getLanguage().translateString("startLoadingRoom"));
+        File[] files = new File(this.getDataFolder() + "/Rooms").listFiles();
+        if (files != null && files.length > 0) {
+            Arrays.stream(files)
+                    .filter(File::isFile)
+                    .filter(file -> file.getName().endsWith(".yml"))
+                    .forEach(file -> {
+                        String[] fileName = file.getName().split("\\.");
+                        if (fileName.length > 0) {
+                            this.loadRoom(fileName[0]);
+                        }
+                    });
         }
-        this.getLogger().info(this.getLanguage(null).translateString("roomLoadedAllSuccess")
+        this.getLogger().info(this.getLanguage().translateString("roomLoadedAllSuccess")
                 .replace(" %number%", this.rooms.size() + ""));
     }
 
@@ -632,18 +619,18 @@ public class MurderMystery extends PluginBase {
                 config.getStringList("goldSpawn").size() == 0 ||
                 config.getInt("goldSpawnTime", 0) == 0 ||
                 "".equals(config.getString("gameMode", "").trim())) {
-            this.getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByConfig")
+            this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByConfig")
                     .replace("%name%", name + "(" + world + ")"));
             return;
         }
         if (Server.getInstance().getLevelByName(world) == null && !Server.getInstance().loadLevel(world)) {
-            this.getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByLevel")
+            this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByLevel")
                     .replace("%name%", name + "(" + world + ")"));
             return;
         }
         String gameMode = config.getString("gameMode", "classic");
         if (!ROOM_CLASS.containsKey(gameMode)) {
-            this.getLogger().warning(this.getLanguage(null).translateString("roomLoadedFailureByGameMode")
+            this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByGameMode")
                     .replace("%name%", name + "(" + world + ")")
                     .replace("%gameMode%", gameMode));
             return;
@@ -654,7 +641,7 @@ public class MurderMystery extends PluginBase {
             BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
             baseRoom.setGameMode(gameMode);
             this.rooms.put(world, baseRoom);
-            this.getLogger().info(this.getLanguage(null).translateString("roomLoadedSuccess")
+            this.getLogger().info(this.getLanguage().translateString("roomLoadedSuccess")
                     .replace("%name%", name + "(" + world + ")"));
         } catch (Exception e) {
             this.roomName.remove(world);
@@ -665,8 +652,8 @@ public class MurderMystery extends PluginBase {
     /**
      * 卸载所有房间
      */
-    public void unloadRooms() {
-        if (this.rooms.size() > 0) {
+    public void unloadAllRoom() {
+        if (!this.rooms.isEmpty()) {
             for (String world : new HashSet<>(this.rooms.keySet())) {
                 this.unloadRoom(world);
             }
@@ -699,7 +686,7 @@ public class MurderMystery extends PluginBase {
      * 重载所有房间
      */
     public void reLoadRooms() {
-        this.unloadRooms();
+        this.unloadAllRoom();
         this.loadAllRoom();
     }
 
@@ -707,8 +694,8 @@ public class MurderMystery extends PluginBase {
      * 加载所有皮肤
      */
     private void loadSkins() {
-        this.getLogger().info(this.getLanguage(null).translateString("startLoadingSkin"));
-        File[] files = (new File(getDataFolder() + "/Skins")).listFiles();
+        this.getLogger().info(this.getLanguage().translateString("startLoadingSkin"));
+        File[] files = (new File(this.getDataFolder() + "/Skins")).listFiles();
         if (files != null && files.length > 0) {
             int x = 0;
             for (File file : files) {
@@ -725,18 +712,18 @@ public class MurderMystery extends PluginBase {
                     try {
                         skinData = ImageIO.read(skinFile);
                     } catch (Exception ignored) {
-                        this.getLogger().warning(this.getLanguage(null)
+                        this.getLogger().warning(this.getLanguage()
                                 .translateString("skinFailureByFormat").replace("%name%", skinName));
                     }
                     if (skinData != null) {
                         skin.setSkinData(skinData);
                         skin.setSkinId(skinName);
-                        String tip = this.getLanguage(null).translateString("skinLoadedSuccess")
+                        String tip = this.getLanguage().translateString("skinLoadedSuccess")
                                 .replace("%number%", x + "")
                                 .replace("%name%", skinName) + "  ";
 
                         try {
-                            File wantedFile = new File(getDataFolder() + "/Skins/" + skinName + "/wanted.png");
+                            File wantedFile = new File(this.getDataFolder() + "/Skins/" + skinName + "/wanted.png");
                             if (wantedFile.exists()) {
                                 skin.setWantedImage(ImageIO.read(wantedFile));
                                 tip += this.getLanguage().translateString("skinWantedLoadedSuccess");
@@ -751,18 +738,18 @@ public class MurderMystery extends PluginBase {
                         this.skins.put(x, skin);
                         x++;
                     }else {
-                        this.getLogger().warning(this.getLanguage(null).translateString("skinFailureByFormat").replace("%name%", skinName));
+                        this.getLogger().warning(this.getLanguage().translateString("skinFailureByFormat").replace("%name%", skinName));
                     }
                 } else {
-                    this.getLogger().warning(this.getLanguage(null).translateString("skinFailureByName").replace("%name%", skinName));
+                    this.getLogger().warning(this.getLanguage().translateString("skinFailureByName").replace("%name%", skinName));
                 }
             }
         }
         if (this.skins.size() >= 16) {
-            this.getLogger().info(this.getLanguage(null).translateString("skinLoadedAllSuccess")
+            this.getLogger().info(this.getLanguage().translateString("skinLoadedAllSuccess")
                     .replace("%number%", this.skins.size() + ""));
         }else {
-            this.getLogger().warning(this.getLanguage(null).translateString("skinLoadedAllFailureByNumber"));
+            this.getLogger().warning(this.getLanguage().translateString("skinLoadedAllFailureByNumber"));
         }
     }
 
