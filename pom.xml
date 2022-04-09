@@ -151,14 +151,14 @@
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
-            <version>1.5.3</version>
+            <version>1.5.4</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.smallaswater.npc</groupId>
             <artifactId>RsNPCX</artifactId>
-            <version>1.8.6</version>
+            <version>1.8.8</version>
             <scope>provided</scope>
         </dependency>
 

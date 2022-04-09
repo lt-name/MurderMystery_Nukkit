@@ -77,16 +77,16 @@ public class ClassicModeRoom extends BaseRoom {
             @Override
             public void onRun(int i) {
                 if (finalKillKillerPlayer != null) {
-                    Tools.cmd(finalKillKillerPlayer, murderMystery.getConfig().getStringList("killKillerCmd"));
+                    Tools.executeCommands(finalKillKillerPlayer, murderMystery.getConfig().getStringList("killKillerCmd"));
                 }
                 if (finalKillerVictory != null) {
-                    Tools.cmd(finalKillerVictory, murderMystery.getConfig().getStringList("killerVictoryCmd"));
+                    Tools.executeCommands(finalKillerVictory, murderMystery.getConfig().getStringList("killerVictoryCmd"));
                 }
                 for (Player player : commonPeopleVictory) {
-                    Tools.cmd(player, murderMystery.getConfig().getStringList("commonPeopleVictoryCmd"));
+                    Tools.executeCommands(player, murderMystery.getConfig().getStringList("commonPeopleVictoryCmd"));
                 }
                 for (Player player : defeatPlayers) {
-                    Tools.cmd(player, murderMystery.getConfig().getStringList("defeatCmd"));
+                    Tools.executeCommands(player, murderMystery.getConfig().getStringList("defeatCmd"));
                 }
             }
         }, 20);
