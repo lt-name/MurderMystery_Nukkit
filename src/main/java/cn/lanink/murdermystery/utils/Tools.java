@@ -10,7 +10,6 @@ import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
@@ -101,18 +100,52 @@ public class Tools {
      * 执行命令
      *
      * @param player 玩家
-     * @param cmds 命令
+     * @param commandList 命令
      */
-    public static void cmd(Player player, List<String> cmds) {
-        if (player == null || cmds == null || cmds.size() == 0) {
+    public static void executeCommands(Player player, List<String> commandList) {
+        if (player == null || commandList == null || commandList.size() == 0) {
             return;
         }
-        for (String s : cmds) {
-            String[] cmd = s.split("&");
-            if ((cmd.length > 1) && ("con".equals(cmd[1]))) {
-                Server.getInstance().dispatchCommand(new ConsoleCommandSender(), cmd[0].replace("@p", player.getName()));
-            } else {
-                Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
+        for (String s : commandList) {
+            String[] cmds = s.split("&");
+            String command = cmds[0].replace("@p", player.getName());
+            if (cmds.length > 1) {
+                if ("con".equals(cmds[1])) {
+                    try {
+                        Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command);
+                    } catch (Exception ignored) {
+
+                    }
+                    continue;
+                }else if ("op".equals(cmds[1])) {
+                    boolean needCancelOP = false;
+                    final String playerName = player.getName();
+                    if (!player.isOp()) {
+                        needCancelOP = true;
+                        Server.getInstance().getScheduler().scheduleDelayedTask(MurderMystery.getInstance(), () -> Server.getInstance().removeOp(playerName), 1);
+                        player.setOp(true);
+                    }
+                    try {
+                        Server.getInstance().dispatchCommand(player, command);
+                    } catch (Exception ignored) {
+
+                    } finally {
+                        if (needCancelOP) {
+                            try {
+                                player.setOp(false);
+                            } catch (Exception ignored) {
+
+                            }
+                            Server.getInstance().removeOp(playerName);
+                        }
+                    }
+                    continue;
+                }
+            }
+            try {
+                Server.getInstance().dispatchCommand(player, command);
+            } catch (Exception ignored) {
+
             }
         }
     }

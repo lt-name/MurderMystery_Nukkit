@@ -354,6 +354,10 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             player.showPlayer(p);
         }
         player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
+
+        if (this.murderMystery.getConfig().exists("QuitRoom.cmd")) {
+            Tools.executeCommands(player, this.murderMystery.getConfig().getStringList("QuitRoom.cmd"));
+        }
     }
 
     /**
