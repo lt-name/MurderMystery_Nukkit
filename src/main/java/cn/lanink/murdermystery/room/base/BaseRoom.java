@@ -353,10 +353,15 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             p.showPlayer(player);
             player.showPlayer(p);
         }
-        player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
 
-        if (this.murderMystery.getConfig().exists("QuitRoom.cmd")) {
-            Tools.executeCommands(player, this.murderMystery.getConfig().getStringList("QuitRoom.cmd"));
+        if (this.murderMystery.isAutomaticNextRound()) {
+            Server.getInstance().dispatchCommand(player, this.murderMystery.getCmdUser() + " join mode:" + this.getGameMode());
+        }else {
+            player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
+
+            if (this.murderMystery.getConfig().exists("QuitRoom.cmd")) {
+                Tools.executeCommands(player, this.murderMystery.getConfig().getStringList("QuitRoom.cmd"));
+            }
         }
     }
 
@@ -960,6 +965,9 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
         if (this.getStatus() != RoomStatus.VICTORY && this.getPlayers().size() > 0) {
             this.setStatus(RoomStatus.VICTORY);
+            for (Player player : this.players.keySet()) {
+                Tools.giveItem(player, 10); //退出房间物品
+            }
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.murderMystery,
                     new VictoryTask(this.murderMystery, this, victoryMode), 20);
         }else {

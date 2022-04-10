@@ -29,9 +29,13 @@ cmdWhitelist:
   - ban
   - kick
   - report
+
 QuitRoom:
   #退出房间执行命令
   cmd: []
+#游戏结束后自动加入下一局 （建议开启autoCreateTemporaryRoom）
+AutomaticNextRound: false
+
 # 杀手胜利执行命令(仅杀手执行)
 killerVictoryCmd:
   - me 我胜利了
