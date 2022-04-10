@@ -99,6 +99,8 @@ public class MurderMystery extends PluginBase {
 
     private boolean restoreWorld = false;
     private boolean autoCreateTemporaryRoom = false;
+    @Getter
+    private boolean automaticNextRound = false; //游戏结束后自动加入新房间
 
     private String defaultLanguage = "zh_CN";
     private final HashMap<String, String> languageMappingTable = new HashMap<>();
@@ -156,6 +158,7 @@ public class MurderMystery extends PluginBase {
 
         this.restoreWorld = this.config.getBoolean("restoreWorld", false);
         this.autoCreateTemporaryRoom = this.config.getBoolean("autoCreateTemporaryRoom", false);
+        this.automaticNextRound = this.config.getBoolean("AutomaticNextRound", false);
 
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
