@@ -322,12 +322,16 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
     }
 
+    public synchronized void quitRoom(Player player) {
+        this.quitRoom(player, true);
+    }
+
     /**
      * 退出房间
      *
      * @param player 玩家
      */
-    public synchronized void quitRoom(Player player) {
+    public synchronized void quitRoom(Player player, boolean initiative) {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomPlayerQuitEvent(this, player));
 
         this.players.remove(player);
@@ -354,7 +358,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             player.showPlayer(p);
         }
 
-        if (this.murderMystery.isAutomaticNextRound()) {
+        if (this.murderMystery.isAutomaticNextRound() && !initiative) {
             Server.getInstance().dispatchCommand(player, this.murderMystery.getCmdUser() + " join mode:" + this.getGameMode());
         }else {
             player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
@@ -535,7 +539,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             this.victoryReward(victory);
         }
         for (Player player : new HashSet<>(this.players.keySet())) {
-            this.quitRoom(player);
+            this.quitRoom(player, false);
         }
         for (Player player : new HashSet<>(this.spectatorPlayers)) {
             this.quitRoom(player);
