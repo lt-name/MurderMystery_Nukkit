@@ -23,13 +23,11 @@ import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
-import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.player.PlayerItemConsumeEvent;
-import cn.nukkit.event.player.PlayerItemHeldEvent;
-import cn.nukkit.event.player.PlayerRespawnEvent;
+import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemMap;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
@@ -491,6 +489,21 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                     player.getInventory().addItem(ItemManager.get(player, 345));
                 }
             }, 100);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerMapInfoRequest(PlayerMapInfoRequestEvent event) {
+        Player player = event.getPlayer();
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
+            return;
+        }
+        Item item = event.getMap();
+        if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG)) {
+            event.setCancelled(true);
+            ItemMap map = (ItemMap) item;
+            map.sendImage(player);
         }
     }
 

@@ -30,7 +30,7 @@ public class JoinRoom extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (this.murderMystery.getRooms().size() > 0) {
+        if (!this.murderMystery.getRooms().isEmpty()) {
             Player player = (Player) sender;
             if (player.riding != null) {
                 sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomOnRiding"));
