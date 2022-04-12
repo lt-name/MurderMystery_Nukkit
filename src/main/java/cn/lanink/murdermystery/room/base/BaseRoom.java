@@ -359,7 +359,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         }
 
         if (this.murderMystery.isAutomaticNextRound() && !initiative) {
-            Server.getInstance().dispatchCommand(player, this.murderMystery.getCmdUser() + " join mode:" + this.getGameMode());
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> Server.getInstance().dispatchCommand(player, this.murderMystery.getCmdUser() + " join mode:" + this.getGameMode()), 10);
         }else {
             player.sendMessage(this.murderMystery.getLanguage(player).translateString("quitRoom"));
 

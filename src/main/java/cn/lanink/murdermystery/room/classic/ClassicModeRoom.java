@@ -89,7 +89,7 @@ public class ClassicModeRoom extends BaseRoom {
                     Tools.executeCommands(player, murderMystery.getConfig().getStringList("defeatCmd"));
                 }
             }
-        }, 20);
+        }, 1);
     }
 
 }
