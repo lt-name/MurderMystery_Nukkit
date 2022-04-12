@@ -1,5 +1,6 @@
 package cn.lanink.murdermystery.entity.data;
 
+import cn.lanink.murdermystery.item.ItemManager;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.ItemMap;
 import lombok.Getter;
@@ -31,7 +32,9 @@ public class MurderMysterySkin extends Skin {
     public ItemMap getItemMap() {
         ItemMap item = new ItemMap();
         item.setImage(this.getWantedImage());
-        item.getNamedTag().putBoolean("cannotClickOnInventory", true);
+        item.getNamedTag()
+                .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
+                .putBoolean("cannotClickOnInventory", true);
         return item;
     }
 
