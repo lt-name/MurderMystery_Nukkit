@@ -178,6 +178,7 @@ victoryKillerBottom: "§eCongratulations to the killer for winning"
 victoryKillerScoreBoard: "§eCongratulations to the killer!"
 victoryCommonPeopleBottom: "§eCongratulations to civilians and detectives! "
 victoryCommonPeopleScoreBoard: "§eCivilian and Detective Wins!"
+victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a will join the next game after §e%1% §a seconds automatically"
 scoreBoardTitle: "§eMurderMystery"
 waitTimeScoreBoard: |-
   Room Mode: §a %roomMode%

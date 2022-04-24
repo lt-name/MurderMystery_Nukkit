@@ -330,6 +330,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
      * 退出房间
      *
      * @param player 玩家
+     * @param initiative 玩家主动退出
      */
     public synchronized void quitRoom(Player player, boolean initiative) {
         Server.getInstance().getPluginManager().callEvent(new MurderMysteryRoomPlayerQuitEvent(this, player));

@@ -178,6 +178,7 @@ victoryKillerBottom: "§eXin chúc mừng kẻ giết người đã chiến th�
 victoryKillerScoreBoard: "§eChúc mừng kẻ giết người!"
 victoryCommonPeopleBottom: "§eXin chúc mừng dân thường và thám tử! "
 victoryCommonPeopleScoreBoard: "§eDân thường và thám tử chiến thắng!"
+victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a will join the next game after §e%1% §a seconds automatically"
 scoreBoardTitle: "§eMurderMystery"
 waitTimeScoreBoard: |-
   Chế độ phòng: §a %roomMode%

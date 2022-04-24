@@ -178,6 +178,7 @@ victoryKillerBottom: "§e恭喜杀手获得胜利"
 victoryKillerScoreBoard: "§e恭喜杀手获得胜利! "
 victoryCommonPeopleBottom: "§e恭喜平民和侦探获得胜利！"
 victoryCommonPeopleScoreBoard: "§e恭喜平民和侦探获得胜利！"
+victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a将在 §e%1% §a秒自动后加入下一局游戏"
 scoreBoardTitle: "§e密室杀手"
 waitTimeScoreBoard: |-
   房间模式: §a %roomMode%
