@@ -56,10 +56,14 @@ public class VictoryTask extends PluginTask<MurderMystery> {
             this.victoryTime--;
             for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
                 String bottom;
-                if (victory == 3) {
-                    bottom = this.owner.getLanguage(entry.getKey()).translateString("victoryKillerBottom");
+                if (this.owner.isAutomaticNextRound()) {
+                    bottom = this.owner.getLanguage(entry.getKey()).translateString("victory_automaticallyJoinTheNextGameCountdown_Bottom", this.victoryTime);
                 }else {
-                    bottom = this.owner.getLanguage(entry.getKey()).translateString("victoryCommonPeopleBottom");
+                    if (victory == 3) {
+                        bottom = this.owner.getLanguage(entry.getKey()).translateString("victoryKillerBottom");
+                    } else {
+                        bottom = this.owner.getLanguage(entry.getKey()).translateString("victoryCommonPeopleBottom");
+                    }
                 }
                 if (!bottom.trim().equals("")) {
                     entry.getKey().sendTip(bottom);

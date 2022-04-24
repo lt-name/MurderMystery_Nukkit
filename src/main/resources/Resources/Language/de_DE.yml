@@ -170,6 +170,7 @@ victoryKillerBottom: "Herzlichen Glückwunsch an den Killer zum Sieg"
 victoryKillerScoreBoard: "Herzlichen Glückwunsch an den Mörder!"
 victoryCommonPeopleBottom: "Herzlichen Glückwunsch an Zivilisten und Detektive!"
 victoryCommonPeopleScoreBoard: "§eCivilian und Detective Wins!"
+victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a will join the next game after §e%1% §a seconds automatically"
 scoreBoardTitle: "§eMurderMystery"
 waitTimeScoreBoard: |-
   Raummodus: §a%roomMode%

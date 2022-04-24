@@ -182,6 +182,7 @@ victoryKillerBottom: "§e머더가 모두를 죽여 승리한 것을 축하합�
 victoryKillerScoreBoard: "§e머더를 축하해주세요!"
 victoryCommonPeopleBottom: "§e시민과 형사가 승리한 것을 축하합니다! "
 victoryCommonPeopleScoreBoard: "§e시민과 형사를 축하해주세요!"
+victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a will join the next game after §e%1% §a seconds automatically"
 scoreBoardTitle: "§e머더 미스터리"
 waitTimeScoreBoard: |-
   방 모드: §a %roomMode%
