@@ -1,9 +1,11 @@
 package cn.lanink.murdermystery;
 
+import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gamecore.utils.Language;
+import cn.lanink.gamecore.utils.VersionUtils;
 import cn.lanink.murdermystery.addons.manager.AddonsManager;
 import cn.lanink.murdermystery.command.AdminCommand;
 import cn.lanink.murdermystery.command.UserCommand;
@@ -249,6 +251,25 @@ public class MurderMystery extends PluginBase {
         this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         this.getLogger().info("§l§e https://github.com/lt-name/MurderMystery_Nukkit");
         this.getLogger().info("§l§eVersion: " + VERSION);
+
+        //检查依赖版本
+        try {
+            String needGameCoreVersion = "1.5.5";
+            if (!VersionUtils.checkMinimumVersion(GameCore.getInstance(), needGameCoreVersion)) {
+                throw new RuntimeException("MemoriesOfTime - GameCore plugin version is too low! At least version " + needGameCoreVersion + " is needed!");
+            }
+        }catch (Exception e) {
+            this.getLogger().error("Please check the dependency plugin version!", e);
+            //延迟3秒方便查看报错
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException ignored) {
+
+            }
+            //TODO 当VersionUtils能处理快照版本时，删除此段注释
+            /*this.getServer().getPluginManager().disablePlugin(this);
+            return;*/
+        }
 
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();

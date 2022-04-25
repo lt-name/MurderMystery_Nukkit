@@ -14,6 +14,8 @@ public class ItemManager {
 
     public static final String IS_MURDER_MYSTERY_TAG = Tools.dynamic("isMurderMystery");
     public static final String INTERNAL_ID_TAG = Tools.dynamic("MurderMysteryInternalID");
+    public static final String NOT_CLICK_TAG = Tools.dynamic("MurderMysteryCanNotClick");
+    public static final String NOT_CLICK_ON_INVENTORY_TAG = Tools.dynamic("MurderMysteryCanNotClickOnInventory");
 
     public static Item get(int internalID) {
         return get(null, internalID);
@@ -49,7 +51,8 @@ public class ItemManager {
                 item = Item.get(395, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
-                        .putInt(ItemManager.INTERNAL_ID_TAG, 3));
+                        .putInt(ItemManager.INTERNAL_ID_TAG, 3)
+                        .putBoolean(ItemManager.NOT_CLICK_TAG, true));
                 item.setCustomName(language.translateString("itemScan"));
                 item.setLore(language.translateString("itemScanLore").split("\n"));
                 return item;
@@ -93,7 +96,7 @@ public class ItemManager {
                 return item;
             case 266:
                 item = Item.get(266, 0, count); //金锭
-                item.setNamedTag(new CompoundTag().putBoolean("cannotClickOnInventory", true));
+                item.setNamedTag(new CompoundTag().putBoolean(ItemManager.NOT_CLICK_ON_INVENTORY_TAG, true));
                 return item;
             case 345:
                 item = Item.get(345); //指南针
