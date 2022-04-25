@@ -221,11 +221,18 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
             return;
         }
+
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK ||
                 event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_AIR) {
             event.setCancelled(true);
             player.setAllowModifyWorld(false);
         }
+
+        Item item = event.getItem();
+        if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.NOT_CLICK_TAG)) {
+            event.setCancelled(true);
+        }
+
         if (room.getStatus() == RoomStatus.GAME && room.isPlaying(player) && player.getGamemode() == 0) {
             Language language = this.murderMystery.getLanguage(player);
             int id1 = block.getId();
@@ -308,8 +315,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                 });
                 event.setCancelled(true);
             }
-        }else if (event.getItem() != null && event.getItem().getNamedTag() != null) {
-            CompoundTag tag = event.getItem().getNamedTag();
+        }else if (item != null && item.getNamedTag() != null) {
+            CompoundTag tag = item.getNamedTag();
             if (tag.getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG) && tag.getInt(ItemManager.INTERNAL_ID_TAG) == 10) {
                 event.setCancelled(true);
                 room.quitRoom(player);
@@ -559,8 +566,8 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         if (room == null || (!room.isPlaying(player) && !room.isSpectator(player))) {
             return;
         }
-        if ((event.getSourceItem().hasCompoundTag() && event.getSourceItem().getNamedTag().getBoolean("cannotClickOnInventory")) ||
-                (event.getHeldItem().hasCompoundTag() && event.getHeldItem().getNamedTag().getBoolean("cannotClickOnInventory"))) {
+        if ((event.getSourceItem().hasCompoundTag() && event.getSourceItem().getNamedTag().getBoolean(ItemManager.NOT_CLICK_ON_INVENTORY_TAG)) ||
+                (event.getHeldItem().hasCompoundTag() && event.getHeldItem().getNamedTag().getBoolean(ItemManager.NOT_CLICK_ON_INVENTORY_TAG))) {
             event.setCancelled(true);
             return;
         }
