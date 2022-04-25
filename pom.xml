@@ -151,7 +151,7 @@
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
-            <version>1.5.4</version>
+            <version>1.5.5</version>
             <scope>provided</scope>
         </dependency>
 
