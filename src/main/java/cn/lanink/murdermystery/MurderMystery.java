@@ -266,8 +266,9 @@ public class MurderMystery extends PluginBase {
             } catch (InterruptedException ignored) {
 
             }
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
+            //TODO 当VersionUtils能处理快照版本时，删除此段注释
+            /*this.getServer().getPluginManager().disablePlugin(this);
+            return;*/
         }
 
         //加载计分板
