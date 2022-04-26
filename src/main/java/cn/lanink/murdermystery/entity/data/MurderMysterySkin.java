@@ -2,6 +2,7 @@ package cn.lanink.murdermystery.entity.data;
 
 import cn.lanink.murdermystery.item.ItemManager;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +32,7 @@ public class MurderMysterySkin extends Skin {
     }
 
     public ItemMap getItemMap() {
-        ItemMap item = new ItemMap();
+        ItemMap item = (ItemMap) Item.get(Item.MAP, 0, 1);
         item.setImage(this.getWantedImage());
         item.getNamedTag()
                 .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
