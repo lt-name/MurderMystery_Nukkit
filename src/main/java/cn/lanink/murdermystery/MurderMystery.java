@@ -254,21 +254,21 @@ public class MurderMystery extends PluginBase {
 
         //检查依赖版本
         try {
-            String needGameCoreVersion = "1.5.5";
+            String needGameCoreVersion = "1.5.6";
             if (!VersionUtils.checkMinimumVersion(GameCore.getInstance(), needGameCoreVersion)) {
-                throw new RuntimeException("MemoriesOfTime - GameCore plugin version is too low! At least version " + needGameCoreVersion + " is needed!");
+                throw new RuntimeException("[MemoriesOfTime-GameCore] plugin version is too low! At least version " + needGameCoreVersion + " is needed!");
             }
         }catch (Exception e) {
             this.getLogger().error("Please check the dependency plugin version!", e);
+            this.getLogger().error("Please update the plugin to the required version!");
             //延迟3秒方便查看报错
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException ignored) {
 
             }
-            //TODO 当VersionUtils能处理快照版本时，删除此段注释
-            /*this.getServer().getPluginManager().disablePlugin(this);
-            return;*/
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         //加载计分板
