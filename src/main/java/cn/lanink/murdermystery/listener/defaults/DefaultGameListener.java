@@ -229,7 +229,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
         }
 
         Item item = event.getItem();
-        if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.NOT_CLICK_TAG)) {
+        if (item != null && item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.NOT_CLICK_TAG)) {
             event.setCancelled(true);
         }
 
