@@ -13,10 +13,12 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.block.BlockPlaceEvent;
+import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
@@ -49,6 +51,16 @@ import java.util.Random;
  */
 @SuppressWarnings("unused")
 public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
+
+    @EventHandler
+    public void onEntityExplosionPrime(EntityExplosionPrimeEvent event) {
+        if (event.getEntity() instanceof EntityFirework) {
+            Entity entity = event.getEntity();
+            if (entity.namedTag != null && entity.namedTag.getBoolean("IsMurderMysteryFirework")) {
+                event.setCancelled();
+            }
+        }
+    }
 
     /**
      * 生命实体射出箭 事件

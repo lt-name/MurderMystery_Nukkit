@@ -344,6 +344,7 @@ public class Tools {
                 .putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
         item.setNamedTag(tag);
         CompoundTag nbt = new CompoundTag();
+        nbt.putBoolean("IsMurderMysteryFirework", true);
         nbt.putList(new ListTag<DoubleTag>("Pos")
                 .add(new DoubleTag("",position.x+0.5D))
                 .add(new DoubleTag("",position.y+0.5D))
