@@ -96,7 +96,6 @@ playerChat: "§a[房间]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[死亡]§f %player%§b >>>§f %message%"
 playerSpectatorChat: "§a[旁观]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
-tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 itemDetectiveBow: "§e侦探之弓"
 itemDetectiveBowLore: |-
   会自动补充消耗的箭

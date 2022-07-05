@@ -83,13 +83,12 @@ public class PlayerJoinAndQuit implements Listener {
         String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getFolderName();
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
-            LinkedHashMap<String, BaseRoom> room = this.murderMystery.getRooms();
-            if (room.containsKey(fromLevel) &&
-                    (room.get(fromLevel).isPlaying(player) || room.get(fromLevel).isSpectator(player))) {
-                event.setCancelled(true);
-                player.sendMessage(this.murderMystery.getLanguage(player).translateString("tpQuitRoomLevel"));
-            }else if (!player.isOp() && room.containsKey(toLevel) &&
-                    !room.get(toLevel).isPlaying(player) && !room.get(toLevel).isSpectator(player)) {
+            LinkedHashMap<String, BaseRoom> rooms = this.murderMystery.getRooms();
+            if (rooms.containsKey(fromLevel) &&
+                    (rooms.get(fromLevel).isPlaying(player) || rooms.get(fromLevel).isSpectator(player))) {
+                rooms.get(fromLevel).quitRoom(player);
+            }else if (!player.isOp() && rooms.containsKey(toLevel) &&
+                    !rooms.get(toLevel).isPlaying(player) && !rooms.get(toLevel).isSpectator(player)) {
                 event.setCancelled(true);
                 player.sendMessage(this.murderMystery.getLanguage(player).translateString("tpJoinRoomLevel"));
             }

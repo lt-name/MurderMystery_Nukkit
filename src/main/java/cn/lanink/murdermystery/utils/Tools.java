@@ -219,6 +219,10 @@ public class Tools {
             player.setNameTag("");
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
+
+            player.getInventory().clearAll();
+            player.getOffhandInventory().clearAll();
+            player.getEnderChestInventory().clearAll();
         }else {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);

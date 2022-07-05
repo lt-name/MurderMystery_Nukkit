@@ -100,7 +100,6 @@ playerChat: "§a[]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[사망] %player§b >>> %message%"
 playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §c게임을 시작하기 전에 월드에 참가하세요."
-tpQuitRoomLevel: "§e >> §c명령어를 사용하여 방을 종료하세요."
 itemDetectiveBow: "§e형사들의 활"
 itemDetectiveBowLore: |-
   소비된 화살이 자동적으로 보충됩니다.

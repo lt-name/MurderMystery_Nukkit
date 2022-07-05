@@ -96,7 +96,6 @@ playerChat: "§a[Room]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[Death]§f %player%§b >>>§f %message%"
 playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"
-tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room"
 itemDetectiveBow: "§eBow of detectives"
 itemDetectiveBowLore: |-
   Automatically replenish consumed arrows

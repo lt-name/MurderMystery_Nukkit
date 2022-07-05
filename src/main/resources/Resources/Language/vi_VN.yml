@@ -96,7 +96,6 @@ playerChat: "§a[Room]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c[Death]§f %player%§b >>>§f %message%"
 playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §cĐể vào bản đồ trò chơi, trước tiên hãy tham gia trò chơi"
-tpQuitRoomLevel: "§e >> §cVui lòng sử dụng lệnh để thoát khỏi phòng"
 itemDetectiveBow: "§eCung của thám tử"
 itemDetectiveBowLore: |-
   Tự động bổ sung mũi tên
