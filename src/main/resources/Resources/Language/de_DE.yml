@@ -92,7 +92,6 @@ playerChat: "§a[Room]§f %player%§b >>>§f %message%"
 playerDeathChat: "§c [Tod]% Spieler% + §b >>>% Nachricht%"
 playerSpectatorChat: "§a[Spectator]§f %player%§b >>>§f %message%"
 tpJoinRoomLevel: "§e >> §cBitte trete einer Karte bei, bevor du anfängst zu spielen."
-tpQuitRoomLevel: "§e >> §cBitte verwenden Sie den Befehl, um den Raum zu verlassen."
 itemDetectiveBow: "§eBow der Detektive"
 itemDetectiveBowLore: |-
   Verbrauchte Pfeile automatisch auffüllen
