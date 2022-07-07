@@ -35,6 +35,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 import lombok.Getter;
+import me.petterim1.scoreboards.Main;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -668,6 +669,18 @@ public class MurderMystery extends PluginBase {
         } catch (Exception e) {
             this.roomName.remove(world);
             e.printStackTrace();
+            return;
+        }
+        //兼容SimpleScoreboards
+        try {
+            Class.forName("me.petterim1.scoreboards.Main");
+            if (!Main.noScoreboardWorlds.contains(world)) {
+                Main.noScoreboardWorlds.add(world);
+            }
+        }catch (Exception e) {
+            if (debug) {
+                this.getLogger().error("调用SimpleScoreboards插件接口错误: ", e);
+            }
         }
     }
 
@@ -701,6 +714,16 @@ public class MurderMystery extends PluginBase {
             this.getLogger().info(this.getLanguage().translateString("roomUnloadSuccess")
                     .replace("%name%", room.getFullRoomName()));
             this.roomName.remove(world);
+
+            //兼容SimpleScoreboards
+            try {
+                Class.forName("me.petterim1.scoreboards.Main");
+                Main.noScoreboardWorlds.remove(world);
+            }catch (Exception e) {
+                if (debug) {
+                    this.getLogger().error("调用SimpleScoreboards插件接口错误: ", e);
+                }
+            }
         }
     }
 
