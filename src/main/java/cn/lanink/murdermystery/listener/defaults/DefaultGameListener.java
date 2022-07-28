@@ -188,13 +188,16 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
 
         Item item = event.getItem();
         if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_MURDER_MYSTERY_TAG)) {
-            switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG)) {
+            CompoundTag namedTag = item.getNamedTag();
+            switch (namedTag.getInt(ItemManager.INTERNAL_ID_TAG)) {
                 case 10:
                     int nowTick = Server.getInstance().getTick();
-                    int lastTick = item.getNamedTag().getInt("lastTick");
+                    int lastTick = namedTag.getInt("lastTick");
                     if (lastTick == 0 || nowTick - lastTick > 40) {
                         player.sendTip(this.murderMystery.getLanguage(player).translateString("item_quitRoom_click_2"));
-                        item.getNamedTag().putInt("lastTick", nowTick);
+                        namedTag.putInt("lastTick", nowTick);
+                        item.setNamedTag(namedTag);
+                        player.getInventory().setItemInHand(item);
                         event.setCancelled(true);
                         player.getInventory().setHeldItemIndex(7);
                     }else {
