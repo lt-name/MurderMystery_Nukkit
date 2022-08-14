@@ -172,6 +172,14 @@
         </dependency>
 
         <dependency>
+            <groupId>FakeFStage</groupId>
+            <artifactId>FakeFStage</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/FakeFStage.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>23.0.0</version>

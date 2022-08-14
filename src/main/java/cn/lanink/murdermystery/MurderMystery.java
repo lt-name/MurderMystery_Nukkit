@@ -22,6 +22,7 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.room.doubleMode.DoubleRoomMode;
 import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
+import cn.lanink.murdermystery.tasks.FStageTask;
 import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.utils.MetricsLite;
@@ -282,7 +283,7 @@ public class MurderMystery extends PluginBase {
             }
             this.hasTips = true;
         } catch (Exception ignored) {
-
+        //注册RsNPC变量
         }
         try {
             Class.forName("com.smallaswater.npc.variable.VariableManage");
@@ -291,6 +292,13 @@ public class MurderMystery extends PluginBase {
             } catch (Exception e) {
                 com.smallaswater.npc.variable.VariableManage.addVariable("MurderMysteryVariable", RsNpcXVariable.class);
             }
+        } catch (Exception ignored) {
+
+        }
+        //检查FAP群组服插件
+        try {
+            Class.forName("net.fap.stage.FStage");
+            Server.getInstance().getScheduler().scheduleRepeatingTask(this, new FStageTask(this), 20, true);
         } catch (Exception ignored) {
 
         }
