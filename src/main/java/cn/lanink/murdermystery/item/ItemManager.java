@@ -29,7 +29,7 @@ public class ItemManager {
         Item item;
         Language language = MurderMystery.getInstance().getLanguage(player);
         switch (internalID) {
-            case 1:
+            case 1: //侦探弓
                 item = Item.get(261, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
@@ -38,7 +38,7 @@ public class ItemManager {
                 item.setCustomName(language.translateString("itemDetectiveBow"));
                 item.setLore(language.translateString("itemDetectiveBowLore").split("\n"));
                 return item;
-            case 2:
+            case 2: //杀手剑
                 item = Item.get(267, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
