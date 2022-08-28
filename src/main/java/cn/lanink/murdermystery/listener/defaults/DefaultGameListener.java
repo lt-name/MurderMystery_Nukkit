@@ -50,6 +50,16 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
 
+    @EventHandler
+    public void onPlayerChangeSkin(PlayerChangeSkinEvent event) { //此事件仅玩家主动修改皮肤时触发，不需要针对插件修改特判
+        Player player = event.getPlayer();
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
     /**
      * 生命实体射出箭 事件
      * @param event 事件
