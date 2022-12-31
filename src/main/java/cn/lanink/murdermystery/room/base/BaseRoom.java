@@ -709,7 +709,9 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                 entry.getKey().getInventory().removeItem(gold);
                 entry.getKey().getInventory().addItem(Item.get(262, 0, 1));
                 if (needBow) {
-                    entry.getKey().getInventory().addItem(Item.get(261, 0, 1));
+                    Item bow = Item.get(261, 0, 1);
+                    bow.setNamedTag(new CompoundTag().putByte("Unbreakable", 1)); //无限耐久
+                    entry.getKey().getInventory().addItem(bow);
                 }
                 Tools.playSound(entry.getKey(), Sound.RANDOM_LEVELUP);
             }

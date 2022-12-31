@@ -30,7 +30,7 @@ jobs:
           key: dependencies-{{ checksum "pom.xml" }}
 
       - store_artifacts:
-          path: target/MurderMystery-1.4.1.0-PM1E.jar
+          path: target/MurderMystery-1.4.2-PM1E.jar
 
 workflows:
   build:
