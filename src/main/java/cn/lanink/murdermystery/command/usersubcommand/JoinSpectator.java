@@ -42,24 +42,35 @@ public class JoinSpectator extends BaseSubCommand {
                     return true;
                 }
             }
-            String world = args[1];
-            if (!this.murderMystery.getRooms().containsKey(world)) {
-                for (Map.Entry<String, String> entry : this.murderMystery.getRoomName().entrySet()) {
-                    if (entry.getValue().equals(args[1])) {
-                        world = entry.getKey();
+            if (args.length < 2) {
+                for (BaseRoom room : this.murderMystery.getRooms().values()) {
+                    if (room.getStatus() == RoomStatus.GAME) {
+                        room.joinRoom(player, true);
+                        return true;
                     }
                 }
-            }
-            BaseRoom room = this.murderMystery.getRooms().get(world);
-            if (room != null) {
-                if (room.getStatus() != RoomStatus.LEVEL_NOT_LOADED &&
-                        room.getStatus() != RoomStatus.VICTORY) {
-                    room.joinRoom(player, true);
-                }else {
-                    sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsNeedInitialized"));
-                }
-            }else {
                 sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsNotFound"));
+                return true;
+            }else {
+                String world = args[1];
+                if (!this.murderMystery.getRooms().containsKey(world)) {
+                    for (Map.Entry<String, String> entry : this.murderMystery.getRoomName().entrySet()) {
+                        if (entry.getValue().equals(args[1])) {
+                            world = entry.getKey();
+                        }
+                    }
+                }
+                BaseRoom room = this.murderMystery.getRooms().get(world);
+                if (room != null) {
+                    if (room.getStatus() != RoomStatus.LEVEL_NOT_LOADED &&
+                            room.getStatus() != RoomStatus.VICTORY) {
+                        room.joinRoom(player, true);
+                    } else {
+                        sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsNeedInitialized"));
+                    }
+                } else {
+                    sender.sendMessage(this.murderMystery.getLanguage(sender).translateString("joinRoomIsNotFound"));
+                }
             }
             return true;
         }

@@ -218,6 +218,8 @@ public class FormHelper {
                         language.translateString("joinRoomIsFull"),
                         language.translateString("buttonSpectator"),
                         language.translateString("buttonReturn"));
+                modal.onClickedTrue((p) -> Server.getInstance().dispatchCommand(p, MURDER_MYSTERY.getCmdUser() + " joinspectator " + room.getLevelName()));
+                modal.onClickedFalse(FormHelper::sendRoomListMenu);
             }else {
                 modal = new AdvancedFormWindowModal(PLUGIN_NAME,
                         language.translateString("joinRoomOK")
