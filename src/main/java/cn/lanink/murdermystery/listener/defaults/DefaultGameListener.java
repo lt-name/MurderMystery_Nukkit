@@ -93,16 +93,16 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             //回收弓
             Server.getInstance().getScheduler().scheduleDelayedTask(this.murderMystery, () -> {
                 int arrow = 0;
-                boolean hasBow = false;
+                Item bow = null;
                 for (Item item : player.getInventory().slots.values()) {
                     if (item.getId() == 262) {
                         arrow += item.getCount();
                     }else if (item.getId() == 261) {
-                        hasBow = true;
+                        bow = item; //弓根据玩家语言修改名称，不同玩家的弓nbt可能不一样
                     }
                 }
-                if (arrow < 1 && hasBow) {
-                    player.getInventory().removeItem(Item.get(261, 0, 1));
+                if (arrow < 1 && bow != null) {
+                    player.getInventory().removeItem(bow);
                 }
             }, 1);
         }
