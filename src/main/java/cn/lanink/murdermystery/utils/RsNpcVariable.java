@@ -3,18 +3,19 @@ package cn.lanink.murdermystery.utils;
 import cn.lanink.murdermystery.MurderMystery;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.nukkit.Player;
-import com.smallaswater.npc.variable.BaseVariable;
+import com.smallaswater.npc.data.RsNpcConfig;
+import com.smallaswater.npc.variable.BaseVariableV2;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author lt_name
+ * @author LT_Name
  */
-public class RsNpcXVariable extends BaseVariable {
+public class RsNpcVariable extends BaseVariableV2 {
 
     @Override
-    public String stringReplace(Player player, String s) {
+    public void onUpdate(Player player, RsNpcConfig rsNpcConfig) {
         HashMap<String, Integer> map = new HashMap<>();
         int all = 0;
         for (BaseRoom room : MurderMystery.getInstance().getRooms().values()) {
@@ -23,9 +24,9 @@ public class RsNpcXVariable extends BaseVariable {
             all += room.getPlayers().size();
         }
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            s = s.replace("{MurderMysteryRoomPlayerNumber" + entry.getKey() + "}", entry.getValue() + "");
+            this.addVariable("{MurderMysteryRoomPlayerNumber" + entry.getKey() + "}", String.valueOf(entry.getValue()));
         }
-        return s.replace("{MurderMysteryRoomPlayerNumberAll}", all + "");
+        this.addVariable("{MurderMysteryRoomPlayerNumberAll}", String.valueOf(all));
     }
 
 }

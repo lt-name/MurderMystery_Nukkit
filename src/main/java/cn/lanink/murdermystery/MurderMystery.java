@@ -3,7 +3,7 @@ package cn.lanink.murdermystery;
 import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
-import cn.lanink.gamecore.utils.FileUtil;
+import cn.lanink.gamecore.utils.FileUtils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.VersionUtils;
 import cn.lanink.murdermystery.addons.manager.AddonsManager;
@@ -25,8 +25,7 @@ import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
 import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.utils.MetricsLite;
-import cn.lanink.murdermystery.utils.RsNpcXVariable;
-import cn.lanink.murdermystery.utils.RsNpcXVariableV2;
+import cn.lanink.murdermystery.utils.RsNpcVariable;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -285,12 +284,8 @@ public class MurderMystery extends PluginBase {
 
         }
         try {
-            Class.forName("com.smallaswater.npc.variable.VariableManage");
-            try {
-                com.smallaswater.npc.variable.VariableManage.addVariableV2("MurderMysteryVariable", RsNpcXVariableV2.class);
-            } catch (Exception e) {
-                com.smallaswater.npc.variable.VariableManage.addVariable("MurderMysteryVariable", RsNpcXVariable.class);
-            }
+            Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
+            com.smallaswater.npc.variable.VariableManage.addVariableV2("MurderMysteryVariable", RsNpcVariable.class);
         } catch (Exception ignored) {
 
         }
@@ -504,8 +499,8 @@ public class MurderMystery extends PluginBase {
         this.temporaryRooms.add(finalNewRoom);
         this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
         this.temporaryRoomsConfig.save();
-        FileUtil.copyDir(this.getRoomConfigPath() + template + ".yml", this.getRoomConfigPath() + finalNewRoom + ".yml");
-        FileUtil.copyDir(this.getWorldBackupPath() + template, this.getServerWorldPath() + finalNewRoom);
+        FileUtils.copyDir(this.getRoomConfigPath() + template + ".yml", this.getRoomConfigPath() + finalNewRoom + ".yml");
+        FileUtils.copyDir(this.getWorldBackupPath() + template, this.getServerWorldPath() + finalNewRoom);
         if (MurderMystery.debug) {
             this.getLogger().info("自动创建临时房间: " + template + " -> " + finalNewRoom);
         }
@@ -530,9 +525,9 @@ public class MurderMystery extends PluginBase {
             this.getServer().unloadLevel(level);
         }
         CompletableFuture.runAsync(() -> {
-            FileUtil.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
-            FileUtil.deleteFile(this.getServerWorldPath() + levelName);
-            FileUtil.deleteFile(this.getWorldBackupPath() + levelName);
+            FileUtils.deleteFile(this.getRoomConfigPath() + levelName + ".yml");
+            FileUtils.deleteFile(this.getServerWorldPath() + levelName);
+            FileUtils.deleteFile(this.getWorldBackupPath() + levelName);
             this.temporaryRooms.remove(levelName);
             this.temporaryRoomsConfig.set("temporaryRooms", this.temporaryRooms);
             this.temporaryRoomsConfig.save();
