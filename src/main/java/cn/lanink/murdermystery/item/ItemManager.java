@@ -47,16 +47,16 @@ public class ItemManager {
                 item.setCustomName(language.translateString("itemKillerSword"));
                 item.setLore(language.translateString("itemKillerSwordLore").split("\n"));
                 return item;
-            case 3:
+            case 3: //杀手 扫描器
                 item = Item.get(395, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
                         .putInt(ItemManager.INTERNAL_ID_TAG, 3)
-                        .putBoolean(ItemManager.NOT_CLICK_TAG, true));
+                        .putBoolean(ItemManager.NOT_CLICK_ON_INVENTORY_TAG, true));
                 item.setCustomName(language.translateString("itemScan"));
                 item.setLore(language.translateString("itemScanLore").split("\n"));
                 return item;
-            case 10:
+            case 10: //退出房间
                 item = Item.get(324, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
@@ -70,7 +70,7 @@ public class ItemManager {
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
                         .putInt(ItemManager.INTERNAL_ID_TAG, 20));
                 return item;
-            case 21:
+            case 21: //随机药水
                 item = Item.get(373, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
@@ -78,7 +78,7 @@ public class ItemManager {
                 item.setCustomName(language.translateString("itemPotion"));
                 item.setLore(language.translateString("itemPotionLore").split("\n"));
                 return item;
-            case 22:
+            case 22: //护盾墙
                 item = Item.get(241, 3, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
@@ -86,7 +86,7 @@ public class ItemManager {
                 item.setCustomName(language.translateString("itemShieldWall"));
                 item.setLore(language.translateString("itemShieldWallLore").split("\n"));
                 return item;
-            case 23:
+            case 23: //眩晕雪球
                 item = Item.get(332, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(ItemManager.IS_MURDER_MYSTERY_TAG, true)
@@ -94,12 +94,12 @@ public class ItemManager {
                 item.setCustomName(language.translateString("itemSnowball"));
                 item.setLore(language.translateString("itemSnowballLore").split("\n"));
                 return item;
-            case 266:
-                item = Item.get(266, 0, count); //金锭
+            case 266: //金锭
+                item = Item.get(266, 0, count);
                 item.setNamedTag(new CompoundTag().putBoolean(ItemManager.NOT_CLICK_ON_INVENTORY_TAG, true));
                 return item;
-            case 345:
-                item = Item.get(345); //指南针
+            case 345: //指南针
+                item = Item.get(345);
                 return item;
             default:
                 return Item.get(0);

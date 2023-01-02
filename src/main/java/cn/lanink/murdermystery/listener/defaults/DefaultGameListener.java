@@ -219,7 +219,7 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
                         player.sendTip(this.murderMystery.getLanguage(player).translateString("item_quitRoom_click_2"));
                         namedTag.putInt("lastTick", nowTick);
                         item.setNamedTag(namedTag);
-                        player.getInventory().setItemInHand(item);
+                        player.getInventory().setItem(8, item);
                         event.setCancelled(true);
                         player.getInventory().setHeldItemIndex(7);
                     }else {
