@@ -17,6 +17,7 @@ import cn.lanink.murdermystery.listener.classic.ClassicDamageListener;
 import cn.lanink.murdermystery.listener.classic.ClassicGameListener;
 import cn.lanink.murdermystery.listener.defaults.*;
 import cn.lanink.murdermystery.listener.infected.InfectedGameListener;
+import cn.lanink.murdermystery.playerdata.PlayerDataManager;
 import cn.lanink.murdermystery.room.assassin.AssassinModeRoom;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
@@ -65,6 +66,8 @@ public class MurderMystery extends PluginBase {
 
     private static MurderMystery murderMystery;
     private static AddonsManager addonsManager;
+    @Getter
+    private PlayerDataManager playerDataManager;
 
     private Config config;
 
@@ -169,6 +172,8 @@ public class MurderMystery extends PluginBase {
         this.cmdWhitelist = this.config.getStringList("cmdWhitelist");
 
         this.loadLanguage();
+
+        this.playerDataManager = new PlayerDataManager(this);
 
         //扩展
         if (addonsManager == null) {
@@ -324,6 +329,10 @@ public class MurderMystery extends PluginBase {
     public void onDisable() {
         if (addonsManager != null) {
             addonsManager.disableAll();
+        }
+        if (this.playerDataManager != null) {
+            this.playerDataManager.saveAll();
+            this.playerDataManager.clearAll();
         }
         this.removeAllTemporaryRoom();
         this.unloadAllRoom();
