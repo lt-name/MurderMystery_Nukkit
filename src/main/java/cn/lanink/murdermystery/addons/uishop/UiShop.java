@@ -4,6 +4,7 @@ import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.murdermystery.addons.AddonsBase;
+import cn.lanink.murdermystery.addons.manager.autoregister.RegisterListener;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
 import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author lt_name
  */
+@RegisterListener
 public class UiShop extends AddonsBase implements Listener {
 
     private final ArrayList<String> items = new ArrayList<>();
@@ -36,7 +38,6 @@ public class UiShop extends AddonsBase implements Listener {
     public void onEnable() {
         this.getMurderMystery().saveResource("Addons/UiShop/config.yml", false);
         this.items.addAll(this.getConfig().getStringList("items"));
-        this.getAddonsManager().registerEvents(this, this);
         this.getLogger().info("§a加载完成！");
     }
 
