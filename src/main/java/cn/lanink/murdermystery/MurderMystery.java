@@ -288,6 +288,7 @@ public class MurderMystery extends PluginBase {
         } catch (Exception ignored) {
 
         }
+        //注册RsNPC变量
         try {
             Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
             com.smallaswater.npc.variable.VariableManage.addVariableV2("MurderMysteryVariable", RsNpcVariable.class);
@@ -672,7 +673,7 @@ public class MurderMystery extends PluginBase {
                     .replace("%name%", name + "(" + world + ")"));
         } catch (Exception e) {
             this.roomName.remove(world);
-            e.printStackTrace();
+            this.getLogger().error("Room loading error", e);
             return;
         }
         //兼容SimpleScoreboards
