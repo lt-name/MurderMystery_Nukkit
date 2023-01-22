@@ -186,6 +186,9 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
+        if (human == null || skin == null) {
+            return;
+        }
         PlayerSkinPacket packet = new PlayerSkinPacket();
         packet.skin = skin;
         packet.newSkinName = skin.getSkinId();
