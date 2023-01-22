@@ -4,6 +4,7 @@ import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.murdermystery.addons.AddonsBase;
+import cn.lanink.murdermystery.addons.manager.autoregister.RegisterListener;
 import cn.lanink.murdermystery.event.MurderMysteryRoomStartEvent;
 import cn.lanink.murdermystery.item.ItemManager;
 import cn.lanink.murdermystery.room.base.BaseRoom;
@@ -18,24 +19,25 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.Task;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lt_name
  */
+@RegisterListener
 public class UiShop extends AddonsBase implements Listener {
 
-    private ArrayList<String> items = new ArrayList<>();
-    private final HashSet<Player> cache = new HashSet<>();
+    private final ArrayList<String> items = new ArrayList<>();
+    private final Cache<Player, Boolean> cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
 
     @Override
     public void onEnable() {
         this.getMurderMystery().saveResource("Addons/UiShop/config.yml", false);
         this.items.addAll(this.getConfig().getStringList("items"));
-        this.getAddonsManager().registerEvents(this, this);
         this.getLogger().info("§a加载完成！");
     }
 
@@ -48,17 +50,14 @@ public class UiShop extends AddonsBase implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onRoomStart(MurderMysteryRoomStartEvent event) {
         BaseRoom room = event.getRoom();
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.getMurderMystery(), new Task() {
-            @Override
-            public void onRun(int i) {
-                String[] s = getConfig().get("UiShopItem", "347:0").split(":");
-                Item item = Item.get(Integer.parseInt(s[0]), Integer.parseInt(s[1]), 1);
-                item.setNamedTag(new CompoundTag().putBoolean("isMurderUiShop", true));
-                item.setCustomName(getConfig().getString("UiShopItemName", "§a道具商店"));
-                item.setLore(getConfig().getString("UiShopItemLore", "便携道具商店\n购买各种道具来帮助你获取胜利！").split("\n"));
-                for (Player player : room.getPlayers().keySet()) {
-                    player.getInventory().addItem(item);
-                }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.getMurderMystery(), () -> {
+            String[] s = getConfig().get("UiShopItem", "347:0").split(":");
+            Item item = Item.get(Integer.parseInt(s[0]), Integer.parseInt(s[1]), 1);
+            item.setNamedTag(new CompoundTag().putBoolean("isMurderUiShop", true));
+            item.setCustomName(getConfig().getString("UiShopItemName", "§a道具商店"));
+            item.setLore(getConfig().getString("UiShopItemLore", "便携道具商店\n购买各种道具来帮助你获取胜利！").split("\n"));
+            for (Player player : room.getPlayers().keySet()) {
+                player.getInventory().addItem(item);
             }
         }, 1);
     }
@@ -72,12 +71,12 @@ public class UiShop extends AddonsBase implements Listener {
         }
         BaseRoom room = getMurderMystery().getRooms().get(player.getLevel().getName());
         if (room != null && room.getStatus() == RoomStatus.GAME &&
-                item.getNamedTag().getBoolean("isMurderUiShop") && !this.cache.contains(player)) {
-            this.cache.add(player);
+                item.getNamedTag().getBoolean("isMurderUiShop") && this.cache.getIfPresent(player) == null) {
+            this.cache.put(player, true);
             this.showUiShop(player);
             event.setCancelled(true);
             Server.getInstance().getScheduler().scheduleDelayedTask(this.getMurderMystery(),
-                    () -> cache.remove(player), 10);
+                    () -> cache.invalidate(player), 10);
         }
     }
 
