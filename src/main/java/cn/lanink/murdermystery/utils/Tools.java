@@ -20,6 +20,7 @@ import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -29,8 +30,11 @@ import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -44,6 +48,39 @@ public class Tools {
 
     public static <T> T dynamic(T value) {
         return value;
+    }
+
+    public static double toDouble(Object object) {
+        return new BigDecimal(object.toString()).doubleValue();
+    }
+
+    /**
+     * Vector3 转为 Map
+     *
+     * @param vector3 Vector3
+     * @return Map
+     */
+    public static LinkedHashMap<String, Double> vector3ToMap(Vector3 vector3) {
+        LinkedHashMap<String, Double> map = new LinkedHashMap<>();
+        map.put("x", vector3.getX());
+        map.put("y", vector3.getY());
+        map.put("z", vector3.getZ());
+        return map;
+    }
+
+    /**
+     * Map 转为 Vector3
+     *
+     * @param map Map
+     * @return Vector3
+     */
+    @SuppressWarnings("rawtypes")
+    public static Vector3 mapToVector3(Map map) {
+        return new Vector3(
+                toDouble(map.get("x")),
+                toDouble(map.get("y")),
+                toDouble(map.get("z"))
+        );
     }
 
     /**
@@ -186,6 +223,9 @@ public class Tools {
      * @param skin 皮肤
      */
     public static void setHumanSkin(EntityHuman human, Skin skin) {
+        if (human == null || skin == null) {
+            return;
+        }
         PlayerSkinPacket packet = new PlayerSkinPacket();
         packet.skin = skin;
         packet.newSkinName = skin.getSkinId();

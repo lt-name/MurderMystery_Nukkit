@@ -58,6 +58,10 @@ public class DefaultGameListener extends BaseMurderMysteryListener<BaseRoom> {
             return;
         }
         event.setCancelled(true);
+        Server.getInstance().getScheduler().scheduleDelayedTask(
+                this.murderMystery,
+                () -> Tools.setHumanSkin(player, room.getPlayerSkin(player)),
+                10, true);
     }
 
     /**
