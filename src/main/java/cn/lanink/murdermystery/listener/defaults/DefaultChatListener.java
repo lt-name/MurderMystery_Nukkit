@@ -29,7 +29,11 @@ public class DefaultChatListener extends BaseMurderMysteryListener<BaseRoom> {
         if (player == null || message == null) {
             return;
         }
-        message = message.replace("/", "").split(" ")[0];
+        String[] split = message.replace("/", "").split(" ");
+        if (split.length == 0) {
+            return;
+        }
+        message = split[0];
         BaseRoom room = this.getListenerRooms().get(player.getLevel().getFolderName());
         if (room == null || !room.isPlaying(player)) {
             return;
