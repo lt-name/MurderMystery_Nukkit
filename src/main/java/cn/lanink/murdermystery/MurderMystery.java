@@ -3,6 +3,7 @@ package cn.lanink.murdermystery;
 import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
+import cn.lanink.gamecore.utils.ConfigUtils;
 import cn.lanink.gamecore.utils.FileUtils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.VersionUtils;
@@ -26,6 +27,7 @@ import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.utils.MetricsLite;
 import cn.lanink.murdermystery.utils.RsNpcVariable;
+import cn.lanink.murdermystery.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -101,6 +103,9 @@ public class MurderMystery extends PluginBase {
 
     private boolean restoreWorld = false;
     private boolean autoCreateTemporaryRoom = false;
+
+    @Getter
+    private boolean automaticJoinGame = false;
     @Getter
     private boolean automaticNextRound = false; //游戏结束后自动加入新房间
 
@@ -154,12 +159,20 @@ public class MurderMystery extends PluginBase {
             }
         }
 
+        ConfigUpdateUtils.updateConfig();
+        Config configDescription = new Config();
+        configDescription.load(this.getResource("Resources/Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
+        ConfigUtils.addDescription(this.config, configDescription);
+
+        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
+
         this.temporaryRoomsConfig = new Config(this.getDataFolder() + "/temporaryRoomList.yml", Config.YAML);
         this.temporaryRooms = new CopyOnWriteArrayList<>(this.temporaryRoomsConfig.getStringList("temporaryRooms"));
         this.removeAllTemporaryRoom();
 
         this.restoreWorld = this.config.getBoolean("restoreWorld", false);
         this.autoCreateTemporaryRoom = this.config.getBoolean("autoCreateTemporaryRoom", false);
+        this.automaticJoinGame = this.config.getBoolean("AutomaticJoinGame", false);
         this.automaticNextRound = this.config.getBoolean("AutomaticNextRound", false);
 
         this.cmdUser = this.config.getString("cmdUser", "murdermystery");

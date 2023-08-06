@@ -1,3 +1,5 @@
+ConfigVersion: 1.4.2
+
 #zh_CN | en_US | ko_KR | vi_VN | de_DE
 defaultLanguage: zh_CN
 languageMappingTable:
@@ -9,14 +11,7 @@ languageMappingTable:
   en_GB: "en_US"
   de: "de_DE"
 autoUpdateLanguage: false
-#结束游戏后还原地图
-#注意：仅在首次加载房间时备份地图！
-#Restore the map(world) after the game is over
-#Note: The map(world) is only backed up when loading the room for the first time!
-restoreWorld: true
-#自动创建临时房间 保证至少有一个空闲房间
-#Automatically create a temporary room to ensure that there is at least one free room
-autoCreateTemporaryRoom: true
+
 #插件命令 Plugin commands
 cmdUser: murdermystery
 cmdUserAliases:
@@ -30,6 +25,17 @@ cmdWhitelist:
   - kick
   - report
 
+#结束游戏后还原地图
+#注意：仅在首次加载房间时备份地图！
+#Restore the map(world) after the game is over
+#Note: The map(world) is only backed up when loading the room for the first time!
+restoreWorld: true
+#自动创建临时房间 保证至少有一个空闲房间
+#Automatically create a temporary room to ensure that there is at least one free room
+autoCreateTemporaryRoom: true
+
+#玩家进入服务器后自动加入游戏房间（适用于群组服游戏子服场景）
+AutomaticJoinGame: false
 QuitRoom:
   #退出房间执行命令
   cmd: []
