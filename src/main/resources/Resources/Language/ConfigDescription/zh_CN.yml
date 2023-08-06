@@ -1,0 +1,32 @@
+header: |-
+  MurderMystery 插件配置文件
+footer: |-
+  你已经到达配置文件的底部啦
+
+ConfigVersion: |-
+  配置文件的版本号
+  警告！ 除非您明确知道您在干什么，否则不要尝试改动此项配置！
+
+defaultLanguage: "插件默认语言设置 可选 zh_CN | en_US | ko_KR | vi_VN | de_DE"
+languageMappingTable: "语言映射表"
+autoUpdateLanguage: "自动更新语言文件"
+
+cmdUser: "插件命令"
+cmdUserAliases: "插件命令别名"
+cmdAdmin: "插件管理命令"
+cmdAdminAliases: "插件管理命令别名"
+cmdWhitelist: "可以在游戏房间中使用的命令"
+
+restoreWorld: |-
+  结束游戏后还原地图
+  注意：仅在首次加载房间时备份地图！
+autoCreateTemporaryRoom: "自动创建临时房间 保证至少有一个空闲房间"
+
+AutomaticJoinGame: "玩家进入服务器后自动加入游戏房间（适用于群组服游戏子服场景）"
+QuitRoom.cmd: "退出房间执行命令"
+AutomaticNextRound: "游戏结束后自动加入下一局 （建议开启autoCreateTemporaryRoom）"
+
+killerVictoryCmd: "杀手胜利执行命令(仅杀手执行)"
+commonPeopleVictoryCmd: "平民与侦探胜利执行命令(仅存活的玩家执行)"
+killKillerCmd: "击杀杀手的玩家执行命令"
+defeatCmd: "失败执行命令"

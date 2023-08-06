@@ -11,6 +11,7 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
+import cn.nukkit.event.player.PlayerLocallyInitializedEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 
@@ -54,6 +55,17 @@ public class PlayerJoinAndQuit implements Listener {
                     player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                 }
             }, 1);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerLocallyInitialized(PlayerLocallyInitializedEvent event) {
+        Player player = event.getPlayer();
+        if (player == null) {
+            return;
+        }
+        if (this.murderMystery.isAutomaticJoinGame()) {
+            Server.getInstance().dispatchCommand(player, this.murderMystery.getCmdUser() + " join");
         }
     }
 

@@ -1,0 +1,32 @@
+header: |-
+  MurderMystery Plugin configuration file
+footer: |-
+  You have reached the bottom of the profile
+
+ConfigVersion: |-
+  The version number of the configuration file
+  Warning! Don't try to change this configuration unless you know exactly what you are doing!
+
+defaultLanguage: "Plugin default language settings. Optional: zh_CN | en_US | ko_KR | vi_VN | de_DE"
+languageMappingTable: "languageMappingTable"
+autoUpdateLanguage: "Automatically update language files"
+
+cmdUser: "plugin command"
+cmdUserAliases: "plugin command alias"
+cmdAdmin: "plugin management commands"
+cmdAdminAliases: "plugin management command alias"
+cmdWhitelist: "Commands that can be used in the game room"
+
+restoreWorld: |-
+  Restore the map(world) after the game is over
+  Note: The map(world) is only backed up when loading the room for the first time!
+autoCreateTemporaryRoom: "Automatically create a temporary room to ensure that there is at least one free room"
+
+AutomaticJoinGame: "Players automatically join the game room after entering the server (applicable to group service game sub-service scene）"
+QuitRoom.cmd: "Exit Room Execute Command"
+AutomaticNextRound: "After the game is over, it will automatically join the next round (it is recommended to open the autoCreateTemporaryRoom)"
+
+killerVictoryCmd: "Killer Triumph Execute Command (Killer Execute Only)"
+commonPeopleVictoryCmd: "Civilian and Detective Victory Execute Command (only executed by surviving players)"
+killKillerCmd: "The player who kills the killer executes the command."
+defeatCmd: "Failed to execute command"
