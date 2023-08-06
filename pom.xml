@@ -144,14 +144,14 @@
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
-            <version>PM1E_1.19.62.2619</version>
+            <version>PM1E_1.20.10.2933</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
-            <version>1.6.8.0-PM1E</version>
+            <version>1.6.11-PM1E</version>
             <scope>provided</scope>
         </dependency>
 
@@ -168,14 +168,6 @@
             <version>2.6.1</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/SimpleScoreboards-2.6.1.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>FakeFStage</groupId>
-            <artifactId>FakeFStage</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/FakeFStage.jar</systemPath>
         </dependency>
 
         <dependency>

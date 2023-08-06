@@ -22,7 +22,6 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.classic.ClassicModeRoom;
 import cn.lanink.murdermystery.room.doubleMode.DoubleRoomMode;
 import cn.lanink.murdermystery.room.infected.InfectedModeRoom;
-import cn.lanink.murdermystery.tasks.FStageTask;
 import cn.lanink.murdermystery.tasks.Watchdog;
 import cn.lanink.murdermystery.tasks.admin.SetRoomTask;
 import cn.lanink.murdermystery.utils.MetricsLite;
@@ -52,7 +51,7 @@ import java.util.concurrent.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.4.2-PM1E-SNAPSHOT git-f9f5181";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
     public static final ThreadPoolExecutor CHECK_ROOM_THREAD_POOL = new ThreadPoolExecutor(
@@ -287,13 +286,6 @@ public class MurderMystery extends PluginBase {
         try {
             Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
             com.smallaswater.npc.variable.VariableManage.addVariableV2("MurderMysteryVariable", RsNpcVariable.class);
-        } catch (Exception ignored) {
-
-        }
-        //检查FAP群组服插件
-        try {
-            Class.forName("net.fap.stage.FStage");
-            Server.getInstance().getScheduler().scheduleRepeatingTask(this, new FStageTask(this), 20, true);
         } catch (Exception ignored) {
 
         }
