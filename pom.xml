@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>MurderMystery</artifactId>
-    <version>1.4.2-PM1E<!-- -SNAPSHOT--></version>
+    <version>1.4.3-PM1E-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -170,6 +170,14 @@
         </dependency>
 
         <dependency>
+            <groupId>FakeNsGameBase</groupId>
+            <artifactId>FakeNsGameBase</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/FakeNsGameBase.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.0.1</version>
@@ -182,7 +190,6 @@
             <version>1.18.26</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
 </project>

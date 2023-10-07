@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedHashMap;
+
 /**
  * @author LT_Name
  */
@@ -35,6 +37,28 @@ public class ConfigUpdateUtils {
         }
 
         config.save();
+    }
+
+    // 需要在NsGB加载后检查，放到onEnable里
+    public static void checkFapNsGB(MurderMystery murderMystery) {
+        try {
+            Class.forName("cn.nsgamebase.NsGameBaseMain");
+
+            Config config = murderMystery.getConfig();
+
+            LinkedHashMap<String, Object> fapIntegral = new LinkedHashMap<>();
+            fapIntegral.put("money", 10);
+            fapIntegral.put("point", 0);
+            fapIntegral.put("exp", 10);
+            fapIntegral.put("maxMultiplier", 1);
+
+            if (!config.exists("fapIntegral")) {
+                config.set("fapIntegral", fapIntegral);
+                config.save();
+            }
+        } catch (Exception ignored) {
+
+        }
     }
 
 }

@@ -96,6 +96,8 @@ public class MurderMystery extends PluginBase {
 
     private IScoreboard scoreboard;
     private boolean hasTips = false;
+    @Getter
+    private boolean hasNsGB = false;
 
     private String serverWorldPath;
     private String worldBackupPath;
@@ -294,8 +296,17 @@ public class MurderMystery extends PluginBase {
             }
             this.hasTips = true;
         } catch (Exception ignored) {
-        //注册RsNPC变量
+
         }
+        //检查FAP基础插件
+        try {
+            Class.forName("cn.nsgamebase.NsGameBaseMain");
+            ConfigUpdateUtils.checkFapNsGB(this);
+            this.hasNsGB = true;
+        } catch (Exception ignored) {
+
+        }
+        //注册RsNPC变量
         try {
             Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
             com.smallaswater.npc.variable.VariableManage.addVariableV2("MurderMysteryVariable", RsNpcVariable.class);

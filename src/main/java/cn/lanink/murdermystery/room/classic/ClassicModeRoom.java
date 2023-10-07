@@ -4,6 +4,8 @@ import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.utils.Tools;
+import cn.nsgamebase.api.GbGameApi;
+import cn.nsgamebase.entity.pojo.AbstractDataGamePlayerPojo;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
@@ -51,7 +53,9 @@ public class ClassicModeRoom extends BaseRoom {
         Player killerVictory = null;
         Set<Player> commonPeopleVictory = new HashSet<>();
         Set<Player> defeatPlayers = new HashSet<>();
+        Set<Player> players = new HashSet<>();
         for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            players.add(entry.getKey());
             if (victory == 3) {
                 if (entry.getValue() == PlayerIdentity.KILLER) {
                     killerVictory = entry.getKey();
@@ -87,6 +91,23 @@ public class ClassicModeRoom extends BaseRoom {
                 }
                 for (Player player : defeatPlayers) {
                     Tools.executeCommands(player, murderMystery.getConfig().getStringList("defeatCmd"));
+                }
+
+                if (murderMystery.isHasNsGB()) {
+                    for (Player player : players) {
+                        AbstractDataGamePlayerPojo pojo = new AbstractDataGamePlayerPojo();
+                        pojo.add("played");
+                        Config config = murderMystery.getConfig();
+                        int money = config.getInt("fapIntegral.money");
+                        int point = config.getInt("fapIntegral.point");
+                        int exp = config.getInt("fapIntegral.exp");
+                        int maxMultiplier = config.getInt("fapIntegral.maxMultiplier");
+                        if (maxMultiplier > 1) { //nsgb没有检查，这里检查下防止报错
+                            GbGameApi.saveAndReward(player, "MurderMystery", pojo, money, point, exp, maxMultiplier);
+                        } else {
+                            GbGameApi.saveAndReward(player.getName(), "MurderMystery", pojo, money, point, exp);
+                        }
+                    }
                 }
             }
         }, 1);
