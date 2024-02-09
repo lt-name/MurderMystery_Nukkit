@@ -296,6 +296,7 @@ public class MurderMystery extends PluginBase {
         } catch (Exception ignored) {
 
         }
+        //注册RsNPC变量
         try {
             Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
             com.smallaswater.npc.variable.VariableManage.addVariableV2("MurderMysteryVariable", RsNpcVariable.class);
