@@ -267,7 +267,7 @@ public class MurderMystery extends PluginBase {
 
         //检查依赖版本
         try {
-            String needGameCoreVersion = "1.5.6";
+            String needGameCoreVersion = "1.6.13";
             if (!VersionUtils.checkMinimumVersion(GameCore.getInstance(), needGameCoreVersion)) {
                 throw new RuntimeException("[MemoriesOfTime-GameCore] plugin version is too low! At least version " + needGameCoreVersion + " is needed!");
             }

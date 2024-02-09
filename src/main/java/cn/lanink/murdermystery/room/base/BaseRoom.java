@@ -1,6 +1,6 @@
 package cn.lanink.murdermystery.room.base;
 
-import cn.lanink.gamecore.utils.FileUtil;
+import cn.lanink.gamecore.utils.FileUtils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
@@ -100,7 +100,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                 this.murderMystery.getLogger().info(this.murderMystery.getLanguage(null)
                         .translateString("roomLevelBackup").replace("%name%", this.getFullRoomName()));
                 Server.getInstance().unloadLevel(this.level);
-                if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
+                if (FileUtils.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                     Server.getInstance().loadLevel(this.levelName);
                     this.level = Server.getInstance().getLevelByName(this.levelName);
                 }else {
@@ -970,7 +970,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
         if (this.players.size() >= this.getMinPlayers() && this.setGameTime - this.gameTime <= 20) {
             return;
         }
-        if (this.getStatus() != RoomStatus.VICTORY && this.getPlayers().size() > 0) {
+        if (this.getStatus() != RoomStatus.VICTORY && !this.getPlayers().isEmpty()) {
             this.setStatus(RoomStatus.VICTORY);
             for (Player player : this.players.keySet()) {
                 Tools.giveItem(player, 10); //退出房间物品
@@ -1000,7 +1000,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
                         }
                     }
                 }
-                if (x == 0 && cache.size() > 0) {
+                if (x == 0 && !cache.isEmpty()) {
                     this.murderMystery.addTemporaryRoom(cache.get(MurderMystery.RANDOM.nextInt(cache.size())));
                 }
             }, MurderMystery.CHECK_ROOM_THREAD_POOL);
@@ -1048,7 +1048,7 @@ public abstract class BaseRoom implements ITimeTask, IAsyncTipsTask {
             this.murderMystery.unloadRoom(this.levelName);
         }
         CompletableFuture.runAsync(() -> {
-            if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
+            if (FileUtils.deleteFile(levelFile) && FileUtils.copyDir(backup, levelFile)) {
                 Server.getInstance().loadLevel(this.levelName);
                 this.level = Server.getInstance().getLevelByName(this.levelName);
                 this.waitSpawn.setLevel(this.level);
