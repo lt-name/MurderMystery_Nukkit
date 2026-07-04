@@ -5,7 +5,8 @@ import cn.lanink.murdermystery.room.base.BaseRoom;
 import cn.lanink.murdermystery.room.base.PlayerIdentity;
 import cn.lanink.murdermystery.utils.Tools;
 import cn.nsgamebase.api.GbGameApi;
-import cn.nsgamebase.entity.pojo.AbstractDataGamePlayerPojo;
+import cn.nsgamebase.api.GbPlayerDataApi;
+import cn.nsgamebase.entity.pojo.AbstractLeaderBroad;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
@@ -95,17 +96,20 @@ public class ClassicModeRoom extends BaseRoom {
 
                 if (murderMystery.isHasNsGB()) {
                     for (Player player : players) {
-                        AbstractDataGamePlayerPojo pojo = new AbstractDataGamePlayerPojo();
+                        AbstractLeaderBroad pojo = new AbstractLeaderBroad();
                         pojo.add("played");
                         Config config = murderMystery.getConfig();
                         int money = config.getInt("fapIntegral.money");
                         int point = config.getInt("fapIntegral.point");
                         int exp = config.getInt("fapIntegral.exp");
                         int maxMultiplier = config.getInt("fapIntegral.maxMultiplier");
+                        if (point > 0) {
+                            GbPlayerDataApi.addEmerald(player.getName(), point, false);
+                        }
                         if (maxMultiplier > 1) { //nsgb没有检查，这里检查下防止报错
-                            GbGameApi.saveAndReward(player, "MurderMystery", pojo, money, point, exp, maxMultiplier);
+                            GbGameApi.saveAndReward(player.getName(), "MurderMystery", pojo, money, exp, maxMultiplier);
                         } else {
-                            GbGameApi.saveAndReward(player.getName(), "MurderMystery", pojo, money, point, exp);
+                            GbGameApi.saveAndReward(player.getName(), "MurderMystery", pojo, maxMultiplier);
                         }
                     }
                 }
