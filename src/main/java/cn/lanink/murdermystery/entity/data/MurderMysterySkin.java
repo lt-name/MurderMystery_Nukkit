@@ -28,6 +28,7 @@ public class MurderMysterySkin extends Skin {
         this.setSkinData(skin.getSkinData());
         this.setGeometryName(skin.getSkinResourcePatch());
         this.setGeometryData(skin.getGeometryData());
+        this.setSkinResourcePatch(skin.getSkinResourcePatch());
     }
 
     public ItemMap getItemMap() {

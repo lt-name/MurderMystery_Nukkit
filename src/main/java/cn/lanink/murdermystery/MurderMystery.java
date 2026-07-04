@@ -53,7 +53,7 @@ import java.util.concurrent.*;
  */
 public class MurderMystery extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.4.3-SNAPSHOT git-20d7d74";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
     public static final ThreadPoolExecutor CHECK_ROOM_THREAD_POOL = new ThreadPoolExecutor(
@@ -96,6 +96,8 @@ public class MurderMystery extends PluginBase {
 
     private IScoreboard scoreboard;
     private boolean hasTips = false;
+    @Getter
+    private boolean hasNsGB = false;
 
     private String serverWorldPath;
     private String worldBackupPath;
@@ -293,6 +295,14 @@ public class MurderMystery extends PluginBase {
                 throw new RuntimeException("Not Loaded");
             }
             this.hasTips = true;
+        } catch (Exception ignored) {
+
+        }
+        //检查FAP基础插件
+        try {
+            Class.forName("cn.nsgamebase.NsGameBaseMain");
+            ConfigUpdateUtils.checkFapNsGB(this);
+            this.hasNsGB = true;
         } catch (Exception ignored) {
 
         }
@@ -579,6 +589,7 @@ public class MurderMystery extends PluginBase {
         File fileImg = new File(getDataFolder() + "/Resources/Sword/skin.png");
         File fileJson = new File(getDataFolder() + "/Resources/Sword/skin.json");
         Skin skin = new Skin();
+        skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         skin.setTrusted(true);
         BufferedImage skinData;
         try {
@@ -606,6 +617,7 @@ public class MurderMystery extends PluginBase {
             getLogger().warning(this.getLanguage(null).translateString("swordFailure"));
         }
         //默认尸体皮肤
+        this.corpseSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         skinData = null;
         try {
             skinData = ImageIO.read(this.getResource("skin.png"));
@@ -760,6 +772,7 @@ public class MurderMystery extends PluginBase {
                 File skinFile = new File(getDataFolder() + "/Skins/" + skinName + "/skin.png");
                 if (skinFile.exists()) {
                     MurderMysterySkin skin = new MurderMysterySkin();
+                    skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
                     skin.setTrusted(true);
                     BufferedImage skinData = null;
                     try {
